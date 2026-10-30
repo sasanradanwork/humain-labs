@@ -21,6 +21,17 @@ const TITLES = {
 };
 const PAGES = new Set(Object.keys(TITLES));
 
+const MenuGlyph = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+    <path d="M4 7h16M4 12h16M4 17h16" />
+  </svg>
+);
+const CloseGlyph = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+    <path d="M6 6l12 12M18 6L6 18" />
+  </svg>
+);
+
 export default function App() {
   useStore();
   const route = useRoute();
@@ -29,6 +40,7 @@ export default function App() {
   const [toastMsg, setToastMsg] = useState("");
   const [modal, setModal] = useState(null);
   const [afterAuth, setAfterAuth] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [filters, setFilters] = useState({
     studies: { q: "", field: "", country: "", format: "", sort: "" },
     researchers: { q: "", field: "", country: "", institution: "", verified: false },
@@ -62,6 +74,20 @@ export default function App() {
   }, [toast]);
 
   const closeModal = useCallback(() => setModal(null), []);
+  const openAuth = (mode) => {
+    setMenuOpen(false);
+    setAfterAuth({ hash: location.hash || "#/" });
+    navigate(`#/auth?mode=${mode}&as=participant`);
+  };
+
+  // The phone menu closes when the page changes and on Escape.
+  useEffect(() => setMenuOpen(false), [route.page, route.id]);
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e) => e.key === "Escape" && setMenuOpen(false);
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [menuOpen]);
   const requireLogin = useCallback(
     (then) => {
       if (AUTH.user) return then();
@@ -177,19 +203,50 @@ export default function App() {
       <header>
         <div className="wrap">
           <div className="head">
-            <a className="brand" href="#/" aria-label="HumAIn Labs home">
+            <a className="brand" href="#/" aria-label="HumAIn Labs home" onClick={() => setMenuOpen(false)}>
               <Logo animated steam={false} />
             </a>
-            <nav id="nav" aria-label="Sections">
+            <nav
+              id="nav"
+              className={menuOpen ? "open" : undefined}
+              aria-label="Sections"
+              onClick={(e) => e.target.closest("a") && setMenuOpen(false)}
+            >
               {NAV[role()].map(([k, label]) => (
                 <a key={k} href={`#/${k === "home" ? "" : k}`} data-page={k} aria-current={k === navPage ? "page" : "false"}>
                   {label}
                 </a>
               ))}
+              <div className="menu-extra">
+                <button className="btn" onClick={toggle}>
+                  {dark ? <Icon.sun /> : <Icon.moon />}
+                  {dark ? "Light mode" : "Dark mode"}
+                </button>
+                {AUTH.user ? (
+                  <>
+                    <span className="menu-account">
+                      <Avatar name={AUTH.researcher?.name || AUTH.user.name || "you"} size={30} />
+                      <span className="role-tag">{role() === "researcher" ? "Researcher" : "Participant"}</span>
+                    </span>
+                    <button className="btn" onClick={() => backend.signOut()}>
+                      Sign out
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button className="btn" onClick={() => openAuth("signin")}>
+                      Sign in
+                    </button>
+                    <button className="btn btn-solid" onClick={() => openAuth("register")}>
+                      Register
+                    </button>
+                  </>
+                )}
+              </div>
             </nav>
             <div className="who" id="who">
               <button
-                className="btn icon-btn theme-btn"
+                className="btn icon-btn theme-btn desk"
                 onClick={toggle}
                 aria-label={`Switch to ${dark ? "light" : "dark"} mode`}
                 title={`Switch to ${dark ? "light" : "dark"} mode`}
@@ -198,36 +255,34 @@ export default function App() {
               </button>
               {AUTH.user ? (
                 <>
-                  <span className="who-name" title={`Signed in as ${AUTH.researcher?.name || AUTH.user.name} (${role()} account)`}>
+                  <span className="who-name desk" title={`Signed in as ${AUTH.researcher?.name || AUTH.user.name} (${role()} account)`}>
                     <Avatar name={AUTH.researcher?.name || AUTH.user.name || "you"} size={30} />
                     <span className="role-tag">{role() === "researcher" ? "Researcher" : "Participant"}</span>
                   </span>
-                  <button className="btn" onClick={() => backend.signOut()}>
+                  <button className="btn desk" onClick={() => backend.signOut()}>
                     Sign out
                   </button>
                 </>
               ) : (
                 <>
-                  <button
-                    className="btn"
-                    onClick={() => {
-                      setAfterAuth({ hash: location.hash || "#/" });
-                      navigate("#/auth?mode=signin&as=participant");
-                    }}
-                  >
+                  <button className="btn desk" onClick={() => openAuth("signin")}>
                     Sign in
                   </button>
-                  <button
-                    className="btn btn-solid"
-                    onClick={() => {
-                      setAfterAuth({ hash: location.hash || "#/" });
-                      navigate("#/auth?mode=register&as=participant");
-                    }}
-                  >
+                  <button className="btn btn-solid desk" onClick={() => openAuth("register")}>
                     Register
                   </button>
                 </>
               )}
+              <button
+                className="btn icon-btn menu-btn"
+                type="button"
+                aria-controls="nav"
+                aria-expanded={menuOpen}
+                aria-label={menuOpen ? "Close menu" : "Open menu"}
+                onClick={() => setMenuOpen((o) => !o)}
+              >
+                {menuOpen ? <CloseGlyph /> : <MenuGlyph />}
+              </button>
             </div>
           </div>
         </div>
