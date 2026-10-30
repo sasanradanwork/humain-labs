@@ -4,7 +4,8 @@ import { Cover, DeadlinePill, HomeBackdrop, Icon, Spark, TrendChips, VerifiedBad
 import { StudyAction, StudyCard, Toolbar, studyTrend } from "../components/cards.jsx";
 import { AUTH, S, byId, role, studyGroupName, studyVerified } from "../lib/store.js";
 import { countryInfo, fmtDate, isOpen, matches, plural, uniq } from "../lib/util.js";
-import { Field, Form, SubmitButton, navigate, reducedMotion, replaceRoute, useUI } from "../lib/ui.jsx";
+import { Field, Form, SubmitButton, navigate, reducedMotion, replaceRoute, useRoute, useUI } from "../lib/ui.jsx";
+import { SITE } from "../lib/site.js";
 import founderPhoto from "../data/founder.jpg";
 
 // Participants only ever see open studies from verified researchers.
@@ -415,7 +416,7 @@ export function MyApplications() {
 
 /* ================= about ================= */
 // Edit these to change the About page. The photo is bundled into the page at build time.
-const CONTACT_EMAIL = "partners@humain.example"; // ← change to your real address
+const CONTACT_EMAIL = SITE.contactEmail;
 const FOUNDERS = [
   {
     name: "Dr Sasan Radan",
@@ -433,6 +434,11 @@ const PARTNERS = [
 ];
 
 export function About() {
+  const route = useRoute();
+  // Footer links to #/about?to=contact jump to the contact section.
+  useEffect(() => {
+    if (route.q.get("to") === "contact") document.getElementById("contact")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [route]);
   return (
     <div className="wrap about">
       <section className="about-hero">
@@ -554,6 +560,25 @@ export function About() {
         <div className="actions">
           <a className="btn btn-solid" href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Becoming a HumAIn Labs partner")}`}>
             <Icon.mail /> Contact us about partnering
+          </a>
+        </div>
+      </section>
+
+      <section className="home-sec" id="contact">
+        <h2>Contact</h2>
+        <p className="soft">Choose the address that fits your question.</p>
+        <div className="contact-grid">
+          <a className="contact-card" href={`mailto:${SITE.contactEmail}`}>
+            <strong>General enquiries</strong>
+            <span>{SITE.contactEmail}</span>
+          </a>
+          <a className="contact-card" href={`mailto:${SITE.privacyEmail}`}>
+            <strong>Privacy and data requests</strong>
+            <span>{SITE.privacyEmail}</span>
+          </a>
+          <a className="contact-card" href={`mailto:${SITE.contactEmail}?subject=${encodeURIComponent("Report a study or profile")}`}>
+            <strong>Report a study or profile</strong>
+            <span>{SITE.contactEmail}</span>
           </a>
         </div>
       </section>
