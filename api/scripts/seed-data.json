@@ -1,1142 +1,1142 @@
 {
- "researchers": [
-  {
-   "id": "r1",
-   "userId": "",
-   "name": "Dr. Amara Nwosu",
-   "handle": "amara-nwosu",
-   "position": "Associate Professor of Economics",
-   "institution": "Lagos Business School",
-   "department": "Economics",
-   "country": "Nigeria",
-   "field": "Behavioural Economics",
-   "email": "a.nwosu@example.edu",
-   "bio": "Studying how default choices shape savings behaviour across West African fintech users.",
-   "linkedin": "https://www.linkedin.com/in/humain-demo-amara-nwosu",
-   "createdAt": "2026-07-01",
-   "verified": {
-    "method": "institution-email",
-    "domain": "example.edu",
-    "at": "2026-07-02"
-   },
-   "metrics": {
-    "source": "OpenAlex",
-    "authorId": "Ar1",
-    "name": "Dr. Amara Nwosu",
-    "works": 64,
-    "citations": 1240,
-    "hIndex": 19,
-    "i10": 41,
-    "recentWorks": 9,
-    "recentCitations": 223,
-    "updatedAt": "2026-09-15"
-   },
-   "scholar": "https://scholar.google.com/citations?user=EXAMPLE001AAJ",
-   "orcid": ""
-  },
-  {
-   "id": "r2",
-   "userId": "",
-   "name": "Prof. Liesel Ackerman",
-   "handle": "liesel-ackerman",
-   "position": "Professor of Developmental Psychology",
-   "institution": "Utrecht University",
-   "department": "Psychology",
-   "country": "Netherlands",
-   "field": "Developmental Psychology",
-   "email": "l.ackerman@example.edu",
-   "bio": "Looking at how bilingual households negotiate screen-time rules with children aged 6â€“10.",
-   "linkedin": "https://www.linkedin.com/in/humain-demo-liesel-ackerman",
-   "createdAt": "2026-07-01",
-   "verified": {
-    "method": "institution-email",
-    "domain": "example.edu",
-    "at": "2026-07-02"
-   },
-   "metrics": {
-    "source": "OpenAlex",
-    "authorId": "Ar2",
-    "name": "Prof. Liesel Ackerman",
-    "works": 128,
-    "citations": 2310,
-    "hIndex": 27,
-    "i10": 88,
-    "recentWorks": 7,
-    "recentCitations": 415,
-    "updatedAt": "2026-09-15"
-   },
-   "scholar": "https://scholar.google.com/citations?user=EXAMPLE002AAJ",
-   "orcid": ""
-  },
-  {
-   "id": "r3",
-   "userId": "",
-   "name": "Dr. Halden Cho",
-   "handle": "halden-cho",
-   "position": "Senior Lecturer",
-   "institution": "National University of Singapore",
-   "department": "Psychology",
-   "country": "Singapore",
-   "field": "Cognitive Science",
-   "email": "h.cho@example.edu",
-   "bio": "Working on cross-cultural differences in spatial reasoning tasks, and always keen to co-run a study.",
-   "linkedin": "",
-   "createdAt": "2026-07-01",
-   "verified": {
-    "method": "institution-email",
-    "domain": "example.edu",
-    "at": "2026-07-02"
-   },
-   "metrics": {
-    "source": "OpenAlex",
-    "authorId": "Ar3",
-    "name": "Dr. Halden Cho",
-    "works": 31,
-    "citations": 610,
-    "hIndex": 13,
-    "i10": 22,
-    "recentWorks": 6,
-    "recentCitations": 109,
-    "updatedAt": "2026-09-15"
-   },
-   "orcid": "",
-   "scholar": ""
-  },
-  {
-   "id": "r4",
-   "userId": "",
-   "name": "Dr. SofÃ­a MarÃ­n",
-   "handle": "sof-a-mar-n",
-   "position": "Lecturer in Public Health",
-   "institution": "Universidad de Buenos Aires",
-   "department": "Faculty of Medicine",
-   "country": "Argentina",
-   "field": "Public Health",
-   "email": "s.marin@example.edu",
-   "bio": "Researching sleep, shift work and wellbeing among healthcare and logistics workers.",
-   "linkedin": "",
-   "createdAt": "2026-07-01",
-   "verified": {
-    "method": "institution-email",
-    "domain": "example.edu",
-    "at": "2026-07-02"
-   },
-   "orcid": "",
-   "scholar": ""
-  },
-  {
-   "id": "r5",
-   "userId": "",
-   "name": "Dr. Rohan Mehta",
-   "handle": "rohan-mehta",
-   "position": "Senior Lecturer in HCI",
-   "institution": "University of Manchester",
-   "department": "Computer Science",
-   "country": "United Kingdom",
-   "field": "Humanâ€“Computer Interaction",
-   "email": "r.mehta@example.edu",
-   "bio": "Studying how people judge, check and correct answers from AI assistants.",
-   "linkedin": "https://www.linkedin.com/in/humain-demo-rohan-mehta",
-   "createdAt": "2026-07-01",
-   "verified": {
-    "method": "institution-email",
-    "domain": "example.edu",
-    "at": "2026-07-02"
-   },
-   "metrics": {
-    "source": "OpenAlex",
-    "authorId": "Ar5",
-    "name": "Dr. Rohan Mehta",
-    "works": 47,
-    "citations": 880,
-    "hIndex": 16,
-    "i10": 33,
-    "recentWorks": 11,
-    "recentCitations": 158,
-    "updatedAt": "2026-09-15"
-   },
-   "scholar": "https://scholar.google.com/citations?user=EXAMPLE003AAJ",
-   "orcid": ""
-  },
-  {
-   "id": "r6",
-   "userId": "",
-   "name": "Dr. Aiko Tanaka",
-   "handle": "aiko-tanaka",
-   "position": "Associate Professor",
-   "institution": "Kyoto University",
-   "department": "Graduate School of Letters",
-   "country": "Japan",
-   "field": "Linguistics",
-   "email": "a.tanaka@example.edu",
-   "bio": "Corpus work on politeness and register in workplace messaging. Open to collaboration on multilingual datasets.",
-   "linkedin": "",
-   "createdAt": "2026-07-01",
-   "metrics": {
-    "source": "OpenAlex",
-    "authorId": "Ar6",
-    "name": "Dr. Aiko Tanaka",
-    "works": 72,
-    "citations": 1490,
-    "hIndex": 21,
-    "i10": 52,
-    "recentWorks": 4,
-    "recentCitations": 268,
-    "updatedAt": "2026-09-15"
-   },
-   "orcid": "",
-   "scholar": ""
-  },
-  {
-   "id": "r7",
-   "userId": "",
-   "name": "Dr. Kofi Mensah",
-   "handle": "kofi-mensah",
-   "position": "Postdoctoral researcher",
-   "institution": "Lagos Business School",
-   "department": "Economics",
-   "country": "Nigeria",
-   "field": "Behavioural Economics",
-   "email": "k.mensah@example.edu",
-   "bio": "Running field experiments on reminders and repayment with mobile-money users.",
-   "linkedin": "",
-   "createdAt": "2026-07-01",
-   "verified": {
-    "method": "institution-email",
-    "domain": "example.edu",
-    "at": "2026-07-02"
-   },
-   "metrics": {
-    "source": "OpenAlex",
-    "authorId": "Ar7",
-    "name": "Dr. Kofi Mensah",
-    "works": 22,
-    "citations": 310,
-    "hIndex": 9,
-    "i10": 14,
-    "recentWorks": 8,
-    "recentCitations": 55,
-    "updatedAt": "2026-09-15"
-   },
-   "orcid": "",
-   "scholar": ""
-  },
-  {
-   "id": "r8",
-   "userId": "",
-   "name": "Ifeoma Eze",
-   "handle": "ifeoma-eze",
-   "position": "PhD candidate",
-   "institution": "Lagos Business School",
-   "department": "Economics",
-   "country": "Nigeria",
-   "field": "Behavioural Economics",
-   "email": "i.eze@example.edu",
-   "bio": "PhD on short-term borrowing and payday timing in the gig economy.",
-   "linkedin": "",
-   "createdAt": "2026-07-01",
-   "orcid": "",
-   "scholar": ""
-  },
-  {
-   "id": "r9",
-   "userId": "",
-   "name": "Tobi Adeyemi",
-   "handle": "tobi-adeyemi",
-   "position": "Research assistant",
-   "institution": "Lagos Business School",
-   "department": "Economics",
-   "country": "Nigeria",
-   "field": "Behavioural Economics",
-   "email": "t.adeyemi@example.edu",
-   "bio": "Coordinates survey fieldwork and data cleaning for the Household Finance Lab.",
-   "linkedin": "",
-   "createdAt": "2026-07-01",
-   "orcid": "",
-   "scholar": ""
-  },
-  {
-   "id": "r10",
-   "userId": "",
-   "name": "Dr. Joris van Dam",
-   "handle": "joris-van-dam",
-   "position": "Assistant Professor",
-   "institution": "Utrecht University",
-   "department": "Psychology",
-   "country": "Netherlands",
-   "field": "Developmental Psychology",
-   "email": "j.vandam@example.edu",
-   "bio": "Diary methods and family language choice at home.",
-   "linkedin": "",
-   "createdAt": "2026-07-01",
-   "verified": {
-    "method": "institution-email",
-    "domain": "example.edu",
-    "at": "2026-07-02"
-   },
-   "metrics": {
-    "source": "OpenAlex",
-    "authorId": "Ar10",
-    "name": "Dr. Joris van Dam",
-    "works": 38,
-    "citations": 540,
-    "hIndex": 12,
-    "i10": 19,
-    "recentWorks": 5,
-    "recentCitations": 97,
-    "updatedAt": "2026-09-15"
-   },
-   "orcid": "",
-   "scholar": ""
-  },
-  {
-   "id": "r11",
-   "userId": "",
-   "name": "Nadia Haddad",
-   "handle": "nadia-haddad",
-   "position": "PhD candidate",
-   "institution": "Utrecht University",
-   "department": "Psychology",
-   "country": "Netherlands",
-   "field": "Developmental Psychology",
-   "email": "n.haddad@example.edu",
-   "bio": "PhD on how children push back against media rules.",
-   "linkedin": "",
-   "createdAt": "2026-07-01",
-   "orcid": "",
-   "scholar": ""
-  },
-  {
-   "id": "r12",
-   "userId": "",
-   "name": "Wei Jie Lim",
-   "handle": "wei-jie-lim",
-   "position": "Research assistant",
-   "institution": "National University of Singapore",
-   "department": "Psychology",
-   "country": "Singapore",
-   "field": "Cognitive Science",
-   "email": "wj.lim@example.edu",
-   "bio": "Runs lab sessions and builds online spatial reasoning tasks.",
-   "linkedin": "",
-   "createdAt": "2026-07-01",
-   "orcid": "",
-   "scholar": ""
-  },
-  {
-   "id": "r13",
-   "userId": "",
-   "name": "Dr. Ellen Okafor",
-   "handle": "ellen-okafor",
-   "position": "Research Fellow",
-   "institution": "University of Manchester",
-   "department": "Computer Science",
-   "country": "United Kingdom",
-   "field": "Humanâ€“Computer Interaction",
-   "email": "e.okafor@example.edu",
-   "bio": "Designing think-aloud studies on how people notice AI mistakes.",
-   "linkedin": "",
-   "createdAt": "2026-07-01",
-   "verified": {
-    "method": "institution-email",
-    "domain": "example.edu",
-    "at": "2026-07-02"
-   },
-   "metrics": {
-    "source": "OpenAlex",
-    "authorId": "Ar13",
-    "name": "Dr. Ellen Okafor",
-    "works": 19,
-    "citations": 260,
-    "hIndex": 8,
-    "i10": 12,
-    "recentWorks": 7,
-    "recentCitations": 46,
-    "updatedAt": "2026-09-15"
-   },
-   "orcid": "",
-   "scholar": ""
-  },
-  {
-   "id": "r14",
-   "userId": "",
-   "name": "Sam Whitfield",
-   "handle": "sam-whitfield",
-   "position": "PhD candidate",
-   "institution": "University of Manchester",
-   "department": "Computer Science",
-   "country": "United Kingdom",
-   "field": "Humanâ€“Computer Interaction",
-   "email": "s.whitfield@example.edu",
-   "bio": "PhD on when people override confident models.",
-   "linkedin": "",
-   "createdAt": "2026-07-01",
-   "orcid": "",
-   "scholar": ""
-  },
-  {
-   "id": "r15",
-   "userId": "",
-   "name": "Leila Rahimi",
-   "handle": "leila-rahimi",
-   "position": "PhD candidate",
-   "institution": "University of Manchester",
-   "department": "Computer Science",
-   "country": "United Kingdom",
-   "field": "Humanâ€“Computer Interaction",
-   "email": "l.rahimi@example.edu",
-   "bio": "PhD on explanations and trust in AI writing tools.",
-   "linkedin": "",
-   "createdAt": "2026-07-01",
-   "orcid": "",
-   "scholar": ""
-  },
-  {
-   "id": "r16",
-   "userId": "",
-   "name": "Jonah Price",
-   "handle": "jonah-price",
-   "position": "Research assistant",
-   "institution": "University of Manchester",
-   "department": "Computer Science",
-   "country": "United Kingdom",
-   "field": "Humanâ€“Computer Interaction",
-   "email": "j.price@example.edu",
-   "bio": "Runs lab sessions and recruitment for the Humanâ€“AI Interaction Lab.",
-   "linkedin": "",
-   "createdAt": "2026-07-01",
-   "orcid": "",
-   "scholar": ""
-  }
- ],
- "studies": [
-  {
-   "id": "s1",
-   "title": "Digital savings habits among gig workers",
-   "researcherId": "r1",
-   "researcherName": "Dr. Amara Nwosu",
-   "researcherEmail": "a.nwosu@example.edu",
-   "institution": "Lagos Business School",
-   "country": "Nigeria",
-   "field": "Behavioural Economics",
-   "groupId": "g1",
-   "format": "Online",
-   "duration": "20 min survey + optional interview",
-   "compensation": "Â£8 voucher",
-   "description": "A 20-minute online survey plus an optional follow-up interview about how you manage irregular income.",
-   "criteria": "18+, currently doing gig or freelance work",
-   "postedAt": "2026-07-28",
-   "closesAt": "2026-11-30"
-  },
-  {
-   "id": "s2",
-   "title": "Bilingual households and screen-time rules",
-   "researcherId": "r2",
-   "researcherName": "Prof. Liesel Ackerman",
-   "researcherEmail": "l.ackerman@example.edu",
-   "institution": "Utrecht University",
-   "country": "Netherlands",
-   "field": "Developmental Psychology",
-   "groupId": "g2",
-   "format": "Online",
-   "duration": "45 min video call",
-   "compensation": "â‚¬20 gift card",
-   "description": "One 45-minute video call with a parent or guardian of a bilingual child aged 6â€“10.",
-   "criteria": "Parent or guardian of a bilingual child aged 6â€“10",
-   "postedAt": "2026-08-01",
-   "closesAt": "2026-11-15"
-  },
-  {
-   "id": "s3",
-   "title": "Sleep patterns in night-shift workers",
-   "researcherId": "r4",
-   "researcherName": "Dr. SofÃ­a MarÃ­n",
-   "researcherEmail": "s.marin@example.edu",
-   "institution": "Universidad de Buenos Aires",
-   "country": "Argentina",
-   "field": "Public Health",
-   "groupId": "",
-   "format": "Online",
-   "duration": "7-day sleep diary, 5 min a day",
-   "compensation": "Unpaid, summary of findings shared",
-   "description": "Keep a short daily sleep diary for one week and answer a closing questionnaire about your shift pattern.",
-   "criteria": "18+, working at least two night shifts a week",
-   "postedAt": "2026-08-19",
-   "closesAt": "2026-12-11"
-  },
-  {
-   "id": "s5",
-   "title": "Diary study: writing with AI tools",
-   "researcherId": "r13",
-   "researcherName": "Dr. Ellen Okafor",
-   "researcherEmail": "e.okafor@example.edu",
-   "institution": "University of Manchester",
-   "country": "United Kingdom",
-   "field": "Humanâ€“Computer Interaction",
-   "groupId": "g4",
-   "format": "Online",
-   "duration": "10 min a day for 2 weeks",
-   "compensation": "Â£25 voucher",
-   "description": "Keep a short daily diary about when you use AI tools for writing, and when you decide not to.",
-   "criteria": "18+, writes at least a few times a week for work or study",
-   "postedAt": "2026-09-14",
-   "closesAt": "2026-11-05"
-  },
-  {
-   "id": "s6",
-   "title": "How families choose what to watch together",
-   "researcherId": "r10",
-   "researcherName": "Dr. Joris van Dam",
-   "researcherEmail": "j.vandam@example.edu",
-   "institution": "Utrecht University",
-   "country": "Netherlands",
-   "field": "Developmental Psychology",
-   "groupId": "g2",
-   "format": "Online",
-   "duration": "30 min video interview",
-   "compensation": "â‚¬15 gift card",
-   "description": "A relaxed video interview about how your household decides what to watch, and who gets the final say.",
-   "criteria": "Parents or guardians living with at least one child aged 8â€“14",
-   "postedAt": "2026-09-09",
-   "closesAt": "2026-12-20"
-  },
-  {
-   "id": "s4",
-   "title": "How do you check an AI's answer?",
-   "researcherId": "r5",
-   "researcherName": "Dr. Rohan Mehta",
-   "researcherEmail": "r.mehta@example.edu",
-   "institution": "University of Manchester",
-   "country": "United Kingdom",
-   "field": "Humanâ€“Computer Interaction",
-   "groupId": "g4",
-   "format": "Hybrid",
-   "duration": "60 min session",
-   "compensation": "Â£15",
-   "description": "Work through a set of questions with an AI assistant while thinking aloud, in our Manchester lab or over a screen-share.",
-   "criteria": "18+, uses an AI assistant at least weekly",
-   "postedAt": "2026-09-02",
-   "closesAt": "2026-12-18"
-  }
- ],
- "groups": [
-  {
-   "id": "g1",
-   "ownerId": "r1",
-   "name": "Household Finance Lab",
-   "institution": "Lagos Business School",
-   "country": "Nigeria",
-   "field": "Behavioural Economics",
-   "founded": 2017,
-   "email": "hflab@example.edu",
-   "website": "",
-   "summary": "How people with irregular incomes save, borrow and plan, and how app design nudges those choices.",
-   "about": "We run field experiments with fintech partners across West Africa, testing whether small design changes, like a default savings rate or a reminder at payday, change what people actually do with their money. Most of our work is with gig and informal-sector workers.",
-   "focus": [
-    "Savings defaults",
-    "Mobile money",
-    "Gig-economy income",
-    "Field experiments"
-   ],
-   "members": [
+  "researchers": [
     {
-     "researcherId": "r1",
-     "role": "Group lead",
-     "canEdit": true
+      "id": "r1",
+      "userId": "",
+      "name": "Dr. Amara Nwosu",
+      "handle": "amara-nwosu",
+      "position": "Associate Professor of Economics",
+      "institution": "Lagos Business School",
+      "department": "Economics",
+      "country": "Nigeria",
+      "field": "Behavioural Economics",
+      "email": "a.nwosu@example.edu",
+      "bio": "Studying how default choices shape savings behaviour across West African fintech users.",
+      "linkedin": "https://www.linkedin.com/in/humain-demo-amara-nwosu",
+      "createdAt": "2026-07-01",
+      "verified": {
+        "method": "institution-email",
+        "domain": "example.edu",
+        "at": "2026-07-02"
+      },
+      "metrics": {
+        "source": "OpenAlex",
+        "authorId": "Ar1",
+        "name": "Dr. Amara Nwosu",
+        "works": 64,
+        "citations": 1240,
+        "hIndex": 19,
+        "i10": 41,
+        "recentWorks": 9,
+        "recentCitations": 223,
+        "updatedAt": "2026-09-15"
+      },
+      "scholar": "https://scholar.google.com/citations?user=EXAMPLE001AAJ",
+      "orcid": ""
     },
     {
-     "researcherId": "r7",
-     "role": "Postdoctoral researcher",
-     "canEdit": true
+      "id": "r2",
+      "userId": "",
+      "name": "Prof. Liesel Ackerman",
+      "handle": "liesel-ackerman",
+      "position": "Professor of Developmental Psychology",
+      "institution": "Utrecht University",
+      "department": "Psychology",
+      "country": "Netherlands",
+      "field": "Developmental Psychology",
+      "email": "l.ackerman@example.edu",
+      "bio": "Looking at how bilingual households negotiate screen-time rules with children aged 6–10.",
+      "linkedin": "https://www.linkedin.com/in/humain-demo-liesel-ackerman",
+      "createdAt": "2026-07-01",
+      "verified": {
+        "method": "institution-email",
+        "domain": "example.edu",
+        "at": "2026-07-02"
+      },
+      "metrics": {
+        "source": "OpenAlex",
+        "authorId": "Ar2",
+        "name": "Prof. Liesel Ackerman",
+        "works": 128,
+        "citations": 2310,
+        "hIndex": 27,
+        "i10": 88,
+        "recentWorks": 7,
+        "recentCitations": 415,
+        "updatedAt": "2026-09-15"
+      },
+      "scholar": "https://scholar.google.com/citations?user=EXAMPLE002AAJ",
+      "orcid": ""
     },
     {
-     "researcherId": "r8",
-     "role": "PhD candidate",
-     "canEdit": false
+      "id": "r3",
+      "userId": "",
+      "name": "Dr. Halden Cho",
+      "handle": "halden-cho",
+      "position": "Senior Lecturer",
+      "institution": "National University of Singapore",
+      "department": "Psychology",
+      "country": "Singapore",
+      "field": "Cognitive Science",
+      "email": "h.cho@example.edu",
+      "bio": "Working on cross-cultural differences in spatial reasoning tasks, and always keen to co-run a study.",
+      "linkedin": "",
+      "createdAt": "2026-07-01",
+      "verified": {
+        "method": "institution-email",
+        "domain": "example.edu",
+        "at": "2026-07-02"
+      },
+      "metrics": {
+        "source": "OpenAlex",
+        "authorId": "Ar3",
+        "name": "Dr. Halden Cho",
+        "works": 31,
+        "citations": 610,
+        "hIndex": 13,
+        "i10": 22,
+        "recentWorks": 6,
+        "recentCitations": 109,
+        "updatedAt": "2026-09-15"
+      },
+      "orcid": "",
+      "scholar": ""
     },
     {
-     "researcherId": "r9",
-     "role": "Research assistant",
-     "canEdit": false
+      "id": "r4",
+      "userId": "",
+      "name": "Dr. Sofía Marín",
+      "handle": "sof-a-mar-n",
+      "position": "Lecturer in Public Health",
+      "institution": "Universidad de Buenos Aires",
+      "department": "Faculty of Medicine",
+      "country": "Argentina",
+      "field": "Public Health",
+      "email": "s.marin@example.edu",
+      "bio": "Researching sleep, shift work and wellbeing among healthcare and logistics workers.",
+      "linkedin": "",
+      "createdAt": "2026-07-01",
+      "verified": {
+        "method": "institution-email",
+        "domain": "example.edu",
+        "at": "2026-07-02"
+      },
+      "orcid": "",
+      "scholar": ""
+    },
+    {
+      "id": "r5",
+      "userId": "",
+      "name": "Dr. Rohan Mehta",
+      "handle": "rohan-mehta",
+      "position": "Senior Lecturer in HCI",
+      "institution": "University of Manchester",
+      "department": "Computer Science",
+      "country": "United Kingdom",
+      "field": "Human–Computer Interaction",
+      "email": "r.mehta@example.edu",
+      "bio": "Studying how people judge, check and correct answers from AI assistants.",
+      "linkedin": "https://www.linkedin.com/in/humain-demo-rohan-mehta",
+      "createdAt": "2026-07-01",
+      "verified": {
+        "method": "institution-email",
+        "domain": "example.edu",
+        "at": "2026-07-02"
+      },
+      "metrics": {
+        "source": "OpenAlex",
+        "authorId": "Ar5",
+        "name": "Dr. Rohan Mehta",
+        "works": 47,
+        "citations": 880,
+        "hIndex": 16,
+        "i10": 33,
+        "recentWorks": 11,
+        "recentCitations": 158,
+        "updatedAt": "2026-09-15"
+      },
+      "scholar": "https://scholar.google.com/citations?user=EXAMPLE003AAJ",
+      "orcid": ""
+    },
+    {
+      "id": "r6",
+      "userId": "",
+      "name": "Dr. Aiko Tanaka",
+      "handle": "aiko-tanaka",
+      "position": "Associate Professor",
+      "institution": "Kyoto University",
+      "department": "Graduate School of Letters",
+      "country": "Japan",
+      "field": "Linguistics",
+      "email": "a.tanaka@example.edu",
+      "bio": "Corpus work on politeness and register in workplace messaging. Open to collaboration on multilingual datasets.",
+      "linkedin": "",
+      "createdAt": "2026-07-01",
+      "metrics": {
+        "source": "OpenAlex",
+        "authorId": "Ar6",
+        "name": "Dr. Aiko Tanaka",
+        "works": 72,
+        "citations": 1490,
+        "hIndex": 21,
+        "i10": 52,
+        "recentWorks": 4,
+        "recentCitations": 268,
+        "updatedAt": "2026-09-15"
+      },
+      "orcid": "",
+      "scholar": ""
+    },
+    {
+      "id": "r7",
+      "userId": "",
+      "name": "Dr. Kofi Mensah",
+      "handle": "kofi-mensah",
+      "position": "Postdoctoral researcher",
+      "institution": "Lagos Business School",
+      "department": "Economics",
+      "country": "Nigeria",
+      "field": "Behavioural Economics",
+      "email": "k.mensah@example.edu",
+      "bio": "Running field experiments on reminders and repayment with mobile-money users.",
+      "linkedin": "",
+      "createdAt": "2026-07-01",
+      "verified": {
+        "method": "institution-email",
+        "domain": "example.edu",
+        "at": "2026-07-02"
+      },
+      "metrics": {
+        "source": "OpenAlex",
+        "authorId": "Ar7",
+        "name": "Dr. Kofi Mensah",
+        "works": 22,
+        "citations": 310,
+        "hIndex": 9,
+        "i10": 14,
+        "recentWorks": 8,
+        "recentCitations": 55,
+        "updatedAt": "2026-09-15"
+      },
+      "orcid": "",
+      "scholar": ""
+    },
+    {
+      "id": "r8",
+      "userId": "",
+      "name": "Ifeoma Eze",
+      "handle": "ifeoma-eze",
+      "position": "PhD candidate",
+      "institution": "Lagos Business School",
+      "department": "Economics",
+      "country": "Nigeria",
+      "field": "Behavioural Economics",
+      "email": "i.eze@example.edu",
+      "bio": "PhD on short-term borrowing and payday timing in the gig economy.",
+      "linkedin": "",
+      "createdAt": "2026-07-01",
+      "orcid": "",
+      "scholar": ""
+    },
+    {
+      "id": "r9",
+      "userId": "",
+      "name": "Tobi Adeyemi",
+      "handle": "tobi-adeyemi",
+      "position": "Research assistant",
+      "institution": "Lagos Business School",
+      "department": "Economics",
+      "country": "Nigeria",
+      "field": "Behavioural Economics",
+      "email": "t.adeyemi@example.edu",
+      "bio": "Coordinates survey fieldwork and data cleaning for the Household Finance Lab.",
+      "linkedin": "",
+      "createdAt": "2026-07-01",
+      "orcid": "",
+      "scholar": ""
+    },
+    {
+      "id": "r10",
+      "userId": "",
+      "name": "Dr. Joris van Dam",
+      "handle": "joris-van-dam",
+      "position": "Assistant Professor",
+      "institution": "Utrecht University",
+      "department": "Psychology",
+      "country": "Netherlands",
+      "field": "Developmental Psychology",
+      "email": "j.vandam@example.edu",
+      "bio": "Diary methods and family language choice at home.",
+      "linkedin": "",
+      "createdAt": "2026-07-01",
+      "verified": {
+        "method": "institution-email",
+        "domain": "example.edu",
+        "at": "2026-07-02"
+      },
+      "metrics": {
+        "source": "OpenAlex",
+        "authorId": "Ar10",
+        "name": "Dr. Joris van Dam",
+        "works": 38,
+        "citations": 540,
+        "hIndex": 12,
+        "i10": 19,
+        "recentWorks": 5,
+        "recentCitations": 97,
+        "updatedAt": "2026-09-15"
+      },
+      "orcid": "",
+      "scholar": ""
+    },
+    {
+      "id": "r11",
+      "userId": "",
+      "name": "Nadia Haddad",
+      "handle": "nadia-haddad",
+      "position": "PhD candidate",
+      "institution": "Utrecht University",
+      "department": "Psychology",
+      "country": "Netherlands",
+      "field": "Developmental Psychology",
+      "email": "n.haddad@example.edu",
+      "bio": "PhD on how children push back against media rules.",
+      "linkedin": "",
+      "createdAt": "2026-07-01",
+      "orcid": "",
+      "scholar": ""
+    },
+    {
+      "id": "r12",
+      "userId": "",
+      "name": "Wei Jie Lim",
+      "handle": "wei-jie-lim",
+      "position": "Research assistant",
+      "institution": "National University of Singapore",
+      "department": "Psychology",
+      "country": "Singapore",
+      "field": "Cognitive Science",
+      "email": "wj.lim@example.edu",
+      "bio": "Runs lab sessions and builds online spatial reasoning tasks.",
+      "linkedin": "",
+      "createdAt": "2026-07-01",
+      "orcid": "",
+      "scholar": ""
+    },
+    {
+      "id": "r13",
+      "userId": "",
+      "name": "Dr. Ellen Okafor",
+      "handle": "ellen-okafor",
+      "position": "Research Fellow",
+      "institution": "University of Manchester",
+      "department": "Computer Science",
+      "country": "United Kingdom",
+      "field": "Human–Computer Interaction",
+      "email": "e.okafor@example.edu",
+      "bio": "Designing think-aloud studies on how people notice AI mistakes.",
+      "linkedin": "",
+      "createdAt": "2026-07-01",
+      "verified": {
+        "method": "institution-email",
+        "domain": "example.edu",
+        "at": "2026-07-02"
+      },
+      "metrics": {
+        "source": "OpenAlex",
+        "authorId": "Ar13",
+        "name": "Dr. Ellen Okafor",
+        "works": 19,
+        "citations": 260,
+        "hIndex": 8,
+        "i10": 12,
+        "recentWorks": 7,
+        "recentCitations": 46,
+        "updatedAt": "2026-09-15"
+      },
+      "orcid": "",
+      "scholar": ""
+    },
+    {
+      "id": "r14",
+      "userId": "",
+      "name": "Sam Whitfield",
+      "handle": "sam-whitfield",
+      "position": "PhD candidate",
+      "institution": "University of Manchester",
+      "department": "Computer Science",
+      "country": "United Kingdom",
+      "field": "Human–Computer Interaction",
+      "email": "s.whitfield@example.edu",
+      "bio": "PhD on when people override confident models.",
+      "linkedin": "",
+      "createdAt": "2026-07-01",
+      "orcid": "",
+      "scholar": ""
+    },
+    {
+      "id": "r15",
+      "userId": "",
+      "name": "Leila Rahimi",
+      "handle": "leila-rahimi",
+      "position": "PhD candidate",
+      "institution": "University of Manchester",
+      "department": "Computer Science",
+      "country": "United Kingdom",
+      "field": "Human–Computer Interaction",
+      "email": "l.rahimi@example.edu",
+      "bio": "PhD on explanations and trust in AI writing tools.",
+      "linkedin": "",
+      "createdAt": "2026-07-01",
+      "orcid": "",
+      "scholar": ""
+    },
+    {
+      "id": "r16",
+      "userId": "",
+      "name": "Jonah Price",
+      "handle": "jonah-price",
+      "position": "Research assistant",
+      "institution": "University of Manchester",
+      "department": "Computer Science",
+      "country": "United Kingdom",
+      "field": "Human–Computer Interaction",
+      "email": "j.price@example.edu",
+      "bio": "Runs lab sessions and recruitment for the Human–AI Interaction Lab.",
+      "linkedin": "",
+      "createdAt": "2026-07-01",
+      "orcid": "",
+      "scholar": ""
     }
-   ],
-   "grants": 3,
-   "publications": [
+  ],
+  "studies": [
     {
-     "title": "Defaults and savings among mobile-money users: evidence from a randomised rollout",
-     "authors": "Nwosu, A., Mensah, K.",
-     "venue": "Journal of Development Economics",
-     "year": 2025,
-     "url": ""
+      "id": "s1",
+      "title": "Digital savings habits among gig workers",
+      "researcherId": "r1",
+      "researcherName": "Dr. Amara Nwosu",
+      "researcherEmail": "a.nwosu@example.edu",
+      "institution": "Lagos Business School",
+      "country": "Nigeria",
+      "field": "Behavioural Economics",
+      "groupId": "g1",
+      "format": "Online",
+      "duration": "20 min survey + optional interview",
+      "compensation": "£8 voucher",
+      "description": "A 20-minute online survey plus an optional follow-up interview about how you manage irregular income.",
+      "criteria": "18+, currently doing gig or freelance work",
+      "postedAt": "2026-07-28",
+      "closesAt": "2026-11-30"
     },
     {
-     "title": "Payday reminders and short-term borrowing in the gig economy",
-     "authors": "Eze, I., Nwosu, A.",
-     "venue": "Behavioural Public Policy",
-     "year": 2024,
-     "url": ""
+      "id": "s2",
+      "title": "Bilingual households and screen-time rules",
+      "researcherId": "r2",
+      "researcherName": "Prof. Liesel Ackerman",
+      "researcherEmail": "l.ackerman@example.edu",
+      "institution": "Utrecht University",
+      "country": "Netherlands",
+      "field": "Developmental Psychology",
+      "groupId": "g2",
+      "format": "Online",
+      "duration": "45 min video call",
+      "compensation": "€20 gift card",
+      "description": "One 45-minute video call with a parent or guardian of a bilingual child aged 6–10.",
+      "criteria": "Parent or guardian of a bilingual child aged 6–10",
+      "postedAt": "2026-08-01",
+      "closesAt": "2026-11-15"
     },
     {
-     "title": "Irregular income and mental accounting in Lagos",
-     "authors": "Nwosu, A.",
-     "venue": "Journal of Economic Psychology",
-     "year": 2022,
-     "url": ""
+      "id": "s3",
+      "title": "Sleep patterns in night-shift workers",
+      "researcherId": "r4",
+      "researcherName": "Dr. Sofía Marín",
+      "researcherEmail": "s.marin@example.edu",
+      "institution": "Universidad de Buenos Aires",
+      "country": "Argentina",
+      "field": "Public Health",
+      "groupId": "",
+      "format": "Online",
+      "duration": "7-day sleep diary, 5 min a day",
+      "compensation": "Unpaid, summary of findings shared",
+      "description": "Keep a short daily sleep diary for one week and answer a closing questionnaire about your shift pattern.",
+      "criteria": "18+, working at least two night shifts a week",
+      "postedAt": "2026-08-19",
+      "closesAt": "2026-12-11"
+    },
+    {
+      "id": "s5",
+      "title": "Diary study: writing with AI tools",
+      "researcherId": "r13",
+      "researcherName": "Dr. Ellen Okafor",
+      "researcherEmail": "e.okafor@example.edu",
+      "institution": "University of Manchester",
+      "country": "United Kingdom",
+      "field": "Human–Computer Interaction",
+      "groupId": "g4",
+      "format": "Online",
+      "duration": "10 min a day for 2 weeks",
+      "compensation": "£25 voucher",
+      "description": "Keep a short daily diary about when you use AI tools for writing, and when you decide not to.",
+      "criteria": "18+, writes at least a few times a week for work or study",
+      "postedAt": "2026-09-14",
+      "closesAt": "2026-11-05"
+    },
+    {
+      "id": "s6",
+      "title": "How families choose what to watch together",
+      "researcherId": "r10",
+      "researcherName": "Dr. Joris van Dam",
+      "researcherEmail": "j.vandam@example.edu",
+      "institution": "Utrecht University",
+      "country": "Netherlands",
+      "field": "Developmental Psychology",
+      "groupId": "g2",
+      "format": "Online",
+      "duration": "30 min video interview",
+      "compensation": "€15 gift card",
+      "description": "A relaxed video interview about how your household decides what to watch, and who gets the final say.",
+      "criteria": "Parents or guardians living with at least one child aged 8–14",
+      "postedAt": "2026-09-09",
+      "closesAt": "2026-12-20"
+    },
+    {
+      "id": "s4",
+      "title": "How do you check an AI's answer?",
+      "researcherId": "r5",
+      "researcherName": "Dr. Rohan Mehta",
+      "researcherEmail": "r.mehta@example.edu",
+      "institution": "University of Manchester",
+      "country": "United Kingdom",
+      "field": "Human–Computer Interaction",
+      "groupId": "g4",
+      "format": "Hybrid",
+      "duration": "60 min session",
+      "compensation": "£15",
+      "description": "Work through a set of questions with an AI assistant while thinking aloud, in our Manchester lab or over a screen-share.",
+      "criteria": "18+, uses an AI assistant at least weekly",
+      "postedAt": "2026-09-02",
+      "closesAt": "2026-12-18"
     }
-   ],
-   "openings": [
+  ],
+  "groups": [
     {
-     "type": "PhD position",
-     "title": "Funded PhD: behavioural design in mobile money",
-     "detail": "Three-year studentship. A quantitative background and some R or Python expected.",
-     "deadline": "2026-11-30"
+      "id": "g1",
+      "ownerId": "r1",
+      "name": "Household Finance Lab",
+      "institution": "Lagos Business School",
+      "country": "Nigeria",
+      "field": "Behavioural Economics",
+      "founded": 2017,
+      "email": "hflab@example.edu",
+      "website": "",
+      "summary": "How people with irregular incomes save, borrow and plan, and how app design nudges those choices.",
+      "about": "We run field experiments with fintech partners across West Africa, testing whether small design changes, like a default savings rate or a reminder at payday, change what people actually do with their money. Most of our work is with gig and informal-sector workers.",
+      "focus": [
+        "Savings defaults",
+        "Mobile money",
+        "Gig-economy income",
+        "Field experiments"
+      ],
+      "members": [
+        {
+          "researcherId": "r1",
+          "role": "Group lead",
+          "canEdit": true
+        },
+        {
+          "researcherId": "r7",
+          "role": "Postdoctoral researcher",
+          "canEdit": true
+        },
+        {
+          "researcherId": "r8",
+          "role": "PhD candidate",
+          "canEdit": false
+        },
+        {
+          "researcherId": "r9",
+          "role": "Research assistant",
+          "canEdit": false
+        }
+      ],
+      "grants": 3,
+      "publications": [
+        {
+          "title": "Defaults and savings among mobile-money users: evidence from a randomised rollout",
+          "authors": "Nwosu, A., Mensah, K.",
+          "venue": "Journal of Development Economics",
+          "year": 2025,
+          "url": ""
+        },
+        {
+          "title": "Payday reminders and short-term borrowing in the gig economy",
+          "authors": "Eze, I., Nwosu, A.",
+          "venue": "Behavioural Public Policy",
+          "year": 2024,
+          "url": ""
+        },
+        {
+          "title": "Irregular income and mental accounting in Lagos",
+          "authors": "Nwosu, A.",
+          "venue": "Journal of Economic Psychology",
+          "year": 2022,
+          "url": ""
+        }
+      ],
+      "openings": [
+        {
+          "type": "PhD position",
+          "title": "Funded PhD: behavioural design in mobile money",
+          "detail": "Three-year studentship. A quantitative background and some R or Python expected.",
+          "deadline": "2026-11-30"
+        },
+        {
+          "type": "Collaborator",
+          "title": "Partner fintech or co-investigator in East Africa",
+          "detail": "Looking to replicate our savings-default study in Kenya or Tanzania.",
+          "deadline": ""
+        }
+      ],
+      "publicId": "HLG-M9S3-46Q3-DW",
+      "ror": "",
+      "rorName": ""
     },
     {
-     "type": "Collaborator",
-     "title": "Partner fintech or co-investigator in East Africa",
-     "detail": "Looking to replicate our savings-default study in Kenya or Tanzania.",
-     "deadline": ""
+      "id": "g2",
+      "ownerId": "r2",
+      "name": "Family Language & Media Group",
+      "institution": "Utrecht University",
+      "country": "Netherlands",
+      "field": "Developmental Psychology",
+      "founded": 2014,
+      "email": "flm@example.edu",
+      "website": "",
+      "summary": "How multilingual families talk about, and set rules around, screens and media.",
+      "about": "We combine interviews, home diaries and short surveys to understand how parents in bilingual households make media decisions, and how children push back. We work closely with schools and parent networks in the Netherlands and Germany.",
+      "focus": [
+        "Bilingual families",
+        "Screen time",
+        "Parent–child negotiation",
+        "Qualitative methods"
+      ],
+      "members": [
+        {
+          "researcherId": "r2",
+          "role": "Group lead",
+          "canEdit": true
+        },
+        {
+          "researcherId": "r10",
+          "role": "Assistant professor",
+          "canEdit": false
+        },
+        {
+          "researcherId": "r11",
+          "role": "PhD candidate",
+          "canEdit": false
+        }
+      ],
+      "grants": 5,
+      "publications": [
+        {
+          "title": "Whose rules? Screen-time negotiation in bilingual households",
+          "authors": "Ackerman, L., Haddad, N.",
+          "venue": "Child Development",
+          "year": 2025,
+          "url": ""
+        },
+        {
+          "title": "Language choice and media use at home: a diary study",
+          "authors": "van Dam, J., Ackerman, L.",
+          "venue": "Journal of Children and Media",
+          "year": 2023,
+          "url": ""
+        }
+      ],
+      "openings": [
+        {
+          "type": "Postdoc",
+          "title": "Two-year postdoc in family media research",
+          "detail": "Experience with qualitative interviewing, and Dutch or German preferred.",
+          "deadline": "2026-10-15"
+        }
+      ],
+      "publicId": "HLG-25VT-4F5V-3I",
+      "ror": "",
+      "rorName": ""
+    },
+    {
+      "id": "g3",
+      "ownerId": "r3",
+      "name": "Spatial Cognition Lab",
+      "institution": "National University of Singapore",
+      "country": "Singapore",
+      "field": "Cognitive Science",
+      "founded": 2019,
+      "email": "scl@example.edu",
+      "website": "",
+      "summary": "Cross-cultural differences in how people reason about space, direction and maps.",
+      "about": "We run short online and in-lab tasks comparing spatial reasoning across language groups. The lab is small and currently focused on writing up a multi-site dataset.",
+      "focus": [
+        "Spatial reasoning",
+        "Language and thought",
+        "Cross-cultural replication"
+      ],
+      "members": [
+        {
+          "researcherId": "r3",
+          "role": "Group lead",
+          "canEdit": true
+        },
+        {
+          "researcherId": "r12",
+          "role": "Research assistant",
+          "canEdit": false
+        }
+      ],
+      "grants": 1,
+      "publications": [
+        {
+          "title": "Frames of reference across six languages: a multi-site study",
+          "authors": "Cho, H., Lim, W. J.",
+          "venue": "Cognition",
+          "year": 2024,
+          "url": ""
+        }
+      ],
+      "openings": [],
+      "publicId": "HLG-7E3S-3E28-J2",
+      "ror": "",
+      "rorName": ""
+    },
+    {
+      "id": "g4",
+      "ownerId": "r5",
+      "name": "Human–AI Interaction Lab",
+      "institution": "University of Manchester",
+      "country": "United Kingdom",
+      "field": "Human–Computer Interaction",
+      "founded": 2021,
+      "email": "haii@example.edu",
+      "website": "",
+      "summary": "How people decide when to trust, check or override an AI system.",
+      "about": "We study everyday use of AI assistants through think-aloud sessions, diary studies and large online experiments, with a focus on how people notice and recover from AI mistakes.",
+      "focus": [
+        "Trust calibration",
+        "Think-aloud studies",
+        "AI errors",
+        "Online experiments"
+      ],
+      "members": [
+        {
+          "researcherId": "r5",
+          "role": "Group lead",
+          "canEdit": true
+        },
+        {
+          "researcherId": "r13",
+          "role": "Research fellow",
+          "canEdit": true
+        },
+        {
+          "researcherId": "r14",
+          "role": "PhD candidate",
+          "canEdit": false
+        },
+        {
+          "researcherId": "r15",
+          "role": "PhD candidate",
+          "canEdit": false
+        },
+        {
+          "researcherId": "r16",
+          "role": "Research assistant",
+          "canEdit": false
+        }
+      ],
+      "grants": 2,
+      "publications": [
+        {
+          "title": "Checking behaviour when working with AI assistants",
+          "authors": "Mehta, R., Okafor, E.",
+          "venue": "CHI Conference on Human Factors in Computing Systems",
+          "year": 2026,
+          "url": ""
+        },
+        {
+          "title": "When do people override a confident model?",
+          "authors": "Whitfield, S., Mehta, R.",
+          "venue": "International Journal of Human-Computer Studies",
+          "year": 2025,
+          "url": ""
+        }
+      ],
+      "openings": [
+        {
+          "type": "Research assistant",
+          "title": "Part-time research assistant for lab sessions",
+          "detail": "Run think-aloud sessions two days a week. Based in Manchester.",
+          "deadline": "2026-10-31"
+        }
+      ],
+      "publicId": "HLG-T97K-B6CQ-6X",
+      "ror": "",
+      "rorName": ""
     }
-   ],
-   "publicId": "HLG-M9S3-46Q3-DW",
-   "ror": "",
-   "rorName": ""
-  },
-  {
-   "id": "g2",
-   "ownerId": "r2",
-   "name": "Family Language & Media Group",
-   "institution": "Utrecht University",
-   "country": "Netherlands",
-   "field": "Developmental Psychology",
-   "founded": 2014,
-   "email": "flm@example.edu",
-   "website": "",
-   "summary": "How multilingual families talk about, and set rules around, screens and media.",
-   "about": "We combine interviews, home diaries and short surveys to understand how parents in bilingual households make media decisions, and how children push back. We work closely with schools and parent networks in the Netherlands and Germany.",
-   "focus": [
-    "Bilingual families",
-    "Screen time",
-    "Parentâ€“child negotiation",
-    "Qualitative methods"
-   ],
-   "members": [
+  ],
+  "applications": [
     {
-     "researcherId": "r2",
-     "role": "Group lead",
-     "canEdit": true
+      "id": "p1",
+      "studyId": "s1",
+      "userId": "",
+      "name": "Tunde Bakare",
+      "email": "tunde.b@example.com",
+      "age": "29",
+      "country": "Nigeria",
+      "notes": "",
+      "date": "2026-08-02"
     },
     {
-     "researcherId": "r10",
-     "role": "Assistant professor",
-     "canEdit": false
+      "id": "p2",
+      "studyId": "s1",
+      "userId": "",
+      "name": "Chiamaka Obi",
+      "email": "chiamaka.o@example.com",
+      "age": "34",
+      "country": "Nigeria",
+      "notes": "",
+      "date": "2026-08-04"
     },
     {
-     "researcherId": "r11",
-     "role": "PhD candidate",
-     "canEdit": false
+      "id": "p3",
+      "studyId": "s2",
+      "userId": "",
+      "name": "Sanne de Vries",
+      "email": "sanne.dv@example.com",
+      "age": "38",
+      "country": "Netherlands",
+      "notes": "",
+      "date": "2026-08-05"
+    },
+    {
+      "id": "p4",
+      "studyId": "s2",
+      "userId": "",
+      "name": "Youssef El-Amin",
+      "email": "y.elamin@example.com",
+      "age": "41",
+      "country": "Germany",
+      "notes": "",
+      "date": "2026-08-06"
+    },
+    {
+      "id": "p5",
+      "studyId": "s1",
+      "userId": "",
+      "name": "Grace Mwangi",
+      "email": "grace.m@example.com",
+      "age": "26",
+      "country": "Kenya",
+      "notes": "",
+      "date": "2026-08-09"
+    },
+    {
+      "id": "p6",
+      "studyId": "s2",
+      "userId": "",
+      "name": "Mei Lin Tan",
+      "email": "meilin.tan@example.com",
+      "age": "31",
+      "country": "Singapore",
+      "notes": "",
+      "date": "2026-08-11"
+    },
+    {
+      "id": "p7",
+      "studyId": "s1",
+      "userId": "",
+      "name": "Carlos Medina",
+      "email": "carlos.m@example.com",
+      "age": "44",
+      "country": "Brazil",
+      "notes": "",
+      "date": "2026-08-12"
+    },
+    {
+      "id": "p8",
+      "studyId": "s2",
+      "userId": "",
+      "name": "Priya Nair",
+      "email": "priya.n@example.com",
+      "age": "36",
+      "country": "India",
+      "notes": "",
+      "date": "2026-08-14"
+    },
+    {
+      "id": "p9",
+      "studyId": "s1",
+      "userId": "",
+      "name": "Jordan Achebe",
+      "email": "jordan.a@example.com",
+      "age": "23",
+      "country": "United States",
+      "notes": "",
+      "date": "2026-08-15"
+    },
+    {
+      "id": "p10",
+      "studyId": "s2",
+      "userId": "",
+      "name": "Emily Clarke",
+      "email": "emily.c@example.com",
+      "age": "52",
+      "country": "United Kingdom",
+      "notes": "",
+      "date": "2026-08-18"
+    },
+    {
+      "id": "p11",
+      "studyId": "s1",
+      "userId": "",
+      "name": "Hana Kobayashi",
+      "email": "hana.k@example.com",
+      "age": "27",
+      "country": "Japan",
+      "notes": "",
+      "date": "2026-08-20"
+    },
+    {
+      "id": "p12",
+      "studyId": "s2",
+      "userId": "",
+      "name": "Diego Fernández",
+      "email": "diego.f@example.com",
+      "age": "33",
+      "country": "Argentina",
+      "notes": "",
+      "date": "2026-08-22"
+    },
+    {
+      "id": "p13",
+      "studyId": "s3",
+      "userId": "",
+      "name": "Lucía Romero",
+      "email": "lucia.r@example.com",
+      "age": "39",
+      "country": "Argentina",
+      "notes": "",
+      "date": "2026-08-25"
+    },
+    {
+      "id": "p14",
+      "studyId": "s3",
+      "userId": "",
+      "name": "Ana Souza",
+      "email": "ana.s@example.com",
+      "age": "30",
+      "country": "Brazil",
+      "notes": "",
+      "date": "2026-08-27"
+    },
+    {
+      "id": "p15",
+      "studyId": "s4",
+      "userId": "",
+      "name": "Oliver Grant",
+      "email": "oliver.g@example.com",
+      "age": "28",
+      "country": "United Kingdom",
+      "notes": "",
+      "date": "2026-09-04"
+    },
+    {
+      "id": "p16",
+      "studyId": "s4",
+      "userId": "",
+      "name": "Aisha Khan",
+      "email": "aisha.k@example.com",
+      "age": "35",
+      "country": "United Kingdom",
+      "notes": "",
+      "date": "2026-09-06"
+    },
+    {
+      "id": "p17",
+      "studyId": "s4",
+      "userId": "",
+      "name": "Liam O'Connor",
+      "email": "liam.oc@example.com",
+      "age": "42",
+      "country": "Ireland",
+      "notes": "",
+      "date": "2026-09-08"
+    },
+    {
+      "id": "p18",
+      "studyId": "s4",
+      "userId": "",
+      "name": "Ruth Asante",
+      "email": "ruth.a@example.com",
+      "age": "33",
+      "country": "United Kingdom",
+      "notes": "",
+      "date": "2026-09-12"
+    },
+    {
+      "id": "p19",
+      "studyId": "s4",
+      "userId": "",
+      "name": "Marc Tremblay",
+      "email": "marc.t@example.com",
+      "age": "45",
+      "country": "Canada",
+      "notes": "",
+      "date": "2026-09-15"
+    },
+    {
+      "id": "p20",
+      "studyId": "s4",
+      "userId": "",
+      "name": "Kavya Rao",
+      "email": "kavya.r@example.com",
+      "age": "29",
+      "country": "India",
+      "notes": "",
+      "date": "2026-09-18"
+    },
+    {
+      "id": "p21",
+      "studyId": "s4",
+      "userId": "",
+      "name": "Zoe Hall",
+      "email": "zoe.h@example.com",
+      "age": "24",
+      "country": "Australia",
+      "notes": "",
+      "date": "2026-09-19"
+    },
+    {
+      "id": "p22",
+      "studyId": "s3",
+      "userId": "",
+      "name": "Pablo Ruiz",
+      "email": "pablo.r@example.com",
+      "age": "37",
+      "country": "Spain",
+      "notes": "",
+      "date": "2026-09-11"
+    },
+    {
+      "id": "p23",
+      "studyId": "s3",
+      "userId": "",
+      "name": "Valentina Gómez",
+      "email": "valen.g@example.com",
+      "age": "32",
+      "country": "Argentina",
+      "notes": "",
+      "date": "2026-09-16"
+    },
+    {
+      "id": "p24",
+      "studyId": "s1",
+      "userId": "",
+      "name": "Kwame Boateng",
+      "email": "kwame.b@example.com",
+      "age": "28",
+      "country": "Ghana",
+      "notes": "",
+      "date": "2026-09-14"
+    },
+    {
+      "id": "p25",
+      "studyId": "s2",
+      "userId": "",
+      "name": "Lotte Bakker",
+      "email": "lotte.b@example.com",
+      "age": "40",
+      "country": "Netherlands",
+      "notes": "",
+      "date": "2026-09-17"
+    },
+    {
+      "id": "p26",
+      "studyId": "s5",
+      "userId": "",
+      "name": "Hannah Moore",
+      "email": "hannah.m@example.com",
+      "age": "27",
+      "country": "United Kingdom",
+      "notes": "",
+      "date": "2026-09-15"
+    },
+    {
+      "id": "p27",
+      "studyId": "s5",
+      "userId": "",
+      "name": "Jonas Weber",
+      "email": "jonas.w@example.com",
+      "age": "35",
+      "country": "Germany",
+      "notes": "",
+      "date": "2026-09-16"
+    },
+    {
+      "id": "p28",
+      "studyId": "s5",
+      "userId": "",
+      "name": "Maya Brooks",
+      "email": "maya.b@example.com",
+      "age": "30",
+      "country": "United States",
+      "notes": "",
+      "date": "2026-09-17"
+    },
+    {
+      "id": "p29",
+      "studyId": "s5",
+      "userId": "",
+      "name": "Adaeze Nnamdi",
+      "email": "adaeze.n@example.com",
+      "age": "26",
+      "country": "Nigeria",
+      "notes": "",
+      "date": "2026-09-18"
+    },
+    {
+      "id": "p30",
+      "studyId": "s5",
+      "userId": "",
+      "name": "Tom Fletcher",
+      "email": "tom.f@example.com",
+      "age": "41",
+      "country": "United Kingdom",
+      "notes": "",
+      "date": "2026-09-19"
+    },
+    {
+      "id": "p31",
+      "studyId": "s6",
+      "userId": "",
+      "name": "Elise Peeters",
+      "email": "elise.p@example.com",
+      "age": "39",
+      "country": "Belgium",
+      "notes": "",
+      "date": "2026-09-10"
+    },
+    {
+      "id": "p32",
+      "studyId": "s6",
+      "userId": "",
+      "name": "Daan Visser",
+      "email": "daan.v@example.com",
+      "age": "44",
+      "country": "Netherlands",
+      "notes": "",
+      "date": "2026-09-13"
     }
-   ],
-   "grants": 5,
-   "publications": [
-    {
-     "title": "Whose rules? Screen-time negotiation in bilingual households",
-     "authors": "Ackerman, L., Haddad, N.",
-     "venue": "Child Development",
-     "year": 2025,
-     "url": ""
-    },
-    {
-     "title": "Language choice and media use at home: a diary study",
-     "authors": "van Dam, J., Ackerman, L.",
-     "venue": "Journal of Children and Media",
-     "year": 2023,
-     "url": ""
-    }
-   ],
-   "openings": [
-    {
-     "type": "Postdoc",
-     "title": "Two-year postdoc in family media research",
-     "detail": "Experience with qualitative interviewing, and Dutch or German preferred.",
-     "deadline": "2026-10-15"
-    }
-   ],
-   "publicId": "HLG-25VT-4F5V-3I",
-   "ror": "",
-   "rorName": ""
-  },
-  {
-   "id": "g3",
-   "ownerId": "r3",
-   "name": "Spatial Cognition Lab",
-   "institution": "National University of Singapore",
-   "country": "Singapore",
-   "field": "Cognitive Science",
-   "founded": 2019,
-   "email": "scl@example.edu",
-   "website": "",
-   "summary": "Cross-cultural differences in how people reason about space, direction and maps.",
-   "about": "We run short online and in-lab tasks comparing spatial reasoning across language groups. The lab is small and currently focused on writing up a multi-site dataset.",
-   "focus": [
-    "Spatial reasoning",
-    "Language and thought",
-    "Cross-cultural replication"
-   ],
-   "members": [
-    {
-     "researcherId": "r3",
-     "role": "Group lead",
-     "canEdit": true
-    },
-    {
-     "researcherId": "r12",
-     "role": "Research assistant",
-     "canEdit": false
-    }
-   ],
-   "grants": 1,
-   "publications": [
-    {
-     "title": "Frames of reference across six languages: a multi-site study",
-     "authors": "Cho, H., Lim, W. J.",
-     "venue": "Cognition",
-     "year": 2024,
-     "url": ""
-    }
-   ],
-   "openings": [],
-   "publicId": "HLG-7E3S-3E28-J2",
-   "ror": "",
-   "rorName": ""
-  },
-  {
-   "id": "g4",
-   "ownerId": "r5",
-   "name": "Humanâ€“AI Interaction Lab",
-   "institution": "University of Manchester",
-   "country": "United Kingdom",
-   "field": "Humanâ€“Computer Interaction",
-   "founded": 2021,
-   "email": "haii@example.edu",
-   "website": "",
-   "summary": "How people decide when to trust, check or override an AI system.",
-   "about": "We study everyday use of AI assistants through think-aloud sessions, diary studies and large online experiments, with a focus on how people notice and recover from AI mistakes.",
-   "focus": [
-    "Trust calibration",
-    "Think-aloud studies",
-    "AI errors",
-    "Online experiments"
-   ],
-   "members": [
-    {
-     "researcherId": "r5",
-     "role": "Group lead",
-     "canEdit": true
-    },
-    {
-     "researcherId": "r13",
-     "role": "Research fellow",
-     "canEdit": true
-    },
-    {
-     "researcherId": "r14",
-     "role": "PhD candidate",
-     "canEdit": false
-    },
-    {
-     "researcherId": "r15",
-     "role": "PhD candidate",
-     "canEdit": false
-    },
-    {
-     "researcherId": "r16",
-     "role": "Research assistant",
-     "canEdit": false
-    }
-   ],
-   "grants": 2,
-   "publications": [
-    {
-     "title": "Checking behaviour when working with AI assistants",
-     "authors": "Mehta, R., Okafor, E.",
-     "venue": "CHI Conference on Human Factors in Computing Systems",
-     "year": 2026,
-     "url": ""
-    },
-    {
-     "title": "When do people override a confident model?",
-     "authors": "Whitfield, S., Mehta, R.",
-     "venue": "International Journal of Human-Computer Studies",
-     "year": 2025,
-     "url": ""
-    }
-   ],
-   "openings": [
-    {
-     "type": "Research assistant",
-     "title": "Part-time research assistant for lab sessions",
-     "detail": "Run think-aloud sessions two days a week. Based in Manchester.",
-     "deadline": "2026-10-31"
-    }
-   ],
-   "publicId": "HLG-T97K-B6CQ-6X",
-   "ror": "",
-   "rorName": ""
-  }
- ],
- "applications": [
-  {
-   "id": "p1",
-   "studyId": "s1",
-   "userId": "",
-   "name": "Tunde Bakare",
-   "email": "tunde.b@example.com",
-   "age": "29",
-   "country": "Nigeria",
-   "notes": "",
-   "date": "2026-08-02"
-  },
-  {
-   "id": "p2",
-   "studyId": "s1",
-   "userId": "",
-   "name": "Chiamaka Obi",
-   "email": "chiamaka.o@example.com",
-   "age": "34",
-   "country": "Nigeria",
-   "notes": "",
-   "date": "2026-08-04"
-  },
-  {
-   "id": "p3",
-   "studyId": "s2",
-   "userId": "",
-   "name": "Sanne de Vries",
-   "email": "sanne.dv@example.com",
-   "age": "38",
-   "country": "Netherlands",
-   "notes": "",
-   "date": "2026-08-05"
-  },
-  {
-   "id": "p4",
-   "studyId": "s2",
-   "userId": "",
-   "name": "Youssef El-Amin",
-   "email": "y.elamin@example.com",
-   "age": "41",
-   "country": "Germany",
-   "notes": "",
-   "date": "2026-08-06"
-  },
-  {
-   "id": "p5",
-   "studyId": "s1",
-   "userId": "",
-   "name": "Grace Mwangi",
-   "email": "grace.m@example.com",
-   "age": "26",
-   "country": "Kenya",
-   "notes": "",
-   "date": "2026-08-09"
-  },
-  {
-   "id": "p6",
-   "studyId": "s2",
-   "userId": "",
-   "name": "Mei Lin Tan",
-   "email": "meilin.tan@example.com",
-   "age": "31",
-   "country": "Singapore",
-   "notes": "",
-   "date": "2026-08-11"
-  },
-  {
-   "id": "p7",
-   "studyId": "s1",
-   "userId": "",
-   "name": "Carlos Medina",
-   "email": "carlos.m@example.com",
-   "age": "44",
-   "country": "Brazil",
-   "notes": "",
-   "date": "2026-08-12"
-  },
-  {
-   "id": "p8",
-   "studyId": "s2",
-   "userId": "",
-   "name": "Priya Nair",
-   "email": "priya.n@example.com",
-   "age": "36",
-   "country": "India",
-   "notes": "",
-   "date": "2026-08-14"
-  },
-  {
-   "id": "p9",
-   "studyId": "s1",
-   "userId": "",
-   "name": "Jordan Achebe",
-   "email": "jordan.a@example.com",
-   "age": "23",
-   "country": "United States",
-   "notes": "",
-   "date": "2026-08-15"
-  },
-  {
-   "id": "p10",
-   "studyId": "s2",
-   "userId": "",
-   "name": "Emily Clarke",
-   "email": "emily.c@example.com",
-   "age": "52",
-   "country": "United Kingdom",
-   "notes": "",
-   "date": "2026-08-18"
-  },
-  {
-   "id": "p11",
-   "studyId": "s1",
-   "userId": "",
-   "name": "Hana Kobayashi",
-   "email": "hana.k@example.com",
-   "age": "27",
-   "country": "Japan",
-   "notes": "",
-   "date": "2026-08-20"
-  },
-  {
-   "id": "p12",
-   "studyId": "s2",
-   "userId": "",
-   "name": "Diego FernÃ¡ndez",
-   "email": "diego.f@example.com",
-   "age": "33",
-   "country": "Argentina",
-   "notes": "",
-   "date": "2026-08-22"
-  },
-  {
-   "id": "p13",
-   "studyId": "s3",
-   "userId": "",
-   "name": "LucÃ­a Romero",
-   "email": "lucia.r@example.com",
-   "age": "39",
-   "country": "Argentina",
-   "notes": "",
-   "date": "2026-08-25"
-  },
-  {
-   "id": "p14",
-   "studyId": "s3",
-   "userId": "",
-   "name": "Ana Souza",
-   "email": "ana.s@example.com",
-   "age": "30",
-   "country": "Brazil",
-   "notes": "",
-   "date": "2026-08-27"
-  },
-  {
-   "id": "p15",
-   "studyId": "s4",
-   "userId": "",
-   "name": "Oliver Grant",
-   "email": "oliver.g@example.com",
-   "age": "28",
-   "country": "United Kingdom",
-   "notes": "",
-   "date": "2026-09-04"
-  },
-  {
-   "id": "p16",
-   "studyId": "s4",
-   "userId": "",
-   "name": "Aisha Khan",
-   "email": "aisha.k@example.com",
-   "age": "35",
-   "country": "United Kingdom",
-   "notes": "",
-   "date": "2026-09-06"
-  },
-  {
-   "id": "p17",
-   "studyId": "s4",
-   "userId": "",
-   "name": "Liam O'Connor",
-   "email": "liam.oc@example.com",
-   "age": "42",
-   "country": "Ireland",
-   "notes": "",
-   "date": "2026-09-08"
-  },
-  {
-   "id": "p18",
-   "studyId": "s4",
-   "userId": "",
-   "name": "Ruth Asante",
-   "email": "ruth.a@example.com",
-   "age": "33",
-   "country": "United Kingdom",
-   "notes": "",
-   "date": "2026-09-12"
-  },
-  {
-   "id": "p19",
-   "studyId": "s4",
-   "userId": "",
-   "name": "Marc Tremblay",
-   "email": "marc.t@example.com",
-   "age": "45",
-   "country": "Canada",
-   "notes": "",
-   "date": "2026-09-15"
-  },
-  {
-   "id": "p20",
-   "studyId": "s4",
-   "userId": "",
-   "name": "Kavya Rao",
-   "email": "kavya.r@example.com",
-   "age": "29",
-   "country": "India",
-   "notes": "",
-   "date": "2026-09-18"
-  },
-  {
-   "id": "p21",
-   "studyId": "s4",
-   "userId": "",
-   "name": "Zoe Hall",
-   "email": "zoe.h@example.com",
-   "age": "24",
-   "country": "Australia",
-   "notes": "",
-   "date": "2026-09-19"
-  },
-  {
-   "id": "p22",
-   "studyId": "s3",
-   "userId": "",
-   "name": "Pablo Ruiz",
-   "email": "pablo.r@example.com",
-   "age": "37",
-   "country": "Spain",
-   "notes": "",
-   "date": "2026-09-11"
-  },
-  {
-   "id": "p23",
-   "studyId": "s3",
-   "userId": "",
-   "name": "Valentina GÃ³mez",
-   "email": "valen.g@example.com",
-   "age": "32",
-   "country": "Argentina",
-   "notes": "",
-   "date": "2026-09-16"
-  },
-  {
-   "id": "p24",
-   "studyId": "s1",
-   "userId": "",
-   "name": "Kwame Boateng",
-   "email": "kwame.b@example.com",
-   "age": "28",
-   "country": "Ghana",
-   "notes": "",
-   "date": "2026-09-14"
-  },
-  {
-   "id": "p25",
-   "studyId": "s2",
-   "userId": "",
-   "name": "Lotte Bakker",
-   "email": "lotte.b@example.com",
-   "age": "40",
-   "country": "Netherlands",
-   "notes": "",
-   "date": "2026-09-17"
-  },
-  {
-   "id": "p26",
-   "studyId": "s5",
-   "userId": "",
-   "name": "Hannah Moore",
-   "email": "hannah.m@example.com",
-   "age": "27",
-   "country": "United Kingdom",
-   "notes": "",
-   "date": "2026-09-15"
-  },
-  {
-   "id": "p27",
-   "studyId": "s5",
-   "userId": "",
-   "name": "Jonas Weber",
-   "email": "jonas.w@example.com",
-   "age": "35",
-   "country": "Germany",
-   "notes": "",
-   "date": "2026-09-16"
-  },
-  {
-   "id": "p28",
-   "studyId": "s5",
-   "userId": "",
-   "name": "Maya Brooks",
-   "email": "maya.b@example.com",
-   "age": "30",
-   "country": "United States",
-   "notes": "",
-   "date": "2026-09-17"
-  },
-  {
-   "id": "p29",
-   "studyId": "s5",
-   "userId": "",
-   "name": "Adaeze Nnamdi",
-   "email": "adaeze.n@example.com",
-   "age": "26",
-   "country": "Nigeria",
-   "notes": "",
-   "date": "2026-09-18"
-  },
-  {
-   "id": "p30",
-   "studyId": "s5",
-   "userId": "",
-   "name": "Tom Fletcher",
-   "email": "tom.f@example.com",
-   "age": "41",
-   "country": "United Kingdom",
-   "notes": "",
-   "date": "2026-09-19"
-  },
-  {
-   "id": "p31",
-   "studyId": "s6",
-   "userId": "",
-   "name": "Elise Peeters",
-   "email": "elise.p@example.com",
-   "age": "39",
-   "country": "Belgium",
-   "notes": "",
-   "date": "2026-09-10"
-  },
-  {
-   "id": "p32",
-   "studyId": "s6",
-   "userId": "",
-   "name": "Daan Visser",
-   "email": "daan.v@example.com",
-   "age": "44",
-   "country": "Netherlands",
-   "notes": "",
-   "date": "2026-09-13"
-  }
- ]
+  ]
 }
