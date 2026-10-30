@@ -4,7 +4,7 @@
  * applications are partitioned on /studyId so a study's applicants sit together.
  */
 const PARTITION = { researchers: "id", groups: "id", studies: "id", applications: "studyId" };
-const QUERYABLE = new Set(["userId", "researcherId", "studyId", "ownerId", "handle", "groupId"]);
+const QUERYABLE = new Set(["userId", "researcherId", "studyId", "ownerId", "handle", "groupId", "publicId"]);
 const strip = (d) => { if (!d) return d; const { _rid, _self, _etag, _attachments, _ts, ...rest } = d; return rest; };
 
 function cosmosRepo() {
