@@ -8,6 +8,8 @@ import { fallbackBackend, pickBackend, setToaster } from "./lib/backends.js";
 import { UIProvider, navigate, useRoute, useTheme } from "./lib/ui.jsx";
 import { appCount, canEditGroup } from "./lib/store.js";
 import { plural } from "./lib/util.js";
+import { SITE } from "./lib/site.js";
+import { Privacy, Terms } from "./pages/legal.jsx";
 
 // Researchers and participants see different parts of the site.
 const NAV = {
@@ -18,6 +20,7 @@ const NAV = {
 const TITLES = {
   about: "About", auth: "Sign in or register", home: "Research needs people", studies: "Open studies", researchers: "Researchers",
   groups: "Research groups", reach: "Global reach", mine: "My applications", dashboard: "Researcher area", profile: "Your profile",
+  terms: "Terms and conditions", privacy: "Privacy policy",
 };
 const PAGES = new Set(Object.keys(TITLES));
 
@@ -188,6 +191,12 @@ export default function App() {
       case "profile":
         body = <ProfileEditor onVerify={() => setModal({ kind: "verify" })} onScholar={() => setModal({ kind: "scholar" })} />;
         break;
+      case "terms":
+        body = <Terms />;
+        break;
+      case "privacy":
+        body = <Privacy />;
+        break;
       case "about":
         body = <About />;
         break;
@@ -291,6 +300,24 @@ export default function App() {
       <main>
         <div id="app">{body}</div>
       </main>
+
+      <footer className="site-footer">
+        <div className="wrap footer-inner">
+          <div className="footer-brand">
+            <strong>HumAIn Labs</strong>
+            <span className="soft">Research needs people.</span>
+          </div>
+          <nav aria-label="Footer">
+            <a href="#/about">About</a>
+            <a href="#/about?to=contact">Contact</a>
+            <a href="#/terms">Terms and conditions</a>
+            <a href="#/privacy">Privacy policy</a>
+          </nav>
+          <p className="small soft footer-legal">
+            © {new Date().getFullYear()} {SITE.legalName} · Company number {SITE.companyNumber}
+          </p>
+        </div>
+      </footer>
 
       {modal?.kind === "apply" && <ApplyModal study={modal.study} onClose={closeModal} />}
       {modal?.kind === "study" && <StudyModal existing={modal.existing} onClose={closeModal} />}
