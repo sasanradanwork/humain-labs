@@ -48,3 +48,6 @@ route("studiesDelete", ["DELETE"], "studies/{id}", H.deleteStudy);
 route("studyApplicants", ["GET"], "studies/{id}/applications", H.studyApplicants);
 route("applicationsCreate", ["POST"], "applications", H.apply);
 route("applicationsMine", ["GET"], "applications/mine", H.myApplications);
+route("participant", ["PUT"], "participant", H.putParticipant);
+route("applicationsWithdraw", ["POST"], "applications/{id}/withdraw", H.withdrawApplication);
+route("applicationsRate", ["PUT"], "applications/{id}/rating", H.rateApplication);
