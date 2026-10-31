@@ -15,9 +15,13 @@ function route(name, methods, path, handler) {
     methods, route: path, authLevel: "anonymous",
     handler: async (request, context) => {
       try {
+        // Some actions (such as withdrawing) send no body at all, which is fine.
         let body = null;
         if (["POST", "PUT"].includes(request.method)) {
-          try { body = await request.json(); } catch { throw new HttpError(400, "The request body must be JSON."); }
+          const text = await request.text();
+          if (text.trim()) {
+            try { body = JSON.parse(text); } catch { throw new HttpError(400, "The request body must be JSON."); }
+          }
         }
         const res = await handler({ repo: getRepo(), principal: getPrincipal(request.headers), params: request.params, query: request.query.get("q"), body, mailer: getMailer() });
         return { status: res.status, jsonBody: res.json, headers: { "Cache-Control": "no-store" } };
