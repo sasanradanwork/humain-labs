@@ -5,11 +5,11 @@
       "userId": "",
       "name": "Dr. Amara Nwosu",
       "handle": "amara-nwosu",
-      "position": "Associate Professor of Economics",
+      "position": "Associate professor",
       "institution": "Lagos Business School",
       "department": "Economics",
       "country": "Nigeria",
-      "field": "Behavioural Economics",
+      "field": "Behavioural economics",
       "email": "a.nwosu@example.edu",
       "bio": "Studying how default choices shape savings behaviour across West African fintech users.",
       "linkedin": "https://www.linkedin.com/in/humain-demo-amara-nwosu",
@@ -39,11 +39,11 @@
       "userId": "",
       "name": "Prof. Liesel Ackerman",
       "handle": "liesel-ackerman",
-      "position": "Professor of Developmental Psychology",
+      "position": "Professor",
       "institution": "Utrecht University",
       "department": "Psychology",
       "country": "Netherlands",
-      "field": "Developmental Psychology",
+      "field": "Developmental psychology",
       "email": "l.ackerman@example.edu",
       "bio": "Looking at how bilingual households negotiate screen-time rules with children aged 6–10.",
       "linkedin": "https://www.linkedin.com/in/humain-demo-liesel-ackerman",
@@ -73,11 +73,11 @@
       "userId": "",
       "name": "Dr. Halden Cho",
       "handle": "halden-cho",
-      "position": "Senior Lecturer",
+      "position": "Senior lecturer",
       "institution": "National University of Singapore",
       "department": "Psychology",
       "country": "Singapore",
-      "field": "Cognitive Science",
+      "field": "Cognitive science",
       "email": "h.cho@example.edu",
       "bio": "Working on cross-cultural differences in spatial reasoning tasks, and always keen to co-run a study.",
       "linkedin": "",
@@ -107,11 +107,11 @@
       "userId": "",
       "name": "Dr. Sofía Marín",
       "handle": "sof-a-mar-n",
-      "position": "Lecturer in Public Health",
+      "position": "Lecturer",
       "institution": "Universidad de Buenos Aires",
       "department": "Faculty of Medicine",
       "country": "Argentina",
-      "field": "Public Health",
+      "field": "Public health",
       "email": "s.marin@example.edu",
       "bio": "Researching sleep, shift work and wellbeing among healthcare and logistics workers.",
       "linkedin": "",
@@ -129,11 +129,11 @@
       "userId": "",
       "name": "Dr. Rohan Mehta",
       "handle": "rohan-mehta",
-      "position": "Senior Lecturer in HCI",
+      "position": "Senior lecturer",
       "institution": "University of Manchester",
       "department": "Computer Science",
       "country": "United Kingdom",
-      "field": "Human–Computer Interaction",
+      "field": "Human–computer interaction",
       "email": "r.mehta@example.edu",
       "bio": "Studying how people judge, check and correct answers from AI assistants.",
       "linkedin": "https://www.linkedin.com/in/humain-demo-rohan-mehta",
@@ -163,7 +163,7 @@
       "userId": "",
       "name": "Dr. Aiko Tanaka",
       "handle": "aiko-tanaka",
-      "position": "Associate Professor",
+      "position": "Associate professor",
       "institution": "Kyoto University",
       "department": "Graduate School of Letters",
       "country": "Japan",
@@ -196,7 +196,7 @@
       "institution": "Lagos Business School",
       "department": "Economics",
       "country": "Nigeria",
-      "field": "Behavioural Economics",
+      "field": "Behavioural economics",
       "email": "k.mensah@example.edu",
       "bio": "Running field experiments on reminders and repayment with mobile-money users.",
       "linkedin": "",
@@ -226,11 +226,11 @@
       "userId": "",
       "name": "Ifeoma Eze",
       "handle": "ifeoma-eze",
-      "position": "PhD candidate",
+      "position": "PhD student",
       "institution": "Lagos Business School",
       "department": "Economics",
       "country": "Nigeria",
-      "field": "Behavioural Economics",
+      "field": "Behavioural economics",
       "email": "i.eze@example.edu",
       "bio": "PhD on short-term borrowing and payday timing in the gig economy.",
       "linkedin": "",
@@ -247,7 +247,7 @@
       "institution": "Lagos Business School",
       "department": "Economics",
       "country": "Nigeria",
-      "field": "Behavioural Economics",
+      "field": "Behavioural economics",
       "email": "t.adeyemi@example.edu",
       "bio": "Coordinates survey fieldwork and data cleaning for the Household Finance Lab.",
       "linkedin": "",
@@ -260,11 +260,11 @@
       "userId": "",
       "name": "Dr. Joris van Dam",
       "handle": "joris-van-dam",
-      "position": "Assistant Professor",
+      "position": "Assistant professor",
       "institution": "Utrecht University",
       "department": "Psychology",
       "country": "Netherlands",
-      "field": "Developmental Psychology",
+      "field": "Developmental psychology",
       "email": "j.vandam@example.edu",
       "bio": "Diary methods and family language choice at home.",
       "linkedin": "",
@@ -294,11 +294,11 @@
       "userId": "",
       "name": "Nadia Haddad",
       "handle": "nadia-haddad",
-      "position": "PhD candidate",
+      "position": "PhD student",
       "institution": "Utrecht University",
       "department": "Psychology",
       "country": "Netherlands",
-      "field": "Developmental Psychology",
+      "field": "Developmental psychology",
       "email": "n.haddad@example.edu",
       "bio": "PhD on how children push back against media rules.",
       "linkedin": "",
@@ -315,7 +315,7 @@
       "institution": "National University of Singapore",
       "department": "Psychology",
       "country": "Singapore",
-      "field": "Cognitive Science",
+      "field": "Cognitive science",
       "email": "wj.lim@example.edu",
       "bio": "Runs lab sessions and builds online spatial reasoning tasks.",
       "linkedin": "",
@@ -328,11 +328,11 @@
       "userId": "",
       "name": "Dr. Ellen Okafor",
       "handle": "ellen-okafor",
-      "position": "Research Fellow",
+      "position": "Research fellow",
       "institution": "University of Manchester",
       "department": "Computer Science",
       "country": "United Kingdom",
-      "field": "Human–Computer Interaction",
+      "field": "Human–computer interaction",
       "email": "e.okafor@example.edu",
       "bio": "Designing think-aloud studies on how people notice AI mistakes.",
       "linkedin": "",
@@ -362,11 +362,11 @@
       "userId": "",
       "name": "Sam Whitfield",
       "handle": "sam-whitfield",
-      "position": "PhD candidate",
+      "position": "PhD student",
       "institution": "University of Manchester",
       "department": "Computer Science",
       "country": "United Kingdom",
-      "field": "Human–Computer Interaction",
+      "field": "Human–computer interaction",
       "email": "s.whitfield@example.edu",
       "bio": "PhD on when people override confident models.",
       "linkedin": "",
@@ -379,11 +379,11 @@
       "userId": "",
       "name": "Leila Rahimi",
       "handle": "leila-rahimi",
-      "position": "PhD candidate",
+      "position": "PhD student",
       "institution": "University of Manchester",
       "department": "Computer Science",
       "country": "United Kingdom",
-      "field": "Human–Computer Interaction",
+      "field": "Human–computer interaction",
       "email": "l.rahimi@example.edu",
       "bio": "PhD on explanations and trust in AI writing tools.",
       "linkedin": "",
@@ -400,7 +400,7 @@
       "institution": "University of Manchester",
       "department": "Computer Science",
       "country": "United Kingdom",
-      "field": "Human–Computer Interaction",
+      "field": "Human–computer interaction",
       "email": "j.price@example.edu",
       "bio": "Runs lab sessions and recruitment for the Human–AI Interaction Lab.",
       "linkedin": "",
@@ -418,7 +418,7 @@
       "researcherEmail": "a.nwosu@example.edu",
       "institution": "Lagos Business School",
       "country": "Nigeria",
-      "field": "Behavioural Economics",
+      "field": "Behavioural economics",
       "groupId": "g1",
       "format": "Online",
       "duration": "20 min survey + optional interview",
@@ -436,7 +436,7 @@
       "researcherEmail": "l.ackerman@example.edu",
       "institution": "Utrecht University",
       "country": "Netherlands",
-      "field": "Developmental Psychology",
+      "field": "Developmental psychology",
       "groupId": "g2",
       "format": "Online",
       "duration": "45 min video call",
@@ -454,7 +454,7 @@
       "researcherEmail": "s.marin@example.edu",
       "institution": "Universidad de Buenos Aires",
       "country": "Argentina",
-      "field": "Public Health",
+      "field": "Public health",
       "groupId": "",
       "format": "Online",
       "duration": "7-day sleep diary, 5 min a day",
@@ -472,7 +472,7 @@
       "researcherEmail": "e.okafor@example.edu",
       "institution": "University of Manchester",
       "country": "United Kingdom",
-      "field": "Human–Computer Interaction",
+      "field": "Human–computer interaction",
       "groupId": "g4",
       "format": "Online",
       "duration": "10 min a day for 2 weeks",
@@ -490,7 +490,7 @@
       "researcherEmail": "j.vandam@example.edu",
       "institution": "Utrecht University",
       "country": "Netherlands",
-      "field": "Developmental Psychology",
+      "field": "Developmental psychology",
       "groupId": "g2",
       "format": "Online",
       "duration": "30 min video interview",
@@ -508,7 +508,7 @@
       "researcherEmail": "r.mehta@example.edu",
       "institution": "University of Manchester",
       "country": "United Kingdom",
-      "field": "Human–Computer Interaction",
+      "field": "Human–computer interaction",
       "groupId": "g4",
       "format": "Hybrid",
       "duration": "60 min session",
@@ -517,6 +517,24 @@
       "criteria": "18+, uses an AI assistant at least weekly",
       "postedAt": "2026-09-02",
       "closesAt": "2026-12-18"
+    },
+    {
+      "id": "s-closed",
+      "title": "Digital savings habits among gig workers (closed study, ratings demo)",
+      "researcherId": "r1",
+      "researcherName": "Dr. Amara Nwosu",
+      "researcherEmail": "a.nwosu@example.edu",
+      "institution": "Lagos Business School",
+      "country": "Nigeria",
+      "field": "Behavioural economics",
+      "groupId": "g1",
+      "format": "Online",
+      "duration": "20 min survey + optional interview",
+      "compensation": "£8 voucher",
+      "description": "A 20-minute online survey plus an optional follow-up interview about how you manage irregular income.",
+      "criteria": "18+, currently doing gig or freelance work",
+      "postedAt": "2026-08-01",
+      "closesAt": "2026-10-15"
     }
   ],
   "groups": [
@@ -526,7 +544,7 @@
       "name": "Household Finance Lab",
       "institution": "Lagos Business School",
       "country": "Nigeria",
-      "field": "Behavioural Economics",
+      "field": "Behavioural economics",
       "founded": 2017,
       "email": "hflab@example.edu",
       "website": "",
@@ -567,21 +585,32 @@
           "authors": "Nwosu, A., Mensah, K.",
           "venue": "Journal of Development Economics",
           "year": 2025,
-          "url": ""
+          "url": "",
+          "authorNames": [
+            "Nwosu, A.",
+            "Mensah, K."
+          ]
         },
         {
           "title": "Payday reminders and short-term borrowing in the gig economy",
           "authors": "Eze, I., Nwosu, A.",
           "venue": "Behavioural Public Policy",
           "year": 2024,
-          "url": ""
+          "url": "",
+          "authorNames": [
+            "Eze, I.",
+            "Nwosu, A."
+          ]
         },
         {
           "title": "Irregular income and mental accounting in Lagos",
           "authors": "Nwosu, A.",
           "venue": "Journal of Economic Psychology",
           "year": 2022,
-          "url": ""
+          "url": "",
+          "authorNames": [
+            "Nwosu, A."
+          ]
         }
       ],
       "openings": [
@@ -608,7 +637,7 @@
       "name": "Family Language & Media Group",
       "institution": "Utrecht University",
       "country": "Netherlands",
-      "field": "Developmental Psychology",
+      "field": "Developmental psychology",
       "founded": 2014,
       "email": "flm@example.edu",
       "website": "",
@@ -644,14 +673,22 @@
           "authors": "Ackerman, L., Haddad, N.",
           "venue": "Child Development",
           "year": 2025,
-          "url": ""
+          "url": "",
+          "authorNames": [
+            "Ackerman, L.",
+            "Haddad, N."
+          ]
         },
         {
           "title": "Language choice and media use at home: a diary study",
           "authors": "van Dam, J., Ackerman, L.",
           "venue": "Journal of Children and Media",
           "year": 2023,
-          "url": ""
+          "url": "",
+          "authorNames": [
+            "van Dam, J.",
+            "Ackerman, L."
+          ]
         }
       ],
       "openings": [
@@ -672,7 +709,7 @@
       "name": "Spatial Cognition Lab",
       "institution": "National University of Singapore",
       "country": "Singapore",
-      "field": "Cognitive Science",
+      "field": "Cognitive science",
       "founded": 2019,
       "email": "scl@example.edu",
       "website": "",
@@ -702,7 +739,11 @@
           "authors": "Cho, H., Lim, W. J.",
           "venue": "Cognition",
           "year": 2024,
-          "url": ""
+          "url": "",
+          "authorNames": [
+            "Cho, H.",
+            "Lim, W. J."
+          ]
         }
       ],
       "openings": [],
@@ -716,7 +757,7 @@
       "name": "Human–AI Interaction Lab",
       "institution": "University of Manchester",
       "country": "United Kingdom",
-      "field": "Human–Computer Interaction",
+      "field": "Human–computer interaction",
       "founded": 2021,
       "email": "haii@example.edu",
       "website": "",
@@ -762,14 +803,22 @@
           "authors": "Mehta, R., Okafor, E.",
           "venue": "CHI Conference on Human Factors in Computing Systems",
           "year": 2026,
-          "url": ""
+          "url": "",
+          "authorNames": [
+            "Mehta, R.",
+            "Okafor, E."
+          ]
         },
         {
           "title": "When do people override a confident model?",
           "authors": "Whitfield, S., Mehta, R.",
           "venue": "International Journal of Human-Computer Studies",
           "year": 2025,
-          "url": ""
+          "url": "",
+          "authorNames": [
+            "Whitfield, S.",
+            "Mehta, R."
+          ]
         }
       ],
       "openings": [
@@ -1137,6 +1186,53 @@
       "country": "Netherlands",
       "notes": "",
       "date": "2026-09-13"
+    },
+    {
+      "id": "cl1",
+      "studyId": "s-closed",
+      "userId": "",
+      "name": "Tunde Bakare",
+      "email": "tunde.b@example.com",
+      "age": "29",
+      "country": "Nigeria",
+      "notes": "",
+      "date": "2026-09-20",
+      "rating": {
+        "stars": 5,
+        "attended": true,
+        "comment": "Punctual and thoughtful.",
+        "researcherId": "r1",
+        "ratedAt": "2026-10-16"
+      }
+    },
+    {
+      "id": "cl2",
+      "studyId": "s-closed",
+      "userId": "",
+      "name": "Chiamaka Obi",
+      "email": "chiamaka.o@example.com",
+      "age": "34",
+      "country": "Nigeria",
+      "notes": "",
+      "date": "2026-09-20",
+      "rating": {
+        "stars": 4,
+        "attended": true,
+        "comment": "Punctual and thoughtful.",
+        "researcherId": "r1",
+        "ratedAt": "2026-10-16"
+      }
+    },
+    {
+      "id": "cl3",
+      "studyId": "s-closed",
+      "userId": "",
+      "name": "Grace Mwangi",
+      "email": "grace.m@example.com",
+      "age": "26",
+      "country": "Kenya",
+      "notes": "",
+      "date": "2026-09-20"
     }
   ]
 }
