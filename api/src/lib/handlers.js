@@ -34,7 +34,8 @@ async function myParticipant(repo, principal) {
   if (!principal) return null;
   return repo.get("participants", participantId(principal.userId));
 }
-const publicParticipant = ({ userId, ...p }) => p;
+// Sign-in ids and pending confirmation codes never leave the server.
+const publicParticipant = ({ userId, emailCode, ...p }) => p;
 // Ratings are summarised per participant, across every study they have taken part in.
 const participantKey = ({ userId, email }) => userId || String(email || "").toLowerCase();
 function ratingSummaries(applications) {
@@ -201,6 +202,7 @@ function ensureOwner(g, ownerId) {
 }
 async function createGroup({ repo, principal, body }) {
   const me = await needResearcher(repo, principal);
+  if (!me.verified) throw new HttpError(403, "Verify your institution email before creating a research group. Until then your account is view-only.");
   const g = ensureOwner(await normalizeGroup(repo, body), me.id);
   // Permanent public identifier, minted once and never reissued.
   let publicId = newGroupId();
@@ -212,6 +214,7 @@ async function createGroup({ repo, principal, body }) {
 }
 async function updateGroup({ repo, principal, body, params }) {
   const me = await needResearcher(repo, principal);
+  if (!me.verified) throw new HttpError(403, "Verify your institution email before editing a research group. Until then your account is view-only.");
   const existing = await repo.get("groups", params.id);
   if (!existing) throw new HttpError(404, "That group doesn't exist.");
   if (!canEditGroup(existing, me.id)) throw new HttpError(403, "Only the group's owner and members with edit access can change this page.");
@@ -422,6 +425,7 @@ async function apply({ repo, principal, body }) {
   // Name, email, age and country come from the participant profile, so they are entered once, not per study.
   const profile = await repo.get("participants", participantId(principal.userId));
   if (!profile) throw new HttpError(412, "Set up your participant profile first. You only do this once, then you can apply to any study.");
+  if (!emailConfirmed(profile)) throw new HttpError(403, "Confirm your email address before you apply. You can send the code from your details page.");
   const mine = await repo.where("applications", "userId", principal.userId);
   if (mine.some((a) => a.studyId === studyId)) throw new HttpError(409, "You've already applied to this study.");
   const doc = {
@@ -451,6 +455,7 @@ async function putParticipant({ repo, principal, body }) {
   const id = participantId(principal.userId);
   const existing = await repo.get("participants", id);
   const doc = {
+    ...(existing || {}),
     id, userId: principal.userId,
     name: V.str(b.name, "Full name", { required: true, max: 120 }),
     email: V.email(b.email, "Email", { required: true }),
@@ -459,8 +464,77 @@ async function putParticipant({ repo, principal, body }) {
     createdAt: existing?.createdAt || today(),
     updatedAt: today(),
   };
+  // A changed address has to be confirmed again before applying.
+  if (existing && existing.email.toLowerCase() !== doc.email.toLowerCase()) { delete doc.emailVerified; delete doc.emailCode; }
   await repo.upsert("participants", doc);
   return ok(publicParticipant(doc), existing ? 200 : 201);
+}
+
+const emailConfirmed = (p) => !!p?.emailVerified && p.emailVerified.email.toLowerCase() === String(p.email).toLowerCase();
+
+// Sends a 6-digit code to the participant's address, the same way institution verification does.
+async function participantEmailStart({ repo, principal, mailer, now = Date.now() }) {
+  needUser(principal);
+  const p = await repo.get("participants", participantId(principal.userId));
+  if (!p) throw new HttpError(404, "Set up your details first.");
+  if (emailConfirmed(p)) return ok({ verified: true });
+  if (p.emailCode?.sentAt && now - p.emailCode.sentAt < RESEND_MS) throw new HttpError(429, "A code was sent less than a minute ago. Check your inbox, or try again shortly.");
+  const code = String(crypto.randomInt(0, 1000000)).padStart(6, "0");
+  const salt = crypto.randomBytes(8).toString("hex");
+  await repo.upsert("participants", { ...p, emailCode: { email: p.email, salt, codeHash: hashCode(code, salt), sentAt: now, expiresAt: now + CODE_TTL_MS, attempts: 0 } });
+  if (mailer) {
+    await mailer.send({
+      to: p.email,
+      subject: "Confirm your HumAIn Labs email",
+      text: `Your HumAIn Labs confirmation code is ${code}. It expires in 15 minutes.\n\nIf you didn't ask for this, you can ignore this email.`,
+    });
+    return ok({ sent: true, email: p.email });
+  }
+  if (process.env.DEV_SHOW_CODES === "1") return ok({ sent: false, email: p.email, devCode: code });
+  throw new HttpError(503, "Email isn't set up on this server yet, so codes can't be sent.");
+}
+
+async function participantEmailConfirm({ repo, principal, body, now = Date.now() }) {
+  needUser(principal);
+  const p = await repo.get("participants", participantId(principal.userId));
+  const c = p?.emailCode;
+  if (!c) throw bad("Ask for a confirmation code first.");
+  if (c.email.toLowerCase() !== String(p.email).toLowerCase()) throw bad("Your email has changed. Ask for a new code.");
+  if (now > c.expiresAt) throw bad("That code has expired. Ask for a new one.");
+  if (c.attempts >= MAX_ATTEMPTS) throw new HttpError(429, "Too many wrong codes. Ask for a new one.");
+  const code = V.str(body?.code, "Code", { required: true, max: 10 }).replace(/\s/g, "");
+  if (hashCode(code, c.salt) !== c.codeHash) {
+    await repo.upsert("participants", { ...p, emailCode: { ...c, attempts: c.attempts + 1 } });
+    throw bad(`That code isn't right. ${MAX_ATTEMPTS - c.attempts - 1} tries left.`);
+  }
+  const { emailCode, ...rest } = p;
+  const doc = { ...rest, emailVerified: { email: p.email, at: today(now) } };
+  await repo.upsert("participants", doc);
+  return ok(publicParticipant(doc));
+}
+
+// Participant: removes their applications and their details.
+async function deleteParticipant({ repo, principal }) {
+  needUser(principal);
+  for (const a of await repo.where("applications", "userId", principal.userId)) await repo.remove("applications", a.id, a.studyId);
+  await repo.remove("participants", participantId(principal.userId));
+  return ok({ deleted: true });
+}
+
+// Researcher: groups they created must be deleted first, since other people are members of them.
+// Their studies go too, with the applications to those studies.
+async function deleteResearcherProfile({ repo, principal }) {
+  const me = await needResearcher(repo, principal);
+  if ((await repo.where("groups", "ownerId", me.id)).length) throw new HttpError(409, "Delete the research groups you created first. Other people are members of them, so they can't be removed automatically.");
+  for (const s of await repo.where("studies", "researcherId", me.id)) {
+    for (const a of await repo.where("applications", "studyId", s.id)) await repo.remove("applications", a.id, a.studyId);
+    await repo.remove("studies", s.id);
+  }
+  for (const g of await repo.all("groups")) {
+    if ((g.members || []).some((m) => m.researcherId === me.id)) await repo.upsert("groups", { ...g, members: g.members.filter((m) => m.researcherId !== me.id) });
+  }
+  await repo.remove("researchers", me.id);
+  return ok({ deleted: true });
 }
 
 /* ---------- withdrawal and ratings ---------- */
@@ -502,4 +576,5 @@ module.exports = {
   publicData, network, me, verifyStart, verifyConfirm, fetchScholar, rorSearch, putProfile, createGroup, updateGroup, deleteGroup,
   createStudy, updateStudy, deleteStudy, studyApplicants, apply, myApplications, canEditGroup,
   putParticipant, withdrawApplication, rateApplication,
+  participantEmailStart, participantEmailConfirm, deleteParticipant, deleteResearcherProfile,
 };

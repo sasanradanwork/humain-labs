@@ -29,7 +29,9 @@ const routes = [
   ["POST", /^studies$/, H.createStudy], ["PUT", /^studies\/([^/]+)$/, H.updateStudy], ["DELETE", /^studies\/([^/]+)$/, H.deleteStudy],
   ["GET", /^studies\/([^/]+)\/applications$/, H.studyApplicants],
   ["POST", /^applications$/, H.apply], ["GET", /^applications\/mine$/, H.myApplications],
-  ["PUT", /^participant$/, H.putParticipant],
+  ["PUT", /^participant$/, H.putParticipant], ["DELETE", /^participant$/, H.deleteParticipant],
+  ["POST", /^participant\/email\/start$/, H.participantEmailStart], ["POST", /^participant\/email\/confirm$/, H.participantEmailConfirm],
+  ["DELETE", /^profile$/, H.deleteResearcherProfile],
   ["POST", /^applications\/([^/]+)\/withdraw$/, H.withdrawApplication],
   ["PUT", /^applications\/([^/]+)\/rating$/, H.rateApplication],
 ];

@@ -41,6 +41,7 @@ function docBackend(store, kind) {
 
   const mine = () => (session ? S.researchers.find((r) => r.userId === session.userId) || null : null);
   const myParticipant = () => (session ? S.participants.find((p) => p.userId === session.userId) || null : null);
+  let pendingParticipant = null;
   const needResearcher = () => {
     if (!session) throw new UserError("Sign in to do this.");
     const r = mine();
@@ -111,6 +112,7 @@ function docBackend(store, kind) {
     async saveGroup(g0, id) {
       const g = withHarvard(g0);
       const me = needResearcher();
+      if (!me.verified) throw new UserError("Verify your institution email before creating or editing research groups.");
       if (g.members.some((m) => !S.researchers.some((r) => r.id === m.researcherId)))
         throw new UserError("Every member must be a registered researcher.");
       if (id) {
@@ -251,14 +253,52 @@ function docBackend(store, kind) {
         name: p.name, email: p.email, age: Number(p.age), country: p.country,
         createdAt: existing?.createdAt || today(), updatedAt: today(),
       };
+      if (existing && existing.email.toLowerCase() !== String(p.email).toLowerCase()) delete doc.emailVerified;
       await store.put("participants", doc);
       return doc;
+    },
+    async sendParticipantCode() {
+      const part = myParticipant();
+      if (!part) throw new UserError("Set up your details first.");
+      pendingParticipant = { id: part.id, email: part.email, code: String(Math.floor(Math.random() * 1e6)).padStart(6, "0"), expires: Date.now() + 15 * 60 * 1000, attempts: 0 };
+      return { sent: false, email: part.email, devCode: pendingParticipant.code };
+    },
+    async confirmParticipantCode(code) {
+      const part = myParticipant();
+      const v = pendingParticipant;
+      if (!part || !v || v.id !== part.id) throw new UserError("Ask for a confirmation code first.");
+      if (Date.now() > v.expires) throw new UserError("That code has expired. Ask for a new one.");
+      if (v.attempts >= 5) throw new UserError("Too many wrong codes. Ask for a new one.");
+      if (String(code).replace(/\s/g, "") !== v.code) {
+        v.attempts++;
+        throw new UserError(`That code isn't right. ${5 - v.attempts} tries left.`);
+      }
+      pendingParticipant = null;
+      await store.put("participants", { ...part, emailVerified: { email: part.email, at: today() } });
+    },
+    async deleteParticipant() {
+      if (!session) throw new UserError("Sign in to do this.");
+      const part = myParticipant();
+      for (const a of S.applications.filter((x) => x.userId === session.userId)) await store.del("applications", a.id);
+      if (part) await store.del("participants", part.id);
+    },
+    async deleteProfile() {
+      const me = needResearcher();
+      if (S.groups.some((g) => g.ownerId === me.id)) throw new UserError("Delete the research groups you created first. Other people are members of them, so they can't be removed automatically.");
+      for (const s of S.studies.filter((x) => x.researcherId === me.id)) {
+        for (const a of S.applications.filter((x) => x.studyId === s.id)) await store.del("applications", a.id);
+        await store.del("studies", s.id);
+      }
+      for (const g of S.groups.filter((x) => (x.members || []).some((m) => m.researcherId === me.id)))
+        await store.put("groups", { ...g, members: g.members.filter((m) => m.researcherId !== me.id) });
+      await store.del("researchers", me.id);
     },
     async apply(a) {
       if (!session) throw new UserError("Sign in to apply.");
       if (mine()) throw new UserError("Researcher accounts can't apply to studies. Sign in with a separate participant account to take part.");
       const part = myParticipant();
       if (!part) throw new UserError("Set up your participant details first. You only do this once.");
+      if (part.emailVerified?.email !== part.email) throw new UserError("Confirm your email address before you apply.");
       const st = S.studies.find((x) => x.id === a.studyId);
       if (!st || !isVisibleHere(st)) throw new UserError("That study isn't open any more.");
       if (S.applications.some((x) => x.studyId === a.studyId && x.userId === session.userId)) throw new UserError("You've already applied to this study.");
@@ -514,6 +554,22 @@ function azureBackend() {
     },
     async saveParticipant(p) {
       const r = await api("PUT", "participant", p);
+      await self.after();
+      return r;
+    },
+    async deleteParticipant() {
+      await api("DELETE", "participant");
+      await self.after();
+    },
+    async deleteProfile() {
+      await api("DELETE", "profile");
+      await self.after();
+    },
+    async sendParticipantCode() {
+      return api("POST", "participant/email/start");
+    },
+    async confirmParticipantCode(code) {
+      const r = await api("POST", "participant/email/confirm", { code });
       await self.after();
       return r;
     },

@@ -17,7 +17,12 @@ async function verifiedProfile(repo, id, over = {}) {
   return r.json;
 }
 const soon = (days = 10) => new Date(Date.now() + days * 86400000).toISOString().slice(0, 10);
-const participant = (repo, id, over = {}) => H.putParticipant({ repo, principal: user(id), body: { name: "Participant " + id, email: id + "@example.com", age: 30, country: "Kenya", ...over } });
+const participant = async (repo, id, over = {}) => {
+  const r = await H.putParticipant({ repo, principal: user(id), body: { name: "Participant " + id, email: id + "@example.com", age: 30, country: "Kenya", ...over } });
+  const existing = await repo.get("participants", r.json.id);
+  if (!existing.emailVerified) await repo.upsert("participants", { ...existing, emailVerified: { email: existing.email, at: "2026-10-01" } });
+  return r;
+};
 const applyBody = (studyId, over = {}) => ({ studyId, consent: true, ...over });
 const profile = (over = {}) => ({ name: "Amrit Kaur", handle: "amrit-kaur", position: "PhD student", institution: "HumAIn", country: "United Kingdom", field: "Computer science", email: "amrit@example.com", bio: "Intrusion detection.", linkedin: "https://www.linkedin.com/in/amrit", ...over });
 
@@ -84,7 +89,7 @@ test("groups: need a profile, members must be registered, owner always kept", as
   const repo = fresh();
   const base = { name: "Secure AI Lab", institution: "HumAIn", country: "United Kingdom", field: "Computer science", email: "lab@example.com", summary: "Safer AI systems.", about: "We study attacks on ML systems." };
   assert.equal((await run(H.createGroup, { repo, principal: user("u1"), body: base })).status, 403);
-  await H.putProfile({ repo, principal: user("u1"), body: profile() });
+  await verifiedProfile(repo, "u1");
   assert.equal((await run(H.createGroup, { repo, principal: user("u1"), body: { ...base, members: [{ researcherId: "nobody" }] } })).status, 400);
   const g = await run(H.createGroup, { repo, principal: user("u1"), body: { ...base, members: [{ researcherId: "r5", role: "Collaborator" }], publications: [{ title: "Paper", authorNames: ["Amrit Kaur"], venue: "Journal of Big Data", year: 2023 }], openings: [{ type: "Postdoc", title: "Postdoc in AI security" }] } });
   assert.equal(g.status, 201);
@@ -336,5 +341,61 @@ test("researchers rate participants once a study has closed; other researchers s
   assert.ok(!JSON.stringify(theirs).includes("Great."));
   // Participants never see ratings
   assert.ok((await H.myApplications({ repo, principal: user("p1") })).json.every((x) => !("rating" in x)));
+});
+
+test("view-only: an unverified researcher can't create or edit groups", async () => {
+  const repo = fresh();
+  await H.putProfile({ repo, principal: user("u1"), body: profile() });
+  const base = { name: "Lab", institution: "HumAIn", country: "United Kingdom", field: "Computer science", email: "lab@example.com", summary: "s", about: "a" };
+  assert.equal((await run(H.createGroup, { repo, principal: user("u1"), body: base })).status, 403);
+  await verifiedProfile(repo, "u2");
+  const g = await run(H.createGroup, { repo, principal: user("u2"), body: base });
+  assert.equal(g.status, 201);
+  await repo.upsert("researchers", { ...(await repo.get("researchers", (await H.me({ repo, principal: user("u2") })).json.researcher.id)), verified: undefined });
+  assert.equal((await run(H.updateGroup, { repo, principal: user("u2"), params: { id: g.json.id }, body: base })).status, 403);
+});
+
+test("participants must confirm their email before applying, and a changed address needs confirming again", async () => {
+  const repo = fresh(); const sent = [];
+  const mailer = { send: async (m) => sent.push(m) };
+  await verifiedProfile(repo, "u1");
+  const s = await H.createStudy({ repo, principal: user("u1"), body: { title: "Survey", description: "15 min", criteria: "18+", closesAt: soon(10) } });
+  await H.putParticipant({ repo, principal: user("p1"), body: { name: "Pat", email: "pat@example.com", age: 30, country: "Kenya" } });
+  assert.equal((await run(H.apply, { repo, principal: user("p1"), body: applyBody(s.json.id) })).status, 403);
+  assert.equal((await run(H.participantEmailStart, { repo, principal: user("p1"), mailer, now: 1000 })).status, 200);
+  assert.equal((await run(H.participantEmailConfirm, { repo, principal: user("p1"), body: { code: "000000" }, now: 2000 })).status, 400);
+  const code = sent[0].text.match(/\d{6}/)[0];
+  assert.equal((await run(H.participantEmailConfirm, { repo, principal: user("p1"), body: { code }, now: 3000 })).status, 200);
+  assert.equal((await run(H.apply, { repo, principal: user("p1"), body: applyBody(s.json.id) })).status, 201);
+  // Changing the address unconfirms it
+  await H.putParticipant({ repo, principal: user("p1"), body: { name: "Pat", email: "new@example.com", age: 30, country: "Kenya" } });
+  assert.equal((await H.me({ repo, principal: user("p1") })).json.participant.emailVerified, undefined);
+  const other = await H.createStudy({ repo, principal: user("u1"), body: { title: "Second", description: "d", criteria: "c", closesAt: soon(12) } });
+  assert.equal((await run(H.apply, { repo, principal: user("p1"), body: applyBody(other.json.id) })).status, 403);
+});
+
+test("participants can delete their details, which removes their applications", async () => {
+  const repo = fresh();
+  await verifiedProfile(repo, "u1");
+  await participant(repo, "p1");
+  const s = await H.createStudy({ repo, principal: user("u1"), body: { title: "Survey", description: "15 min", criteria: "18+", closesAt: soon(10) } });
+  await run(H.apply, { repo, principal: user("p1"), body: applyBody(s.json.id) });
+  assert.equal((await H.deleteParticipant({ repo, principal: user("p1") })).json.deleted, true);
+  assert.equal((await H.me({ repo, principal: user("p1") })).json.participant, null);
+  assert.equal((await H.myApplications({ repo, principal: user("p1") })).json.length, 0);
+});
+
+test("researchers can delete their profile once their groups are gone; their studies go with it", async () => {
+  const repo = fresh();
+  await verifiedProfile(repo, "u1");
+  const s = await H.createStudy({ repo, principal: user("u1"), body: { title: "Survey", description: "15 min", criteria: "18+", closesAt: soon(10) } });
+  await participant(repo, "p1");
+  await run(H.apply, { repo, principal: user("p1"), body: applyBody(s.json.id) });
+  const g = await run(H.createGroup, { repo, principal: user("u1"), body: { name: "Lab", institution: "HumAIn", country: "United Kingdom", field: "Computer science", email: "lab@example.com", summary: "s", about: "a" } });
+  assert.equal((await run(H.deleteResearcherProfile, { repo, principal: user("u1") })).status, 409);
+  await H.deleteGroup({ repo, principal: user("u1"), params: { id: g.json.id } });
+  assert.equal((await H.deleteResearcherProfile({ repo, principal: user("u1") })).json.deleted, true);
+  assert.equal((await H.me({ repo, principal: user("u1") })).json.researcher, null);
+  assert.ok(!(await H.publicData({ repo })).json.studies.some((x) => x.id === s.json.id));
 });
 

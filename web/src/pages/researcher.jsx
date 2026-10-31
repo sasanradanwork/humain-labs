@@ -790,7 +790,7 @@ export function Dashboard({ route, onNewStudy, onEditStudy, onDeleteStudy, onVer
 }
 
 /* ================= profile editor ================= */
-export function ProfileEditor({ onVerify, onScholar, onRor }) {
+export function ProfileEditor({ onVerify, onScholar, onRor, onDelete }) {
   const { backend, toast } = useUI();
   const [handleAuto, setHandleAuto] = useState(!AUTH.researcher?.handle);
   const [handle, setHandle] = useState(AUTH.researcher?.handle || "");
@@ -980,6 +980,14 @@ export function ProfileEditor({ onVerify, onScholar, onRor }) {
           </div>
           <div className="actions">
             <SubmitButton className="btn btn-solid">{isNew ? "Publish profile" : "Save changes"}</SubmitButton>
+            {!isNew && (
+              <>
+                <span className="spacer" />
+                <button type="button" className="btn btn-danger" onClick={onDelete}>
+                  Delete profile
+                </button>
+              </>
+            )}
             <a className="btn" href="#/dashboard">
               Cancel
             </a>
@@ -1050,6 +1058,22 @@ export function GroupEditor({ route, onRor, onDelete }) {
         </a>
         <div className="empty" style={{ marginTop: 16 }}>
           <div>Only the group's owner and members with edit access can change this page.</div>
+        </div>
+      </div>
+    );
+
+  // Unverified researchers can look at groups but not create or change them.
+  if (me && !me.verified)
+    return (
+      <div className="wrap">
+        <a className="back" href={editing ? groupHref(g) : "#/dashboard"}>
+          ← {editing ? g.name : "Researcher area"}
+        </a>
+        <div className="empty" style={{ marginTop: 16 }}>
+          <div>View-only mode. Verify your institution email to create or edit research groups.</div>
+          <a className="btn btn-blue" href="#/dashboard">
+            Go to your researcher area
+          </a>
         </div>
       </div>
     );

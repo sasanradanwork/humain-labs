@@ -1,11 +1,16 @@
 // Participant details: set up once after registering, then used for every application.
+import { useState } from "react";
 import { ChoiceField } from "../components/fields.jsx";
 import { AUTH } from "../lib/store.js";
 import { COUNTRY_NAMES } from "../lib/lists.js";
 import { Field, Form, SubmitButton, navigate, useUI } from "../lib/ui.jsx";
 
-export function ParticipantProfile() {
+// Applying is locked until the email on the details has been confirmed with a code.
+const emailConfirmed = (p) => !!p && p.emailVerified?.email === p.email;
+
+export function ParticipantProfile({ onDelete }) {
   const { backend, toast } = useUI();
+  const [sent, setSent] = useState(null);
   const p = AUTH.participant;
   if (!AUTH.user)
     return (
@@ -38,6 +43,12 @@ export function ParticipantProfile() {
       </div>
     );
   const fromAccount = AUTH.user.name && !/@/.test(AUTH.user.name) ? AUTH.user.name : "";
+  const confirmed = emailConfirmed(p);
+  const after = () => {
+    const next = sessionStorage.getItem("after-profile");
+    sessionStorage.removeItem("after-profile");
+    navigate(next || "#/studies");
+  };
   return (
     <div className="wrap">
       <div className="editor">
@@ -48,11 +59,20 @@ export function ParticipantProfile() {
         </p>
         <Form
           onSubmit={async (d) => {
+            const sameEmail = !!p && p.email.toLowerCase() === d.email.trim().toLowerCase();
             await backend.saveParticipant({ name: d.name, email: d.email, age: Number(d.age), country: d.country });
-            toast(p ? "Details saved." : "Details saved. You can now apply to studies.");
-            const next = sessionStorage.getItem("after-profile");
-            sessionStorage.removeItem("after-profile");
-            navigate(next || "#/studies");
+            if (sameEmail && confirmed) {
+              toast("Details saved.");
+              after();
+              return;
+            }
+            toast(
+              !p
+                ? "Details saved. Confirm your email below to unlock studies."
+                : sameEmail
+                  ? "Details saved."
+                  : "Details saved. Your email has changed, so confirm the new address below."
+            );
           }}
         >
           <div className="fsec">
@@ -78,6 +98,75 @@ export function ParticipantProfile() {
             </a>
           </div>
         </Form>
+
+        {p && !confirmed && (
+          <div className="fsec" id="confirm-email" style={{ marginTop: 22 }}>
+            <h2>Confirm your email</h2>
+            <p className="hint">
+              Confirm <strong>{p.email}</strong> to unlock studies. We'll send a 6-digit code to that address.
+            </p>
+            {!sent ? (
+              <Form onSubmit={async () => setSent(await backend.sendParticipantCode())}>
+                <SubmitButton className="btn btn-solid">Send me a code</SubmitButton>
+              </Form>
+            ) : (
+              <Form
+                onSubmit={async (c) => {
+                  await backend.confirmParticipantCode(c.code);
+                  setSent(null);
+                  toast("Email confirmed. You can now apply to studies.");
+                  if (sessionStorage.getItem("after-profile")) after();
+                }}
+              >
+                {sent.devCode && (
+                  <div className="demo-hint" style={{ marginTop: 0 }}>
+                    Preview mode: no email is sent here, so your code is <strong>{sent.devCode}</strong>.
+                  </div>
+                )}
+                <div className="stack" style={{ marginTop: 12 }}>
+                  <Field label="6-digit code" required>
+                    <input
+                      name="code"
+                      required
+                      inputMode="numeric"
+                      autoComplete="one-time-code"
+                      pattern="\d{6}"
+                      maxLength="6"
+                      placeholder="123456"
+                      style={{ letterSpacing: ".3em", fontSize: "1.1rem" }}
+                      autoFocus
+                    />
+                  </Field>
+                </div>
+                <div className="actions" style={{ marginTop: 14 }}>
+                  <SubmitButton className="btn btn-solid">Confirm email</SubmitButton>
+                  <button type="button" className="btn" onClick={async () => setSent(await backend.sendParticipantCode())}>
+                    Send a new code
+                  </button>
+                </div>
+              </Form>
+            )}
+          </div>
+        )}
+
+        {p && confirmed && (
+          <p className="small soft" style={{ marginTop: 18 }}>
+            ✓ Your email {p.email} is confirmed. You can apply to studies.
+          </p>
+        )}
+
+        {p && (
+          <div className="fsec" style={{ marginTop: 26 }}>
+            <h2>Delete your details</h2>
+            <p className="hint">
+              This removes your participant details and every application you've made. You can set them up again at any time, but you'll need to confirm
+              your email again.
+            </p>
+            <button type="button" className="btn btn-danger" onClick={onDelete}>
+              Delete my details
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

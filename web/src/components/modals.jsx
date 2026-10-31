@@ -32,6 +32,30 @@ export function ApplyModal({ study: s, onClose }) {
         </div>
       </Modal>
     );
+  // Applying is locked until the participant has confirmed the email on their details.
+  if (p.emailVerified?.email !== p.email)
+    return (
+      <Modal onClose={onClose}>
+        <h2>Confirm your email first</h2>
+        <p className="soft" style={{ marginTop: 10 }}>
+          Before you apply to studies, confirm the email address on your details. We'll send a code to <strong>{p.email}</strong>. This takes under a minute, and
+          you only do it once for each address.
+        </p>
+        <div className="actions" style={{ marginTop: 18 }}>
+          <button
+            className="btn btn-solid"
+            type="button"
+            onClick={() => {
+              sessionStorage.setItem("after-profile", location.hash);
+              onClose();
+              navigate("#/participant");
+            }}
+          >
+            Confirm my email
+          </button>
+        </div>
+      </Modal>
+    );
   return (
     <Modal onClose={onClose}>
       <Form

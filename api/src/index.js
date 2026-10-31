@@ -53,5 +53,9 @@ route("studyApplicants", ["GET"], "studies/{id}/applications", H.studyApplicants
 route("applicationsCreate", ["POST"], "applications", H.apply);
 route("applicationsMine", ["GET"], "applications/mine", H.myApplications);
 route("participant", ["PUT"], "participant", H.putParticipant);
+route("participantDelete", ["DELETE"], "participant", H.deleteParticipant);
+route("participantEmailStart", ["POST"], "participant/email/start", H.participantEmailStart);
+route("participantEmailConfirm", ["POST"], "participant/email/confirm", H.participantEmailConfirm);
+route("profileDelete", ["DELETE"], "profile", H.deleteResearcherProfile);
 route("applicationsWithdraw", ["POST"], "applications/{id}/withdraw", H.withdrawApplication);
 route("applicationsRate", ["PUT"], "applications/{id}/rating", H.rateApplication);

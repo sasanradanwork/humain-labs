@@ -193,7 +193,22 @@ export default function App() {
         body = <MyApplications onWithdraw={onWithdraw} />;
         break;
       case "participant":
-        body = <ParticipantProfile />;
+        body = (
+          <ParticipantProfile
+            onDelete={() =>
+              setModal({
+                kind: "confirm",
+                title: "Delete your details?",
+                text: "Your participant details and every study application you've made will be deleted. This can't be undone.",
+                label: "Delete my details",
+                onConfirm: async () => {
+                  await backend.deleteParticipant();
+                  toast("Your details have been deleted.");
+                },
+              })
+            }
+          />
+        );
         break;
       case "dashboard":
         body = (
@@ -222,6 +237,19 @@ export default function App() {
       case "profile":
         body = (
           <ProfileEditor
+            onDelete={() =>
+              setModal({
+                kind: "confirm",
+                title: "Delete your researcher profile?",
+                text: "Your profile and the studies you posted will be removed, along with their applications. You can't delete it while you still own research groups. This can't be undone.",
+                label: "Delete profile",
+                onConfirm: async () => {
+                  await backend.deleteProfile();
+                  toast("Your researcher profile has been deleted.");
+                  navigate("#/");
+                },
+              })
+            }
             onVerify={() => setModal({ kind: "verify" })}
             onScholar={() => setModal({ kind: "scholar" })}
             onRor={(seed, onPick) => setModal({ kind: "ror", seed, onPick })}
