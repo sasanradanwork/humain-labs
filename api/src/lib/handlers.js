@@ -3,6 +3,8 @@ const crypto = require("node:crypto");
 const V = require("./validate");
 const { trendFor } = require("./trending");
 const { newGroupId } = require("./ids");
+const { FIELDS, POSITIONS, COUNTRY_NAMES } = require("./lists");
+const { harvardAuthors } = require("./harvard");
 const { HttpError, bad } = V;
 
 const newId = () => crypto.randomUUID().replace(/-/g, "").slice(0, 16);
@@ -26,6 +28,27 @@ async function needResearcher(repo, principal) {
   if (!r) throw new HttpError(403, "Create your researcher profile first.");
   return r;
 }
+// Participant profiles are keyed by a hash of the sign-in id, so the id reveals nothing about the person.
+const participantId = (userId) => "p-" + crypto.createHash("sha256").update(String(userId)).digest("hex").slice(0, 40);
+async function myParticipant(repo, principal) {
+  if (!principal) return null;
+  return repo.get("participants", participantId(principal.userId));
+}
+const publicParticipant = ({ userId, ...p }) => p;
+// Ratings are summarised per participant, across every study they have taken part in.
+const participantKey = ({ userId, email }) => userId || String(email || "").toLowerCase();
+function ratingSummaries(applications) {
+  const totals = new Map();
+  for (const a of applications) {
+    if (!a.rating || a.status === "withdrawn") continue;
+    const k = participantKey(a);
+    const t = totals.get(k) || { count: 0, sum: 0 };
+    t.count += 1; t.sum += Number(a.rating.stars) || 0;
+    totals.set(k, t);
+  }
+  return new Map([...totals].map(([k, t]) => [k, { count: t.count, average: Math.round((t.sum / t.count) * 10) / 10 }]));
+}
+
 // What other researchers may see. Sign-in ids and pending verification codes never leave the server.
 const publicResearcher = ({ userId, verification, ...r }) => r;
 function canEditGroup(g, researcherId) {
@@ -36,7 +59,9 @@ function canEditGroup(g, researcherId) {
 // Participant-facing data: open studies from verified researchers only, with just enough
 // about who runs them, plus a trending score (no applicant numbers).
 async function publicData({ repo, now = Date.now() }) {
-  const [studies, researchers, groups, applications] = await Promise.all([repo.all("studies"), repo.all("researchers"), repo.all("groups"), repo.all("applications")]);
+  const [studies, researchers, groups, everyApplication] = await Promise.all([repo.all("studies"), repo.all("researchers"), repo.all("groups"), repo.all("applications")]);
+  // Withdrawn applications no longer count towards reach or trending.
+  const applications = everyApplication.filter((a) => a.status !== "withdrawn");
   const rById = new Map(researchers.map((r) => [r.id, r]));
   const gById = new Map(groups.map((g) => [g.id, g]));
   // Where participants are based, as counts per country. No applicant details, and no
@@ -59,7 +84,8 @@ async function publicData({ repo, now = Date.now() }) {
 // Researcher-only data: the directory, group pages and recruitment counts.
 async function network({ repo, principal }) {
   const me = await needResearcher(repo, principal);
-  const [researchers, groups, applications] = await Promise.all([repo.all("researchers"), repo.all("groups"), repo.all("applications")]);
+  const [researchers, groups, everyApplication] = await Promise.all([repo.all("researchers"), repo.all("groups"), repo.all("applications")]);
+  const applications = everyApplication.filter((a) => a.status !== "withdrawn");
   // Only aggregate counts leave the server; applicant details never do.
   const byCountry = {}, byStudy = {};
   for (const a of applications) {
@@ -73,9 +99,10 @@ async function network({ repo, principal }) {
 }
 
 async function me({ repo, principal }) {
-  if (!principal) return ok({ user: null, researcher: null });
+  if (!principal) return ok({ user: null, researcher: null, participant: null });
   const r = await myResearcher(repo, principal);
-  return ok({ user: { name: principal.details, provider: principal.provider }, researcher: r ? publicResearcher(r) : null });
+  const p = r ? null : await myParticipant(repo, principal);
+  return ok({ user: { name: principal.details, provider: principal.provider }, researcher: r ? publicResearcher(r) : null, participant: p ? publicParticipant(p) : null });
 }
 
 /* ---------- researcher profile ---------- */
@@ -86,11 +113,12 @@ async function putProfile({ repo, principal, body }) {
   const p = {
     name: V.str(b.name, "Name", { required: true, max: 120 }),
     handle: V.handle(b.handle),
-    position: V.str(b.position, "Position", { max: 120 }),
+    position: V.choice(b.position, "Position", POSITIONS, { required: true }),
     institution: V.str(b.institution, "Institution", { required: true, max: 160 }),
+    ror: V.ror(b.ror),
     department: V.str(b.department, "Department", { max: 160 }),
-    country: V.str(b.country, "Country", { required: true, max: 80 }),
-    field: V.str(b.field, "Field", { required: true, max: 80 }),
+    country: V.choice(b.country, "Country", COUNTRY_NAMES, { required: true }),
+    field: V.choice(b.field, "Field", FIELDS, { required: true }),
     email: V.email(b.email, "Email", { required: true }),
     linkedin: V.linkedin(b.linkedin),
     scholar: V.scholar(b.scholar),
@@ -119,8 +147,8 @@ async function normalizeGroup(repo, b) {
   const g = {
     name: V.str(b.name, "Group name", { required: true, max: 140 }),
     institution: V.str(b.institution, "Institution", { required: true, max: 160 }),
-    country: V.str(b.country, "Country", { required: true, max: 80 }),
-    field: V.str(b.field, "Field", { required: true, max: 80 }),
+    country: V.choice(b.country, "Country", COUNTRY_NAMES, { required: true }),
+    field: V.choice(b.field, "Field", FIELDS, { required: true }),
     founded: V.int(b.founded, "Year founded", { min: 1800, max: year }),
     email: V.email(b.email, "Contact email", { required: true }),
     website: V.url(b.website, "Website"),
@@ -131,13 +159,22 @@ async function normalizeGroup(repo, b) {
     focus: V.list(b.focus, "Research focus", 12).map((f) => V.str(f, "Research focus area", { max: 40 })).filter(Boolean),
     // Citations aren't typed in: they're summed from members' OpenAlex figures when the page is drawn.
     grants: V.int(b.grants, "Active grants", { min: 0, max: 1000 }) ?? 0,
-    publications: V.list(b.publications, "Publications", 200).map((p, i) => ({
-      title: V.str(p.title, `Publication ${i + 1} title`, { required: true, max: 300 }),
-      authors: V.str(p.authors, `Publication ${i + 1} authors`, { required: true, max: 400 }),
-      venue: V.str(p.venue, `Publication ${i + 1} journal or venue`, { required: true, max: 200 }),
-      year: V.int(p.year, `Publication ${i + 1} year`, { min: 1900, max: year + 1, required: true }),
-      url: V.url(p.url, `Publication ${i + 1} link`),
-    })),
+    publications: V.list(b.publications, "Publications", 200).map((raw, i) => {
+      const p = raw || {};
+      // Authors are entered one full name at a time and stored as a Harvard-style string.
+      const authorNames = V.list(p.authorNames, `Publication ${i + 1} authors`, 30)
+        .map((n, j) => V.str(n, `Publication ${i + 1}, author ${j + 1}`, { max: 120 }))
+        .filter(Boolean);
+      if (!authorNames.length) throw bad(`Publication ${i + 1} needs at least one author.`);
+      return {
+        title: V.str(p.title, `Publication ${i + 1} title`, { required: true, max: 300 }),
+        authorNames,
+        authors: harvardAuthors(authorNames),
+        venue: V.str(p.venue, `Publication ${i + 1} journal or venue`, { required: true, max: 200 }),
+        year: V.int(p.year, `Publication ${i + 1} year`, { min: 1900, max: year + 1, required: true }),
+        url: V.url(p.url, `Publication ${i + 1} link`),
+      };
+    }),
     openings: V.list(b.openings, "Openings", 20).map((o, i) => ({
       type: V.oneOf(o.type, `Opening ${i + 1} type`, V.OPENING_TYPES, "Other"),
       title: V.str(o.title, `Opening ${i + 1} title`, { required: true, max: 160 }),
@@ -199,8 +236,8 @@ async function normalizeStudy(repo, me, b) {
   b = b || {};
   const s = {
     title: V.str(b.title, "Study title", { required: true, max: 160 }),
-    field: V.str(b.field, "Field", { max: 80 }) || me.field,
-    country: V.str(b.country, "Country", { max: 80 }) || me.country,
+    field: V.choice(b.field, "Field", FIELDS) || me.field,
+    country: V.choice(b.country, "Country", COUNTRY_NAMES) || me.country,
     format: V.oneOf(b.format, "Format", V.FORMATS, "Online"),
     duration: V.str(b.duration, "Time needed", { max: 120 }),
     compensation: V.str(b.compensation, "Reward", { max: 120 }),
@@ -250,7 +287,15 @@ async function studyApplicants({ repo, principal, params }) {
   if (!s) throw new HttpError(404, "That study doesn't exist.");
   if (s.researcherId !== me.id) throw new HttpError(403, "Only the researcher running this study can see its applicants.");
   const apps = await repo.where("applications", "studyId", s.id);
-  return ok(apps.map(({ userId, ...a }) => a).sort((a, b) => String(b.date).localeCompare(String(a.date))));
+  const summaries = ratingSummaries(await repo.all("applications"));
+  const rows = apps.map(({ userId, rating, ...a }) => ({
+    ...a,
+    status: a.status || "active",
+    // Other researchers' feedback is reduced to a score and a count. Comments stay with whoever wrote them.
+    ratingSummary: summaries.get(participantKey({ userId, email: a.email })) || { count: 0, average: null },
+    rating: rating && rating.researcherId === me.id ? { stars: rating.stars, attended: rating.attended, comment: rating.comment, ratedAt: rating.ratedAt } : null,
+  }));
+  return ok(rows.sort((a, b) => String(b.date).localeCompare(String(a.date))));
 }
 
 /* ---------- institution lookup ---------- */
@@ -374,16 +419,17 @@ async function apply({ repo, principal, body }) {
   if (!isOpen(study)) throw new HttpError(410, "This study has closed and isn't taking applications any more.");
   if (b.consent !== true) throw bad("You need to agree to be contacted about this study.");
   if (await myResearcher(repo, principal)) throw new HttpError(403, "Researcher accounts can't apply to studies. Sign in with a separate participant account to take part.");
+  // Name, email, age and country come from the participant profile, so they are entered once, not per study.
+  const profile = await repo.get("participants", participantId(principal.userId));
+  if (!profile) throw new HttpError(412, "Set up your participant profile first. You only do this once, then you can apply to any study.");
   const mine = await repo.where("applications", "userId", principal.userId);
   if (mine.some((a) => a.studyId === studyId)) throw new HttpError(409, "You've already applied to this study.");
   const doc = {
     id: newId(), studyId, userId: principal.userId,
-    name: V.str(b.name, "Name", { required: true, max: 120 }),
-    email: V.email(b.email, "Email", { required: true }),
-    age: String(V.int(b.age, "Age", { min: 16, max: 120, required: true })),
-    country: V.str(b.country, "Country", { required: true, max: 80 }),
+    name: profile.name, email: profile.email, age: String(profile.age), country: profile.country,
     notes: V.str(b.notes, "Notes", { max: 1000 }),
     date: today(),
+    status: "active",
   };
   await repo.upsert("applications", doc);
   const { userId, ...out } = doc;
@@ -392,10 +438,68 @@ async function apply({ repo, principal, body }) {
 async function myApplications({ repo, principal }) {
   needUser(principal);
   const mine = await repo.where("applications", "userId", principal.userId);
-  return ok(mine.map(({ userId, ...a }) => a));
+  // Ratings are for researchers only, so they never come back to the participant.
+  return ok(mine.map(({ userId, rating, ...a }) => ({ status: "active", ...a })));
+}
+
+/* ---------- participant profile ---------- */
+// Set up once after signing in. Applications copy these details, so nobody retypes them for each study.
+async function putParticipant({ repo, principal, body }) {
+  needUser(principal);
+  if (await myResearcher(repo, principal)) throw new HttpError(403, "Researcher accounts don't take part in studies, so they don't need a participant profile.");
+  const b = body || {};
+  const id = participantId(principal.userId);
+  const existing = await repo.get("participants", id);
+  const doc = {
+    id, userId: principal.userId,
+    name: V.str(b.name, "Full name", { required: true, max: 120 }),
+    email: V.email(b.email, "Email", { required: true }),
+    age: V.int(b.age, "Age", { min: 16, max: 120, required: true }),
+    country: V.choice(b.country, "Country", COUNTRY_NAMES, { required: true }),
+    createdAt: existing?.createdAt || today(),
+    updatedAt: today(),
+  };
+  await repo.upsert("participants", doc);
+  return ok(publicParticipant(doc), existing ? 200 : 201);
+}
+
+/* ---------- withdrawal and ratings ---------- */
+// A participant can withdraw up to the end of the day before the study's closing date.
+async function withdrawApplication({ repo, principal, params, now = Date.now() }) {
+  needUser(principal);
+  const [a] = await repo.where("applications", "id", params.id);
+  if (!a || a.userId !== principal.userId) throw new HttpError(404, "That application doesn't exist.");
+  if (a.status === "withdrawn") throw new HttpError(409, "You've already withdrawn from this study.");
+  const s = await repo.get("studies", a.studyId);
+  if (!s?.closesAt || today(now) >= s.closesAt) throw new HttpError(410, "Withdrawal closes the day before this study's deadline, so it's too late to withdraw.");
+  const withdrawnAt = today(now);
+  await repo.upsert("applications", { ...a, status: "withdrawn", withdrawnAt });
+  return ok({ id: a.id, status: "withdrawn", withdrawnAt });
+}
+
+// Researchers rate each participant once their study has closed. The rating and comment are private to the researcher.
+async function rateApplication({ repo, principal, params, body, now = Date.now() }) {
+  const me = await needResearcher(repo, principal);
+  const [a] = await repo.where("applications", "id", params.id);
+  if (!a) throw new HttpError(404, "That application doesn't exist.");
+  const s = await repo.get("studies", a.studyId);
+  if (!s || s.researcherId !== me.id) throw new HttpError(403, "Only the researcher running this study can rate its participants.");
+  if (isOpen(s, now)) throw bad("You can rate participants once the study has closed.");
+  if (a.status === "withdrawn") throw bad("Participants who withdrew can't be rated.");
+  const b = body || {};
+  const rating = {
+    stars: V.int(b.stars, "Rating", { min: 1, max: 5, required: true }),
+    attended: b.attended === true ? true : b.attended === false ? false : null,
+    comment: V.str(b.comment, "Comment", { max: 1000 }),
+    researcherId: me.id,
+    ratedAt: today(now),
+  };
+  await repo.upsert("applications", { ...a, rating });
+  return ok({ stars: rating.stars, attended: rating.attended, comment: rating.comment, ratedAt: rating.ratedAt });
 }
 
 module.exports = {
   publicData, network, me, verifyStart, verifyConfirm, fetchScholar, rorSearch, putProfile, createGroup, updateGroup, deleteGroup,
   createStudy, updateStudy, deleteStudy, studyApplicants, apply, myApplications, canEditGroup,
+  putParticipant, withdrawApplication, rateApplication,
 };

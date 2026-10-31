@@ -68,6 +68,14 @@ function oneOf(v, name, list, fallback) {
   if (!list.includes(s)) throw bad(`${name} must be one of: ${list.join(", ")}.`);
   return s;
 }
+/** Must be one of a standard list. Matching ignores case, and the canonical spelling is returned. */
+function choice(v, name, list, { required = false } = {}) {
+  const s = str(v, name, { max: 120 });
+  if (!s) { if (required) throw bad(`${name} is required.`); return ""; }
+  const hit = list.find((x) => x.toLowerCase() === s.toLowerCase());
+  if (!hit) throw bad(`${name} must be picked from the list.`);
+  return hit;
+}
 function list(v, name, max) {
   if (v == null) return [];
   if (!Array.isArray(v)) throw bad(`${name} must be a list.`);
@@ -75,4 +83,4 @@ function list(v, name, max) {
   return v;
 }
 
-module.exports = { HttpError, bad, str, int, email, url, linkedin, orcid, scholar, ror, date, handle, oneOf, list, FORMATS, OPENING_TYPES };
+module.exports = { HttpError, bad, str, int, email, url, linkedin, orcid, scholar, ror, date, handle, oneOf, choice, list, FORMATS, OPENING_TYPES };
