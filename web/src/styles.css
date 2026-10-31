@@ -1,3 +1,4 @@
+
 :root{
   --paper:#FFFFFF; --paper-2:#F4F6FC; --card:#FFFFFF; --ink:#101828; --ink-soft:#5B6475;
   --line:#DDE1EC; --blue:#1C39BB; --blue-deep:#101F6E; --blue-tint:#E9EBFA; --on-blue:#FFFFFF;
@@ -560,3 +561,23 @@ body.on-home .site-footer{background:var(--paper-2)}
 .legal ul{padding-left:20px;margin:0 0 12px}
 .legal li{margin-bottom:6px}
 .legal a{color:var(--blue)}
+
+/* ---------- identifiers, standard lists, ratings and withdrawal ---------- */
+.hlg-badge{flex:none;vertical-align:-3px;display:inline-block}
+.hlg-explain{display:flex;gap:18px;align-items:flex-start;margin-top:14px}
+.hlg-explain p{margin:0}
+.applying-as{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--paper-2)}
+.applying-as div{display:flex;flex-direction:column;gap:2px;min-width:0}
+.authors{display:flex;flex-direction:column;gap:8px}
+.author-row{display:flex;gap:8px;align-items:center}
+.author-row input{flex:1;min-width:0}
+.harvard-preview{margin:4px 0 0}
+.star-row{display:flex;gap:4px;margin-top:4px}
+.star{background:none;border:0;padding:2px 3px;font-size:28px;line-height:1;cursor:pointer;color:var(--line)}
+.star.on{color:var(--blue)}
+.star:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:4px}
+.radio-row{display:flex;gap:18px;flex-wrap:wrap;margin-top:4px}
+.field-stack > span:first-child{display:block;font-size:.9rem;font-weight:600;margin-bottom:6px}
+.setup-banner{background:var(--blue-tint);border-bottom:1px solid var(--line)}
+.setup-banner-inner{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding-top:12px;padding-bottom:12px}
+.setup-banner-actions{display:flex;gap:8px;flex-wrap:wrap}

@@ -5,7 +5,10 @@ import { GroupCard, ResearcherCard, Toolbar, groupHref, lookingFor } from "../co
 import { AUTH, S, appCount, byId, canEditGroup, groupStudies, groupsOf, memberResearchers, role } from "../lib/store.js";
 import { fmtDate, gidKey, isOpen, makeHandle, matches, normCountry, OPENING_TYPES, plural, ROLE_SUGGESTIONS, sortName, uniq } from "../lib/util.js";
 import { Field, Form, SubmitButton, navigate, replaceRoute, useUI } from "../lib/ui.jsx";
-import { CountryList, FieldList, InstList } from "../components/modals.jsx";
+import { AuthorNames, ChoiceField, InstitutionField } from "../components/fields.jsx";
+import { HlgBadge } from "../components/hlg.jsx";
+import { COUNTRY_NAMES, FIELDS, POSITIONS } from "../lib/lists.js";
+import { namesFromHarvard } from "../lib/harvard.js";
 import { ResearcherGate, isVisible } from "./public.jsx";
 
 export function groupByRef(ref) {
@@ -191,6 +194,7 @@ export function GroupPage({ route, onApply }) {
       <div className="idbar">
         {g.publicId && (
           <span className="idchip" title="This group's permanent HumAIn Labs identifier. Quote it on papers, adverts and applications.">
+            <HlgBadge size={16} />
             <span className="idlabel">Group ID</span>
             <code>{g.publicId}</code>
             <button className="link small" onClick={copyId}>
@@ -438,7 +442,7 @@ const SetupPrompt = () => (
   </div>
 );
 
-export function Dashboard({ route, onNewStudy, onEditStudy, onDeleteStudy, onVerify, onScholar }) {
+export function Dashboard({ route, onNewStudy, onEditStudy, onDeleteStudy, onVerify, onScholar, onRate }) {
   const { backend, toast } = useUI();
   const me = AUTH.researcher;
   const myStudies = useMemo(
@@ -447,6 +451,10 @@ export function Dashboard({ route, onNewStudy, onEditStudy, onDeleteStudy, onVer
   );
   const wanted = route.q.get("study");
   const [picked, setPicked] = useState(wanted || "");
+  // A link to another study while this page is open should switch the table too.
+  useEffect(() => {
+    if (wanted) setPicked(wanted);
+  }, [wanted]);
   const dashStudy = myStudies.some((s) => s.id === picked) ? picked : myStudies[0]?.id || "";
   const [apps, setApps] = useState(null);
   const [appsError, setAppsError] = useState("");
@@ -468,7 +476,7 @@ export function Dashboard({ route, onNewStudy, onEditStudy, onDeleteStudy, onVer
     return () => {
       live = false;
     };
-  }, [dashStudy, backend, S.applications.length]);
+  }, [dashStudy, backend, S.applications.length, S.appsVersion]);
 
   if (!AUTH.user)
     return (
@@ -490,6 +498,9 @@ export function Dashboard({ route, onNewStudy, onEditStudy, onDeleteStudy, onVer
     );
 
   const myGroups = groupsOf(me.id);
+  const dashStudyObj = byId("studies", dashStudy);
+  // Participants can be rated once the study has closed.
+  const dashClosed = !!dashStudyObj && !isOpen(dashStudyObj);
   async function exportCSV() {
     const s = byId("studies", dashStudy);
     if (!s) return;
@@ -499,7 +510,7 @@ export function Dashboard({ route, onNewStudy, onEditStudy, onDeleteStudy, onVer
     } catch (e) {
       return toast(e.message);
     }
-    const rows = [["Name", "Email", "Age", "Country", "Notes", "Applied"], ...list.map((a) => [a.name, a.email, a.age, a.country, a.notes, a.date])];
+    const rows = [["Name", "Email", "Age", "Country", "Notes", "Applied", "Status"], ...list.map((a) => [a.name, a.email, a.age, a.country, a.notes, a.date, a.status || "active"])];
     const csv = rows.map((r) => r.map((x) => `"${String(x ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
     const filename = `${s.title.replace(/[^\w]+/g, "-").toLowerCase()}-applicants.csv`;
     if (backend.kind === "claude") {
@@ -721,6 +732,9 @@ export function Dashboard({ route, onNewStudy, onEditStudy, onDeleteStudy, onVer
                         <th>Country</th>
                         <th>Notes</th>
                         <th>Applied</th>
+                        <th>Track record</th>
+                        <th>Status</th>
+                        <th>Rating</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -733,11 +747,28 @@ export function Dashboard({ route, onNewStudy, onEditStudy, onDeleteStudy, onVer
                             <td>{a.country}</td>
                             <td style={{ maxWidth: 260 }}>{a.notes}</td>
                             <td style={{ whiteSpace: "nowrap" }}>{fmtDate(a.date)}</td>
+                            <td style={{ whiteSpace: "nowrap" }}>
+                              {a.ratingSummary?.count ? (
+                                `★ ${a.ratingSummary.average} (${plural(a.ratingSummary.count, "rating", "ratings")})`
+                              ) : (
+                                <span className="soft">No ratings yet</span>
+                              )}
+                            </td>
+                            <td style={{ whiteSpace: "nowrap" }}>
+                              {a.status === "withdrawn" ? <span className="unverified">Withdrew {fmtDate(a.withdrawnAt)}</span> : "Active"}
+                            </td>
+                            <td style={{ whiteSpace: "nowrap" }}>
+                              {dashClosed && a.status !== "withdrawn" && onRate && (
+                                <button className="link small" onClick={() => onRate(a, dashStudyObj)}>
+                                  {a.rating ? `★ ${a.rating.stars}. Edit` : "Rate"}
+                                </button>
+                              )}
+                            </td>
                           </tr>
                         ))
                       ) : (
                         <tr>
-                          <td colSpan="6" className="soft" style={{ textAlign: "center", padding: 36 }}>
+                          <td colSpan="9" className="soft" style={{ textAlign: "center", padding: 36 }}>
                             No applications yet.
                           </td>
                         </tr>
@@ -759,10 +790,11 @@ export function Dashboard({ route, onNewStudy, onEditStudy, onDeleteStudy, onVer
 }
 
 /* ================= profile editor ================= */
-export function ProfileEditor({ onVerify, onScholar }) {
+export function ProfileEditor({ onVerify, onScholar, onRor }) {
   const { backend, toast } = useUI();
   const [handleAuto, setHandleAuto] = useState(!AUTH.researcher?.handle);
   const [handle, setHandle] = useState(AUTH.researcher?.handle || "");
+  const [inst, setInst] = useState({ name: AUTH.researcher?.institution || "", ror: AUTH.researcher?.ror || "" });
   if (!AUTH.user)
     return (
       <div className="wrap">
@@ -786,9 +818,10 @@ export function ProfileEditor({ onVerify, onScholar }) {
               name: d.name,
               handle: d.handle.replace(/^@/, ""),
               position: d.position,
-              institution: d.institution,
+              institution: inst.name,
+              ror: inst.ror,
               department: d.department,
-              country: normCountry(d.country),
+              country: d.country,
               field: d.field,
               email: d.email,
               linkedin: d.linkedin,
@@ -840,9 +873,7 @@ export function ProfileEditor({ onVerify, onScholar }) {
                   </div>
                 </Field>
               </div>
-              <Field label="Position">
-                <input name="position" maxLength="120" defaultValue={p.position || ""} placeholder="e.g. Senior Lecturer, PhD candidate" />
-              </Field>
+              <ChoiceField label="Position" name="position" options={POSITIONS} required defaultValue={p.position} />
               <Field label="Short bio" required>
                 <textarea name="bio" rows="3" required maxLength="600" defaultValue={p.bio || ""} placeholder="What are you working on right now?" />
               </Field>
@@ -852,20 +883,14 @@ export function ProfileEditor({ onVerify, onScholar }) {
             <h2>Institution</h2>
             <div className="stack">
               <div className="row2">
-                <Field label="Institution" required>
-                  <input name="institution" list="insts" required maxLength="160" defaultValue={p.institution || ""} placeholder="e.g. University of Warwick" />
-                </Field>
+                <InstitutionField value={inst} onFind={() => onRor(inst.name, (hit) => setInst({ name: hit.name, ror: hit.ror }))} />
                 <Field label="Department or school">
                   <input name="department" maxLength="160" defaultValue={p.department || ""} />
                 </Field>
               </div>
               <div className="row2">
-                <Field label="Country" required>
-                  <input name="country" list="countries" required maxLength="80" defaultValue={p.country || ""} />
-                </Field>
-                <Field label="Field of research" required>
-                  <input name="field" list="fields" required maxLength="80" defaultValue={p.field || ""} />
-                </Field>
+                <ChoiceField label="Country" name="country" options={COUNTRY_NAMES} required defaultValue={p.country} />
+                <ChoiceField label="Field of research" name="field" options={FIELDS} required defaultValue={p.field} />
               </div>
             </div>
           </div>
@@ -953,9 +978,6 @@ export function ProfileEditor({ onVerify, onScholar }) {
               </>
             )}
           </div>
-          <CountryList />
-          <FieldList />
-          <InstList />
           <div className="actions">
             <SubmitButton className="btn btn-solid">{isNew ? "Publish profile" : "Save changes"}</SubmitButton>
             <a className="btn" href="#/dashboard">
@@ -978,10 +1000,11 @@ export function GroupEditor({ route, onRor, onDelete }) {
   const [members, setMembers] = useState(() =>
     editing && g ? g.members.map((m) => ({ ...m })) : me ? [{ researcherId: me.id, role: "Group lead", canEdit: true }] : []
   );
-  const [pubs, setPubs] = useState(() => (editing && g ? (g.publications || []).map((p) => ({ ...p })) : []));
+  const [pubs, setPubs] = useState(() =>
+    editing && g ? (g.publications || []).map((p) => ({ ...p, authorNames: p.authorNames?.length ? [...p.authorNames] : namesFromHarvard(p.authors) })) : []
+  );
   const [openings, setOpenings] = useState(() => (editing && g ? (g.openings || []).map((o) => ({ ...o })) : []));
-  const [ror, setRor] = useState(g?.ror || "");
-  const [rorName, setRorName] = useState(g?.rorName || "");
+  const [inst, setInst] = useState({ name: g?.institution || me?.institution || "", ror: g?.ror || "", rorName: g?.rorName || "" });
   const [summaryLen, setSummaryLen] = useState((g?.summary || "").length);
   const [mention, setMention] = useState("");
   const [mentionIdx, setMentionIdx] = useState(0);
@@ -1067,20 +1090,26 @@ export function GroupEditor({ route, onRor, onDelete }) {
           onSubmit={async (d) => {
             const body = {
               name: d.name,
-              institution: d.institution,
-              country: normCountry(d.country),
+              institution: inst.name,
+              ror: inst.ror,
+              rorName: inst.rorName,
+              country: d.country,
               field: d.field,
               founded: d.founded ? Number(d.founded) : null,
               email: d.email,
               website: d.website,
               summary: d.summary,
               about: d.about,
-              ror: (ror || "").replace(/^https?:\/\/(www\.)?ror\.org\//i, "").trim().toLowerCase(),
-              rorName,
               focus: uniq((d.focus || "").split(",").map((x) => x.trim())).slice(0, 12),
               grants: d.grants ? Number(d.grants) : 0,
               members: members.map((m) => ({ researcherId: m.researcherId, role: (m.role || "Member").trim(), canEdit: !!m.canEdit })),
-              publications: pubs.map((p) => ({ title: p.title.trim(), authors: p.authors.trim(), venue: p.venue.trim(), year: Number(p.year), url: (p.url || "").trim() })),
+              publications: pubs.map((p) => ({
+                title: p.title.trim(),
+                authorNames: (p.authorNames || []).map((n) => n.trim()).filter(Boolean),
+                venue: p.venue.trim(),
+                year: Number(p.year),
+                url: (p.url || "").trim(),
+              })),
               openings: openings.map((o) => ({ type: o.type || "Other", title: o.title.trim(), detail: (o.detail || "").trim(), deadline: o.deadline || "" })),
             };
             const saved = await backend.saveGroup(body, editing ? g.id : null);
@@ -1096,47 +1125,12 @@ export function GroupEditor({ route, onRor, onDelete }) {
                 <Field label="Group name" required>
                   <input name="name" required maxLength="140" defaultValue={v.name || ""} placeholder="e.g. Human–AI Interaction Lab" />
                 </Field>
+                <InstitutionField value={inst} onFind={() => onRor(inst.name, (hit) => setInst({ name: hit.name, ror: hit.ror, rorName: hit.name }))} />
                 <div className="row2">
-                  <Field label="Institution" required>
-                    <input name="institution" list="insts" required maxLength="160" defaultValue={v.institution || ""} />
-                  </Field>
-                  <Field label="Country" required>
-                    <input name="country" list="countries" required maxLength="80" defaultValue={v.country || ""} />
-                  </Field>
+                  <ChoiceField label="Country" name="country" options={COUNTRY_NAMES} required defaultValue={v.country} />
+                  <ChoiceField label="Field" name="field" options={FIELDS} required defaultValue={v.field} />
                 </div>
-                <Field
-                  label="Institution ROR ID"
-                  hint={
-                    <div className="counter" style={{ textAlign: "left" }} id="ror-note">
-                      {ror
-                        ? `Linked to ${rorName || "ror.org/" + ror}`
-                        : "The Research Organization Registry gives every institution a permanent ID. Optional, but it makes your group easier to identify."}
-                    </div>
-                  }
-                >
-                  <div className="withbtn">
-                    <input id="ror-input" name="ror" maxLength="60" value={ror} onChange={(e) => setRor(e.target.value)} placeholder="027m9bs27" />
-                    <button
-                      type="button"
-                      className="btn"
-                      onClick={() =>
-                        onRor(formRef.current?.querySelector("[name=institution]")?.value || "", (hit) => {
-                          setRor(hit.ror);
-                          setRorName(hit.name);
-                          const inst = formRef.current?.querySelector("[name=institution]");
-                          if (inst && !inst.value.trim()) inst.value = hit.name;
-                          toast(`Linked to ${hit.name}.`);
-                        })
-                      }
-                    >
-                      Find in ROR
-                    </button>
-                  </div>
-                </Field>
                 <div className="row2">
-                  <Field label="Field" required>
-                    <input name="field" list="fields" required maxLength="80" defaultValue={v.field || ""} />
-                  </Field>
                   <Field label="Year founded">
                     <input name="founded" type="number" min="1800" max={year} defaultValue={v.founded || ""} />
                   </Field>
@@ -1336,10 +1330,11 @@ export function GroupEditor({ route, onRor, onDelete }) {
                       <Field label="Title" required>
                         <input data-p={i} data-k="title" required maxLength="300" value={p.title} onChange={(e) => setPub(i, "title", e.target.value)} />
                       </Field>
-                      <div className="row3">
-                        <Field label="Authors" required>
-                          <input data-p={i} data-k="authors" required maxLength="400" value={p.authors} onChange={(e) => setPub(i, "authors", e.target.value)} placeholder="Kaur, A., Lee, J." />
-                        </Field>
+                      <div className="f field-stack">
+                        <span className="req">Authors</span>
+                        <AuthorNames names={p.authorNames || [""]} onChange={(names) => setPub(i, "authorNames", names)} />
+                      </div>
+                      <div className="row2">
                         <Field label="Journal or venue" required>
                           <input data-p={i} data-k="venue" required maxLength="200" value={p.venue} onChange={(e) => setPub(i, "venue", e.target.value)} />
                         </Field>
@@ -1356,7 +1351,7 @@ export function GroupEditor({ route, onRor, onDelete }) {
                   <p className="rep-empty">No publications added.</p>
                 )}
               </div>
-              <button type="button" className="btn" onClick={() => setPubs([...pubs, { title: "", authors: "", venue: "", year: "", url: "" }])}>
+              <button type="button" className="btn" onClick={() => setPubs([...pubs, { title: "", authorNames: [""], venue: "", year: "", url: "" }])}>
                 Add a publication
               </button>
             </div>
@@ -1403,9 +1398,6 @@ export function GroupEditor({ route, onRor, onDelete }) {
               </button>
             </div>
 
-            <CountryList />
-            <FieldList />
-            <InstList />
             <div className="actions">
               <SubmitButton className="btn btn-solid">{editing ? "Save changes" : "Publish group page"}</SubmitButton>
               <a className="btn" href={editing ? groupHref(g) : "#/dashboard"}>

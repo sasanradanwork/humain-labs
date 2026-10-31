@@ -3,9 +3,10 @@
 import { useSyncExternalStore } from "react";
 import { normCountry } from "./util.js";
 
-export const S = { researchers: [], groups: [], studies: [], applications: [], myApps: [], stats: { total: 0, byCountry: {}, byStudy: {} } };
-export const AUTH = { user: null, researcher: null };
-export const COLS = ["researchers", "studies", "groups", "applications"];
+// appsVersion moves whenever applications change, so the applicants table reloads.
+export const S = { researchers: [], participants: [], groups: [], studies: [], applications: [], myApps: [], appsVersion: 0, stats: { total: 0, byCountry: {}, byStudy: {} } };
+export const AUTH = { user: null, researcher: null, participant: null };
+export const COLS = ["researchers", "participants", "studies", "groups", "applications"];
 
 let version = 0;
 const listeners = new Set();

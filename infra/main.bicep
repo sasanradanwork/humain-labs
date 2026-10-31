@@ -25,6 +25,7 @@ var suffix = take(uniqueString(resourceGroup().id), 8)
 var databaseName = 'humain'
 var containers = [
   { name: 'researchers', partitionKey: '/id' }
+  { name: 'participants', partitionKey: '/id' }
   { name: 'groups', partitionKey: '/id' }
   { name: 'studies', partitionKey: '/id' }
   { name: 'applications', partitionKey: '/studyId' }

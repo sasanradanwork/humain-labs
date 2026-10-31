@@ -2,7 +2,7 @@
 // Replace every value in [square brackets] and the email addresses before launch.
 export const SITE = {
   name: "HumAIn Labs",
-  legalName: "[Legal entity name]",
+  legalName: "HumAIn Labs",
   companyNumber: "[Company registration number]",
   address: "[Registered office address]",
   contactEmail: "partners@humain.example",

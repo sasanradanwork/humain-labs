@@ -1,46 +1,42 @@
 // The dialogs: applying, posting a study, verification, publication stats and the ROR lookup.
 import { useState } from "react";
-import { Field, Form, Modal, SubmitButton, useUI } from "../lib/ui.jsx";
+import { Field, Form, Modal, SubmitButton, navigate, useUI } from "../lib/ui.jsx";
 import { AUTH, S, groupsOf, role } from "../lib/store.js";
-import { COUNTRIES, DAY_MS, FORMATS, FREE_MAIL, normCountry, plural, today, uniq } from "../lib/util.js";
-
-export const CountryList = () => (
-  <datalist id="countries">
-    {Object.keys(COUNTRIES).map((c) => (
-      <option key={c} value={c} />
-    ))}
-  </datalist>
-);
-export const FieldList = () => (
-  <datalist id="fields">
-    {uniq([...S.studies, ...S.researchers, ...S.groups].map((x) => x.field)).map((f) => (
-      <option key={f} value={f} />
-    ))}
-  </datalist>
-);
-export const InstList = () => (
-  <datalist id="insts">
-    {uniq([...S.researchers, ...S.groups].map((x) => x.institution)).map((f) => (
-      <option key={f} value={f} />
-    ))}
-  </datalist>
-);
+import { DAY_MS, FORMATS, FREE_MAIL, plural, today, UserError } from "../lib/util.js";
+import { COUNTRY_NAMES, FIELDS } from "../lib/lists.js";
+import { ChoiceField } from "./fields.jsx";
 
 export function ApplyModal({ study: s, onClose }) {
   const { backend, toast } = useUI();
+  const p = AUTH.participant;
+  // Details are set up once, so the dialog only asks for them if they're missing.
+  if (!p)
+    return (
+      <Modal onClose={onClose}>
+        <h2>Set up your details first</h2>
+        <p className="soft" style={{ marginTop: 10 }}>
+          Add your name, email, age and country once. Every application uses them, so you won't need to type them in again for each study.
+        </p>
+        <div className="actions" style={{ marginTop: 18 }}>
+          <button
+            className="btn btn-solid"
+            type="button"
+            onClick={() => {
+              sessionStorage.setItem("after-profile", location.hash);
+              onClose();
+              navigate("#/participant");
+            }}
+          >
+            Set up my details
+          </button>
+        </div>
+      </Modal>
+    );
   return (
     <Modal onClose={onClose}>
       <Form
         onSubmit={async (d) => {
-          await backend.apply({
-            studyId: s.id,
-            name: d.name,
-            email: d.email,
-            age: Number(d.age),
-            country: normCountry(d.country),
-            notes: d.notes || "",
-            consent: true,
-          });
+          await backend.apply({ studyId: s.id, notes: d.notes || "", consent: true });
           onClose();
           toast(`Application sent to ${s.researcherName}.`);
         }}
@@ -49,21 +45,19 @@ export function ApplyModal({ study: s, onClose }) {
         <p className="small soft">
           Run by {s.researcherName}, {s.institution}
         </p>
-        <div className="stack" style={{ marginTop: 16 }}>
-          <Field label="Full name">
-            <input name="name" required defaultValue={AUTH.researcher?.name || (AUTH.user?.name && !/@/.test(AUTH.user.name) ? AUTH.user.name : "")} autoFocus />
-          </Field>
-          <Field label="Email">
-            <input name="email" type="email" required defaultValue={AUTH.user?.email || ""} />
-          </Field>
-          <div className="row2">
-            <Field label="Age">
-              <input name="age" type="number" min="16" max="120" required />
-            </Field>
-            <Field label="Country">
-              <input name="country" list="countries" required />
-            </Field>
+        <div className="applying-as">
+          <div>
+            <span className="small soft">Applying as</span>
+            <strong>{p.name}</strong>
+            <span className="small soft">
+              {p.email} · age {p.age} · {p.country}
+            </span>
           </div>
+          <a className="small" href="#/participant" onClick={() => onClose()}>
+            Change
+          </a>
+        </div>
+        <div className="stack" style={{ marginTop: 16 }}>
           <Field label="Anything the researcher should know? (optional)">
             <textarea name="notes" rows="3" maxLength="1000" />
           </Field>
@@ -71,7 +65,6 @@ export function ApplyModal({ study: s, onClose }) {
             <input type="checkbox" name="consent" required /> I agree to {s.researcherName} contacting me about this study.
           </label>
         </div>
-        <CountryList />
         <p className="note">
           Who can take part: {s.criteria || "open to all"}. Only {s.researcherName} can see your details.
         </p>
@@ -91,7 +84,7 @@ export function StudyModal({ existing, onClose, onSaved }) {
     <Modal onClose={onClose}>
       <Form
         onSubmit={async (d) => {
-          const saved = await backend.saveStudy({ ...d, country: normCountry(d.country) }, existing?.id);
+          const saved = await backend.saveStudy(d, existing?.id);
           onSaved?.(saved);
           onClose();
           toast(existing ? "Study saved." : "Study published.");
@@ -106,12 +99,8 @@ export function StudyModal({ existing, onClose, onSaved }) {
             <input name="title" required maxLength="160" defaultValue={s.title || ""} autoFocus />
           </Field>
           <div className="row2">
-            <Field label="Field" required>
-              <input name="field" list="fields" required defaultValue={s.field || ""} />
-            </Field>
-            <Field label="Country" required>
-              <input name="country" list="countries" required defaultValue={s.country || ""} />
-            </Field>
+            <ChoiceField label="Field" name="field" options={FIELDS} required defaultValue={s.field} />
+            <ChoiceField label="Country" name="country" options={COUNTRY_NAMES} required defaultValue={s.country} />
           </div>
           <Field label="Research group">
             <select name="groupId" defaultValue={s.groupId || ""}>
@@ -150,8 +139,6 @@ export function StudyModal({ existing, onClose, onSaved }) {
             <input name="criteria" required maxLength="400" defaultValue={s.criteria || ""} placeholder="e.g. 18+, living in the UK" />
           </Field>
         </div>
-        <CountryList />
-        <FieldList />
         <SubmitButton style={{ marginTop: 18 }}>{existing ? "Save changes" : "Publish study"}</SubmitButton>
       </Form>
     </Modal>
@@ -327,3 +314,66 @@ export function ConfirmModal({ title, text, label, onConfirm, onClose }) {
 }
 
 export const isResearcherView = () => role() === "researcher";
+
+// Researchers rate each participant once their study has closed. Other researchers see only the average.
+export function RateModal({ app: a, study: st, onClose }) {
+  const { backend, toast } = useUI();
+  const r = a.rating || null;
+  const [stars, setStars] = useState(r?.stars || 0);
+  const [attended, setAttended] = useState(r?.attended === true ? "yes" : r?.attended === false ? "no" : "");
+  return (
+    <Modal onClose={onClose}>
+      <Form
+        onSubmit={async (d) => {
+          if (!stars) throw new UserError("Pick a rating from 1 to 5 stars.");
+          await backend.rate(a.id, { stars, attended: attended === "yes" ? true : attended === "no" ? false : null, comment: d.comment || "" });
+          onClose();
+          toast("Rating saved.");
+        }}
+      >
+        <h2>Rate {a.name}</h2>
+        <p className="small soft">
+          For “{st.title}”. Other researchers see only the average score and how many ratings it's based on. Your note stays private.
+        </p>
+        <div className="stack" style={{ marginTop: 16 }}>
+          <div className="f field-stack">
+            <span className="req">Rating</span>
+            <div className="star-row" role="radiogroup" aria-label="Rating out of five">
+              {[1, 2, 3, 4, 5].map((n) => (
+                <button
+                  key={n}
+                  type="button"
+                  role="radio"
+                  aria-checked={stars === n}
+                  aria-label={`${n} star${n > 1 ? "s" : ""}`}
+                  className={"star" + (n <= stars ? " on" : "")}
+                  onClick={() => setStars(n)}
+                >
+                  ★
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="f field-stack">
+            <span>Did they take part?</span>
+            <div className="radio-row">
+              {[
+                ["yes", "Yes"],
+                ["no", "No"],
+                ["", "Not sure"],
+              ].map(([v, label]) => (
+                <label key={label} className="check">
+                  <input type="radio" name="attended-choice" checked={attended === v} onChange={() => setAttended(v)} /> {label}
+                </label>
+              ))}
+            </div>
+          </div>
+          <Field label="Private note (optional)">
+            <textarea name="comment" rows="3" maxLength="1000" defaultValue={r?.comment || ""} />
+          </Field>
+        </div>
+        <SubmitButton style={{ marginTop: 14 }}>Save rating</SubmitButton>
+      </Form>
+    </Modal>
+  );
+}

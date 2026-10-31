@@ -5,10 +5,31 @@
 // The Azure API enforces the rules on the server; the other two check them here.
 import { S, AUTH, COLS, computeStats, notify } from "./store.js";
 import { FREE_MAIL, UserError, newGroupId, today, uid } from "./util.js";
+import { harvardAuthors } from "./harvard.js";
 import DEMO from "../data/seed.json";
 
 let onToast = () => {};
 export const setToaster = (fn) => (onToast = fn);
+
+// Publications are entered as a list of author names; the saved string is the Harvard form.
+const withHarvard = (g) => ({
+  ...g,
+  publications: (g.publications || []).map((p) => ({ ...p, authors: harvardAuthors((p.authorNames || []).map((n) => n.trim()).filter(Boolean)) })),
+});
+// Ratings are averaged per participant across all their studies, as the server does.
+const participantKey = (a) => a.userId || String(a.email || "").toLowerCase();
+function ratingSummaries(apps) {
+  const totals = new Map();
+  for (const a of apps) {
+    if (!a.rating || a.status === "withdrawn") continue;
+    const k = participantKey(a);
+    const t = totals.get(k) || { count: 0, sum: 0 };
+    t.count += 1;
+    t.sum += Number(a.rating.stars) || 0;
+    totals.set(k, t);
+  }
+  return new Map([...totals].map(([k, t]) => [k, { count: t.count, average: Math.round((t.sum / t.count) * 10) / 10 }]));
+}
 
 function docBackend(store, kind) {
   const SESSION_KEY = "humain-labs-session";
@@ -19,6 +40,7 @@ function docBackend(store, kind) {
   } catch (e) {}
 
   const mine = () => (session ? S.researchers.find((r) => r.userId === session.userId) || null : null);
+  const myParticipant = () => (session ? S.participants.find((p) => p.userId === session.userId) || null : null);
   const needResearcher = () => {
     if (!session) throw new UserError("Sign in to do this.");
     const r = mine();
@@ -49,6 +71,7 @@ function docBackend(store, kind) {
     syncAuth() {
       AUTH.user = session ? { name: session.name, email: session.email } : null;
       AUTH.researcher = mine();
+      AUTH.participant = myParticipant();
       S.myApps = session ? S.applications.filter((a) => a.userId === session.userId) : [];
     },
     async refreshMe() {
@@ -85,7 +108,8 @@ function docBackend(store, kind) {
           await store.put("studies", { ...s, researcherName: doc.name, researcherEmail: doc.email, institution: doc.institution });
       return doc;
     },
-    async saveGroup(g, id) {
+    async saveGroup(g0, id) {
+      const g = withHarvard(g0);
       const me = needResearcher();
       if (g.members.some((m) => !S.researchers.some((r) => r.id === m.researcherId)))
         throw new UserError("Every member must be a registered researcher.");
@@ -218,22 +242,77 @@ function docBackend(store, kind) {
       await store.put("researchers", doc);
       return doc;
     },
+    async saveParticipant(p) {
+      if (!session) throw new UserError("Sign in to do this.");
+      if (mine()) throw new UserError("Researcher accounts don't take part in studies, so they don't need a participant profile.");
+      const existing = myParticipant();
+      const doc = {
+        ...(existing || {}), id: existing?.id || uid(), userId: session.userId,
+        name: p.name, email: p.email, age: Number(p.age), country: p.country,
+        createdAt: existing?.createdAt || today(), updatedAt: today(),
+      };
+      await store.put("participants", doc);
+      return doc;
+    },
     async apply(a) {
       if (!session) throw new UserError("Sign in to apply.");
       if (mine()) throw new UserError("Researcher accounts can't apply to studies. Sign in with a separate participant account to take part.");
+      const part = myParticipant();
+      if (!part) throw new UserError("Set up your participant details first. You only do this once.");
       const st = S.studies.find((x) => x.id === a.studyId);
       if (!st || !isVisibleHere(st)) throw new UserError("That study isn't open any more.");
       if (S.applications.some((x) => x.studyId === a.studyId && x.userId === session.userId)) throw new UserError("You've already applied to this study.");
-      const doc = { ...a, id: uid(), userId: session.userId, date: today() };
-      delete doc.consent;
+      // Details come from the participant profile, so each application keeps the details it was sent with.
+      const doc = {
+        id: uid(), studyId: a.studyId, userId: session.userId,
+        name: part.name, email: part.email, age: String(part.age), country: part.country,
+        notes: String(a.notes || "").slice(0, 1000), date: today(), status: "active",
+      };
       await store.put("applications", doc);
       return doc;
+    },
+    async withdraw(id) {
+      if (!session) throw new UserError("Sign in to do this.");
+      const ex = S.applications.find((x) => x.id === id && x.userId === session.userId);
+      if (!ex) throw new UserError("That application doesn't exist.");
+      if (ex.status === "withdrawn") throw new UserError("You've already withdrawn from this study.");
+      const st = S.studies.find((x) => x.id === ex.studyId);
+      if (!st?.closesAt || today() >= st.closesAt) throw new UserError("Withdrawal closes the day before this study's deadline, so it's too late to withdraw.");
+      const doc = { ...ex, status: "withdrawn", withdrawnAt: today() };
+      await store.put("applications", doc);
+      return doc;
+    },
+    async rate(id, body) {
+      const me = needResearcher();
+      const ex = S.applications.find((x) => x.id === id);
+      if (!ex) throw new UserError("That application doesn't exist.");
+      const st = S.studies.find((x) => x.id === ex.studyId);
+      if (!st || st.researcherId !== me.id) throw new UserError("Only the researcher running this study can rate its participants.");
+      if (!st.closesAt || st.closesAt >= today()) throw new UserError("You can rate participants once the study has closed.");
+      if (ex.status === "withdrawn") throw new UserError("Participants who withdrew can't be rated.");
+      const stars = Number(body?.stars);
+      if (!Number.isInteger(stars) || stars < 1 || stars > 5) throw new UserError("Pick a rating from 1 to 5 stars.");
+      const rating = {
+        stars, attended: body.attended === true ? true : body.attended === false ? false : null,
+        comment: String(body.comment || "").slice(0, 1000), researcherId: me.id, ratedAt: today(),
+      };
+      await store.put("applications", { ...ex, rating });
+      return rating;
     },
     async applicants(studyId) {
       const me = needResearcher();
       const s = S.studies.find((x) => x.id === studyId);
       if (!s || s.researcherId !== me.id) throw new UserError("Only the researcher running this study can see its applicants.");
-      return S.applications.filter((a) => a.studyId === studyId).sort((a, b) => String(b.date).localeCompare(String(a.date)));
+      const summaries = ratingSummaries(S.applications);
+      return S.applications
+        .filter((a) => a.studyId === studyId)
+        .map(({ userId, rating, ...a }) => ({
+          ...a,
+          status: a.status || "active",
+          ratingSummary: summaries.get(participantKey({ userId, email: a.email })) || { count: 0, average: null },
+          rating: rating && rating.researcherId === me.id ? rating : null,
+        }))
+        .sort((a, b) => String(b.date).localeCompare(String(a.date)));
     },
   };
   return self;
@@ -258,6 +337,7 @@ function localStore(demo) {
       COLS.forEach((c) => (S[c] = data[c] || []));
     },
     async put(col, doc) {
+      if (col === "applications") S.appsVersion += 1;
       const i = S[col].findIndex((d) => d.id === doc.id);
       if (i === -1) S[col] = [...S[col], doc];
       else {
@@ -355,11 +435,13 @@ function azureBackend() {
       S.studies = publicStudies;
       S.stats = { ...(d.reach || { total: 0, byCountry: {} }), byStudy: S.stats.byStudy || {} };
       Object.keys(appCache).forEach((k) => delete appCache[k]);
+      S.appsVersion += 1;
     },
     async refreshMe() {
       const d = await api("GET", "me");
       AUTH.user = d.user ? { name: d.user.name, email: /@/.test(d.user.name) ? d.user.name : "" } : null;
       AUTH.researcher = d.researcher;
+      AUTH.participant = d.participant || null;
       if (AUTH.researcher) {
         const n = await api("GET", "network");
         S.researchers = n.researchers;
@@ -429,6 +511,21 @@ function azureBackend() {
     },
     async applicants(studyId) {
       return (appCache[studyId] ||= await api("GET", "studies/" + encodeURIComponent(studyId) + "/applications"));
+    },
+    async saveParticipant(p) {
+      const r = await api("PUT", "participant", p);
+      await self.after();
+      return r;
+    },
+    async withdraw(id) {
+      const r = await api("POST", "applications/" + encodeURIComponent(id) + "/withdraw");
+      await self.after();
+      return r;
+    },
+    async rate(id, body) {
+      const r = await api("PUT", "applications/" + encodeURIComponent(id) + "/rating", body);
+      await self.after();
+      return r;
     },
   };
   return self;

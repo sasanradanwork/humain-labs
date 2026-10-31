@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Avatar, Icon, Logo } from "./components/ui.jsx";
-import { ApplyModal, ConfirmModal, RorModal, ScholarModal, StudyModal, VerifyModal } from "./components/modals.jsx";
+import { ApplyModal, ConfirmModal, RateModal, RorModal, ScholarModal, StudyModal, VerifyModal } from "./components/modals.jsx";
 import { About, Auth, Home, MyApplications, Reach, Studies } from "./pages/public.jsx";
 import { Dashboard, GroupEditor, GroupPage, Groups, ProfileEditor, Researchers, groupByRef } from "./pages/researcher.jsx";
 import { AUTH, S, byId, role, useStore } from "./lib/store.js";
@@ -10,17 +10,18 @@ import { appCount, canEditGroup } from "./lib/store.js";
 import { plural } from "./lib/util.js";
 import { SITE } from "./lib/site.js";
 import { Privacy, Terms } from "./pages/legal.jsx";
+import { ParticipantProfile } from "./pages/participant.jsx";
 
 // Researchers and participants see different parts of the site.
 const NAV = {
   guest: [["home", "Home"], ["studies", "Studies"], ["reach", "Reach"], ["about", "About"]],
-  participant: [["home", "Home"], ["studies", "Studies"], ["reach", "Reach"], ["mine", "My applications"]],
+  participant: [["home", "Home"], ["studies", "Studies"], ["reach", "Reach"], ["mine", "My applications"], ["participant", "Your details"]],
   researcher: [["home", "Home"], ["studies", "Studies"], ["researchers", "Researchers"], ["groups", "Groups"], ["reach", "Reach"], ["dashboard", "Profile"]],
 };
 const TITLES = {
   about: "About", auth: "Sign in or register", home: "Research needs people", studies: "Open studies", researchers: "Researchers",
   groups: "Research groups", reach: "Global reach", mine: "My applications", dashboard: "Researcher area", profile: "Your profile",
-  terms: "Terms and conditions", privacy: "Privacy policy",
+  terms: "Terms and conditions", privacy: "Privacy policy", participant: "Your details",
 };
 const PAGES = new Set(Object.keys(TITLES));
 
@@ -100,6 +101,20 @@ export default function App() {
     []
   );
   const onApply = useCallback((study) => requireLogin(() => setModal({ kind: "apply", study })), [requireLogin]);
+  const onWithdraw = useCallback(
+    (app, study) =>
+      setModal({
+        kind: "confirm",
+        title: "Withdraw from this study?",
+        text: `You won't be contacted about “${study.title}”, and you can't apply to it again afterwards.`,
+        label: "Withdraw",
+        onConfirm: async () => {
+          await backend.withdraw(app.id);
+          toast("You've withdrawn from the study.");
+        },
+      }),
+    [backend, toast]
+  );
 
   const setPageFilters = (page) => (next) => setFilters((f) => ({ ...f, [page]: next }));
 
@@ -116,6 +131,18 @@ export default function App() {
   useEffect(() => {
     if (backend && !PAGES.has(route.page)) navigate("#/studies");
   }, [route.page, backend]);
+
+  // After registering, a participant without details is invited to set them up once.
+  // It's a dismissible banner on participant pages, so researchers setting up a profile aren't interrupted.
+  const [bannerGone, setBannerGone] = useState(() => {
+    try {
+      return sessionStorage.getItem("participant-banner") === "gone";
+    } catch (e) {
+      return false;
+    }
+  });
+  const showSetupBanner =
+    !!backend && !!AUTH.user && !AUTH.researcher && !AUTH.participant && !bannerGone && ["home", "studies", "reach", "mine"].includes(route.page);
 
   const ui = useMemo(() => ({ backend, toast, closeModal }), [backend, toast, closeModal]);
   const navPage = route.page === "profile" ? "dashboard" : route.page;
@@ -163,7 +190,10 @@ export default function App() {
         body = <Reach dark={dark} />;
         break;
       case "mine":
-        body = <MyApplications />;
+        body = <MyApplications onWithdraw={onWithdraw} />;
+        break;
+      case "participant":
+        body = <ParticipantProfile />;
         break;
       case "dashboard":
         body = (
@@ -173,6 +203,7 @@ export default function App() {
             onScholar={() => setModal({ kind: "scholar" })}
             onNewStudy={() => setModal(AUTH.researcher?.verified ? { kind: "study" } : { kind: "verify" })}
             onEditStudy={(s) => setModal({ kind: "study", existing: s })}
+            onRate={(a, s) => setModal({ kind: "rate", app: a, study: s })}
             onDeleteStudy={(s) =>
               setModal({
                 kind: "confirm",
@@ -189,7 +220,13 @@ export default function App() {
         );
         break;
       case "profile":
-        body = <ProfileEditor onVerify={() => setModal({ kind: "verify" })} onScholar={() => setModal({ kind: "scholar" })} />;
+        body = (
+          <ProfileEditor
+            onVerify={() => setModal({ kind: "verify" })}
+            onScholar={() => setModal({ kind: "scholar" })}
+            onRor={(seed, onPick) => setModal({ kind: "ror", seed, onPick })}
+          />
+        );
         break;
       case "terms":
         body = <Terms />;
@@ -298,6 +335,34 @@ export default function App() {
       </header>
 
       <main>
+        {showSetupBanner && (
+          <div className="setup-banner" role="status">
+            <div className="wrap setup-banner-inner">
+              <span>Set up your details once, and applying to a study takes one click.</span>
+              <div className="setup-banner-actions">
+                <a
+                  className="btn btn-solid"
+                  href="#/participant"
+                  onClick={() => sessionStorage.setItem("after-profile", "#/studies")}
+                >
+                  Set up my details
+                </a>
+                <button
+                  className="btn"
+                  type="button"
+                  onClick={() => {
+                    try {
+                      sessionStorage.setItem("participant-banner", "gone");
+                    } catch (e) {}
+                    setBannerGone(true);
+                  }}
+                >
+                  Later
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         <div id="app">{body}</div>
       </main>
 
@@ -322,6 +387,7 @@ export default function App() {
       {modal?.kind === "apply" && <ApplyModal study={modal.study} onClose={closeModal} />}
       {modal?.kind === "study" && <StudyModal existing={modal.existing} onClose={closeModal} />}
       {modal?.kind === "verify" && <VerifyModal onClose={closeModal} />}
+      {modal?.kind === "rate" && <RateModal app={modal.app} study={modal.study} onClose={closeModal} />}
       {modal?.kind === "scholar" && <ScholarModal onClose={closeModal} />}
       {modal?.kind === "ror" && (
         <RorModal

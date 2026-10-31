@@ -3,7 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import { Cover, DeadlinePill, HomeBackdrop, Icon, Spark, TrendChips, VerifiedBadge } from "../components/ui.jsx";
 import { StudyAction, StudyCard, Toolbar, studyTrend } from "../components/cards.jsx";
 import { AUTH, S, byId, role, studyGroupName, studyVerified } from "../lib/store.js";
-import { countryInfo, fmtDate, isOpen, matches, plural, uniq } from "../lib/util.js";
+import { countryInfo, fmtDate, isOpen, matches, plural, today, uniq } from "../lib/util.js";
+import { HlgBadge } from "../components/hlg.jsx";
 import { Field, Form, SubmitButton, navigate, reducedMotion, replaceRoute, useRoute, useUI } from "../lib/ui.jsx";
 import { SITE } from "../lib/site.js";
 import founderPhoto from "../data/founder.jpg";
@@ -348,7 +349,7 @@ export function Reach({ dark }) {
 }
 
 /* ================= my applications ================= */
-export function MyApplications() {
+export function MyApplications({ onWithdraw }) {
   if (role() === "researcher") {
     navigate("#/dashboard");
     return null;
@@ -396,7 +397,16 @@ export function MyApplications() {
                 </div>
                 <div className="small soft grow">Applied {fmtDate(a.date)}</div>
                 <div className="foot">
-                  <span className="small">The researcher will contact you at {a.email}</span>
+                  {a.status === "withdrawn" ? (
+                    <span className="unverified">Withdrew {fmtDate(a.withdrawnAt)}</span>
+                  ) : (
+                    <span className="small">The researcher will contact you at {a.email}</span>
+                  )}
+                  {a.status !== "withdrawn" && today() < s.closesAt && (
+                    <button className="btn" type="button" onClick={() => onWithdraw?.(a, s)}>
+                      Withdraw
+                    </button>
+                  )}
                 </div>
               </div>
             </article>
@@ -479,6 +489,23 @@ export function About() {
             </span>
             <h3>Keep it direct</h3>
             <p className="soft small">Applications go straight to the researcher running the study, and nobody else sees them.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="home-sec" id="hlg">
+        <h2 className="h2big">Your HLG identifier</h2>
+        <div className="hlg-explain">
+          <HlgBadge size={48} />
+          <div>
+            <p className="soft">
+              Every research group on HumAIn Labs gets a permanent identifier, the way researchers get an ORCID iD. It starts with HLG and looks like
+              HLG-XXXX-XXXX-XX. It doesn't change when a group renames or moves, so you can quote it on papers, adverts and applications.
+            </p>
+            <p className="soft small" style={{ marginTop: 8 }}>
+              The last two characters are a check, so a mistyped ID is caught straight away. Wherever a group's ID appears, the HumAIn Labs badge sits
+              beside it.
+            </p>
           </div>
         </div>
       </section>
