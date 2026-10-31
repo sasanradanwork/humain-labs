@@ -3,8 +3,8 @@
  * Data access. Every container except "applications" is partitioned on /id;
  * applications are partitioned on /studyId so a study's applicants sit together.
  */
-const PARTITION = { researchers: "id", groups: "id", studies: "id", applications: "studyId" };
-const QUERYABLE = new Set(["userId", "researcherId", "studyId", "ownerId", "handle", "groupId", "publicId"]);
+const PARTITION = { researchers: "id", participants: "id", groups: "id", studies: "id", applications: "studyId" };
+const QUERYABLE = new Set(["id", "userId", "researcherId", "studyId", "ownerId", "handle", "groupId", "publicId"]);
 const strip = (d) => { if (!d) return d; const { _rid, _self, _etag, _attachments, _ts, ...rest } = d; return rest; };
 
 function cosmosRepo() {
