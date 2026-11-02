@@ -3,7 +3,7 @@
 export const SITE = {
   name: "HumAIn Labs",
   legalName: "HumAIn Labs",
-  companyNumber: "[Company registration number]",
+  companyNumber: "17557713",
   address: "[Registered office address]",
   contactEmail: "partners@humain.example",
   privacyEmail: "privacy@humain.example",

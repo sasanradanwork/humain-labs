@@ -112,7 +112,7 @@ function docBackend(store, kind) {
     async saveGroup(g0, id) {
       const g = withHarvard(g0);
       const me = needResearcher();
-      if (!me.verified) throw new UserError("Verify your institution email before creating or editing research groups.");
+      if (!me.verified || !me.idVerified) throw new UserError("Verify your institution email and identity before creating or editing research groups.");
       if (g.members.some((m) => !S.researchers.some((r) => r.id === m.researcherId)))
         throw new UserError("Every member must be a registered researcher.");
       if (id) {
@@ -137,7 +137,7 @@ function docBackend(store, kind) {
     },
     async saveStudy(s, id) {
       const me = needResearcher();
-      if (!id && !me.verified) throw new UserError("Verify your institution email before posting a study.");
+      if (!me.verified || !me.idVerified) throw new UserError("Verify your institution email and identity before posting or changing a study.");
       if (!s.closesAt) throw new UserError("Closing date is required.");
       if (s.closesAt < today()) throw new UserError("Closing date can't be in the past.");
       if (s.groupId && !S.groups.some((g) => g.id === s.groupId && g.members.some((m) => m.researcherId === me.id)))
@@ -276,6 +276,15 @@ function docBackend(store, kind) {
       pendingParticipant = null;
       await store.put("participants", { ...part, emailVerified: { email: part.email, at: today() } });
     },
+    async startIdCheck() {
+      if (!session) throw new UserError("Sign in to do this.");
+      const r = mine();
+      const who = r ? "researchers" : "participants";
+      const rec = r || myParticipant();
+      if (!rec) throw new UserError("Set up your details first.");
+      await store.put(who, { ...rec, idVerified: { at: today(), preview: true } });
+      return { verified: true, preview: true };
+    },
     async deleteParticipant() {
       if (!session) throw new UserError("Sign in to do this.");
       const part = myParticipant();
@@ -299,6 +308,7 @@ function docBackend(store, kind) {
       const part = myParticipant();
       if (!part) throw new UserError("Set up your participant details first. You only do this once.");
       if (part.emailVerified?.email !== part.email) throw new UserError("Confirm your email address before you apply.");
+      if (!part.idVerified) throw new UserError("Verify your identity before you apply.");
       const st = S.studies.find((x) => x.id === a.studyId);
       if (!st || !isVisibleHere(st)) throw new UserError("That study isn't open any more.");
       if (S.applications.some((x) => x.studyId === a.studyId && x.userId === session.userId)) throw new UserError("You've already applied to this study.");
@@ -473,6 +483,8 @@ function azureBackend() {
       const d = await api("GET", "public");
       publicStudies = d.studies;
       S.studies = publicStudies;
+      // Guests and participants see only public group pages. Researchers' own list comes from refreshMe.
+      if (!AUTH.researcher) S.groups = d.groups || [];
       S.stats = { ...(d.reach || { total: 0, byCountry: {} }), byStudy: S.stats.byStudy || {} };
       Object.keys(appCache).forEach((k) => delete appCache[k]);
       S.appsVersion += 1;
@@ -554,6 +566,15 @@ function azureBackend() {
     },
     async saveParticipant(p) {
       const r = await api("PUT", "participant", p);
+      await self.after();
+      return r;
+    },
+    async startIdCheck(returnUrl) {
+      const r = await api("POST", "identity/start", { returnUrl });
+      if (r.url) {
+        window.location.href = r.url;
+        return r;
+      }
       await self.after();
       return r;
     },

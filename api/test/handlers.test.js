@@ -6,6 +6,9 @@ const path = require("node:path");
 const { memoryRepo } = require("../src/lib/repo");
 const H = require("../src/lib/handlers");
 const { getPrincipal } = require("../src/lib/auth");
+const crypto = require("node:crypto");
+const { verifyWebhook } = require("../src/lib/idcheck");
+const { CATEGORIES } = require("../src/lib/moderation");
 
 const seed = JSON.parse(fs.readFileSync(path.join(__dirname, "../scripts/seed-data.json"), "utf8"));
 const fresh = () => memoryRepo(seed);
@@ -13,14 +16,14 @@ const user = (id) => ({ userId: id, provider: "aad", details: id + "@example.com
 const run = async (fn, ctx) => { try { return await fn(ctx); } catch (e) { return { status: e.status || 500, json: { error: e.message } }; } };
 async function verifiedProfile(repo, id, over = {}) {
   const r = await H.putProfile({ repo, principal: user(id), body: profile({ handle: "h-" + id, ...over }) });
-  await repo.upsert("researchers", { ...(await repo.get("researchers", r.json.id)), verified: { method: "institution-email", domain: "uni.ac.uk", at: "2026-09-01" } });
+  await repo.upsert("researchers", { ...(await repo.get("researchers", r.json.id)), verified: { method: "institution-email", domain: "uni.ac.uk", at: "2026-09-01" }, idVerified: { at: "2026-09-02" } });
   return r.json;
 }
 const soon = (days = 10) => new Date(Date.now() + days * 86400000).toISOString().slice(0, 10);
 const participant = async (repo, id, over = {}) => {
   const r = await H.putParticipant({ repo, principal: user(id), body: { name: "Participant " + id, email: id + "@example.com", age: 30, country: "Kenya", ...over } });
   const existing = await repo.get("participants", r.json.id);
-  if (!existing.emailVerified) await repo.upsert("participants", { ...existing, emailVerified: { email: existing.email, at: "2026-10-01" } });
+  if (!existing.emailVerified) await repo.upsert("participants", { ...existing, emailVerified: { email: existing.email, at: "2026-10-01" }, idVerified: { at: "2026-10-01" } });
   return r;
 };
 const applyBody = (studyId, over = {}) => ({ studyId, consent: true, ...over });
@@ -37,7 +40,9 @@ test("participants get studies only; the directory and counts need a researcher 
   const pub = await H.publicData({ repo });
   assert.equal(pub.json.studies.length, 6);
   assert.ok(pub.json.studies.every((s) => s.trend && s.trend.weekly.length === 8 && s.trend.weekly.every((w) => w <= 1)));
-  assert.ok(!("researchers" in pub.json) && !("groups" in pub.json));
+  assert.ok(!("researchers" in pub.json));
+  // Visitors only get public groups, with no member list
+  assert.ok(pub.json.groups.every((g) => g.visibility === "public" && !("members" in g) && !("ownerId" in g)));
   // Global reach is open to everyone, as country counts only
   assert.equal(pub.json.reach.total, 35);
   assert.ok(pub.json.reach.byCountry["Nigeria"] > 0 && !("byStudy" in pub.json.reach));
@@ -366,6 +371,8 @@ test("participants must confirm their email before applying, and a changed addre
   assert.equal((await run(H.participantEmailConfirm, { repo, principal: user("p1"), body: { code: "000000" }, now: 2000 })).status, 400);
   const code = sent[0].text.match(/\d{6}/)[0];
   assert.equal((await run(H.participantEmailConfirm, { repo, principal: user("p1"), body: { code }, now: 3000 })).status, 200);
+  assert.equal((await run(H.apply, { repo, principal: user("p1"), body: applyBody(s.json.id) })).status, 403); // ID check still needed
+  await H.identityEvent({ repo, event: { type: "identity.verification_session.verified", data: { object: { id: "vs_p", metadata: { userId: "p1", role: "participant" } } } } });
   assert.equal((await run(H.apply, { repo, principal: user("p1"), body: applyBody(s.json.id) })).status, 201);
   // Changing the address unconfirms it
   await H.putParticipant({ repo, principal: user("p1"), body: { name: "Pat", email: "new@example.com", age: 30, country: "Kenya" } });
@@ -399,3 +406,97 @@ test("researchers can delete their profile once their groups are gone; their stu
   assert.ok(!(await H.publicData({ repo })).json.studies.some((x) => x.id === s.json.id));
 });
 
+
+const stripeEvent = (type, userId, role) => ({ type, data: { object: { id: "vs_" + userId, metadata: { userId, role } } } });
+const signed = (body, secret, t = Math.floor(Date.now() / 1000)) => ({ header: `t=${t},v1=${crypto.createHmac("sha256", secret).update(`${t}.${body}`).digest("hex")}`, body });
+
+test("researchers need an ID check as well as institution email before posting or changing studies and groups", async () => {
+  const repo = fresh();
+  await H.putProfile({ repo, principal: user("u2"), body: profile({ handle: "user-two" }) });
+  const r = await repo.where("researchers", "userId", "u2");
+  await repo.upsert("researchers", { ...r[0], verified: { method: "institution-email", domain: "uni.ac.uk", at: "2026-09-01" } });
+  const study = { title: "Survey", description: "15 min", criteria: "18+", closesAt: soon(10) };
+  assert.equal((await run(H.createStudy, { repo, principal: user("u2"), body: study })).status, 403);
+  await repo.upsert("researchers", { ...(await repo.where("researchers", "userId", "u2"))[0], idVerified: { at: "2026-09-02" } });
+  assert.equal((await run(H.createStudy, { repo, principal: user("u2"), body: study })).status, 201);
+});
+
+test("ID check: start returns Stripe's link and records it; the verified webhook completes it", async () => {
+  const repo = fresh(); const calls = [];
+  await H.putParticipant({ repo, principal: user("p2"), body: { name: "Lee", email: "lee@example.com", age: 25, country: "Kenya" } });
+  const idcheck = async (args) => { calls.push(args); return { id: "vs_1", url: "https://stripe.example/verify" }; };
+  const env = { STRIPE_SECRET_KEY: "sk_test", SITE_URL: "https://site.example" };
+  const start = await run(H.idStart, { repo, principal: user("p2"), body: { returnUrl: "https://site.example/#/participant" }, idcheck, env });
+  assert.equal(start.status, 200);
+  assert.equal(start.json.url, "https://stripe.example/verify");
+  assert.equal(calls[0].role, "participant");
+  assert.equal(calls[0].returnUrl, "https://site.example/#/participant");
+  await H.identityEvent({ repo, event: stripeEvent("identity.verification_session.verified", "p2", "participant") });
+  const me = await H.me({ repo, principal: user("p2") });
+  assert.ok(me.json.participant.idVerified);
+  assert.equal((await run(H.idStart, { repo, principal: user("p2"), body: {}, idcheck, env })).json.verified, true);
+});
+
+test("ID check without Stripe: only the local preview skips it; a live site refuses", async () => {
+  const repo = fresh();
+  await H.putParticipant({ repo, principal: user("p3"), body: { name: "Kim", email: "kim@example.com", age: 25, country: "Kenya" } });
+  assert.equal((await run(H.idStart, { repo, principal: user("p3"), env: {} })).status, 503);
+  const preview = await run(H.idStart, { repo, principal: user("p3"), env: { DEV_SHOW_CODES: "1" } });
+  assert.equal(preview.json.preview, true);
+  assert.ok((await H.me({ repo, principal: user("p3") })).json.participant.idVerified);
+});
+
+test("webhook signatures: a correctly signed event is accepted, altered or stale ones are refused", () => {
+  const body = JSON.stringify(stripeEvent("identity.verification_session.verified", "p9", "participant"));
+  const good = signed(body, "whsec_1");
+  assert.equal(verifyWebhook(good.body, good.header, "whsec_1").type, "identity.verification_session.verified");
+  assert.equal(verifyWebhook(body + " ", good.header, "whsec_1"), null);
+  assert.equal(verifyWebhook(good.body, good.header, "other"), null);
+  const old = signed(body, "whsec_1", Math.floor(Date.now() / 1000) - 3600);
+  assert.equal(verifyWebhook(old.body, old.header, "whsec_1"), null);
+  assert.equal(verifyWebhook(good.body, undefined, "whsec_1"), null);
+});
+
+test("content screening: severe text is refused with a reason, mild text is posted and marked for review", async () => {
+  const repo = fresh();
+  await verifiedProfile(repo, "u4");
+  const r = await repo.where("researchers", "userId", "u4");
+  await repo.upsert("researchers", { ...r[0], idVerified: { at: "2026-09-02" } });
+  const screen = async (text) => text.includes("BANNED") ? [{ category: "Hate", severity: 6 }] : text.includes("rough") ? [{ category: "Violence", severity: 2 }] : [];
+  const base = { description: "15 min", criteria: "18+", closesAt: soon(10) };
+  const blocked = await run(H.createStudy, { repo, principal: user("u4"), body: { ...base, title: "BANNED title" }, screen });
+  assert.equal(blocked.status, 422);
+  assert.match(blocked.json.error, /Study title contains hateful content/);
+  const flagged = await run(H.createStudy, { repo, principal: user("u4"), body: { ...base, title: "A rough survey" }, screen });
+  assert.equal(flagged.status, 201);
+  assert.deepEqual(flagged.json.review.categories, ["Violence"]);
+  const clean = await run(H.createStudy, { repo, principal: user("u4"), body: { ...base, title: "Fine survey" }, screen });
+  assert.equal(clean.json.review, undefined);
+  assert.deepEqual(CATEGORIES, ["Hate", "SelfHarm", "Sexual", "Violence"]);
+});
+
+test("public groups: only the owner or a lead can publish a group, and visitors see it without members", async () => {
+  const repo = fresh();
+  await verifiedProfile(repo, "own1");
+  const owner = (await repo.where("researchers", "userId", "own1"))[0];
+  await repo.upsert("researchers", { ...owner, idVerified: { at: "2026-09-02" } });
+  const g = await H.createGroup({ repo, principal: user("own1"), body: profile2() });
+  assert.equal(g.json.visibility, "private");
+  const pub = await run(H.updateGroup, { repo, principal: user("own1"), params: { id: g.json.id }, body: { ...profile2(), visibility: "public" } });
+  assert.equal(pub.json.visibility, "public");
+  const visitor = await H.publicData({ repo });
+  const seen = visitor.json.groups.find((x) => x.id === g.json.id);
+  assert.ok(seen && !("members" in seen) && seen.memberCount >= 1);
+  // A member without the lead role cannot change visibility
+  await verifiedProfile(repo, "mem1");
+  const member = (await repo.where("researchers", "userId", "mem1"))[0];
+  await repo.upsert("researchers", { ...member, idVerified: { at: "2026-09-02" } });
+  const stored = await repo.get("groups", g.json.id);
+  await repo.upsert("groups", { ...stored, visibility: "public", members: [...stored.members, { researcherId: member.id, role: "Member", canEdit: true }] });
+  const attempt = await H.updateGroup({ repo, principal: user("mem1"), params: { id: g.json.id }, body: { ...profile2(), visibility: "private" } });
+  assert.equal(attempt.json.visibility, "public");
+});
+
+function profile2() {
+  return { name: "Lab", institution: "HumAIn", country: "United Kingdom", field: "Computer science", email: "lab@example.com", summary: "A lab", about: "We study things.", publications: [] };
+}

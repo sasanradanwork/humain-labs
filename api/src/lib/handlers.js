@@ -1,4 +1,6 @@
 "use strict";
+const { screenFields } = require("./moderation");
+const { startStripeCheck } = require("./idcheck");
 const crypto = require("node:crypto");
 const V = require("./validate");
 const { trendFor } = require("./trending");
@@ -51,7 +53,9 @@ function ratingSummaries(applications) {
 }
 
 // What other researchers may see. Sign-in ids and pending verification codes never leave the server.
-const publicResearcher = ({ userId, verification, ...r }) => r;
+const publicResearcher = ({ userId, verification, idCheck, ...r }) => r;
+// Public group pages, as seen by anyone: no member list, owner id or review notes. Members are counted only.
+const publicGroup = ({ members, ownerId, review, citations, ...g }) => ({ ...g, memberCount: (members || []).length });
 function canEditGroup(g, researcherId) {
   return !!researcherId && (g.ownerId === researcherId || (g.members || []).some((m) => m.researcherId === researcherId && m.canEdit));
 }
@@ -60,7 +64,7 @@ function canEditGroup(g, researcherId) {
 // Participant-facing data: open studies from verified researchers only, with just enough
 // about who runs them, plus a trending score (no applicant numbers).
 async function publicData({ repo, now = Date.now() }) {
-  const [studies, researchers, groups, everyApplication] = await Promise.all([repo.all("studies"), repo.all("researchers"), repo.all("groups"), repo.all("applications")]);
+  const [studies, researchers, groups, everyApplication, participants] = await Promise.all([repo.all("studies"), repo.all("researchers"), repo.all("groups"), repo.all("applications"), repo.all("participants")]);
   // Withdrawn applications no longer count towards reach or trending.
   const applications = everyApplication.filter((a) => a.status !== "withdrawn");
   const rById = new Map(researchers.map((r) => [r.id, r]));
@@ -69,8 +73,17 @@ async function publicData({ repo, now = Date.now() }) {
   // per-study numbers: those stay with each study's own researcher.
   const byCountry = {};
   for (const a of applications) { const c = a.country || "Unknown"; byCountry[c] = (byCountry[c] || 0) + 1; }
+  // Registered participants and researchers, counted by country, for the Reach page.
+  const count = (list) => list.reduce((m, x) => { const c = x.country || "Unknown"; m[c] = (m[c] || 0) + 1; return m; }, {});
+  const openStudies = studies.filter((s) => rById.get(s.researcherId)?.verified && isOpen(s, now));
   return ok({
-    reach: { total: applications.length, byCountry },
+    groups: groups.filter((g) => g.visibility === "public").map(publicGroup),
+    reach: {
+      total: applications.length, byCountry,
+      participants: participants.length, participantsByCountry: count(participants),
+      researchers: researchers.length, researchersByCountry: count(researchers),
+      openStudies: openStudies.length,
+    },
     studies: studies
       .filter((s) => rById.get(s.researcherId)?.verified && isOpen(s, now))
       .map((s) => ({
@@ -107,7 +120,15 @@ async function me({ repo, principal }) {
 }
 
 /* ---------- researcher profile ---------- */
-async function putProfile({ repo, principal, body }) {
+// Public text is screened before it's saved; a flagged-for-review note is stored on the record, a blocked one is refused.
+function setReview(doc, review) {
+  if (review) doc.review = review; else delete doc.review;
+  return doc;
+}
+const studyText = (s) => ({ "Study title": s.title, "What's involved": s.description, "Who can take part": s.criteria, Reward: s.compensation });
+const ID_REQUIRED = "Verify your identity first. You can do this from your details page or your researcher area, and it only takes a few minutes.";
+
+async function putProfile({ repo, principal, body, screen }) {
   needUser(principal);
   const existing = await myResearcher(repo, principal);
   const b = body || {};
@@ -126,9 +147,10 @@ async function putProfile({ repo, principal, body }) {
     orcid: V.orcid(b.orcid),
     bio: V.str(b.bio, "Bio", { required: true, max: 600 }),
   };
+  const review = await screenFields({ Bio: p.bio }, { screen });
   const sameHandle = await repo.where("researchers", "handle", p.handle);
   if (sameHandle.some((r) => !existing || r.id !== existing.id)) throw new HttpError(409, `@${p.handle} is already taken. Choose another handle.`);
-  const doc = { ...(existing || {}), ...p, id: existing?.id || newId(), userId: principal.userId, createdAt: existing?.createdAt || today(), updatedAt: today() };
+  const doc = setReview({ ...(existing || {}), ...p, id: existing?.id || newId(), userId: principal.userId, createdAt: existing?.createdAt || today(), updatedAt: today() }, review);
   // Verification vouches for a specific institution, so it lapses if the institution changes.
   if (existing?.verified && existing.institution !== p.institution) delete doc.verified;
   await repo.upsert("researchers", doc);
@@ -151,6 +173,7 @@ async function normalizeGroup(repo, b) {
     country: V.choice(b.country, "Country", COUNTRY_NAMES, { required: true }),
     field: V.choice(b.field, "Field", FIELDS, { required: true }),
     founded: V.int(b.founded, "Year founded", { min: 1800, max: year }),
+    visibility: V.oneOf(b.visibility, "Visibility", ["public", "private"], "private"),
     email: V.email(b.email, "Contact email", { required: true }),
     website: V.url(b.website, "Website"),
     ror: V.ror(b.ror),
@@ -200,26 +223,32 @@ function ensureOwner(g, ownerId) {
   else g.members[i].canEdit = true;
   return g;
 }
-async function createGroup({ repo, principal, body }) {
+async function createGroup({ repo, principal, body, screen }) {
   const me = await needResearcher(repo, principal);
   if (!me.verified) throw new HttpError(403, "Verify your institution email before creating a research group. Until then your account is view-only.");
+  if (!me.idVerified) throw new HttpError(403, ID_REQUIRED);
   const g = ensureOwner(await normalizeGroup(repo, body), me.id);
+  const review = await screenFields({ "Group name": g.name, "One-line summary": g.summary, "About the group": g.about }, { screen });
   // Permanent public identifier, minted once and never reissued.
   let publicId = newGroupId();
   for (let i = 0; i < 5 && (await repo.where("groups", "publicId", publicId)).length; i++) publicId = newGroupId();
-  const doc = { ...g, id: newId(), publicId, ownerId: me.id, createdAt: today(), updatedAt: today() };
+  const doc = setReview({ ...g, id: newId(), publicId, ownerId: me.id, createdAt: today(), updatedAt: today() }, review);
   delete doc.citations;
   await repo.upsert("groups", doc);
   return ok(doc, 201);
 }
-async function updateGroup({ repo, principal, body, params }) {
+async function updateGroup({ repo, principal, body, params, screen }) {
   const me = await needResearcher(repo, principal);
   if (!me.verified) throw new HttpError(403, "Verify your institution email before editing a research group. Until then your account is view-only.");
+  if (!me.idVerified) throw new HttpError(403, ID_REQUIRED);
   const existing = await repo.get("groups", params.id);
   if (!existing) throw new HttpError(404, "That group doesn't exist.");
   if (!canEditGroup(existing, me.id)) throw new HttpError(403, "Only the group's owner and members with edit access can change this page.");
   const g = ensureOwner(await normalizeGroup(repo, body), existing.ownerId);
-  const doc = { ...g, id: existing.id, publicId: existing.publicId || newGroupId(), ownerId: existing.ownerId, createdAt: existing.createdAt, updatedAt: today() };
+  const isLead = existing.ownerId === me.id || (existing.members || []).some((m) => m.researcherId === me.id && /lead/i.test(m.role || ""));
+  if (!isLead) g.visibility = existing.visibility || "private";
+  const review = await screenFields({ "Group name": g.name, "One-line summary": g.summary, "About the group": g.about }, { screen });
+  const doc = setReview({ ...g, id: existing.id, publicId: existing.publicId || newGroupId(), ownerId: existing.ownerId, createdAt: existing.createdAt, updatedAt: today() }, review);
   delete doc.citations;
   await repo.upsert("groups", doc);
   return ok(doc);
@@ -259,19 +288,23 @@ async function normalizeStudy(repo, me, b) {
   }
   return { ...s, researcherId: me.id, researcherName: me.name, researcherEmail: me.email, institution: me.institution };
 }
-async function createStudy({ repo, principal, body }) {
+async function createStudy({ repo, principal, body, screen }) {
   const me = await needResearcher(repo, principal);
   if (!me.verified) throw new HttpError(403, "Verify your institution email before posting a study. Participants only see studies from verified researchers.");
-  const doc = { ...(await normalizeStudy(repo, me, body)), id: newId(), postedAt: today() };
+  if (!me.idVerified) throw new HttpError(403, ID_REQUIRED);
+  const s = await normalizeStudy(repo, me, body);
+  const doc = setReview({ ...s, id: newId(), postedAt: today() }, await screenFields(studyText(s), { screen }));
   await repo.upsert("studies", doc);
   return ok(doc, 201);
 }
-async function updateStudy({ repo, principal, body, params }) {
+async function updateStudy({ repo, principal, body, params, screen }) {
   const me = await needResearcher(repo, principal);
+  if (!me.verified || !me.idVerified) throw new HttpError(403, "Verify your institution email and identity before changing a study. Until then your account is view-only.");
   const existing = await repo.get("studies", params.id);
   if (!existing) throw new HttpError(404, "That study doesn't exist.");
   if (existing.researcherId !== me.id) throw new HttpError(403, "Only the researcher who posted this study can change it.");
-  const doc = { ...(await normalizeStudy(repo, me, body)), id: existing.id, postedAt: existing.postedAt };
+  const s = await normalizeStudy(repo, me, body);
+  const doc = setReview({ ...s, id: existing.id, postedAt: existing.postedAt }, await screenFields(studyText(s), { screen }));
   await repo.upsert("studies", doc);
   return ok(doc);
 }
@@ -426,6 +459,7 @@ async function apply({ repo, principal, body }) {
   const profile = await repo.get("participants", participantId(principal.userId));
   if (!profile) throw new HttpError(412, "Set up your participant profile first. You only do this once, then you can apply to any study.");
   if (!emailConfirmed(profile)) throw new HttpError(403, "Confirm your email address before you apply. You can send the code from your details page.");
+  if (!profile.idVerified) throw new HttpError(403, ID_REQUIRED);
   const mine = await repo.where("applications", "userId", principal.userId);
   if (mine.some((a) => a.studyId === studyId)) throw new HttpError(409, "You've already applied to this study.");
   const doc = {
@@ -572,7 +606,45 @@ async function rateApplication({ repo, principal, params, body, now = Date.now()
   return ok({ stars: rating.stars, attended: rating.attended, comment: rating.comment, ratedAt: rating.ratedAt });
 }
 
+// Starts an ID check for the signed-in researcher or participant and returns the link to Stripe's hosted page.
+// Without Stripe configured, only the local preview skips the check; a live site refuses.
+async function idStart({ repo, principal, body, idcheck = startStripeCheck, env = process.env }) {
+  needUser(principal);
+  const researcher = await myResearcher(repo, principal);
+  const record = researcher || (await myParticipant(repo, principal));
+  if (!record) throw new HttpError(412, "Set up your profile first.");
+  if (record.idVerified) return ok({ verified: true });
+  const coll = researcher ? "researchers" : "participants";
+  if (!env.STRIPE_SECRET_KEY) {
+    if (env.DEV_SHOW_CODES !== "1") throw new HttpError(503, "Identity checks aren't set up yet. Try again later.");
+    await repo.upsert(coll, { ...record, idVerified: { at: today(), preview: true } });
+    return ok({ verified: true, preview: true });
+  }
+  const returnUrl = env.SITE_URL && body?.returnUrl && String(body.returnUrl).startsWith(env.SITE_URL) ? body.returnUrl : env.SITE_URL || undefined;
+  const session = await idcheck({ key: env.STRIPE_SECRET_KEY, userId: principal.userId, role: researcher ? "researcher" : "participant", returnUrl });
+  await repo.upsert(coll, { ...record, idCheck: { sessionId: session.id, status: "pending", startedAt: today() } });
+  return ok({ verified: false, url: session.url });
+}
+
+// Applies a verified (or failed) result from Stripe's webhook to the person it was started for.
+async function identityEvent({ repo, event }) {
+  const s = event?.data?.object || {};
+  const userId = s.metadata?.userId;
+  const role = s.metadata?.role;
+  if (!userId || !String(event?.type || "").startsWith("identity.verification_session.")) return;
+  const researcher = role === "researcher" ? (await repo.where("researchers", "userId", userId))[0] : null;
+  const coll = researcher ? "researchers" : "participants";
+  const record = researcher || (await repo.get("participants", participantId(userId)));
+  if (!record) return;
+  if (event.type === "identity.verification_session.verified") {
+    await repo.upsert(coll, { ...record, idVerified: { at: today(), sessionId: s.id }, idCheck: { sessionId: s.id, status: "verified" } });
+  } else {
+    await repo.upsert(coll, { ...record, idCheck: { sessionId: s.id, status: event.type.replace("identity.verification_session.", "") } });
+  }
+}
+
 module.exports = {
+  idStart, identityEvent,
   publicData, network, me, verifyStart, verifyConfirm, fetchScholar, rorSearch, putProfile, createGroup, updateGroup, deleteGroup,
   createStudy, updateStudy, deleteStudy, studyApplicants, apply, myApplications, canEditGroup,
   putParticipant, withdrawApplication, rateApplication,

@@ -4,6 +4,7 @@ import { ChoiceField } from "../components/fields.jsx";
 import { AUTH } from "../lib/store.js";
 import { COUNTRY_NAMES } from "../lib/lists.js";
 import { Field, Form, SubmitButton, navigate, useUI } from "../lib/ui.jsx";
+import { IdCheckPanel } from "../components/idcheck.jsx";
 
 // Applying is locked until the email on the details has been confirmed with a code.
 const emailConfirmed = (p) => !!p && p.emailVerified?.email === p.email;
@@ -154,6 +155,8 @@ export function ParticipantProfile({ onDelete }) {
             ✓ Your email {p.email} is confirmed. You can apply to studies.
           </p>
         )}
+
+        {p && <IdCheckPanel returnTo="#/participant" />}
 
         {p && (
           <div className="fsec" style={{ marginTop: 26 }}>

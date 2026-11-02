@@ -34,6 +34,7 @@ const routes = [
   ["DELETE", /^profile$/, H.deleteResearcherProfile],
   ["POST", /^applications\/([^/]+)\/withdraw$/, H.withdrawApplication],
   ["PUT", /^applications\/([^/]+)\/rating$/, H.rateApplication],
+  ["POST", /^identity\/start$/, H.idStart],
 ];
 const cookie = (req, k) => (req.headers.cookie || "").split(/;\s*/).map((c) => c.split("=")).find(([n]) => n === k)?.[1];
 // Same header format Static Web Apps sends, decoded by the same code the API uses in Azure.

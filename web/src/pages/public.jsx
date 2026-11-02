@@ -126,7 +126,7 @@ export function Home({ onApply, setStudyQuery }) {
         </section>
         <section className="home-sec trust">
           <div>
-            <span className="tnum">
+            <span className="tnum ok">
               <Icon.check />
             </span>
             <h3>Only verified researchers</h3>
@@ -135,14 +135,14 @@ export function Home({ onApply, setStudyQuery }) {
             </p>
           </div>
           <div>
-            <span className="tnum">
+            <span className="tnum warm">
               <Icon.mail />
             </span>
             <h3>Your details go to one person</h3>
             <p className="soft small">When you apply, only the researcher running that study sees your details, and they contact you directly.</p>
           </div>
           <div>
-            <span className="tnum">
+            <span className="tnum warm">
               <Icon.inst />
             </span>
             <h3>Separate spaces</h3>
@@ -266,8 +266,14 @@ export function Studies({ filters, setFilters, onApply }) {
 
 /* ================= global reach ================= */
 export function Reach({ dark }) {
-  const list = Object.entries(S.stats.byCountry || {}).sort((a, b) => b[1] - a[1]);
+  const sum = (o) => Object.values(o || {}).reduce((a, b) => a + b, 0);
+  const pCountries = S.stats.participantsByCountry || S.stats.byCountry || {};
+  const rCountries = S.stats.researchersByCountry || {};
+  const list = Object.entries(pCountries).sort((a, b) => b[1] - a[1]);
   const max = list[0]?.[1] || 1;
+  const participants = S.stats.participants ?? sum(pCountries);
+  const researchers = S.stats.researchers ?? sum(rCountries);
+  const openStudies = S.stats.openStudies ?? S.studies.length;
   const box = useRef(null);
   useEffect(() => {
     const el = box.current;
@@ -278,11 +284,10 @@ export function Reach({ dark }) {
     if (typeof window.jsVectorMap !== "function") return fail();
     const cs = getComputedStyle(document.documentElement);
     const v = (n) => cs.getPropertyValue(n).trim();
-    const pts = Object.entries(S.stats.byCountry || {})
-      .map(([c, n]) => ({ ...countryInfo(c), n }))
-      .filter((p) => p.iso);
-    const regions = {};
-    pts.forEach((p) => (regions[p.iso] = "hit"));
+    const toPts = (obj) => Object.entries(obj).map(([c, n]) => ({ ...countryInfo(c), n })).filter((p) => p.iso);
+    const pPts = toPts(pCountries);
+    const rPts = toPts(rCountries);
+    const size = (n) => 4 + Math.sqrt(n) * 2.2;
     let map = null;
     try {
       map = new window.jsVectorMap({
@@ -292,11 +297,14 @@ export function Reach({ dark }) {
         zoomButtons: true,
         backgroundColor: "transparent",
         regionStyle: { initial: { fill: v("--map-land"), stroke: v("--paper-2"), strokeWidth: 0.4 }, hover: { fillOpacity: 0.85, cursor: "default" } },
-        series: { regions: [{ attribute: "fill", scale: { hit: v("--map-hit") }, values: regions }] },
-        markers: pts.map((p) => ({ name: `${p.name}: ${plural(p.n, "participant", "participants")}`, coords: [p.lat, p.lng], style: { initial: { r: 4 + Math.sqrt(p.n) * 2.2 } } })),
+        markers: [
+          // Participants and researchers sit in different colours. Researchers are nudged slightly so both show in one country.
+          ...pPts.map((p) => ({ name: `${p.name}: ${plural(p.n, "participant", "participants")}`, coords: [p.lat, p.lng], style: { initial: { fill: v("--blue"), r: size(p.n) } } })),
+          ...rPts.map((p) => ({ name: `${p.name}: ${plural(p.n, "researcher", "researchers")}`, coords: [p.lat - 1.6, p.lng + 1.6], style: { initial: { fill: v("--amber"), r: size(p.n) } } })),
+        ],
         markerStyle: {
-          initial: { fill: v("--blue"), stroke: v("--card"), strokeWidth: 2, strokeOpacity: 1, fillOpacity: 0.95 },
-          hover: { fill: v("--blue-deep"), cursor: "pointer" },
+          initial: { stroke: v("--card"), strokeWidth: 2, strokeOpacity: 1, fillOpacity: 0.95 },
+          hover: { cursor: "pointer" },
         },
       });
     } catch (e) {
@@ -315,26 +323,35 @@ export function Reach({ dark }) {
       <div className="intro">
         <div>
           <h1>Global reach</h1>
-          <p className="soft">Where participants who have applied through HumAIn Labs are based. Hover a marker for the count.</p>
+          <p className="soft">Where participants and researchers on HumAIn Labs are based. Hover a marker for the count.</p>
         </div>
       </div>
       <div className="stats">
         <div className="stat">
-          <b>{S.stats.total || 0}</b>
-          <span className="small soft">participant applications</span>
+          <b>{participants}</b>
+          <span className="small soft">registered participants</span>
         </div>
         <div className="stat">
-          <b>{list.length}</b>
-          <span className="small soft">countries</span>
-        </div>
-        <div className="stat">
-          <b>{S.studies.length}</b>
+          <b>{openStudies}</b>
           <span className="small soft">open studies</span>
         </div>
+        <div className="stat">
+          <b>{researchers}</b>
+          <span className="small soft">researchers</span>
+        </div>
+      </div>
+      <div className="map-legend small" aria-label="Map key">
+        <span>
+          <i className="dot dot-blue" aria-hidden="true" /> Participants
+        </span>
+        <span>
+          <i className="dot dot-amber" aria-hidden="true" /> Researchers
+        </span>
       </div>
       <div className="mapbox">
         <div id="map" ref={box} />
       </div>
+      <h2 className="h2sm" style={{ marginTop: 22 }}>Participants by country</h2>
       <div className="bars">
         {list.slice(0, 8).map(([c, n]) => (
           <div className="bar" key={c}>
@@ -348,7 +365,6 @@ export function Reach({ dark }) {
   );
 }
 
-/* ================= my applications ================= */
 export function MyApplications({ onWithdraw }) {
   if (role() === "researcher") {
     navigate("#/dashboard");
@@ -427,6 +443,9 @@ export function MyApplications({ onWithdraw }) {
 /* ================= about ================= */
 // Edit these to change the About page. The photo is bundled into the page at build time.
 const CONTACT_EMAIL = SITE.contactEmail;
+import teamPhoto2 from "../data/team-2.jpg";
+
+// The team. Replace the placeholder names, roles and bios before launch.
 const FOUNDERS = [
   {
     name: "Dr Sasan Radan",
@@ -436,6 +455,28 @@ const FOUNDERS = [
     bio: "Started HumAIn to make it easier for research to reach the people it's about, and for researchers to find each other.",
     linkedin: "", // ← paste the LinkedIn profile URL here
   },
+  {
+    name: "Team member name", // ← placeholder
+    role: "Role",
+    based: "",
+    photo: teamPhoto2,
+    bio: "A line about what they do at HumAIn Labs.",
+    linkedin: "",
+  },
+  {
+    name: "Team member name", // ← placeholder
+    role: "Role",
+    based: "",
+    photo: "",
+    bio: "A line about what they do at HumAIn Labs.",
+    linkedin: "",
+  },
+];
+// Sponsors are grouped by tier. Replace the placeholder names and notes before launch.
+const SPONSOR_TIERS = [
+  { tier: "Gold", cls: "tier-gold", note: "Our lead supporters.", items: [{ name: "Sponsor name", note: "What they support." }] },
+  { tier: "Silver", cls: "tier-silver", note: "Long-term supporters.", items: [{ name: "Sponsor name", note: "What they support." }] },
+  { tier: "Standard", cls: "tier-standard", note: "Supporters of the platform.", items: [{ name: "Sponsor name", note: "What they support." }] },
 ];
 const PARTNERS = [
   { name: "Partner name", kind: "University or research institute", note: "A line about what you work on together." },
@@ -464,7 +505,7 @@ export function About() {
         <h2 className="h2big">What we do</h2>
         <div className="trust" style={{ marginTop: 16 }}>
           <div>
-            <span className="tnum">
+            <span className="tnum ok">
               <Icon.check />
             </span>
             <h3>Verify researchers</h3>
@@ -474,7 +515,7 @@ export function About() {
             </p>
           </div>
           <div>
-            <span className="tnum">
+            <span className="tnum warm">
               <Icon.inst />
             </span>
             <h3>Give groups a home</h3>
@@ -484,7 +525,7 @@ export function About() {
             </p>
           </div>
           <div>
-            <span className="tnum">
+            <span className="tnum warm">
               <Icon.mail />
             </span>
             <h3>Keep it direct</h3>
@@ -496,7 +537,7 @@ export function About() {
       <section className="home-sec" id="hlg">
         <h2 className="h2big">Your HLG identifier</h2>
         <div className="hlg-explain">
-          <HlgBadge size={48} />
+          <HlgBadge size={48} spin />
           <div>
             <p className="soft">
               Every research group on HumAIn Labs gets a permanent identifier, the way researchers get an ORCID iD. It starts with HLG and looks like
@@ -511,7 +552,7 @@ export function About() {
       </section>
 
       <section className="home-sec">
-        <h2 className="h2big">Founders</h2>
+        <h2 className="h2big">Meet the team</h2>
         <p className="soft" style={{ maxWidth: "66ch", marginTop: 8 }}>
           HumAIn Labs is built by people who have been on both sides of a study: waiting on recruitment that stalls, and hearing about research only
           once it has finished. The team is small, so you can reach us directly.
@@ -521,7 +562,13 @@ export function About() {
             <article className="card" key={f.name}>
               <div className="body">
                 <div className="person">
-                  <img className="headshot" src={f.photo} alt={f.name} width="56" height="56" />
+                  {f.photo ? (
+                    <img className="headshot" src={f.photo} alt={f.name} width="56" height="56" />
+                  ) : (
+                    <span className="headshot initials" aria-hidden="true">
+                      {f.name.trim().slice(0, 1).toUpperCase()}
+                    </span>
+                  )}
                   <div style={{ minWidth: 0 }}>
                     <h3>{f.name}</h3>
                     <div className="small" style={{ color: "var(--blue)" }}>
@@ -574,6 +621,32 @@ export function About() {
                   </p>
                 )}
               </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="home-sec">
+        <div className="intro">
+          <div>
+            <h2 className="h2big">Sponsors</h2>
+            <p className="soft">Organisations that fund HumAIn Labs, grouped by the level of their support.</p>
+          </div>
+        </div>
+        <div className="sponsor-tiers">
+          {SPONSOR_TIERS.map((t) => (
+            <div className={"tier " + t.cls} key={t.tier}>
+              <h3>
+                <span className="tier-dot" aria-hidden="true" />
+                {t.tier} sponsors
+              </h3>
+              <p className="small soft">{t.note}</p>
+              {t.items.map((x, i) => (
+                <div className="tier-logo" key={i}>
+                  <strong>{x.name}</strong>
+                  <div className="small soft">{x.note}</div>
+                </div>
+              ))}
             </div>
           ))}
         </div>

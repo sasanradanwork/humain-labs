@@ -33,7 +33,13 @@ export function computeStats() {
     const c = normCountry(a.country) || "Unknown";
     byCountry[c] = (byCountry[c] || 0) + 1;
   });
-  S.stats = { total: S.applications.length, byCountry, byStudy };
+  const count = (list) => list.reduce((m, x) => { const c = normCountry(x.country) || "Unknown"; m[c] = (m[c] || 0) + 1; return m; }, {});
+  S.stats = {
+    total: S.applications.length, byCountry, byStudy,
+    participants: S.participants.length, participantsByCountry: count(S.participants),
+    researchers: S.researchers.length, researchersByCountry: count(S.researchers),
+    openStudies: S.studies.length,
+  };
 }
 
 /* ---------- derived reads, used all over the pages ---------- */

@@ -7,6 +7,7 @@ import { fmtDate, gidKey, isOpen, makeHandle, matches, normCountry, OPENING_TYPE
 import { Field, Form, SubmitButton, navigate, replaceRoute, useUI } from "../lib/ui.jsx";
 import { AuthorNames, ChoiceField, InstitutionField } from "../components/fields.jsx";
 import { HlgBadge } from "../components/hlg.jsx";
+import { IdCheckPanel } from "../components/idcheck.jsx";
 import { COUNTRY_NAMES, FIELDS, POSITIONS } from "../lib/lists.js";
 import { namesFromHarvard } from "../lib/harvard.js";
 import { ResearcherGate, isVisible } from "./public.jsx";
@@ -67,9 +68,10 @@ export function Researchers({ filters, setFilters }) {
 
 /* ================= group directory ================= */
 export function Groups({ filters, setFilters }) {
-  if (role() !== "researcher") return <ResearcherGate title="Research groups" />;
   const f = filters;
-  const list = S.groups
+  // Signed-out visitors and participants see only public group pages.
+  const pool = AUTH.researcher ? S.groups : S.groups.filter((g) => g.visibility === "public");
+  const list = pool
     .filter((g) => {
       const w = lookingFor(g);
       return (
@@ -98,9 +100,11 @@ export function Groups({ filters, setFilters }) {
           <h1>Research groups</h1>
           <p className="soft">Labs and research groups. Open one to see who's in it, what they've published, and whether they're looking for people.</p>
         </div>
-        <a className="btn btn-blue" href="#/groups/new">
-          Create a research group
-        </a>
+        {AUTH.researcher && (
+          <a className="btn btn-blue" href="#/groups/new">
+            Create a research group
+          </a>
+        )}
       </div>
       <Toolbar
         page="groups"
@@ -156,6 +160,8 @@ export function GroupPage({ route, onApply }) {
   const pubs = [...(g.publications || [])].sort((a, b) => b.year - a.year);
   const openings = g.openings || [];
   const mem = memberResearchers(g);
+  // Public pages for visitors carry a member count only; names are shown to signed-in researchers.
+  const memberTotal = g.members ? mem.length : g.memberCount || 0;
   const withStats = mem.filter((m) => m.r.metrics);
   const citations = withStats.reduce((n, m) => n + (m.r.metrics.citations || 0), 0);
   const copyId = async () => {
@@ -218,7 +224,7 @@ export function GroupPage({ route, onApply }) {
       </div>
       <div className="metrics">
         <div>
-          <b>{mem.length}</b>
+          <b>{memberTotal}</b>
           <span>Members</span>
         </div>
         <div>
@@ -357,6 +363,7 @@ export function GroupPage({ route, onApply }) {
           <section className="sec">
             <h2>Who's in the group</h2>
             <div className="members">
+              {!g.members && <p className="soft small">Members are shown to signed-in researchers.</p>}
               {mem.map((m) => (
                 <div className="person" key={m.researcherId}>
                   <Avatar name={m.r.name} size={42} />
@@ -811,6 +818,7 @@ export function ProfileEditor({ onVerify, onScholar, onRor, onDelete }) {
         </a>
         <h1 style={{ marginTop: 14 }}>{isNew ? "Set up your researcher profile" : "Edit your profile"}</h1>
         <p className="soft lead">This is what appears in the researcher directory and on the groups you belong to. Fields marked * are required.</p>
+        {!isNew && <IdCheckPanel returnTo="#/profile" />}
         <Form
           id="profile-form"
           onSubmit={async (d) => {
@@ -1063,14 +1071,20 @@ export function GroupEditor({ route, onRor, onDelete }) {
     );
 
   // Unverified researchers can look at groups but not create or change them.
-  if (me && !me.verified)
+  if (!me)
+    return (
+      <div className="wrap">
+        <SignInPrompt title="Research groups" text="Sign in with your researcher account to create or edit a research group." />
+      </div>
+    );
+  if (me && !(me.verified && me.idVerified))
     return (
       <div className="wrap">
         <a className="back" href={editing ? groupHref(g) : "#/dashboard"}>
           ← {editing ? g.name : "Researcher area"}
         </a>
         <div className="empty" style={{ marginTop: 16 }}>
-          <div>View-only mode. Verify your institution email to create or edit research groups.</div>
+          <div>View-only mode. Verify your institution email and identity to create or edit research groups.</div>
           <a className="btn btn-blue" href="#/dashboard">
             Go to your researcher area
           </a>
@@ -1079,6 +1093,7 @@ export function GroupEditor({ route, onRor, onDelete }) {
     );
 
   const ownerId = editing ? g.ownerId : me.id;
+  const isLead = !editing || g.ownerId === me.id || (g.members || []).some((m) => m.researcherId === me.id && /lead/i.test(m.role || ""));
   const v = g || { institution: me.institution, country: me.country, field: me.field, email: me.email };
   const year = new Date().getFullYear();
 
@@ -1120,6 +1135,7 @@ export function GroupEditor({ route, onRor, onDelete }) {
               country: d.country,
               field: d.field,
               founded: d.founded ? Number(d.founded) : null,
+              visibility: d.visibility === "public" ? "public" : "private",
               email: d.email,
               website: d.website,
               summary: d.summary,
@@ -1422,6 +1438,22 @@ export function GroupEditor({ route, onRor, onDelete }) {
               </button>
             </div>
 
+            <div className="fsec">
+              <h2>Visibility</h2>
+              <p className="hint">
+                {isLead ? "Choose who can find this group page." : "Only the group lead can change this setting."}
+              </p>
+              <div className="radio-row">
+                <label className="check">
+                  <input type="radio" name="visibility" value="public" defaultChecked={v.visibility === "public"} disabled={!isLead} /> Public: anyone can
+                  see it, signed in or not
+                </label>
+                <label className="check">
+                  <input type="radio" name="visibility" value="private" defaultChecked={v.visibility !== "public"} disabled={!isLead} /> Private: only
+                  signed-in researchers can see it
+                </label>
+              </div>
+            </div>
             <div className="actions">
               <SubmitButton className="btn btn-solid">{editing ? "Save changes" : "Publish group page"}</SubmitButton>
               <a className="btn" href={editing ? groupHref(g) : "#/dashboard"}>

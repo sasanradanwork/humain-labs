@@ -5,6 +5,7 @@ import { AUTH, S, groupsOf, role } from "../lib/store.js";
 import { DAY_MS, FORMATS, FREE_MAIL, plural, today, UserError } from "../lib/util.js";
 import { COUNTRY_NAMES, FIELDS } from "../lib/lists.js";
 import { ChoiceField } from "./fields.jsx";
+import { IdCheckPanel } from "./idcheck.jsx";
 
 export function ApplyModal({ study: s, onClose }) {
   const { backend, toast } = useUI();
@@ -52,6 +53,29 @@ export function ApplyModal({ study: s, onClose }) {
             }}
           >
             Confirm my email
+          </button>
+        </div>
+      </Modal>
+    );
+  if (!p.idVerified)
+    return (
+      <Modal onClose={onClose}>
+        <h2>Verify your identity first</h2>
+        <p className="soft" style={{ marginTop: 10 }}>
+          Before you apply, we check that you're a real person. You'll show a photo ID and take a selfie through Stripe. It takes a few minutes and you only
+          do it once.
+        </p>
+        <div className="actions" style={{ marginTop: 18 }}>
+          <button
+            className="btn btn-solid"
+            type="button"
+            onClick={() => {
+              sessionStorage.setItem("after-profile", location.hash);
+              onClose();
+              navigate("#/participant");
+            }}
+          >
+            Verify my identity
           </button>
         </div>
       </Modal>
@@ -174,6 +198,14 @@ export function VerifyModal({ onClose }) {
   const me = AUTH.researcher;
   const [sent, setSent] = useState(null);
   if (!me) return null;
+  if (me.verified && !me.idVerified)
+    return (
+      <Modal onClose={onClose}>
+        <h2>Verify your identity</h2>
+        <p className="small soft">Your institution email is confirmed. One more step: a photo ID and selfie check, so participants know who they're dealing with.</p>
+        <IdCheckPanel returnTo="#/dashboard" />
+      </Modal>
+    );
   const suggested = FREE_MAIL.has((me.email || "").split("@")[1]) ? "" : me.email;
   return (
     <Modal onClose={onClose}>

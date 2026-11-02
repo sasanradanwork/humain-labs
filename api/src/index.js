@@ -5,6 +5,7 @@ const { cosmosRepo } = require("./lib/repo");
 const { acsMailer } = require("./lib/mailer");
 const { HttpError } = require("./lib/validate");
 const H = require("./lib/handlers");
+const { verifyWebhook } = require("./lib/idcheck");
 
 let repo, mailer;
 const getRepo = () => (repo ||= cosmosRepo());
@@ -59,3 +60,21 @@ route("participantEmailConfirm", ["POST"], "participant/email/confirm", H.partic
 route("profileDelete", ["DELETE"], "profile", H.deleteResearcherProfile);
 route("applicationsWithdraw", ["POST"], "applications/{id}/withdraw", H.withdrawApplication);
 route("applicationsRate", ["PUT"], "applications/{id}/rating", H.rateApplication);
+route("identityStart", ["POST"], "identity/start", H.idStart);
+
+// Stripe calls this when an ID check finishes. It must read the raw body to check the signature, so it skips route().
+app.http("identityWebhook", {
+  methods: ["POST"], route: "identity/webhook", authLevel: "anonymous",
+  handler: async (request, context) => {
+    try {
+      const raw = await request.text();
+      const event = verifyWebhook(raw, request.headers.get("stripe-signature"), process.env.STRIPE_WEBHOOK_SECRET);
+      if (!event) return { status: 400, jsonBody: { error: "Signature check failed." } };
+      await H.identityEvent({ repo: getRepo(), event });
+      return { status: 200, jsonBody: { ok: true } };
+    } catch (e) {
+      context.error(e);
+      return { status: 500, jsonBody: { error: "Webhook failed." } };
+    }
+  },
+});

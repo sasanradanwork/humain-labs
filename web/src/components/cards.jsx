@@ -3,6 +3,7 @@ import { Avatar, Cover, DeadlinePill, Icon, LinkedInLink, Radar, ScholarLink, Tr
 import { AUTH, S, applied, byId, groupsOf, memberResearchers, role, studyGroupName, studyVerified } from "../lib/store.js";
 import { fmtDate, plural, trendFor, uniq } from "../lib/util.js";
 import { navigate } from "../lib/ui.jsx";
+import { useState } from "react";
 
 export const studyTrend = (s) => s.trend || trendFor(s, S.applications);
 export const groupHref = (g) => `#/groups/${encodeURIComponent(g.publicId || g.id)}`;
@@ -129,7 +130,7 @@ export function ResearcherCard({ researcher: r }) {
           <Avatar name={r.name} size={48} />
           <div style={{ minWidth: 0 }}>
             <h3>{r.name}</h3>
-            <div className="handle">@{r.handle}</div>
+            <ContactReveal handle={r.handle} email={r.email} />
           </div>
         </div>
         <div className="badges" style={{ marginTop: 6 }}>
@@ -288,6 +289,24 @@ export function Toolbar({ page, filters, setFilters, defs, hint, toggle, count, 
             <div>No {many} listed yet.</div>
           </div>
         )}
+      </div>
+    </>
+  );
+}
+
+// Handle and email stay blurred until the person chooses to show them.
+export function ContactReveal({ handle, email }) {
+  const [shown, setShown] = useState(false);
+  return (
+    <>
+      <div className="handle">
+        <span className={"blur-text" + (shown ? " shown" : "")}>@{handle}</span>
+      </div>
+      <div className="small soft contact-line">
+        <span className={"blur-text" + (shown ? " shown" : "")}>{email}</span>
+        <button type="button" className="link small" onClick={() => setShown((x) => !x)} aria-pressed={shown}>
+          {shown ? "Hide" : "Show"}
+        </button>
       </div>
     </>
   );

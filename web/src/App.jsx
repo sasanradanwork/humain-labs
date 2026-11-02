@@ -14,8 +14,8 @@ import { ParticipantProfile } from "./pages/participant.jsx";
 
 // Researchers and participants see different parts of the site.
 const NAV = {
-  guest: [["home", "Home"], ["studies", "Studies"], ["reach", "Reach"], ["about", "About"]],
-  participant: [["home", "Home"], ["studies", "Studies"], ["reach", "Reach"], ["mine", "My applications"], ["participant", "Your details"]],
+  guest: [["home", "Home"], ["studies", "Studies"], ["groups", "Groups"], ["reach", "Reach"], ["about", "About"]],
+  participant: [["home", "Home"], ["studies", "Studies"], ["groups", "Groups"], ["reach", "Reach"], ["mine", "My applications"], ["participant", "Your details"]],
   researcher: [["home", "Home"], ["studies", "Studies"], ["researchers", "Researchers"], ["groups", "Groups"], ["reach", "Reach"], ["dashboard", "Profile"]],
 };
 const TITLES = {
@@ -216,7 +216,7 @@ export default function App() {
             route={route}
             onVerify={() => setModal({ kind: "verify" })}
             onScholar={() => setModal({ kind: "scholar" })}
-            onNewStudy={() => setModal(AUTH.researcher?.verified ? { kind: "study" } : { kind: "verify" })}
+            onNewStudy={() => setModal(AUTH.researcher?.verified && AUTH.researcher?.idVerified ? { kind: "study" } : { kind: "verify" })}
             onEditStudy={(s) => setModal({ kind: "study", existing: s })}
             onRate={(a, s) => setModal({ kind: "rate", app: a, study: s })}
             onDeleteStudy={(s) =>
