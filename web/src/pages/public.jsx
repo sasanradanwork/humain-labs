@@ -142,7 +142,7 @@ export function Home({ onApply, setStudyQuery }) {
             <p className="soft small">When you apply, only the researcher running that study sees your details, and they contact you directly.</p>
           </div>
           <div>
-            <span className="tnum warm">
+            <span className="tnum">
               <Icon.inst />
             </span>
             <h3>Separate spaces</h3>
@@ -271,6 +271,12 @@ export function Reach({ dark }) {
   const rCountries = S.stats.researchersByCountry || {};
   const list = Object.entries(pCountries).sort((a, b) => b[1] - a[1]);
   const max = list[0]?.[1] || 1;
+  // Countries with either participants or researchers, largest first, shown side by side.
+  const countries = [...new Set([...Object.keys(pCountries), ...Object.keys(rCountries)])]
+    .map((c) => ({ c, p: pCountries[c] || 0, r: rCountries[c] || 0 }))
+    .sort((a, b) => b.p + b.r - (a.p + a.r))
+    .slice(0, 12);
+  const maxC = Math.max(1, ...countries.flatMap((x) => [x.p, x.r]));
   const participants = S.stats.participants ?? sum(pCountries);
   const researchers = S.stats.researchers ?? sum(rCountries);
   const openStudies = S.stats.openStudies ?? S.studies.length;
@@ -351,13 +357,29 @@ export function Reach({ dark }) {
       <div className="mapbox">
         <div id="map" ref={box} />
       </div>
-      <h2 className="h2sm" style={{ marginTop: 22 }}>Participants by country</h2>
-      <div className="bars">
-        {list.slice(0, 8).map(([c, n]) => (
-          <div className="bar" key={c}>
-            <span>{c}</span>
-            <i style={{ width: `${Math.max(4, (n / max) * 100)}%` }} />
-            <span className="soft">{n}</span>
+      <h2 className="h2sm" style={{ marginTop: 22 }}>Participants and researchers by country</h2>
+      <div className="cmp-legend small">
+        <span>
+          <i className="dot dot-blue" aria-hidden="true" /> Participants
+        </span>
+        <span>
+          <i className="dot dot-amber" aria-hidden="true" /> Researchers
+        </span>
+      </div>
+      <div className="cmp" role="list">
+        {countries.map((x) => (
+          <div className="cmp-row" key={x.c} role="listitem">
+            <span className="cmp-label">{x.c}</span>
+            <div className="cmp-bars">
+              <div className="cmp-bar">
+                <i className="cmp-blue" style={{ width: `${(x.p / maxC) * 100}%` }} />
+                <span className="small">{plural(x.p, "participant", "participants")}</span>
+              </div>
+              <div className="cmp-bar">
+                <i className="cmp-amber" style={{ width: `${(x.r / maxC) * 100}%` }} />
+                <span className="small">{plural(x.r, "researcher", "researchers")}</span>
+              </div>
+            </div>
           </div>
         ))}
       </div>
@@ -443,8 +465,6 @@ export function MyApplications({ onWithdraw }) {
 /* ================= about ================= */
 // Edit these to change the About page. The photo is bundled into the page at build time.
 const CONTACT_EMAIL = SITE.contactEmail;
-import teamPhoto2 from "../data/team-2.jpg";
-
 // The team. Replace the placeholder names, roles and bios before launch.
 const FOUNDERS = [
   {
@@ -459,7 +479,7 @@ const FOUNDERS = [
     name: "Team member name", // ← placeholder
     role: "Role",
     based: "",
-    photo: teamPhoto2,
+    photo: "",
     bio: "A line about what they do at HumAIn Labs.",
     linkedin: "",
   },
@@ -515,7 +535,7 @@ export function About() {
             </p>
           </div>
           <div>
-            <span className="tnum warm">
+            <span className="tnum">
               <Icon.inst />
             </span>
             <h3>Give groups a home</h3>

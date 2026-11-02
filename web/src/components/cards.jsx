@@ -130,11 +130,16 @@ export function ResearcherCard({ researcher: r }) {
           <Avatar name={r.name} size={48} />
           <div style={{ minWidth: 0 }}>
             <h3>{r.name}</h3>
-            <ContactReveal handle={r.handle} email={r.email} />
+            <ContactReveal handle={r.handle} />
           </div>
         </div>
         <div className="badges" style={{ marginTop: 6 }}>
           {r.verified ? <VerifiedBadge v={r.verified} /> : <UnverifiedBadge />}
+          {r.idVerified && (
+            <span className="badge">
+              <Icon.check /> ID checked
+            </span>
+          )}
         </div>
         {r.position && (
           <div className="small" style={{ marginTop: 8 }}>
@@ -294,20 +299,15 @@ export function Toolbar({ page, filters, setFilters, defs, hint, toggle, count, 
   );
 }
 
-// Handle and email stay blurred until the person chooses to show them.
-export function ContactReveal({ handle, email }) {
+// The handle stays blurred until the person chooses to show it. Email addresses are not shown on the directory.
+export function ContactReveal({ handle }) {
   const [shown, setShown] = useState(false);
   return (
-    <>
-      <div className="handle">
-        <span className={"blur-text" + (shown ? " shown" : "")}>@{handle}</span>
-      </div>
-      <div className="small soft contact-line">
-        <span className={"blur-text" + (shown ? " shown" : "")}>{email}</span>
-        <button type="button" className="link small" onClick={() => setShown((x) => !x)} aria-pressed={shown}>
-          {shown ? "Hide" : "Show"}
-        </button>
-      </div>
-    </>
+    <div className="handle contact-line">
+      <span className={"blur-text" + (shown ? " shown" : "")}>@{handle}</span>
+      <button type="button" className="link small" onClick={() => setShown((x) => !x)} aria-pressed={shown}>
+        {shown ? "Hide" : "Show"}
+      </button>
+    </div>
   );
 }

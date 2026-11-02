@@ -98,7 +98,7 @@ async function publicData({ repo, now = Date.now() }) {
 // Researcher-only data: the directory, group pages and recruitment counts.
 async function network({ repo, principal }) {
   const me = await needResearcher(repo, principal);
-  const [researchers, groups, everyApplication] = await Promise.all([repo.all("researchers"), repo.all("groups"), repo.all("applications")]);
+  const [researchers, groups, everyApplication, participants, allStudies] = await Promise.all([repo.all("researchers"), repo.all("groups"), repo.all("applications"), repo.all("participants"), repo.all("studies")]);
   const applications = everyApplication.filter((a) => a.status !== "withdrawn");
   // Only aggregate counts leave the server; applicant details never do.
   const byCountry = {}, byStudy = {};
@@ -109,7 +109,18 @@ async function network({ repo, principal }) {
   }
   // A researcher's own studies, including any hidden from participants because they're not verified.
   const myStudies = (await repo.where("studies", "researcherId", me.id)).map((s) => ({ ...s, hidden: !me.verified }));
-  return ok({ researchers: researchers.map(publicResearcher), groups, myStudies, stats: { total: applications.length, byCountry, byStudy } });
+  const countBy = (list) => list.reduce((m, x) => { const c = x.country || "Unknown"; m[c] = (m[c] || 0) + 1; return m; }, {});
+  const rIds = new Map(researchers.map((r) => [r.id, r]));
+  const openStudies = allStudies.filter((s) => rIds.get(s.researcherId)?.verified && isOpen(s)).length;
+  return ok({
+    researchers: researchers.map(publicResearcher), groups, myStudies,
+    stats: {
+      total: applications.length, byCountry, byStudy,
+      participants: participants.length, participantsByCountry: countBy(participants),
+      researchers: researchers.length, researchersByCountry: countBy(researchers),
+      openStudies,
+    },
+  });
 }
 
 async function me({ repo, principal }) {

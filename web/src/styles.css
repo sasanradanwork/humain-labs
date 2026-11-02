@@ -592,8 +592,8 @@ header nav a[aria-current="page"]::after{transform:scaleX(1)}
 @media (max-width:820px){ header nav a::after{left:12px;right:12px} }
 @media (prefers-reduced-motion:reduce){ header nav a::after{transition:none} }
 .hlg-spin{cursor:default;transform-style:preserve-3d}
-.hlg-spin:hover{animation:hlg-coin .9s cubic-bezier(.3,.7,.4,1)}
-@keyframes hlg-coin{from{transform:rotateY(0)}to{transform:rotateY(360deg)}}
+.hlg-spin:hover{animation:hlg-coin 2.8s cubic-bezier(.12,.62,.2,1) 1 both}
+@keyframes hlg-coin{from{transform:rotateY(0)}to{transform:rotateY(1080deg)}}
 @media (prefers-reduced-motion:reduce){ .hlg-spin:hover{animation:none} }
 .headshot.initials{display:inline-flex;align-items:center;justify-content:center;background:var(--blue-tint);color:var(--blue);font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:600}
 .sponsor-tiers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
@@ -617,3 +617,19 @@ header nav a[aria-current="page"]::after{transform:scaleX(1)}
 .blur-text.shown{filter:none;user-select:auto}
 .contact-line{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 @media (prefers-reduced-motion:reduce){ .blur-text{transition:none} }
+
+/* Current page is shown by the animated underline only */
+header nav a[aria-current="page"]{border-bottom-color:transparent !important}
+.cmp-legend{display:flex;gap:18px;margin:10px 0 12px;color:var(--ink-soft)}
+.cmp-legend span{display:inline-flex;align-items:center;gap:6px}
+.cmp{display:grid;gap:12px}
+.cmp-row{display:grid;grid-template-columns:minmax(90px,150px) 1fr;gap:12px;align-items:center}
+.cmp-label{font-size:.92rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cmp-bars{display:grid;gap:4px;min-width:0}
+.cmp-bar{position:relative;height:22px;background:var(--paper-2);border-radius:6px;overflow:hidden;display:flex;align-items:center}
+.cmp-bar i{position:absolute;left:0;top:0;bottom:0;border-radius:6px;min-width:2px;transition:width .4s ease}
+.cmp-blue{background:var(--blue)}
+.cmp-amber{background:var(--amber)}
+.cmp-bar span{position:relative;padding-left:8px;white-space:nowrap}
+@media (max-width:560px){ .cmp-row{grid-template-columns:1fr} }
+@media (prefers-reduced-motion:reduce){ .cmp-bar i{transition:none} }
