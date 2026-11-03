@@ -591,10 +591,7 @@ header nav a:hover::after,header nav a:focus-visible::after{transform:scaleX(1)}
 header nav a[aria-current="page"]::after{transform:scaleX(1)}
 @media (max-width:820px){ header nav a::after{left:12px;right:12px} }
 @media (prefers-reduced-motion:reduce){ header nav a::after{transition:none} }
-.hlg-spin{cursor:default;transform-style:preserve-3d}
-.hlg-spin:hover{animation:hlg-coin 2.8s cubic-bezier(.12,.62,.2,1) 1 both}
-@keyframes hlg-coin{from{transform:rotateY(0)}to{transform:rotateY(1080deg)}}
-@media (prefers-reduced-motion:reduce){ .hlg-spin:hover{animation:none} }
+.hlg-spin{cursor:default}
 .headshot.initials{display:inline-flex;align-items:center;justify-content:center;background:var(--blue-tint);color:var(--blue);font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:600}
 .sponsor-tiers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
 @media (max-width:820px){ .sponsor-tiers{grid-template-columns:1fr} }
@@ -633,3 +630,17 @@ header nav a[aria-current="page"]{border-bottom-color:transparent !important}
 .cmp-bar span{position:relative;padding-left:8px;white-space:nowrap}
 @media (max-width:560px){ .cmp-row{grid-template-columns:1fr} }
 @media (prefers-reduced-motion:reduce){ .cmp-bar i{transition:none} }
+/* Split bars: participants grow left from the centre line, researchers grow right, on one scale */
+.split{display:grid;gap:16px}
+.split-item{display:grid;gap:6px}
+.split-name{text-align:center;font-size:.92rem}
+.split-line{display:grid;grid-template-columns:44px 1fr 44px;gap:10px;align-items:center}
+.split-num{font-variant-numeric:tabular-nums;font-weight:600;font-size:.9rem}
+.split-num.blue{color:var(--blue);text-align:right}
+.split-num.amber{color:var(--amber);text-align:left}
+.split-track{position:relative;height:18px;border-radius:999px;background:var(--paper-2);overflow:hidden}
+.split-track i{position:absolute;top:0;bottom:0;transition:width .5s ease}
+.split-left{right:50%;background:var(--blue);border-radius:999px 0 0 999px}
+.split-right{left:50%;background:var(--amber);border-radius:0 999px 999px 0}
+.split-axis{position:absolute;left:50%;top:0;bottom:0;width:2px;margin-left:-1px;background:var(--card)}
+@media (prefers-reduced-motion:reduce){ .split-track i{transition:none} }

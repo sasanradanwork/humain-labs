@@ -346,14 +346,6 @@ export function Reach({ dark }) {
           <span className="small soft">researchers</span>
         </div>
       </div>
-      <div className="map-legend small" aria-label="Map key">
-        <span>
-          <i className="dot dot-blue" aria-hidden="true" /> Participants
-        </span>
-        <span>
-          <i className="dot dot-amber" aria-hidden="true" /> Researchers
-        </span>
-      </div>
       <div className="mapbox">
         <div id="map" ref={box} />
       </div>
@@ -366,19 +358,18 @@ export function Reach({ dark }) {
           <i className="dot dot-amber" aria-hidden="true" /> Researchers
         </span>
       </div>
-      <div className="cmp" role="list">
+      <div className="split" role="list" aria-label="Participants and researchers by country">
         {countries.map((x) => (
-          <div className="cmp-row" key={x.c} role="listitem">
-            <span className="cmp-label">{x.c}</span>
-            <div className="cmp-bars">
-              <div className="cmp-bar">
-                <i className="cmp-blue" style={{ width: `${(x.p / maxC) * 100}%` }} />
-                <span className="small">{plural(x.p, "participant", "participants")}</span>
+          <div className="split-item" key={x.c} role="listitem" aria-label={`${x.c}: ${x.p} participants, ${x.r} researchers`}>
+            <div className="split-name">{x.c}</div>
+            <div className="split-line">
+              <span className="split-num blue">{x.p}</span>
+              <div className="split-track">
+                <i className="split-left" style={{ width: `${(x.p / maxC) * 50}%` }} />
+                <i className="split-right" style={{ width: `${(x.r / maxC) * 50}%` }} />
+                <b className="split-axis" aria-hidden="true" />
               </div>
-              <div className="cmp-bar">
-                <i className="cmp-amber" style={{ width: `${(x.r / maxC) * 100}%` }} />
-                <span className="small">{plural(x.r, "researcher", "researchers")}</span>
-              </div>
+              <span className="split-num amber">{x.r}</span>
             </div>
           </div>
         ))}
