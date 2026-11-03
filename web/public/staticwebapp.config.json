@@ -22,6 +22,12 @@
       ]
     },
     {
+      "route": "/api/identity/webhook",
+      "allowedRoles": [
+        "anonymous"
+      ]
+    },
+    {
       "route": "/api/*",
       "allowedRoles": [
         "authenticated"
