@@ -644,3 +644,27 @@ header nav a[aria-current="page"]{border-bottom-color:transparent !important}
 .split-right{left:50%;background:var(--amber);border-radius:0 999px 999px 0}
 .split-axis{position:absolute;left:50%;top:0;bottom:0;width:2px;margin-left:-1px;background:var(--card)}
 @media (prefers-reduced-motion:reduce){ .split-track i{transition:none} }
+
+/* ---- phone layout ---- */
+@media (max-width:640px){
+  /* inputs at 16px stop iPhones zooming in when a field is tapped */
+  input:not([type=checkbox]):not([type=radio]),select,textarea{font-size:16px !important}
+  /* touch-friendly buttons and links */
+  .btn{min-height:44px}
+  .link{min-height:32px;display:inline-flex;align-items:center}
+  .actions{flex-wrap:wrap;gap:10px}
+  .actions .btn{flex:1 1 auto;justify-content:center;text-align:center}
+  .intro{flex-direction:column;align-items:stretch}
+  .withbtn{flex-wrap:wrap}
+  .withbtn .btn{flex:1 1 auto}
+  .applying-as{flex-direction:column;align-items:flex-start}
+  .fsec{padding:16px}
+  .modal{padding:20px}
+  .modal .actions .btn{width:100%}
+  .stat b{font-size:1.9rem}
+  .map-legend,.cmp-legend{flex-wrap:wrap;gap:10px}
+  .split-line{grid-template-columns:32px 1fr 32px;gap:8px}
+  .split-num{font-size:.8rem}
+  /* wide tables scroll sideways inside the page rather than pushing it wider */
+  table{display:block;overflow-x:auto;max-width:100%;white-space:nowrap;-webkit-overflow-scrolling:touch}
+}

@@ -471,6 +471,7 @@ function azureBackend() {
   }
   const appCache = {};
   let publicStudies = [];
+  let publicGroups = [];
   const self = {
     kind: "azure",
     async init() {
@@ -484,7 +485,8 @@ function azureBackend() {
       publicStudies = d.studies;
       S.studies = publicStudies;
       // Guests and participants see only public group pages. Researchers' own list comes from refreshMe.
-      if (!AUTH.researcher) S.groups = d.groups || [];
+      publicGroups = d.groups || [];
+      if (!AUTH.researcher) S.groups = publicGroups;
       S.stats = { ...(d.reach || { total: 0, byCountry: {} }), byStudy: S.stats.byStudy || {} };
       Object.keys(appCache).forEach((k) => delete appCache[k]);
       S.appsVersion += 1;
@@ -505,7 +507,7 @@ function azureBackend() {
       } else {
         S.studies = publicStudies;
         S.researchers = [];
-        S.groups = [];
+        S.groups = publicGroups;
         S.myApps = AUTH.user ? await api("GET", "applications/mine").catch(() => []) : [];
       }
       notify();
