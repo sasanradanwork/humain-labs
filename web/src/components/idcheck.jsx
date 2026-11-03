@@ -42,3 +42,22 @@ export function IdCheckPanel({ returnTo }) {
     </div>
   );
 }
+
+// Shown after registering: the identity check is the next step, before the rest of the site opens.
+export function IdGate({ returnTo }) {
+  return (
+    <div className="wrap">
+      <div className="editor">
+        <h1 style={{ marginTop: 14 }}>Verify your identity to continue</h1>
+        <p className="soft lead">
+          Thanks for registering. The next step is a quick identity check, so everyone on HumAIn Labs knows the people they're dealing with are real. You'll
+          need a photo ID and a selfie. Stripe does the check, and the rest of the site opens once it's done.
+        </p>
+        <IdCheckPanel returnTo={returnTo} />
+        <p className="small soft" style={{ marginTop: 16 }}>
+          Until then you can still read the <a href="#/about">About</a> page and our <a href="#/privacy">privacy policy</a>.
+        </p>
+      </div>
+    </div>
+  );
+}

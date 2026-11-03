@@ -11,6 +11,7 @@ import { plural } from "./lib/util.js";
 import { SITE } from "./lib/site.js";
 import { Privacy, Terms } from "./pages/legal.jsx";
 import { ParticipantProfile } from "./pages/participant.jsx";
+import { IdGate } from "./components/idcheck.jsx";
 
 // Researchers and participants see different parts of the site.
 const NAV = {
@@ -271,6 +272,10 @@ export default function App() {
       default:
         body = null;
     }
+  // After registering, the identity check is the next step. Until it's passed, only the public, sign-in and details pages open.
+  const signedInAs = AUTH.researcher || AUTH.participant;
+  const idGated = !!AUTH.user && !!signedInAs && !signedInAs.idVerified && !["about", "terms", "privacy", "auth", "participant", "profile"].includes(route.page);
+  if (backend && idGated) body = <IdGate returnTo={location.hash || "#/dashboard"} />;
 
   return (
     <UIProvider value={ui}>
