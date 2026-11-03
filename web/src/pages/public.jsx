@@ -683,13 +683,9 @@ export function About() {
             <strong>General enquiries</strong>
             <span>{SITE.contactEmail}</span>
           </a>
-          <a className="contact-card" href={`mailto:${SITE.privacyEmail}`}>
-            <strong>Privacy and data requests</strong>
-            <span>{SITE.privacyEmail}</span>
-          </a>
-          <a className="contact-card" href={`mailto:${SITE.contactEmail}?subject=${encodeURIComponent("Report a study or profile")}`}>
+          <a className="contact-card" href={`mailto:${SITE.reportEmail}?subject=${encodeURIComponent("Report a study or profile")}`}>
             <strong>Report a study or profile</strong>
-            <span>{SITE.contactEmail}</span>
+            <span>{SITE.reportEmail}</span>
           </a>
         </div>
       </section>

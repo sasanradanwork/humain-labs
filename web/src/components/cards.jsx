@@ -226,7 +226,7 @@ export function GroupCard({ group: g }) {
             ))}
           </div>
           <span className="small soft">
-            {plural(mem.length, "member", "members")}, {plural(pubs, "publication", "publications")}
+            {plural(g.members ? mem.length : g.memberCount || 0, "member", "members")}, {plural(pubs, "publication", "publications")}
           </span>
         </div>
       </div>
