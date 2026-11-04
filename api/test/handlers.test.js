@@ -19,6 +19,7 @@ async function verifiedProfile(repo, id, over = {}) {
   await repo.upsert("researchers", { ...(await repo.get("researchers", r.json.id)), verified: { method: "institution-email", domain: "uni.ac.uk", at: "2026-09-01" }, idVerified: { at: "2026-09-02" } });
   return r.json;
 }
+const TL = () => ({ eligibilityStart: soon(12), eligibilityEnd: soon(14), experimentStart: soon(15), experimentEnd: soon(20), validationEnd: soon(22), endDate: soon(23) });
 const soon = (days = 10) => new Date(Date.now() + days * 86400000).toISOString().slice(0, 10);
 const participant = async (repo, id, over = {}) => {
   const r = await H.putParticipant({ repo, principal: user(id), body: { name: "Participant " + id, email: id + "@example.com", age: 30, country: "Kenya", ...over } });
@@ -112,7 +113,7 @@ test("groups: need a profile, members must be registered, owner always kept", as
 test("only verified researchers can post, and only their studies are shown to participants", async () => {
   const repo = fresh();
   await H.putProfile({ repo, principal: user("u1"), body: profile() });
-  const body = { title: "Survey", description: "15 min", criteria: "18+", closesAt: "2099-01-01" };
+  const body = { title: "Survey", description: "15 min", criteria: "18+", closesAt: "2099-01-01", ...TL() };
   assert.equal((await run(H.createStudy, { repo, principal: user("u1"), body })).status, 403);
   // An existing study whose researcher isn't verified is hidden and can't be applied to
   await repo.upsert("studies", { id: "sx", title: "Old", researcherId: (await H.me({ repo, principal: user("u1") })).json.researcher.id, postedAt: "2026-09-01" });
@@ -136,7 +137,7 @@ test("studies and applications: only the study owner sees applicants, one applic
   const repo = fresh();
   await verifiedProfile(repo, "u1");
   await participant(repo, "p1");
-  const s = await H.createStudy({ repo, principal: user("u1"), body: { title: "Phishing awareness", description: "20 min survey", criteria: "18+", format: "Online", closesAt: soon() } });
+  const s = await H.createStudy({ repo, principal: user("u1"), body: { title: "Phishing awareness", description: "20 min survey", criteria: "18+", format: "Online", closesAt: soon(), ...TL() } });
   assert.equal(s.status, 201);
   const app = { studyId: s.json.id, name: "P One", email: "p1@example.com", age: 30, country: "Kenya", consent: true };
   assert.equal((await run(H.apply, { repo, principal: user("p1"), body: { ...app, consent: false } })).status, 400);
@@ -158,15 +159,26 @@ test("researcher accounts can't apply to studies", async () => {
   assert.equal(r.status, 403);
 });
 
+test("studies need a full timeline in order", async () => {
+  const repo = fresh();
+  await verifiedProfile(repo, "u1");
+  const base = { title: "Survey", description: "15 min", criteria: "18+", closesAt: soon(3) };
+  const missing = { ...TL() }; delete missing.validationEnd;
+  assert.equal((await run(H.createStudy, { repo, principal: user("u1"), body: { ...base, ...missing } })).status, 400);
+  const backwards = { ...TL(), experimentEnd: soon(5) };
+  assert.equal((await run(H.createStudy, { repo, principal: user("u1"), body: { ...base, ...backwards } })).status, 400);
+  assert.equal((await run(H.createStudy, { repo, principal: user("u1"), body: { ...base, ...TL() } })).status, 201);
+});
+
 test("studies need a future closing date, and closed studies disappear", async () => {
   const repo = fresh();
   await verifiedProfile(repo, "u1");
   const base = { title: "Survey", description: "15 min", criteria: "18+" };
   assert.equal((await run(H.createStudy, { repo, principal: user("u1"), body: base })).status, 400);
-  assert.equal((await run(H.createStudy, { repo, principal: user("u1"), body: { ...base, closesAt: "2020-01-01" } })).status, 400);
-  const s = await run(H.createStudy, { repo, principal: user("u1"), body: { ...base, closesAt: soon(3) } });
+  assert.equal((await run(H.createStudy, { repo, principal: user("u1"), body: { ...base, closesAt: "2020-01-01", ...TL() } })).status, 400);
+  const s = await run(H.createStudy, { repo, principal: user("u1"), body: { ...base, closesAt: soon(3), ...TL() } });
   assert.equal(s.status, 201);
-  await repo.upsert("studies", { ...s.json, closesAt: "2020-01-01" });
+  await repo.upsert("studies", { ...s.json, closesAt: "2020-01-01", ...TL() });
   assert.ok(!(await H.publicData({ repo })).json.studies.some((x) => x.id === s.json.id));
   assert.equal((await run(H.apply, { repo, principal: user("p1"), body: { studyId: s.json.id, name: "A", email: "a@example.com", age: 30, country: "United Kingdom", consent: true } })).status, 410);
 });
@@ -283,7 +295,7 @@ test("publications store the author names and the Harvard string; at least one a
 test("participants set up a profile once, and every application uses it", async () => {
   const repo = fresh();
   await verifiedProfile(repo, "u1");
-  const s = await H.createStudy({ repo, principal: user("u1"), body: { title: "Survey", description: "15 min", criteria: "18+", closesAt: soon(10) } });
+  const s = await H.createStudy({ repo, principal: user("u1"), body: { title: "Survey", description: "15 min", criteria: "18+", closesAt: soon(10), ...TL() } });
   assert.equal((await run(H.apply, { repo, principal: user("p1"), body: applyBody(s.json.id) })).status, 412);
   const created = await participant(repo, "p1", { name: "Tunde Bakare", email: "tunde@example.com", age: 29, country: "Nigeria" });
   assert.equal(created.status, 201);
@@ -306,7 +318,7 @@ test("participants can withdraw up to the day before the deadline, and it is rec
   await participant(repo, "p1");
   await participant(repo, "p2");
   const closes = soon(5);
-  const s = await H.createStudy({ repo, principal: user("u1"), body: { title: "Survey", description: "15 min", criteria: "18+", closesAt: closes } });
+  const s = await H.createStudy({ repo, principal: user("u1"), body: { title: "Survey", description: "15 min", criteria: "18+", closesAt: closes, ...TL() } });
   const a = (await run(H.apply, { repo, principal: user("p1"), body: applyBody(s.json.id) })).json;
   assert.equal((await run(H.withdrawApplication, { repo, principal: user("p2"), params: { id: a.id } })).status, 404);
   const dayBefore = Date.parse(closes + "T09:00:00Z") - 86400000;
@@ -326,7 +338,7 @@ test("researchers rate participants once a study has closed; other researchers s
   await verifiedProfile(repo, "u2");
   await participant(repo, "p1");
   const closes = soon(3);
-  const mine = await H.createStudy({ repo, principal: user("u1"), body: { title: "Survey", description: "15 min", criteria: "18+", closesAt: closes } });
+  const mine = await H.createStudy({ repo, principal: user("u1"), body: { title: "Survey", description: "15 min", criteria: "18+", closesAt: closes, ...TL() } });
   const app = (await run(H.apply, { repo, principal: user("p1"), body: applyBody(mine.json.id) })).json;
   const rate = (principal, body, now) => run(H.rateApplication, { repo, principal, params: { id: app.id }, body, now });
   const afterClose = Date.parse(closes + "T12:00:00Z") + 86400000;
@@ -338,7 +350,7 @@ test("researchers rate participants once a study has closed; other researchers s
   assert.equal(rows[0].rating.stars, 4);
   assert.equal(rows[0].rating.comment, "Great.");
   // Another researcher sees the participant's score and count, never the comment
-  const other = await H.createStudy({ repo, principal: user("u2"), body: { title: "Other", description: "d", criteria: "c", closesAt: soon(20) } });
+  const other = await H.createStudy({ repo, principal: user("u2"), body: { title: "Other", description: "d", criteria: "c", closesAt: soon(20), ...TL() } });
   await run(H.apply, { repo, principal: user("p1"), body: applyBody(other.json.id) });
   const theirs = (await run(H.studyApplicants, { repo, principal: user("u2"), params: { id: other.json.id } })).json;
   assert.deepEqual(theirs[0].ratingSummary, { count: 1, average: 4 });
@@ -364,7 +376,7 @@ test("participants must confirm their email before applying, and a changed addre
   const repo = fresh(); const sent = [];
   const mailer = { send: async (m) => sent.push(m) };
   await verifiedProfile(repo, "u1");
-  const s = await H.createStudy({ repo, principal: user("u1"), body: { title: "Survey", description: "15 min", criteria: "18+", closesAt: soon(10) } });
+  const s = await H.createStudy({ repo, principal: user("u1"), body: { title: "Survey", description: "15 min", criteria: "18+", closesAt: soon(10), ...TL() } });
   await H.putParticipant({ repo, principal: user("p1"), body: { name: "Pat", email: "pat@example.com", age: 30, country: "Kenya" } });
   assert.equal((await run(H.apply, { repo, principal: user("p1"), body: applyBody(s.json.id) })).status, 403);
   assert.equal((await run(H.participantEmailStart, { repo, principal: user("p1"), mailer, now: 1000 })).status, 200);
@@ -377,7 +389,7 @@ test("participants must confirm their email before applying, and a changed addre
   // Changing the address unconfirms it
   await H.putParticipant({ repo, principal: user("p1"), body: { name: "Pat", email: "new@example.com", age: 30, country: "Kenya" } });
   assert.equal((await H.me({ repo, principal: user("p1") })).json.participant.emailVerified, undefined);
-  const other = await H.createStudy({ repo, principal: user("u1"), body: { title: "Second", description: "d", criteria: "c", closesAt: soon(12) } });
+  const other = await H.createStudy({ repo, principal: user("u1"), body: { title: "Second", description: "d", criteria: "c", closesAt: soon(12), ...TL() } });
   assert.equal((await run(H.apply, { repo, principal: user("p1"), body: applyBody(other.json.id) })).status, 403);
 });
 
@@ -385,7 +397,7 @@ test("participants can delete their details, which removes their applications", 
   const repo = fresh();
   await verifiedProfile(repo, "u1");
   await participant(repo, "p1");
-  const s = await H.createStudy({ repo, principal: user("u1"), body: { title: "Survey", description: "15 min", criteria: "18+", closesAt: soon(10) } });
+  const s = await H.createStudy({ repo, principal: user("u1"), body: { title: "Survey", description: "15 min", criteria: "18+", closesAt: soon(10), ...TL() } });
   await run(H.apply, { repo, principal: user("p1"), body: applyBody(s.json.id) });
   assert.equal((await H.deleteParticipant({ repo, principal: user("p1") })).json.deleted, true);
   assert.equal((await H.me({ repo, principal: user("p1") })).json.participant, null);
@@ -395,7 +407,7 @@ test("participants can delete their details, which removes their applications", 
 test("researchers can delete their profile once their groups are gone; their studies go with it", async () => {
   const repo = fresh();
   await verifiedProfile(repo, "u1");
-  const s = await H.createStudy({ repo, principal: user("u1"), body: { title: "Survey", description: "15 min", criteria: "18+", closesAt: soon(10) } });
+  const s = await H.createStudy({ repo, principal: user("u1"), body: { title: "Survey", description: "15 min", criteria: "18+", closesAt: soon(10), ...TL() } });
   await participant(repo, "p1");
   await run(H.apply, { repo, principal: user("p1"), body: applyBody(s.json.id) });
   const g = await run(H.createGroup, { repo, principal: user("u1"), body: { name: "Lab", institution: "HumAIn", country: "United Kingdom", field: "Computer science", email: "lab@example.com", summary: "s", about: "a" } });
@@ -415,7 +427,7 @@ test("researchers need an ID check as well as institution email before posting o
   await H.putProfile({ repo, principal: user("u2"), body: profile({ handle: "user-two" }) });
   const r = await repo.where("researchers", "userId", "u2");
   await repo.upsert("researchers", { ...r[0], verified: { method: "institution-email", domain: "uni.ac.uk", at: "2026-09-01" } });
-  const study = { title: "Survey", description: "15 min", criteria: "18+", closesAt: soon(10) };
+  const study = { title: "Survey", description: "15 min", criteria: "18+", closesAt: soon(10), ...TL() };
   assert.equal((await run(H.createStudy, { repo, principal: user("u2"), body: study })).status, 403);
   await repo.upsert("researchers", { ...(await repo.where("researchers", "userId", "u2"))[0], idVerified: { at: "2026-09-02" } });
   assert.equal((await run(H.createStudy, { repo, principal: user("u2"), body: study })).status, 201);
@@ -463,7 +475,7 @@ test("content screening: severe text is refused with a reason, mild text is post
   const r = await repo.where("researchers", "userId", "u4");
   await repo.upsert("researchers", { ...r[0], idVerified: { at: "2026-09-02" } });
   const screen = async (text) => text.includes("BANNED") ? [{ category: "Hate", severity: 6 }] : text.includes("rough") ? [{ category: "Violence", severity: 2 }] : [];
-  const base = { description: "15 min", criteria: "18+", closesAt: soon(10) };
+  const base = { description: "15 min", criteria: "18+", closesAt: soon(10), ...TL() };
   const blocked = await run(H.createStudy, { repo, principal: user("u4"), body: { ...base, title: "BANNED title" }, screen });
   assert.equal(blocked.status, 422);
   assert.match(blocked.json.error, /Study title contains hateful content/);

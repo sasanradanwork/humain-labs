@@ -238,7 +238,7 @@ function HowItWorks() {
     <section className="home-sec how" aria-labelledby="how-title">
       <h2 className="h2big" id="how-title">How it works</h2>
       <p className="soft" style={{ maxWidth: "66ch", marginTop: 8 }}>
-        HumAIn Labs sits between researchers and participants, the way a ride-hailing app sits between riders and drivers. Researchers post the study and fund
+        HumAIn Labs sits between researchers and participants. Researchers post the study and fund
         it, and we hold the money until the work is done.
       </p>
       <div className="how-lanes" style={{ marginTop: 20 }}>

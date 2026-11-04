@@ -140,6 +140,10 @@ function docBackend(store, kind) {
       if (!me.verified || !me.idVerified) throw new UserError("Verify your institution email and identity before posting or changing a study.");
       if (!s.closesAt) throw new UserError("Closing date is required.");
       if (s.closesAt < today()) throw new UserError("Closing date can't be in the past.");
+      const TL = [["eligibilityStart", "Eligibility window opens"], ["eligibilityEnd", "Eligibility window closes"], ["experimentStart", "Experiment starts"], ["experimentEnd", "Experiment ends"], ["validationEnd", "Validation complete by"], ["endDate", "Study ends on"]];
+      for (const [k, label] of TL) if (!s[k]) throw new UserError(`${label} is required.`);
+      for (let i = 1; i < TL.length; i++) if (s[TL[i][0]] < s[TL[i - 1][0]]) throw new UserError(`${TL[i][1]} can't be before ${TL[i - 1][1].toLowerCase()}.`);
+      if (s.endDate < today()) throw new UserError("The study end date can't be in the past.");
       if (s.groupId && !S.groups.some((g) => g.id === s.groupId && g.members.some((m) => m.researcherId === me.id)))
         throw new UserError("You can only link a study to a group you're a member of.");
       const base = { ...s, researcherId: me.id, researcherName: me.name, researcherEmail: me.email, institution: me.institution };

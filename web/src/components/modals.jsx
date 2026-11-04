@@ -180,6 +180,33 @@ export function StudyModal({ existing, onClose, onSaved }) {
               <input name="closesAt" type="date" required min={today()} max={maxDate} defaultValue={s.closesAt || ""} />
             </Field>
           </div>
+          <fieldset className="tl-form">
+            <legend>Study timeline</legend>
+            <div className="row2">
+              <Field label="Eligibility window opens" required>
+                <input name="eligibilityStart" type="date" required min={today()} max={maxDate} defaultValue={s.eligibilityStart || ""} />
+              </Field>
+              <Field label="Eligibility window closes" required>
+                <input name="eligibilityEnd" type="date" required min={today()} max={maxDate} defaultValue={s.eligibilityEnd || ""} />
+              </Field>
+            </div>
+            <div className="row2">
+              <Field label="Experiment starts" required>
+                <input name="experimentStart" type="date" required min={today()} max={maxDate} defaultValue={s.experimentStart || ""} />
+              </Field>
+              <Field label="Experiment ends" required>
+                <input name="experimentEnd" type="date" required min={today()} max={maxDate} defaultValue={s.experimentEnd || ""} />
+              </Field>
+            </div>
+            <div className="row2">
+              <Field label="Validation complete by" required>
+                <input name="validationEnd" type="date" required min={today()} max={maxDate} defaultValue={s.validationEnd || ""} />
+              </Field>
+              <Field label="Study ends on" required>
+                <input name="endDate" type="date" required min={today()} max={maxDate} defaultValue={s.endDate || ""} />
+              </Field>
+            </div>
+          </fieldset>
           <Field label="What's involved" required>
             <textarea name="description" rows="3" required maxLength="2000" defaultValue={s.description || ""} />
           </Field>

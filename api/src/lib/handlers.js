@@ -275,8 +275,33 @@ async function deleteGroup({ repo, principal, params }) {
 }
 
 /* ---------- studies ---------- */
+// The study timeline, in the order it happens. Each date must not come before the one before it.
+const TIMELINE = [
+  ["eligibilityStart", "Eligibility window opens"],
+  ["eligibilityEnd", "Eligibility window closes"],
+  ["experimentStart", "Experiment starts"],
+  ["experimentEnd", "Experiment ends"],
+  ["validationEnd", "Validation complete by"],
+  ["endDate", "Study ends on"],
+];
+function timelineOf(b) {
+  const out = {};
+  for (const [k, label] of TIMELINE) {
+    out[k] = V.date(b[k], label);
+    if (!out[k]) throw bad(`${label} is required.`);
+  }
+  for (let i = 1; i < TIMELINE.length; i++) {
+    const [k, label] = TIMELINE[i];
+    const [pk, plabel] = TIMELINE[i - 1];
+    if (out[k] < out[pk]) throw bad(`${label} can't be before ${plabel.toLowerCase()}.`);
+  }
+  if (out.endDate < today()) throw bad("The study end date can't be in the past.");
+  return out;
+}
+
 async function normalizeStudy(repo, me, b) {
   b = b || {};
+  const timeline = timelineOf(b);
   const s = {
     title: V.str(b.title, "Study title", { required: true, max: 160 }),
     field: V.choice(b.field, "Field", FIELDS) || me.field,
@@ -288,6 +313,7 @@ async function normalizeStudy(repo, me, b) {
     criteria: V.str(b.criteria, "Who can take part", { required: true, max: 400 }),
     groupId: V.str(b.groupId, "Group", { max: 64 }),
     closesAt: V.date(b.closesAt, "Closing date"),
+    ...timeline,
   };
   if (!s.closesAt) throw bad("Closing date is required.");
   const max = new Date(); max.setFullYear(max.getFullYear() + 1);

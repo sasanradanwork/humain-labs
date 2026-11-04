@@ -36,6 +36,43 @@ export function StudyAction({ study, full = true, onApply, solid = false }) {
   );
 }
 
+// Study timeline: four milestones, each selectable to show its dates.
+const TL_STEPS = [
+  { label: "Eligibility window", from: "eligibilityStart", to: "eligibilityEnd", c: "var(--blue)", tint: "var(--blue-tint)" },
+  { label: "Experiment period", from: "experimentStart", to: "experimentEnd", c: "var(--t1f)", tint: "var(--t1b)" },
+  { label: "Validation", to: "validationEnd", c: "var(--green)", tint: "var(--green-tint)" },
+  { label: "End date", to: "endDate", c: "var(--amber)", tint: "var(--amber-tint)" },
+];
+const fmtTL = (d) => (d ? new Date(d + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : "Not set");
+
+export function StudyTimeline({ study: s }) {
+  const [active, setActive] = useState(0);
+  if (!TL_STEPS.some((st) => s[st.to])) return <p className="small soft tl-empty">Dates not set yet</p>;
+  const st = TL_STEPS[active];
+  const range = st.from ? `${fmtTL(s[st.from])} to ${fmtTL(s[st.to])}` : fmtTL(s[st.to]);
+  return (
+    <div className="tl">
+      <ol className="tl-track">
+        {TL_STEPS.map((x, i) => (
+          <li key={x.label}>
+            <button
+              type="button"
+              className="tl-dot"
+              aria-pressed={i === active}
+              style={{ "--c": x.c, "--tint": x.tint }}
+              onClick={() => setActive(i)}
+            >
+              <span className="tl-mark" aria-hidden="true">{i + 1}</span>
+              <span className="tl-label">{x.label}</span>
+            </button>
+          </li>
+        ))}
+      </ol>
+      <p className="tl-detail small"><strong>{st.label}:</strong> {range}</p>
+    </div>
+  );
+}
+
 export function StudyCard({ study: s, onApply }) {
   const v = studyVerified(s);
   const gName = studyGroupName(s);
@@ -87,6 +124,7 @@ export function StudyCard({ study: s, onApply }) {
             </>
           )}
         </dl>
+        <StudyTimeline study={s} />
         <p className="small grow" style={{ marginTop: 6 }}>
           {s.description}
         </p>
