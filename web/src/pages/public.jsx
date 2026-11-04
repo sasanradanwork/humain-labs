@@ -170,6 +170,69 @@ const RESEARCHER_STEPS = [
   ["Run the study", "Give confirmed participants the details, then complete the study with them."],
 ];
 
+// The money flow, one step at a time. Each step can be selected to read what happens there.
+const FLOW_STEPS = [
+  {
+    t: "Researcher funds the study",
+    d: "The researcher pays the study budget to HumAIn Labs before the study opens.",
+    c: "var(--blue)", tint: "var(--blue-tint)",
+    icon: <><rect x="3" y="6" width="18" height="13" rx="2" /><path d="M3 10h18M7 15h3" /></>,
+  },
+  {
+    t: "We hold the funds",
+    d: "The money stays with us until the study is complete. It is not released early.",
+    c: "var(--t1f)", tint: "var(--t1b)",
+    icon: <><rect x="5" y="10" width="14" height="10" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /></>,
+  },
+  {
+    t: "Participants are paid",
+    d: "Each participant is paid their reward once they complete the study, whatever rating they receive.",
+    c: "var(--green)", tint: "var(--green-tint)",
+    icon: <path d="M5 12.5l4.5 4.5L19 7.5" />,
+  },
+  {
+    t: "Platform fee kept",
+    d: "HumAIn Labs keeps a fee from each study to run the platform.",
+    c: "var(--amber)", tint: "var(--amber-tint)",
+    icon: <><path d="M6 18L18 6" /><circle cx="7.5" cy="7.5" r="1.8" /><circle cx="16.5" cy="16.5" r="1.8" /></>,
+  },
+];
+
+function MoneyFlow() {
+  const [active, setActive] = useState(0);
+  return (
+    <ol className="flow-v" aria-label="How the money moves">
+      {FLOW_STEPS.map((step, i) => {
+        const open = active === i;
+        return (
+          <li key={step.t} className="flow-step">
+            <button
+              type="button"
+              className="flow-btn"
+              style={{ "--c": step.c, "--tint": step.tint }}
+              aria-expanded={open}
+              aria-controls={`flow-panel-${i}`}
+              onClick={() => setActive(i)}
+            >
+              <span className="flow-ico">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  {step.icon}
+                </svg>
+              </span>
+              <span>
+                <span className="small soft">Step {i + 1}</span>
+                <span className="flow-title" style={{ display: "block" }}>{step.t}</span>
+              </span>
+              <span className="flow-chev" aria-hidden="true">▾</span>
+            </button>
+            {open && <p className="flow-panel" id={`flow-panel-${i}`}>{step.d}</p>}
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
 function HowItWorks() {
   return (
     <section className="home-sec how" aria-labelledby="how-title">
@@ -214,32 +277,7 @@ function HowItWorks() {
         <p className="small soft" style={{ marginTop: 6 }}>
           The researcher funds the study up front. We hold the money and pay each participant once they complete it.
         </p>
-        <div className="flow" aria-label="Researcher funds the study, HumAIn Labs holds the funds, completed participants are paid, and HumAIn Labs keeps a platform fee">
-          <div className="flow-box">
-            <span className="small soft">Step 1</span>
-            <b>Researcher</b>
-            <span className="small soft">funds the study budget</span>
-          </div>
-          <div className="flow-arrow" aria-hidden="true">→</div>
-          <div className="flow-box">
-            <span className="small soft">Step 2</span>
-            <b>HumAIn Labs</b>
-            <span className="small soft">holds the funds until the study is complete</span>
-          </div>
-          <div className="flow-arrow" aria-hidden="true">→</div>
-          <div className="flow-split">
-            <div className="flow-box">
-              <span className="small soft">Step 3</span>
-              <b>Participants</b>
-              <span className="small soft">each paid their reward on completion</span>
-            </div>
-            <div className="flow-box">
-              <span className="small soft">Platform fee</span>
-              <b>HumAIn Labs</b>
-              <span className="small soft">retained for running the platform</span>
-            </div>
-          </div>
-        </div>
+        <MoneyFlow />
         <div className="rating-note">
           <Icon.check />
           <p className="small soft" style={{ margin: 0 }}>

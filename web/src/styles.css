@@ -669,12 +669,11 @@ header nav a[aria-current="page"]{border-bottom-color:transparent !important}
   table{display:block;overflow-x:auto;max-width:100%;white-space:nowrap;-webkit-overflow-scrolling:touch}
 }
 
-/* Contact cards fill the container width */
-.contact-grid{grid-template-columns:1fr}
+/* Contact cards fill their column */
 .contact-card{width:100%}
 
 /* Menu button is a square */
-.menu-btn{width:44px;height:44px;min-width:44px;padding:0;aspect-ratio:1/1;display:inline-flex;align-items:center;justify-content:center}
+.menu-btn{width:44px;height:44px;min-width:44px;padding:0;aspect-ratio:1/1;align-items:center;justify-content:center}
 
 /* Split bars: one full-width bar per country, split by each side's share */
 .split-left{left:0;right:auto;border-radius:999px 0 0 999px}
@@ -702,6 +701,27 @@ header nav a[aria-current="page"]{border-bottom-color:transparent !important}
 }
 
 /* Coin: a flat coin turning, drawn with a 2D transform so every browser shows it */
-.hlg-wrap{display:inline-block;vertical-align:middle;will-change:transform}
+.hlg-wrap{display:inline-block;flex:none;vertical-align:middle;will-change:transform}
 /* Underline also shows on tap and keyboard focus, which touch browsers do not report as :hover */
 header nav a:active::after,header nav a:focus::after{transform:scaleX(1)}
+
+/* The header and its signed-in block keep the light colours in both themes */
+header,header nav,.menu-extra{--paper:#FFFFFF;--paper-2:#F4F6FC;--card:#FFFFFF;--ink:#101828;--ink-soft:#5B6475;--line:#DDE1EC;--blue:#1C39BB;--blue-tint:#E9EBFA;--on-blue:#FFFFFF;--green:#1E8A4C;--green-tint:#E3F4EA;--amber:#B06A00;--amber-tint:#FCF0DC;--logo-ink:#1B2447;--logo-acc:#1C39BB;--logo-bg:#FFFFFF;--ok-bg:#E3F2EA;--ok-ink:#146C43}
+header .avatar{color:#FFFFFF}
+
+/* Money flow: a vertical, selectable sequence with coloured icons */
+.flow-v{list-style:none;padding:0;margin:18px 0 0;display:grid;gap:12px}
+.flow-step{position:relative}
+.flow-step:not(:last-child)::after{content:"";position:absolute;left:35px;top:74px;bottom:-12px;width:2px;background:var(--line)}
+.flow-btn{width:100%;display:grid;grid-template-columns:48px 1fr auto;gap:14px;align-items:center;text-align:left;padding:12px;min-height:44px;border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);cursor:pointer;font:inherit}
+.flow-btn:hover{border-color:var(--c)}
+.flow-btn[aria-expanded="true"]{border-color:var(--c);box-shadow:0 0 0 3px var(--tint)}
+.flow-btn:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.flow-ico{width:48px;height:48px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;background:var(--tint);color:var(--c);transition:transform .25s ease}
+.flow-btn:hover .flow-ico,.flow-btn[aria-expanded="true"] .flow-ico{transform:scale(1.08)}
+.flow-title{font-weight:600}
+.flow-chev{color:var(--ink-soft);transition:transform .25s ease}
+.flow-btn[aria-expanded="true"] .flow-chev{transform:rotate(180deg)}
+.flow-panel{margin:8px 0 0 74px;padding-right:8px;color:var(--ink-soft);font-size:.92rem;line-height:1.5}
+@media (max-width:560px){ .flow-panel{margin-left:0} }
+@media (prefers-reduced-motion:reduce){ .flow-ico,.flow-chev{transition:none} }
