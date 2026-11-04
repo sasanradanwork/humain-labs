@@ -725,9 +725,14 @@ header .avatar{color:#FFFFFF}
 @media (max-width:560px){ .flow-panel{margin-left:0} }
 @media (prefers-reduced-motion:reduce){ .flow-ico,.flow-chev{transition:none} }
 
-/* The header and its menu keep the light palette in both themes */
-header,header nav,.menu-extra{--paper:#FFFFFF;--paper-2:#F4F6FC;--card:#FFFFFF;--ink:#101828;--ink-soft:#5B6475;--line:#DDE1EC;--blue:#1C39BB;--blue-deep:#101F6E;--blue-tint:#E9EBFA;--on-blue:#FFFFFF;--green:#1E8A4C;--green-tint:#E3F4EA;--amber:#B06A00;--amber-tint:#FCF0DC;--gold:#B8860B;--gold-tint:#FBF3D9;--silver:#6B7280;--silver-tint:#EEF0F4;--map-land:#DCE0EA;--map-hit:#AEB9EE;--overlay:rgba(16,24,40,.5);--t0b:#E9EBFA;--t0f:#1C39BB;--t1b:#E3F0EF;--t1f:#0F6E6E;--t2b:#EEEAF8;--t2f:#5B3FA8;--t3b:#E6ECF6;--t3f:#23408E;--t4b:#ECEEF2;--t4f:#3D4A5C;--serif:'Source Serif 4', Georgia, 'Times New Roman', serif;--sans:'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif}
-
+/* The header keeps the homepage navy on every page. Its menu, signed-in block and buttons use fixed colours, so the theme never changes them. */
+header,header nav,.menu-extra{--paper:#1B2447;--paper-2:#222C54;--card:#1B2447;--ink:#E7EAF3;--ink-soft:#B4BCE0;--line:#2A3566;--blue:#93A5FF;--blue-tint:#1D2648;--blue-deep:#BCC7FF;--on-blue:#0E1322;--green:#4ADE80;--green-tint:#14301F;--amber:#F5B041;--amber-tint:#3A2A10;--logo-ink:#E7EAF3;--logo-acc:#93A5FF;--logo-bg:#1B2447;--ok-bg:#12301F;--ok-ink:#6FD19B;--navy:#1B2447}
+header{background:#1B2447;border-bottom-color:rgba(147,165,255,.18)}
+header nav{background:#1B2447;border-color:rgba(147,165,255,.18)}
+header nav a{color:#B4BCE0}
+header nav a:hover{color:#E7EAF3}
+header nav a[aria-current="page"]{color:#E7EAF3}
+header nav a::after{background:#FFFFFF}
 /* Study timeline on cards */
 .tl{margin-top:12px}
 .tl-track{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));list-style:none;margin:0;padding:0}
@@ -745,3 +750,9 @@ header,header nav,.menu-extra{--paper:#FFFFFF;--paper-2:#F4F6FC;--card:#FFFFFF;-
 /* Timeline dates on the study form */
 .tl-form{border:1px solid var(--line);border-radius:12px;padding:12px 14px 4px;margin:14px 0 0;min-width:0}
 .tl-form legend{font-weight:600;padding:0 6px}
+
+/* Applicant stages: five stages, and the mobile money-flow connector stays out of the expanded text */
+.tl-track.five{grid-template-columns:repeat(5,minmax(0,1fr))}
+.tl-track.five::before{left:10%;right:10%}
+.tl-track.five .tl-label{font-size:.68rem}
+@media (max-width:560px){ .flow-step:not(:last-child)::after{display:none} }

@@ -60,6 +60,8 @@ route("participantEmailConfirm", ["POST"], "participant/email/confirm", H.partic
 route("profileDelete", ["DELETE"], "profile", H.deleteResearcherProfile);
 route("applicationsWithdraw", ["POST"], "applications/{id}/withdraw", H.withdrawApplication);
 route("applicationsRate", ["PUT"], "applications/{id}/rating", H.rateApplication);
+route("applicationsAdvance", ["POST"], "applications/{id}/advance", H.advanceApplication);
+route("applicationsReject", ["POST"], "applications/{id}/reject", H.rejectApplication);
 route("identityStart", ["POST"], "identity/start", H.idStart);
 
 // Stripe calls this when an ID check finishes. It must read the raw body to check the signature, so it skips route().

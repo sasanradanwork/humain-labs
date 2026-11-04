@@ -1,7 +1,7 @@
 // The researcher side: directory, group pages, the group editor and the researcher area.
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Avatar, Icon, LinkedInLink, Radar, ScholarLink, Cover, DeadlinePill, VerifiedBadge, UnverifiedBadge, sortByName } from "../components/ui.jsx";
-import { GroupCard, ResearcherCard, Toolbar, groupHref, lookingFor } from "../components/cards.jsx";
+import { GroupCard, ResearcherCard, Toolbar, groupHref, lookingFor, APP_STAGES } from "../components/cards.jsx";
 import { AUTH, S, appCount, byId, canEditGroup, groupStudies, groupsOf, memberResearchers, role } from "../lib/store.js";
 import { fmtDate, gidKey, isOpen, makeHandle, matches, normCountry, OPENING_TYPES, plural, ROLE_SUGGESTIONS, sortName, uniq } from "../lib/util.js";
 import { Field, Form, SubmitButton, navigate, replaceRoute, useUI } from "../lib/ui.jsx";
@@ -508,6 +508,21 @@ export function Dashboard({ route, onNewStudy, onEditStudy, onDeleteStudy, onVer
   const dashStudyObj = byId("studies", dashStudy);
   // Participants can be rated once the study has closed.
   const dashClosed = !!dashStudyObj && !isOpen(dashStudyObj);
+  // Approve moves the participant to the next stage. Not eligible withdraws them.
+  async function moveApplicant(a, action) {
+    try {
+      if (action === "advance") {
+        await backend.advance(a.id);
+        toast(`${a.name} moved to ${APP_STAGES[Math.min((a.stage ?? 0) + 1, APP_STAGES.length - 1)]}`);
+      } else {
+        if (!window.confirm(`Withdraw ${a.name} as not eligible? They won't go on to the study.`)) return;
+        await backend.reject(a.id);
+        toast(`${a.name} was withdrawn as not eligible`);
+      }
+    } catch (e) {
+      toast(e.message);
+    }
+  }
   async function exportCSV() {
     const s = byId("studies", dashStudy);
     if (!s) return;
@@ -741,6 +756,7 @@ export function Dashboard({ route, onNewStudy, onEditStudy, onDeleteStudy, onVer
                         <th>Applied</th>
                         <th>Track record</th>
                         <th>Status</th>
+                        <th>Progress</th>
                         <th>Rating</th>
                       </tr>
                     </thead>
@@ -762,7 +778,25 @@ export function Dashboard({ route, onNewStudy, onEditStudy, onDeleteStudy, onVer
                               )}
                             </td>
                             <td style={{ whiteSpace: "nowrap" }}>
-                              {a.status === "withdrawn" ? <span className="unverified">Withdrew {fmtDate(a.withdrawnAt)}</span> : "Active"}
+                              {a.status === "withdrawn" ? (
+                                <span className="unverified">
+                                  {a.withdrawReason === "eligibility" ? "Not eligible" : "Withdrew"} {fmtDate(a.withdrawnAt)}
+                                </span>
+                              ) : (
+                                APP_STAGES[a.stage ?? 0]
+                              )}
+                            </td>
+                            <td style={{ whiteSpace: "nowrap" }}>
+                              {a.status !== "withdrawn" && (a.stage ?? 0) < APP_STAGES.length - 1 && (
+                                <button className="link small" onClick={() => moveApplicant(a, "advance")}>
+                                  Approve: {APP_STAGES[(a.stage ?? 0) + 1]}
+                                </button>
+                              )}
+                              {a.status !== "withdrawn" && (a.stage ?? 0) <= 1 && (
+                                <button className="link small" style={{ marginLeft: 12 }} onClick={() => moveApplicant(a, "reject")}>
+                                  Not eligible
+                                </button>
+                              )}
                             </td>
                             <td style={{ whiteSpace: "nowrap" }}>
                               {dashClosed && a.status !== "withdrawn" && onRate && (
@@ -775,7 +809,7 @@ export function Dashboard({ route, onNewStudy, onEditStudy, onDeleteStudy, onVer
                         ))
                       ) : (
                         <tr>
-                          <td colSpan="9" className="soft" style={{ textAlign: "center", padding: 36 }}>
+                          <td colSpan="10" className="soft" style={{ textAlign: "center", padding: 36 }}>
                             No applications yet.
                           </td>
                         </tr>

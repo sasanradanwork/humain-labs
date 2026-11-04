@@ -332,6 +332,29 @@ test("participants can withdraw up to the day before the deadline, and it is rec
   assert.equal((await run(H.withdrawApplication, { repo, principal: user("p2"), params: { id: b.id }, now: Date.parse(closes + "T09:00:00Z") })).status, 410);
 });
 
+test("researchers move applicants through the stages, or withdraw them at eligibility", async () => {
+  const repo = fresh();
+  await verifiedProfile(repo, "u1");
+  await participant(repo, "p1");
+  await participant(repo, "p2");
+  const s = await H.createStudy({ repo, principal: user("u1"), body: { title: "Survey", description: "15 min", criteria: "18+", closesAt: soon(5), ...TL() } });
+  const a = (await run(H.apply, { repo, principal: user("p1"), body: applyBody(s.json.id) })).json;
+  const b = (await run(H.apply, { repo, principal: user("p2"), body: applyBody(s.json.id) })).json;
+  // Only the study's researcher can move applicants
+  assert.equal((await run(H.advanceApplication, { repo, principal: user("p1"), params: { id: a.id } })).status, 403);
+  // Approve moves one stage at a time
+  assert.equal((await run(H.advanceApplication, { repo, principal: user("u1"), params: { id: a.id } })).json.stage, 1);
+  assert.equal((await run(H.advanceApplication, { repo, principal: user("u1"), params: { id: a.id } })).json.stage, 2);
+  assert.equal((await H.myApplications({ repo, principal: user("p1") })).json[0].stage, 2);
+  // Rejecting at eligibility withdraws, and a withdrawn participant can't move on
+  assert.equal((await run(H.rejectApplication, { repo, principal: user("u1"), params: { id: b.id } })).status, 200);
+  const rows = (await run(H.studyApplicants, { repo, principal: user("u1"), params: { id: s.json.id } })).json;
+  assert.equal(rows.find((r) => r.id === b.id).withdrawReason, "eligibility");
+  assert.equal((await run(H.advanceApplication, { repo, principal: user("u1"), params: { id: b.id } })).status, 409);
+  // Once in the experiment, eligibility can't be rejected any more
+  assert.equal((await run(H.rejectApplication, { repo, principal: user("u1"), params: { id: a.id } })).status, 409);
+});
+
 test("researchers rate participants once a study has closed; other researchers see only the score", async () => {
   const repo = fresh();
   await verifiedProfile(repo, "u1");

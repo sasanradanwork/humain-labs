@@ -368,7 +368,7 @@ async function studyApplicants({ repo, principal, params }) {
     ratingSummary: summaries.get(participantKey({ userId, email: a.email })) || { count: 0, average: null },
     rating: rating && rating.researcherId === me.id ? { stars: rating.stars, attended: rating.attended, comment: rating.comment, ratedAt: rating.ratedAt } : null,
   }));
-  return ok(rows.sort((a, b) => String(b.date).localeCompare(String(a.date))));
+  return ok(rows.map((r) => ({ ...r, stage: Number.isInteger(r.stage) ? r.stage : 0 })).sort((a, b) => String(b.date).localeCompare(String(a.date))));
 }
 
 /* ---------- institution lookup ---------- */
@@ -514,7 +514,7 @@ async function myApplications({ repo, principal }) {
   needUser(principal);
   const mine = await repo.where("applications", "userId", principal.userId);
   // Ratings are for researchers only, so they never come back to the participant.
-  return ok(mine.map(({ userId, rating, ...a }) => ({ status: "active", ...a })));
+  return ok(mine.map(({ userId, rating, ...a }) => ({ status: "active", stage: 0, ...a })));
 }
 
 /* ---------- participant profile ---------- */
@@ -645,6 +645,38 @@ async function rateApplication({ repo, principal, params, body, now = Date.now()
 
 // Starts an ID check for the signed-in researcher or participant and returns the link to Stripe's hosted page.
 // Without Stripe configured, only the local preview skips the check; a live site refuses.
+/* ---------- study stages ---------- */
+// Participants move through these stages. A researcher approves them on, or rejects them at eligibility and they are withdrawn.
+const STAGES = ["Applied", "Eligibility confirmed", "Experiment", "Validation", "Completed"];
+async function ownApplication(repo, principal, id) {
+  const me = await needResearcher(repo, principal);
+  const [a] = await repo.where("applications", "id", id);
+  if (!a) throw new HttpError(404, "That application doesn't exist.");
+  const s = await repo.get("studies", a.studyId);
+  if (!s || s.researcherId !== me.id) throw new HttpError(403, "Only the researcher running this study can change its applicants.");
+  return a;
+}
+// Approve: move the participant to the next stage.
+async function advanceApplication({ repo, principal, params, now = Date.now() }) {
+  const a = await ownApplication(repo, principal, params.id);
+  if (a.status === "withdrawn") throw new HttpError(409, "This participant has been withdrawn, so they can't move on.");
+  const stage = Number.isInteger(a.stage) ? a.stage : 0;
+  if (stage >= STAGES.length - 1) throw new HttpError(409, "This participant has already completed the study.");
+  const next = stage + 1;
+  const doc = { ...a, stage: next, stageDates: { ...(a.stageDates || {}), [next]: today(now) } };
+  await repo.upsert("applications", doc);
+  return ok({ id: a.id, stage: next, stageDates: doc.stageDates });
+}
+// Reject at eligibility: the participant is withdrawn and does not proceed.
+async function rejectApplication({ repo, principal, params, now = Date.now() }) {
+  const a = await ownApplication(repo, principal, params.id);
+  if (a.status === "withdrawn") throw new HttpError(409, "This participant has already been withdrawn.");
+  if ((Number.isInteger(a.stage) ? a.stage : 0) > 1) throw new HttpError(409, "Eligibility can only be rejected before the experiment starts.");
+  const withdrawnAt = today(now);
+  await repo.upsert("applications", { ...a, status: "withdrawn", withdrawnAt, withdrawReason: "eligibility" });
+  return ok({ id: a.id, status: "withdrawn", withdrawnAt, withdrawReason: "eligibility" });
+}
+
 async function idStart({ repo, principal, body, idcheck = startStripeCheck, env = process.env }) {
   needUser(principal);
   const researcher = await myResearcher(repo, principal);
@@ -684,6 +716,6 @@ module.exports = {
   idStart, identityEvent,
   publicData, network, me, verifyStart, verifyConfirm, fetchScholar, rorSearch, putProfile, createGroup, updateGroup, deleteGroup,
   createStudy, updateStudy, deleteStudy, studyApplicants, apply, myApplications, canEditGroup,
-  putParticipant, withdrawApplication, rateApplication,
+  putParticipant, withdrawApplication, rateApplication, advanceApplication, rejectApplication,
   participantEmailStart, participantEmailConfirm, deleteParticipant, deleteResearcherProfile,
 };

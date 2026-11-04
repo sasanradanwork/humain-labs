@@ -38,8 +38,8 @@ export function StudyAction({ study, full = true, onApply, solid = false }) {
 
 // Study timeline: four milestones, each selectable to show its dates.
 const TL_STEPS = [
-  { label: "Eligibility window", from: "eligibilityStart", to: "eligibilityEnd", c: "var(--blue)", tint: "var(--blue-tint)" },
-  { label: "Experiment period", from: "experimentStart", to: "experimentEnd", c: "var(--t1f)", tint: "var(--t1b)" },
+  { label: "Eligibility", from: "eligibilityStart", to: "eligibilityEnd", c: "var(--blue)", tint: "var(--blue-tint)" },
+  { label: "Experiment", from: "experimentStart", to: "experimentEnd", c: "var(--t1f)", tint: "var(--t1b)" },
   { label: "Validation", to: "validationEnd", c: "var(--green)", tint: "var(--green-tint)" },
   { label: "End date", to: "endDate", c: "var(--amber)", tint: "var(--amber-tint)" },
 ];
@@ -69,6 +69,38 @@ export function StudyTimeline({ study: s }) {
         ))}
       </ol>
       <p className="tl-detail small"><strong>{st.label}:</strong> {range}</p>
+    </div>
+  );
+}
+
+// A participant's progress through a study. Tap a stage to see when it was reached.
+export const APP_STAGES = ["Applied", "Eligibility confirmed", "Experiment", "Validation", "Completed"];
+export function ApplicationStages({ app: a }) {
+  const [picked, setPicked] = useState(null);
+  const current = Number.isInteger(a.stage) ? a.stage : 0;
+  const out = a.status === "withdrawn";
+  const i = picked ?? current;
+  let detail;
+  if (i === current && out) detail = `${a.withdrawReason === "eligibility" ? "not eligible" : "withdrew"}, on ${fmtDate(a.withdrawnAt)}`;
+  else if (i > current) detail = "not reached yet";
+  else detail = i === 0 ? fmtDate(a.date) : a.stageDates?.[i] ? fmtDate(a.stageDates[i]) : "reached";
+  return (
+    <div className="tl" aria-label="Your progress through this study">
+      <ol className="tl-track five">
+        {APP_STAGES.map((label, j) => {
+          const state = j < current ? "done" : j === current ? (out ? "out" : "now") : "todo";
+          const c = { done: "var(--green)", now: "var(--blue)", out: "var(--amber)", todo: "var(--ink-soft)" }[state];
+          return (
+            <li key={label}>
+              <button type="button" className="tl-dot" aria-pressed={i === j} style={{ "--c": c }} onClick={() => setPicked(j)}>
+                <span className="tl-mark" aria-hidden="true">{state === "done" ? "✓" : state === "out" ? "✕" : j + 1}</span>
+                <span className="tl-label">{label}</span>
+              </button>
+            </li>
+          );
+        })}
+      </ol>
+      <p className="tl-detail small"><strong>{APP_STAGES[i]}:</strong> {detail}</p>
     </div>
   );
 }
@@ -124,11 +156,11 @@ export function StudyCard({ study: s, onApply }) {
             </>
           )}
         </dl>
-        <StudyTimeline study={s} />
         <p className="small grow" style={{ marginTop: 6 }}>
           {s.description}
         </p>
         {s.criteria && <div className="elig">Who can take part: {s.criteria}</div>}
+        <StudyTimeline study={s} />
         <div className="foot">
           <StudyAction study={s} onApply={onApply} />
         </div>

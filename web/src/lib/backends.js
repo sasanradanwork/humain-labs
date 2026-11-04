@@ -353,6 +353,31 @@ function docBackend(store, kind) {
       await store.put("applications", { ...ex, rating });
       return rating;
     },
+    async advance(id) {
+      const me = needResearcher();
+      const ex = S.applications.find((x) => x.id === id);
+      if (!ex) throw new UserError("That application doesn't exist.");
+      const st = S.studies.find((x) => x.id === ex.studyId);
+      if (!st || st.researcherId !== me.id) throw new UserError("Only the researcher running this study can change its applicants.");
+      if (ex.status === "withdrawn") throw new UserError("This participant has been withdrawn, so they can't move on.");
+      const stage = Number.isInteger(ex.stage) ? ex.stage : 0;
+      if (stage >= 4) throw new UserError("This participant has already completed the study.");
+      const doc = { ...ex, stage: stage + 1, stageDates: { ...(ex.stageDates || {}), [stage + 1]: today() } };
+      await store.put("applications", doc);
+      return doc;
+    },
+    async reject(id) {
+      const me = needResearcher();
+      const ex = S.applications.find((x) => x.id === id);
+      if (!ex) throw new UserError("That application doesn't exist.");
+      const st = S.studies.find((x) => x.id === ex.studyId);
+      if (!st || st.researcherId !== me.id) throw new UserError("Only the researcher running this study can change its applicants.");
+      if (ex.status === "withdrawn") throw new UserError("This participant has already been withdrawn.");
+      if ((Number.isInteger(ex.stage) ? ex.stage : 0) > 1) throw new UserError("Eligibility can only be rejected before the experiment starts.");
+      const doc = { ...ex, status: "withdrawn", withdrawnAt: today(), withdrawReason: "eligibility" };
+      await store.put("applications", doc);
+      return doc;
+    },
     async applicants(studyId) {
       const me = needResearcher();
       const s = S.studies.find((x) => x.id === studyId);
@@ -564,6 +589,18 @@ function azureBackend() {
     },
     async apply(a) {
       const r = await api("POST", "applications", a);
+      await self.after();
+      return r;
+    },
+    async advance(id) {
+      const r = await api("POST", "applications/" + encodeURIComponent(id) + "/advance");
+      Object.keys(appCache).forEach((k) => delete appCache[k]);
+      await self.after();
+      return r;
+    },
+    async reject(id) {
+      const r = await api("POST", "applications/" + encodeURIComponent(id) + "/reject");
+      Object.keys(appCache).forEach((k) => delete appCache[k]);
       await self.after();
       return r;
     },

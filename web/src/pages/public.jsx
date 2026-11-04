@@ -1,7 +1,7 @@
 // Home, Studies, Reach, My applications, About and the sign-in / register page.
 import { useEffect, useRef, useState } from "react";
 import { Cover, DeadlinePill, HomeBackdrop, Icon, Spark, TrendChips, VerifiedBadge } from "../components/ui.jsx";
-import { StudyAction, StudyCard, Toolbar, studyTrend } from "../components/cards.jsx";
+import { StudyAction, StudyCard, Toolbar, studyTrend, ApplicationStages } from "../components/cards.jsx";
 import { AUTH, S, byId, role, studyGroupName, studyVerified } from "../lib/store.js";
 import { countryInfo, fmtDate, isOpen, matches, plural, today, uniq } from "../lib/util.js";
 import { HlgBadge } from "../components/hlg.jsx";
@@ -559,9 +559,10 @@ export function MyApplications({ onWithdraw }) {
                   {s.researcherName}, {s.institution}
                 </div>
                 <div className="small soft grow">Applied {fmtDate(a.date)}</div>
+                <ApplicationStages app={a} />
                 <div className="foot">
                   {a.status === "withdrawn" ? (
-                    <span className="unverified">Withdrew {fmtDate(a.withdrawnAt)}</span>
+                    <span className="unverified">{a.withdrawReason === "eligibility" ? "Not eligible, withdrawn" : "Withdrew"} {fmtDate(a.withdrawnAt)}</span>
                   ) : (
                     <span className="small">The researcher will contact you at {a.email}</span>
                   )}
