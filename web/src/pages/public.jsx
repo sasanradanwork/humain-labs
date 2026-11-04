@@ -151,8 +151,105 @@ export function Home({ onApply, setStudyQuery }) {
             </p>
           </div>
         </section>
+        <HowItWorks />
       </div>
     </>
+  );
+}
+
+// How it works: the two sides, and how the money moves. Shown at the foot of the homepage.
+const PARTICIPANT_STEPS = [
+  ["Explore open studies", "Browse studies from verified researchers and find the ones you're interested in."],
+  ["Check eligibility and apply", "Read who each study is for, then apply with the details you saved once."],
+  ["Get invited", "If you're eligible, the researcher invites you to take part."],
+];
+const RESEARCHER_STEPS = [
+  ["Advertise your study", "Post it with its budget, the reward for each participant and a closing date."],
+  ["Check applications", "Review who has applied against your criteria."],
+  ["Confirm eligibility", "Within your window, reach out to applicants and confirm they're eligible on HumAIn Labs."],
+  ["Run the study", "Give confirmed participants the details, then complete the study with them."],
+];
+
+function HowItWorks() {
+  return (
+    <section className="home-sec how" aria-labelledby="how-title">
+      <h2 className="h2big" id="how-title">How it works</h2>
+      <p className="soft" style={{ maxWidth: "66ch", marginTop: 8 }}>
+        HumAIn Labs sits between researchers and participants, the way a ride-hailing app sits between riders and drivers. Researchers post the study and fund
+        it, and we hold the money until the work is done.
+      </p>
+      <div className="how-lanes" style={{ marginTop: 20 }}>
+        <div className="how-lane">
+          <h3>For participants</h3>
+          <ol className="how-steps">
+            {PARTICIPANT_STEPS.map(([t, d], i) => (
+              <li key={t}>
+                <span className="how-num">{i + 1}</span>
+                <div>
+                  <strong>{t}</strong>
+                  <span className="small soft">{d}</span>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+        <div className="how-lane">
+          <h3>For researchers</h3>
+          <ol className="how-steps">
+            {RESEARCHER_STEPS.map(([t, d], i) => (
+              <li key={t}>
+                <span className="how-num">{i + 1}</span>
+                <div>
+                  <strong>{t}</strong>
+                  <span className="small soft">{d}</span>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+
+      <div className="how-money">
+        <h3 style={{ margin: 0 }}>How the money moves</h3>
+        <p className="small soft" style={{ marginTop: 6 }}>
+          The researcher funds the study up front. We hold the money and pay each participant once they complete it.
+        </p>
+        <div className="flow" aria-label="Researcher funds the study, HumAIn Labs holds the funds, completed participants are paid, and HumAIn Labs keeps a platform fee">
+          <div className="flow-box">
+            <span className="small soft">Step 1</span>
+            <b>Researcher</b>
+            <span className="small soft">funds the study budget</span>
+          </div>
+          <div className="flow-arrow" aria-hidden="true">→</div>
+          <div className="flow-box">
+            <span className="small soft">Step 2</span>
+            <b>HumAIn Labs</b>
+            <span className="small soft">holds the funds until the study is complete</span>
+          </div>
+          <div className="flow-arrow" aria-hidden="true">→</div>
+          <div className="flow-split">
+            <div className="flow-box">
+              <span className="small soft">Step 3</span>
+              <b>Participants</b>
+              <span className="small soft">each paid their reward on completion</span>
+            </div>
+            <div className="flow-box">
+              <span className="small soft">Platform fee</span>
+              <b>HumAIn Labs</b>
+              <span className="small soft">retained for running the platform</span>
+            </div>
+          </div>
+        </div>
+        <div className="rating-note">
+          <Icon.check />
+          <p className="small soft" style={{ margin: 0 }}>
+            Participants are paid their reward whatever their rating. After each study, the researcher rates the participant out of 5 for the quality of
+            their work. Over time, a participant who consistently gives good data builds a strong rating, which helps them stand out to researchers, while
+            a lower rating reflects work that didn't meet the researcher's standard.
+          </p>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -365,9 +462,8 @@ export function Reach({ dark }) {
             <div className="split-line">
               <span className="split-num blue">{x.p}</span>
               <div className="split-track">
-                <i className="split-left" style={{ width: `${(x.p / maxC) * 50}%` }} />
-                <i className="split-right" style={{ width: `${(x.r / maxC) * 50}%` }} />
-                <b className="split-axis" aria-hidden="true" />
+                <i className="split-left" style={{ width: `${x.p + x.r ? (x.p / (x.p + x.r)) * 100 : 50}%` }} />
+                <i className="split-right" style={{ width: `${x.p + x.r ? (x.r / (x.p + x.r)) * 100 : 50}%` }} />
               </div>
               <span className="split-num amber">{x.r}</span>
             </div>

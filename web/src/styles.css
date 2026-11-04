@@ -668,3 +668,40 @@ header nav a[aria-current="page"]{border-bottom-color:transparent !important}
   /* wide tables scroll sideways inside the page rather than pushing it wider */
   table{display:block;overflow-x:auto;max-width:100%;white-space:nowrap;-webkit-overflow-scrolling:touch}
 }
+
+/* Contact cards fill the container width */
+.contact-grid{grid-template-columns:1fr}
+.contact-card{width:100%}
+
+/* Menu button is a square */
+.menu-btn{width:44px;height:44px;min-width:44px;padding:0;aspect-ratio:1/1;display:inline-flex;align-items:center;justify-content:center}
+
+/* Split bars: one full-width bar per country, split by each side's share */
+.split-left{left:0;right:auto;border-radius:999px 0 0 999px}
+.split-right{left:auto;right:0;border-radius:0 999px 999px 0}
+
+/* How it works */
+.how-lanes{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.how-lane{border:1px solid var(--line);border-radius:18px;padding:22px;background:var(--card)}
+.how-lane h3{font-size:1.1rem;margin:0}
+.how-steps{list-style:none;padding:0;margin:16px 0 0;display:grid;gap:14px}
+.how-steps li{display:grid;grid-template-columns:36px 1fr;gap:12px;align-items:start}
+.how-steps strong{display:block;margin-bottom:2px}
+.how-num{width:36px;height:36px;border-radius:999px;background:var(--blue-tint);color:var(--blue);display:inline-flex;align-items:center;justify-content:center;font-weight:600;font-family:'Outfit',sans-serif}
+.how-money{margin-top:22px;border:1px solid var(--line);border-radius:18px;padding:24px;background:var(--paper-2)}
+.flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:10px;align-items:center;margin-top:16px}
+.flow-box{border:1px solid var(--line);border-radius:14px;padding:14px;background:var(--card);text-align:center;display:grid;gap:4px}
+.flow-box b{font-family:var(--serif);font-size:1.45rem;color:var(--blue);font-weight:600}
+.flow-arrow{color:var(--ink-soft);font-size:1.5rem;text-align:center}
+.flow-split{display:grid;gap:10px}
+.rating-note{margin-top:20px;display:flex;gap:14px;align-items:flex-start;border-left:3px solid var(--amber);padding:6px 0 6px 14px}
+@media (max-width:760px){
+  .how-lanes{grid-template-columns:1fr}
+  .flow{grid-template-columns:1fr}
+  .flow-arrow{transform:rotate(90deg);line-height:1}
+}
+
+/* Coin: a flat coin turning, drawn with a 2D transform so every browser shows it */
+.hlg-wrap{display:inline-block;vertical-align:middle;will-change:transform}
+/* Underline also shows on tap and keyboard focus, which touch browsers do not report as :hover */
+header nav a:active::after,header nav a:focus::after{transform:scaleX(1)}

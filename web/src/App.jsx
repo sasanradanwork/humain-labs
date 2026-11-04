@@ -297,10 +297,6 @@ export default function App() {
                 </a>
               ))}
               <div className="menu-extra">
-                <button className="btn" onClick={toggle}>
-                  {dark ? <Icon.sun /> : <Icon.moon />}
-                  {dark ? "Light mode" : "Dark mode"}
-                </button>
                 {AUTH.user ? (
                   <>
                     <span className="menu-account">
@@ -321,17 +317,13 @@ export default function App() {
                     </button>
                   </>
                 )}
+                <button className="btn" onClick={toggle}>
+                  {dark ? <Icon.sun /> : <Icon.moon />}
+                  {dark ? "Light mode" : "Dark mode"}
+                </button>
               </div>
             </nav>
             <div className="who" id="who">
-              <button
-                className="btn icon-btn theme-btn desk"
-                onClick={toggle}
-                aria-label={`Switch to ${dark ? "light" : "dark"} mode`}
-                title={`Switch to ${dark ? "light" : "dark"} mode`}
-              >
-                {dark ? <Icon.sun /> : <Icon.moon />}
-              </button>
               {AUTH.user ? (
                 <>
                   <span className="who-name desk" title={`Signed in as ${AUTH.researcher?.name || AUTH.user.name} (${role()} account)`}>
@@ -352,6 +344,14 @@ export default function App() {
                   </button>
                 </>
               )}
+              <button
+                className="btn icon-btn theme-btn desk"
+                onClick={toggle}
+                aria-label={`Switch to ${dark ? "light" : "dark"} mode`}
+                title={`Switch to ${dark ? "light" : "dark"} mode`}
+              >
+                {dark ? <Icon.sun /> : <Icon.moon />}
+              </button>
               <button
                 className="btn icon-btn menu-btn"
                 type="button"
