@@ -403,6 +403,27 @@ test("researchers move applicants through the stages, or withdraw them at eligib
   assert.equal((await run(H.rejectApplication, { repo, principal: user("u1"), params: { id: a.id } })).status, 409);
 });
 
+test("participants see their own record, but not what researchers wrote about them", async () => {
+  const repo = fresh();
+  await verifiedProfile(repo, "u1");
+  await participant(repo, "p1");
+  const closes = soon(3);
+  const st = await H.createStudy({ repo, principal: user("u1"), body: { title: "Survey", description: "15 min", criteria: "18+", closesAt: closes, ...TL() } });
+  const app = (await run(H.apply, { repo, principal: user("p1"), body: applyBody(st.json.id) })).json;
+
+  const before = (await H.me({ repo, principal: user("p1") })).json.stats;
+  assert.deepEqual(before, { applied: 1, active: 1, withdrawn: 0, completed: 0, rating: { count: 0, average: null } });
+
+  const afterClose = Date.parse(closes + "T12:00:00Z") + 86400000;
+  assert.equal((await run(H.rateApplication, { repo, principal: user("u1"), params: { id: app.id }, body: { stars: 4, comment: "Great." }, now: afterClose })).status, 200);
+  const after = (await H.me({ repo, principal: user("p1") })).json;
+  assert.deepEqual(after.stats.rating, { count: 1, average: 4 });
+  // The star average comes back, the researcher's comment never does
+  assert.ok(!JSON.stringify(after).includes("Great."));
+  // A researcher's own view carries no participant stats
+  assert.equal((await H.me({ repo, principal: user("u1") })).json.stats, null);
+});
+
 test("researchers rate participants once a study has closed; other researchers see only the score", async () => {
   const repo = fresh();
   await verifiedProfile(repo, "u1");

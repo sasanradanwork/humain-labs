@@ -3,11 +3,39 @@ import { useState } from "react";
 import { ChoiceField } from "../components/fields.jsx";
 import { AUTH } from "../lib/store.js";
 import { COUNTRY_NAMES } from "../lib/lists.js";
+import { plural } from "../lib/util.js";
 import { Field, Form, SubmitButton, navigate, useUI } from "../lib/ui.jsx";
 import { IdCheckPanel } from "../components/idcheck.jsx";
 
 // Applying is locked until the email on the details has been confirmed with a code.
 const emailConfirmed = (p) => !!p && p.emailVerified?.email === p.email;
+
+// A participant's own record. Researchers write a comment with each rating, but that stays with them.
+function ParticipantStats({ stats }) {
+  const r = stats.rating || { count: 0, average: null };
+  return (
+    <section className="pstats" aria-label="Your record">
+      <div className="pstat">
+        <b>{stats.applied}</b>
+        <span className="small soft">{stats.applied === 1 ? "Study applied to" : "Studies applied to"}</span>
+      </div>
+      <div className="pstat">
+        <b>{stats.active}</b>
+        <span className="small soft">In progress</span>
+      </div>
+      <div className="pstat">
+        <b>{stats.completed}</b>
+        <span className="small soft">Completed</span>
+      </div>
+      <div className="pstat">
+        <b>{r.average != null ? <>&#9733; {r.average.toFixed(1)}</> : <span className="soft">&ndash;</span>}</b>
+        <span className="small soft">
+          {r.count ? `Rating from ${plural(r.count, "study", "studies")}` : "No ratings yet"}
+        </span>
+      </div>
+    </section>
+  );
+}
 
 export function ParticipantProfile({ onDelete }) {
   const { backend, toast } = useUI();
@@ -50,10 +78,12 @@ export function ParticipantProfile({ onDelete }) {
     sessionStorage.removeItem("after-profile");
     navigate(next || "#/studies");
   };
+  const stats = AUTH.stats;
   return (
     <div className="wrap">
       <div className="editor">
         <h1 style={{ marginTop: 14 }}>{p ? "Your details" : "Set up your details"}</h1>
+        {p && stats && <ParticipantStats stats={stats} />}
         <p className="soft lead">
           Set these up once. Every study you apply to uses them, so you won't need to type them in again. Only the researcher running a study you apply
           to sees them.

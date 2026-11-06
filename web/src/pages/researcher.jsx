@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Avatar, Icon, LinkedInLink, Radar, ScholarLink, Cover, DeadlinePill, VerifiedBadge, UnverifiedBadge, sortByName } from "../components/ui.jsx";
 import { GroupCard, ResearcherCard, Toolbar, groupHref, lookingFor, APP_STAGES } from "../components/cards.jsx";
 import { AUTH, S, appCount, byId, canEditGroup, groupStudies, groupsOf, memberResearchers, role } from "../lib/store.js";
-import { fmtDate, gidKey, isOpen, makeHandle, matches, normCountry, OPENING_TYPES, plural, ROLE_SUGGESTIONS, sortName, uniq } from "../lib/util.js";
+import { DAY_MS, fmtDate, FORMATS, gidKey, isOpen, makeHandle, matches, normCountry, OPENING_TYPES, plural, ROLE_SUGGESTIONS, sortName, today, uniq } from "../lib/util.js";
 import { Field, Form, SubmitButton, navigate, replaceRoute, useUI } from "../lib/ui.jsx";
 import { AuthorNames, ChoiceField, InstitutionField } from "../components/fields.jsx";
 import { HlgBadge } from "../components/hlg.jsx";
@@ -601,6 +601,319 @@ export function Dashboard({ onVerify, onScholar }) {
     </div>
   );
 }
+
+// A date that is fixed once the study is posted, shown as plain text in its place.
+function LockedDate({ label, value }) {
+  return (
+    <Field label={label}>
+      <p className="locked-val">
+        {value ? fmtDate(value) : "Not set"} <span className="small soft">fixed</span>
+      </p>
+    </Field>
+  );
+}
+
+// What the researcher pays and where it goes, worked out as they type.
+function CostPreview({ budget, participantsWanted, rewardEach }) {
+  const split = feeBreakdown(budget, participantsWanted, rewardEach);
+  const n = Number(participantsWanted) || 0;
+  return (
+    <div className="cost" aria-live="polite">
+      <div className="cost-row">
+        <span>Study budget, paid up front</span>
+        <b>{gbp(split.budget)}</b>
+      </div>
+      <div className="cost-row">
+        <span>Platform fee ({FEE_PERCENT})</span>
+        <b>&minus;{gbp(split.fee)}</b>
+      </div>
+      <div className="cost-row sum">
+        <span>Left for participants</span>
+        <b>{gbp(split.available)}</b>
+      </div>
+      <div className="cost-row">
+        <span>
+          {n || 0} {n === 1 ? "participant" : "participants"} &times; {gbp(rewardEach)}
+        </span>
+        <b>{gbp(split.allocated)}</b>
+      </div>
+      <div className={"cost-row sum" + (split.overspent ? " over" : "")}>
+        <span>{split.overspent ? "Over budget by" : "Not allocated"}</span>
+        <b>{gbp(Math.abs(split.unallocated))}</b>
+      </div>
+      <p className="small soft" style={{ margin: "10px 0 0" }}>
+        {split.overspent
+          ? "Raise the budget, ask for fewer participants, or lower the reward."
+          : `Each participant is paid ${gbp(rewardEach)} as they complete the study. If you don't fill all ${n || 0} places, the rewards you don't use are refunded to whatever you paid with.`}
+      </p>
+    </div>
+  );
+}
+
+export function StudyEditor({ route, onDelete }) {
+  const { backend, toast } = useUI();
+  const me = AUTH.researcher;
+  const editing = route.id !== "new";
+  const existing = editing ? byId("studies", route.id) : null;
+  const canEdit = !editing || (!!existing && !!me && existing.researcherId === me.id);
+
+  if (!AUTH.user)
+    return (
+      <div className="wrap">
+        <SignInPrompt title="Post a study" text="Sign in with your researcher account to post or change a study." />
+      </div>
+    );
+  if (!me) {
+    sessionStorage.setItem("after-profile", location.hash);
+    return (
+      <div className="wrap">
+        <div className="intro">
+          <div>
+            <h1>Post a study</h1>
+            <p className="soft">You need a researcher profile before you can post a study.</p>
+          </div>
+        </div>
+        <SetupPrompt />
+      </div>
+    );
+  }
+  if (!canEdit)
+    return (
+      <div className="wrap">
+        <a className="back" href="#/studies">
+          &larr; Studies
+        </a>
+        <div className="empty" style={{ marginTop: 16 }}>
+          <div>This study doesn't exist, or it was posted by another researcher.</div>
+        </div>
+      </div>
+    );
+  // Unverified researchers can look around but not post.
+  if (!(me.verified && me.idVerified))
+    return (
+      <div className="wrap">
+        <a className="back" href="#/studies">
+          &larr; Studies
+        </a>
+        <div className="empty" style={{ marginTop: 16 }}>
+          <div>View-only mode. Verify your institution email and identity to post or change a study.</div>
+          <a className="btn btn-blue" href="#/dashboard">
+            Go to your researcher area
+          </a>
+        </div>
+      </div>
+    );
+
+  const s = existing || { field: me.field, country: me.country, format: "Online" };
+  const mine = groupsOf(me.id);
+  const maxDate = new Date(Date.now() + 365 * DAY_MS).toISOString().slice(0, 10);
+  // Dates and money participants depend on are fixed once the study is posted.
+  const locked = !!existing;
+  const [money, setMoney] = useState({
+    budget: s.budget ?? "",
+    participantsWanted: s.participantsWanted ?? "",
+    rewardEach: s.rewardEach ?? "",
+  });
+  const onMoney = (k) => (e) => setMoney((m) => ({ ...m, [k]: e.target.value }));
+  const posted = locked ? feeBreakdown(s.budget, s.participantsWanted, s.rewardEach) : null;
+  const back = existing ? `#/studies/${encodeURIComponent(existing.id)}` : "#/studies";
+  return (
+    <div className="wrap">
+      <div className="editor">
+        <a className="back" href={back}>
+          &larr; {existing ? existing.title : "Studies"}
+        </a>
+        <h1 style={{ marginTop: 14 }}>{existing ? "Edit study" : "Post a new study"}</h1>
+        <p className="soft lead">
+          Posted as {me.name}, {me.institution}. Fields marked * are required.
+        </p>
+        <Form
+          onSubmit={async (d) => {
+            const saved = await backend.saveStudy(d, existing?.id);
+            toast(existing ? "Study saved." : "Study published.");
+            navigate(`#/studies/${encodeURIComponent(saved?.id || existing?.id || "")}`);
+          }}
+        >
+          <div className="stack" style={{ marginTop: 16 }}>
+            <Field label="Study title" required>
+              <input name="title" required maxLength="160" defaultValue={s.title || ""} autoFocus />
+            </Field>
+            <div className="row2">
+              <ChoiceField label="Field" name="field" options={FIELDS} required defaultValue={s.field} />
+              <ChoiceField label="Country" name="country" options={COUNTRY_NAMES} required defaultValue={s.country} />
+            </div>
+            <Field label="Research group">
+              <select name="groupId" defaultValue={s.groupId || ""}>
+                <option value="">None</option>
+                {mine.map((g) => (
+                  <option key={g.id} value={g.id}>
+                    {g.name}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <div className="row2">
+              <Field label="Format">
+                <select name="format" defaultValue={s.format || "Online"}>
+                  {FORMATS.map((f) => (
+                    <option key={f}>{f}</option>
+                  ))}
+                </select>
+              </Field>
+              <Field label="Time needed">
+                <input name="duration" maxLength="120" defaultValue={s.duration || ""} placeholder="e.g. 30 min survey" />
+              </Field>
+            </div>
+            <div className="row2">
+              <Field label="Reward, as participants see it">
+                <input name="compensation" maxLength="120" defaultValue={s.compensation || ""} placeholder="e.g. £20 bank transfer" />
+              </Field>
+              <Field label="Applications close on" required>
+                <input name="closesAt" type="date" required min={today()} max={maxDate} defaultValue={s.closesAt || ""} />
+              </Field>
+            </div>
+
+            <fieldset className="tl-form">
+              <legend>Budget</legend>
+              {locked ? (
+                <>
+                  <p className="small soft" style={{ marginTop: 0 }}>
+                    The budget is fixed once a study is posted, because it is paid up front and participants are paid from it.
+                  </p>
+                  <div className="cost">
+                    <div className="cost-row">
+                      <span>Study budget</span>
+                      <b>{gbp(posted.budget)}</b>
+                    </div>
+                    <div className="cost-row">
+                      <span>Platform fee ({FEE_PERCENT})</span>
+                      <b>&minus;{gbp(posted.fee)}</b>
+                    </div>
+                    <div className="cost-row sum">
+                      <span>
+                        {s.participantsWanted || 0} &times; {gbp(s.rewardEach)} for participants
+                      </span>
+                      <b>{gbp(posted.allocated)}</b>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <Field label="Study budget (£)" required>
+                    <input
+                      name="budget"
+                      type="number"
+                      required
+                      min="1"
+                      max="1000000"
+                      step="0.01"
+                      inputMode="decimal"
+                      value={money.budget}
+                      onChange={onMoney("budget")}
+                      placeholder="e.g. 500"
+                    />
+                  </Field>
+                  <div className="row2">
+                    <Field label="Participants needed" required>
+                      <input
+                        name="participantsWanted"
+                        type="number"
+                        required
+                        min="1"
+                        max="10000"
+                        step="1"
+                        inputMode="numeric"
+                        value={money.participantsWanted}
+                        onChange={onMoney("participantsWanted")}
+                        placeholder="e.g. 20"
+                      />
+                    </Field>
+                    <Field label="Reward for each participant (£)" required>
+                      <input
+                        name="rewardEach"
+                        type="number"
+                        required
+                        min="0.01"
+                        max="100000"
+                        step="0.01"
+                        inputMode="decimal"
+                        value={money.rewardEach}
+                        onChange={onMoney("rewardEach")}
+                        placeholder="e.g. 20"
+                      />
+                    </Field>
+                  </div>
+                  <CostPreview {...money} />
+                </>
+              )}
+            </fieldset>
+
+            <fieldset className="tl-form">
+              <legend>Study timeline</legend>
+              <div className="row2">
+                <Field label="Eligibility window opens" required>
+                  <input name="eligibilityStart" type="date" required min={today()} max={maxDate} defaultValue={s.eligibilityStart || ""} />
+                </Field>
+                <Field label="Eligibility window closes" required>
+                  <input name="eligibilityEnd" type="date" required min={today()} max={maxDate} defaultValue={s.eligibilityEnd || ""} />
+                </Field>
+              </div>
+              <div className="row2">
+                <Field label="Experiment starts" required>
+                  <input name="experimentStart" type="date" required min={today()} max={maxDate} defaultValue={s.experimentStart || ""} />
+                </Field>
+                <Field label="Experiment ends" required>
+                  <input name="experimentEnd" type="date" required min={today()} max={maxDate} defaultValue={s.experimentEnd || ""} />
+                </Field>
+              </div>
+              <div className="row2">
+                {locked ? (
+                  <LockedDate label="Validation complete by" value={s.validationEnd} />
+                ) : (
+                  <Field label="Validation complete by" required>
+                    <input name="validationEnd" type="date" required min={today()} max={maxDate} defaultValue={s.validationEnd || ""} />
+                  </Field>
+                )}
+                {locked ? (
+                  <LockedDate label="Study ends on" value={s.endDate} />
+                ) : (
+                  <Field label="Study ends on" required>
+                    <input name="endDate" type="date" required min={today()} max={maxDate} defaultValue={s.endDate || ""} />
+                  </Field>
+                )}
+              </div>
+              {locked && (
+                <p className="small soft">
+                  The validation and end dates are fixed, so participants know when they will be paid. The dates before them can still move, as long as
+                  they stay in order.
+                </p>
+              )}
+            </fieldset>
+
+            <Field label="What's involved" required>
+              <textarea name="description" rows="3" required maxLength="2000" defaultValue={s.description || ""} />
+            </Field>
+            <Field label="Who can take part" required>
+              <input name="criteria" required maxLength="400" defaultValue={s.criteria || ""} placeholder="e.g. 18+, living in the UK" />
+            </Field>
+          </div>
+          <div className="actions">
+            <SubmitButton className="btn btn-solid">{existing ? "Save changes" : "Publish study"}</SubmitButton>
+            <a className="btn" href={back}>
+              Cancel
+            </a>
+            {existing && (
+              <button type="button" className="btn btn-danger" style={{ marginLeft: "auto" }} onClick={() => onDelete(existing)}>
+                Remove study
+              </button>
+            )}
+          </div>
+        </Form>
+      </div>
+    </div>
+  );
+}
+
 
 /* ================= manage one study ================= */
 // The researcher's view of a study they posted: its money, who has applied, and the controls to change it.

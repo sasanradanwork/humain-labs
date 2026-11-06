@@ -5,7 +5,22 @@ import { normCountry } from "./util.js";
 
 // appsVersion moves whenever applications change, so the applicants table reloads.
 export const S = { researchers: [], participants: [], groups: [], studies: [], applications: [], myApps: [], appsVersion: 0, stats: { total: 0, byCountry: {}, byStudy: {} } };
-export const AUTH = { user: null, researcher: null, participant: null };
+export const AUTH = { user: null, researcher: null, participant: null, stats: null };
+
+// A participant's own record, worked out from their applications. Mirrors participantStats on the server:
+// the stars are summarised, the researchers' written comments are not shown.
+export function participantStats(apps) {
+  const live = apps.filter((a) => a.status !== "withdrawn");
+  const rated = live.filter((a) => a.rating);
+  const sum = rated.reduce((n, a) => n + (Number(a.rating.stars) || 0), 0);
+  return {
+    applied: apps.length,
+    active: live.length,
+    withdrawn: apps.length - live.length,
+    completed: live.filter((a) => (Number.isInteger(a.stage) ? a.stage : 0) >= 4).length,
+    rating: { count: rated.length, average: rated.length ? Math.round((sum / rated.length) * 10) / 10 : null },
+  };
+}
 export const COLS = ["researchers", "participants", "studies", "groups", "applications"];
 
 let version = 0;

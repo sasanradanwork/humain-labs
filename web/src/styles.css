@@ -704,8 +704,6 @@ header nav a[aria-current="page"]{border-bottom-color:transparent !important}
 /* Underline also shows on tap and keyboard focus, which touch browsers do not report as :hover */
 header nav a:active::after,header nav a:focus::after{width:calc(100% - 28px)}
 
-/* The header and its signed-in block keep the light colours in both themes */
-header,header nav,.menu-extra{--paper:#FFFFFF;--paper-2:#F4F6FC;--card:#FFFFFF;--ink:#101828;--ink-soft:#5B6475;--line:#DDE1EC;--blue:#1C39BB;--blue-tint:#E9EBFA;--on-blue:#FFFFFF;--green:#1E8A4C;--green-tint:#E3F4EA;--amber:#B06A00;--amber-tint:#FCF0DC;--logo-ink:#1B2447;--logo-acc:#1C39BB;--logo-bg:#FFFFFF;--ok-bg:#E3F2EA;--ok-ink:#146C43}
 header .avatar{color:#FFFFFF}
 
 /* Money flow: a vertical, selectable sequence with coloured icons */
@@ -770,3 +768,16 @@ header nav a::after{background:#FFFFFF}
 .locked-val{margin:0;padding:11px 12px;border:1px dashed var(--line);border-radius:10px;background:var(--paper-2);color:var(--ink-soft)}
 .list .item h3 a{color:inherit;text-decoration:none}
 .list .item h3 a:hover{text-decoration:underline}
+
+/* The ID-checked pill matches the verified pill, with its tick on the text baseline */
+.badge-pill{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:.24rem .6rem;font-weight:500;line-height:1.35;white-space:nowrap}
+/* A participant's own record, above their details */
+.pstats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:16px 0 22px}
+.pstat{border:1px solid var(--line);border-radius:14px;background:var(--paper-2);padding:14px;display:grid;gap:2px;min-width:0}
+.pstat b{font-family:var(--serif);font-size:1.5rem;font-weight:600;color:var(--blue);line-height:1.1}
+.pstat span{overflow-wrap:anywhere}
+@media (max-width:620px){ .pstats{grid-template-columns:repeat(2,minmax(0,1fr))} }
+/* The rating note no longer carries an icon, so the text starts at the rule */
+.rating-note{display:block}
+/* LinkedIn in the footer */
+.footer-social{display:inline-flex;align-items:center}

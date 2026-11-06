@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Avatar, Icon, Logo } from "./components/ui.jsx";
-import { ApplyModal, ConfirmModal, RateModal, RorModal, ScholarModal, StudyModal, VerifyModal } from "./components/modals.jsx";
+import { ApplyModal, ConfirmModal, RateModal, RorModal, ScholarModal, VerifyModal } from "./components/modals.jsx";
 import { About, Auth, Home, MyApplications, Reach, Studies } from "./pages/public.jsx";
-import { Dashboard, GroupEditor, GroupPage, Groups, ManageStudy, ProfileEditor, Researchers, groupByRef } from "./pages/researcher.jsx";
+import { Dashboard, GroupEditor, GroupPage, Groups, ManageStudy, ProfileEditor, Researchers, StudyEditor, groupByRef } from "./pages/researcher.jsx";
 import { AUTH, S, byId, role, useStore } from "./lib/store.js";
 import { fallbackBackend, pickBackend, setToaster } from "./lib/backends.js";
 import { UIProvider, navigate, useRoute, useTheme } from "./lib/ui.jsx";
@@ -102,11 +102,11 @@ export default function App() {
     []
   );
   const onApply = useCallback((study) => requireLogin(() => setModal({ kind: "apply", study })), [requireLogin]);
-  const onNewStudy = useCallback(
-    () => setModal(AUTH.researcher?.verified && AUTH.researcher?.idVerified ? { kind: "study" } : { kind: "verify" }),
-    []
-  );
-  const onEditStudy = useCallback((s) => setModal({ kind: "study", existing: s }), []);
+  const onNewStudy = useCallback(() => {
+    if (AUTH.researcher?.verified && AUTH.researcher?.idVerified) navigate("#/studies/new");
+    else setModal({ kind: "verify" });
+  }, []);
+  const onEditStudy = useCallback((s) => navigate(`#/studies/${encodeURIComponent(s.id)}/edit`), []);
   const onRate = useCallback((a, s) => setModal({ kind: "rate", app: a, study: s }), []);
   const onDeleteStudy = useCallback(
     (s) =>
@@ -177,7 +177,10 @@ export default function App() {
         body = <Home onApply={onApply} setStudyQuery={(q) => setPageFilters("studies")({ ...filters.studies, q })} />;
         break;
       case "studies":
-        body = route.id ? (
+        body =
+          route.id === "new" || route.sub === "edit" ? (
+            <StudyEditor route={route} onDelete={onDeleteStudy} />
+          ) : route.id ? (
           <ManageStudy route={route} onEditStudy={onEditStudy} onDeleteStudy={onDeleteStudy} onRate={onRate} />
         ) : (
           <Studies
@@ -420,6 +423,9 @@ export default function App() {
             <a href="#/about?to=contact">Contact</a>
             <a href="#/terms">Terms and conditions</a>
             <a href="#/privacy">Privacy policy</a>
+            <a className="footer-social" href={SITE.linkedin} target="_blank" rel="noreferrer" aria-label="HumAIn Labs on LinkedIn" title="LinkedIn">
+              <Icon.linkedin />
+            </a>
           </nav>
           <p className="small soft footer-legal">
             © {new Date().getFullYear()} {SITE.legalName} · Company number {SITE.companyNumber}
@@ -428,7 +434,6 @@ export default function App() {
       </footer>
 
       {modal?.kind === "apply" && <ApplyModal study={modal.study} onClose={closeModal} />}
-      {modal?.kind === "study" && <StudyModal existing={modal.existing} onClose={closeModal} />}
       {modal?.kind === "verify" && <VerifyModal onClose={closeModal} />}
       {modal?.kind === "rate" && <RateModal app={modal.app} study={modal.study} onClose={closeModal} />}
       {modal?.kind === "scholar" && <ScholarModal onClose={closeModal} />}

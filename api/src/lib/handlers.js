@@ -53,6 +53,21 @@ function ratingSummaries(applications) {
   return new Map([...totals].map(([k, t]) => [k, { count: t.count, average: Math.round((t.sum / t.count) * 10) / 10 }]));
 }
 
+// A participant's own record. The stars they were given are summarised here, but researchers'
+// written comments stay private to the researcher who wrote them.
+function participantStats(apps) {
+  const live = apps.filter((a) => a.status !== "withdrawn");
+  const rated = live.filter((a) => a.rating);
+  const sum = rated.reduce((n, a) => n + (Number(a.rating.stars) || 0), 0);
+  return {
+    applied: apps.length,
+    active: live.length,
+    withdrawn: apps.length - live.length,
+    completed: live.filter((a) => (Number.isInteger(a.stage) ? a.stage : 0) >= 4).length,
+    rating: { count: rated.length, average: rated.length ? Math.round((sum / rated.length) * 10) / 10 : null },
+  };
+}
+
 // What other researchers may see. Sign-in ids and pending verification codes never leave the server.
 const publicResearcher = ({ userId, verification, idCheck, ...r }) => r;
 // Public group pages, as seen by anyone: no member list, owner id or review notes. Members are counted only.
@@ -125,10 +140,16 @@ async function network({ repo, principal }) {
 }
 
 async function me({ repo, principal }) {
-  if (!principal) return ok({ user: null, researcher: null, participant: null });
+  if (!principal) return ok({ user: null, researcher: null, participant: null, stats: null });
   const r = await myResearcher(repo, principal);
   const p = r ? null : await myParticipant(repo, principal);
-  return ok({ user: { name: principal.details, provider: principal.provider }, researcher: r ? publicResearcher(r) : null, participant: p ? publicParticipant(p) : null });
+  const stats = p ? participantStats(await repo.where("applications", "userId", principal.userId)) : null;
+  return ok({
+    user: { name: principal.details, provider: principal.provider },
+    researcher: r ? publicResearcher(r) : null,
+    participant: p ? publicParticipant(p) : null,
+    stats,
+  });
 }
 
 /* ---------- researcher profile ---------- */

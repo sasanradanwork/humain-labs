@@ -3,7 +3,7 @@
 //  - Claude: the shared database a published claude.ai artifact provides
 //  - Local: this browser's storage, with demo content (for opening the file on its own)
 // The Azure API enforces the rules on the server; the other two check them here.
-import { S, AUTH, COLS, computeStats, notify } from "./store.js";
+import { AUTH, COLS, S, computeStats, notify, participantStats } from "./store.js";
 import { FREE_MAIL, UserError, newGroupId, today, uid } from "./util.js";
 import { harvardAuthors } from "./harvard.js";
 import { feeBreakdown, gbp } from "./money.js";
@@ -75,6 +75,7 @@ function docBackend(store, kind) {
       AUTH.researcher = mine();
       AUTH.participant = myParticipant();
       S.myApps = session ? S.applications.filter((a) => a.userId === session.userId) : [];
+      AUTH.stats = AUTH.participant ? participantStats(S.applications.filter((a) => a.userId === session.userId)) : null;
     },
     async refreshMe() {
       self.syncAuth();
@@ -539,14 +540,21 @@ function azureBackend() {
       AUTH.user = d.user ? { name: d.user.name, email: /@/.test(d.user.name) ? d.user.name : "" } : null;
       AUTH.researcher = d.researcher;
       AUTH.participant = d.participant || null;
+      AUTH.stats = d.stats || null;
       if (AUTH.researcher) {
         const n = await api("GET", "network");
         S.researchers = n.researchers;
         S.groups = n.groups;
         S.stats = n.stats;
         S.myApps = [];
-        const ids = new Set(publicStudies.map((s) => s.id));
-        S.studies = [...publicStudies, ...(n.myStudies || []).filter((s) => !ids.has(s.id))];
+        // The public copy of a study leaves out the budget, so a researcher's own copy is layered
+        // over it: the public extras stay, and the figures only they can see come back.
+        const own = new Map((n.myStudies || []).map((x) => [x.id, x]));
+        const publicIds = new Set(publicStudies.map((x) => x.id));
+        S.studies = [
+          ...publicStudies.map((x) => (own.has(x.id) ? { ...x, ...own.get(x.id) } : x)),
+          ...(n.myStudies || []).filter((x) => !publicIds.has(x.id)),
+        ];
       } else {
         S.studies = publicStudies;
         S.researchers = [];

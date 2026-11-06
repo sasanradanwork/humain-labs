@@ -207,7 +207,7 @@ export function ResearcherCard({ researcher: r }) {
         <div className="badges" style={{ marginTop: 6 }}>
           {r.verified ? <VerifiedBadge v={r.verified} /> : <UnverifiedBadge />}
           {r.idVerified && (
-            <span className="badge">
+            <span className="badge badge-pill" title="Identity checked">
               <Icon.check /> ID checked
             </span>
           )}
