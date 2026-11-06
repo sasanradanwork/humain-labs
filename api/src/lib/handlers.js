@@ -3,6 +3,7 @@ const { screenFields } = require("./moderation");
 const { startStripeCheck } = require("./idcheck");
 const crypto = require("node:crypto");
 const V = require("./validate");
+const { feeBreakdown, gbp } = require("./money");
 const { trendFor } = require("./trending");
 const { newGroupId } = require("./ids");
 const { FIELDS, POSITIONS, COUNTRY_NAMES } = require("./lists");
@@ -86,7 +87,7 @@ async function publicData({ repo, now = Date.now() }) {
     },
     studies: studies
       .filter((s) => rById.get(s.researcherId)?.verified && isOpen(s, now))
-      .map((s) => ({
+      .map(({ budget, ...s }) => ({
         ...s,
         researcherVerified: rById.get(s.researcherId).verified,
         groupName: (s.groupId && gById.get(s.groupId)?.name) || "",
@@ -299,6 +300,17 @@ function timelineOf(b) {
   return out;
 }
 
+// Once a study is posted its money is committed and participants are counting on the end date,
+// so these are fixed. Everything else about the study stays editable.
+const LOCKED = [
+  ["endDate", "the study end date", "date"],
+  ["validationEnd", "the validation date", "date"],
+  ["budget", "the budget", "money"],
+  ["participantsWanted", "the number of participants", "money"],
+  ["rewardEach", "the reward for each participant", "money"],
+];
+const sameValue = (type, a, b) => (type === "date" ? String(a) === String(b) : Math.abs(Number(a) - Number(b)) < 0.005);
+
 async function normalizeStudy(repo, me, b) {
   b = b || {};
   const timeline = timelineOf(b);
@@ -313,8 +325,17 @@ async function normalizeStudy(repo, me, b) {
     criteria: V.str(b.criteria, "Who can take part", { required: true, max: 400 }),
     groupId: V.str(b.groupId, "Group", { max: 64 }),
     closesAt: V.date(b.closesAt, "Closing date"),
+    // The researcher funds the study up front: the budget pays the platform fee and every participant's reward.
+    budget: V.money(b.budget, "Study budget", { min: 1, max: 1000000, required: true }),
+    participantsWanted: V.int(b.participantsWanted, "Participants needed", { min: 1, max: 10000, required: true }),
+    rewardEach: V.money(b.rewardEach, "Reward for each participant", { min: 0.01, max: 100000, required: true }),
     ...timeline,
   };
+  const split = feeBreakdown(s.budget, s.participantsWanted, s.rewardEach);
+  if (split.overspent)
+    throw bad(
+      `After the platform fee your budget leaves ${gbp(split.available)} for participants, but ${s.participantsWanted} \u00d7 ${gbp(s.rewardEach)} comes to ${gbp(split.allocated)}. Raise the budget, ask for fewer participants, or lower the reward.`
+    );
   if (!s.closesAt) throw bad("Closing date is required.");
   const max = new Date(); max.setFullYear(max.getFullYear() + 1);
   if (s.closesAt < today()) throw bad("Closing date can't be in the past.");
@@ -340,7 +361,13 @@ async function updateStudy({ repo, principal, body, params, screen }) {
   const existing = await repo.get("studies", params.id);
   if (!existing) throw new HttpError(404, "That study doesn't exist.");
   if (existing.researcherId !== me.id) throw new HttpError(403, "Only the researcher who posted this study can change it.");
-  const s = await normalizeStudy(repo, me, body);
+  const asked = { ...(body || {}) };
+  for (const [k, label, type] of LOCKED) {
+    if (asked[k] != null && asked[k] !== "" && existing[k] != null && !sameValue(type, asked[k], existing[k]))
+      throw bad(`You can't change ${label} once a study is posted, because participants and their payments depend on it.`);
+    if (existing[k] != null) asked[k] = existing[k];
+  }
+  const s = await normalizeStudy(repo, me, asked);
   const doc = setReview({ ...s, id: existing.id, postedAt: existing.postedAt }, await screenFields(studyText(s), { screen }));
   await repo.upsert("studies", doc);
   return ok(doc);

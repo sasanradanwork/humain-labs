@@ -2,11 +2,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Cover, DeadlinePill, HomeBackdrop, Icon, Spark, TrendChips, VerifiedBadge } from "../components/ui.jsx";
 import { StudyAction, StudyCard, Toolbar, studyTrend, ApplicationStages } from "../components/cards.jsx";
-import { AUTH, S, byId, role, studyGroupName, studyVerified } from "../lib/store.js";
+import { AUTH, S, appCount, byId, role, studyGroupName, studyVerified } from "../lib/store.js";
 import { countryInfo, fmtDate, isOpen, matches, plural, today, uniq } from "../lib/util.js";
 import { HlgBadge } from "../components/hlg.jsx";
 import { Field, Form, SubmitButton, navigate, reducedMotion, replaceRoute, useRoute, useUI } from "../lib/ui.jsx";
 import { SITE } from "../lib/site.js";
+import { gbp } from "../lib/money.js";
 import founderPhoto from "../data/founder.jpg";
 
 // Participants only ever see open studies from verified researchers.
@@ -345,7 +346,69 @@ function Spotlight({ entry: { s, t }, rank, onApply }) {
 }
 
 /* ================= studies ================= */
-export function Studies({ filters, setFilters, onApply }) {
+// A researcher's own studies, listed above the open calls so they can manage them from here.
+function MyStudies({ onNewStudy, onVerify }) {
+  const me = AUTH.researcher;
+  if (!me) return null;
+  const mine = S.studies
+    .filter((x) => x.researcherId === me.id)
+    .sort((a, b) => String(b.postedAt).localeCompare(String(a.postedAt)));
+  return (
+    <section className="dash-sec">
+      <div className="intro">
+        <div>
+          <h2>Your studies</h2>
+          <p className="soft small">Open one to see who has applied, edit it or take it down.</p>
+        </div>
+        {me.verified ? (
+          <button className="btn btn-solid" onClick={onNewStudy}>
+            Post a new study
+          </button>
+        ) : (
+          <button className="btn btn-solid" onClick={onVerify} title="Only verified researchers can post studies">
+            Verify to post a study
+          </button>
+        )}
+      </div>
+      {mine.length ? (
+        <div className="list">
+          {mine.map((x) => (
+            <div className="item" key={x.id}>
+              <div>
+                <h3>
+                  <a href={`#/studies/${encodeURIComponent(x.id)}`}>{x.title}</a>
+                </h3>
+                <div className="small soft">
+                  Posted {fmtDate(x.postedAt)}, {plural(appCount(x.id), "applicant", "applicants")}
+                  {x.participantsWanted ? `, ${x.participantsWanted} wanted at ${gbp(x.rewardEach)} each` : ""}
+                </div>
+                <div className="badges" style={{ marginTop: 6 }}>
+                  <DeadlinePill study={x} />
+                  {!isOpen(x) ? (
+                    <span className="unverified">Closed to new applicants</span>
+                  ) : !isVisible(x) ? (
+                    <span className="unverified">Hidden from participants until you verify</span>
+                  ) : null}
+                </div>
+              </div>
+              <div className="btns">
+                <a className="btn btn-blue" href={`#/studies/${encodeURIComponent(x.id)}`}>
+                  Manage
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="empty" style={{ padding: 30 }}>
+          <div>You haven't posted any studies yet.</div>
+        </div>
+      )}
+    </section>
+  );
+}
+
+export function Studies({ filters, setFilters, onApply, onNewStudy, onVerify }) {
   const f = filters;
   const list = visibleStudies()
     .filter(
@@ -376,6 +439,7 @@ export function Studies({ filters, setFilters, onApply }) {
           <Cover seed="hero-studies" label="x" />
         </div>
       </section>
+      <MyStudies onNewStudy={onNewStudy} onVerify={onVerify} />
       <Toolbar
         page="studies"
         filters={filters}

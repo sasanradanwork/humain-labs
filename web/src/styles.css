@@ -298,19 +298,19 @@ header nav a[aria-current="page"]{color:var(--blue);border-color:var(--blue)}
   .menu-extra .btn{width:100%;min-height:46px;justify-content:center}
   .menu-account{padding:4px 12px 6px;font-size:.9rem}
 }
-body.on-home header{background:var(--navy);border-color:rgba(147,165,255,.18);--logo-ink:#E7EAF3;--logo-acc:#93A5FF;--logo-bg:var(--navy)}
-body.on-home header nav a{color:#B4BCE0}
-body.on-home header nav{background:var(--navy);border-color:rgba(147,165,255,.18)}
-body.on-home header nav a:hover{color:#E7EAF3}
-body.on-home header nav a[aria-current="page"]{color:#E7EAF3;border-color:#93A5FF}
+header{background:var(--navy);border-color:rgba(147,165,255,.18);--logo-ink:#E7EAF3;--logo-acc:#93A5FF;--logo-bg:var(--navy)}
+header nav a{color:#B4BCE0}
+header nav{background:var(--navy);border-color:rgba(147,165,255,.18)}
+header nav a:hover{color:#E7EAF3}
+header nav a[aria-current="page"]{color:#E7EAF3;border-color:#93A5FF}
 @media (max-width:979px){
-  body.on-home header nav a[aria-current="page"]{color:#E7EAF3;border-bottom-color:transparent;text-decoration-color:#93A5FF}
+  header nav a[aria-current="page"]{color:#E7EAF3;border-bottom-color:transparent;text-decoration-color:#93A5FF}
 }
-body.on-home .who .soft{color:#B4BCE0}
-body.on-home .who-name strong{color:#E7EAF3}
-body.on-home header .btn{border-color:rgba(231,234,243,.6);color:#E7EAF3}
-body.on-home header .btn:hover{background:#E7EAF3;color:var(--navy)}
-body.on-home header .btn-blue{border-color:#93A5FF;color:#93A5FF}
+header .who .soft{color:#B4BCE0}
+header .who-name strong{color:#E7EAF3}
+header .btn{border-color:rgba(231,234,243,.6);color:#E7EAF3}
+header .btn:hover{background:#E7EAF3;color:var(--navy)}
+header .btn-blue{border-color:#93A5FF;color:#93A5FF}
 body.on-home main{padding-top:0}
 
 .home-hero{position:relative;overflow:hidden;background:var(--navy);color:#E7EAF3;text-align:center;padding:clamp(56px,9vw,110px) 24px clamp(64px,9vw,104px);font-family:'Outfit',system-ui,sans-serif}
@@ -461,7 +461,7 @@ body.on-home header .btn-solid:hover{background:#B4C1FF;border-color:#B4C1FF;col
 /* ---- header initials, About page ---- */
 .who-name{display:inline-flex;align-items:center;gap:8px;cursor:default}
 .who-name .avatar{border:1px solid var(--line)}
-body.on-home .who-name .avatar{border-color:rgba(231,234,243,.35)}
+header .who-name .avatar{border-color:rgba(231,234,243,.35)}
 .about{max-width:1000px}
 .about-hero{padding:8px 0 10px;max-width:760px}
 .about-hero h1{margin:6px 0 14px;font-size:clamp(1.9rem,3.4vw,2.6rem)}
@@ -727,7 +727,7 @@ header .avatar{color:#FFFFFF}
 
 /* The header keeps the homepage navy on every page. Its menu, signed-in block and buttons use fixed colours, so the theme never changes them. */
 header,header nav,.menu-extra{--paper:#1B2447;--paper-2:#222C54;--card:#1B2447;--ink:#E7EAF3;--ink-soft:#B4BCE0;--line:#2A3566;--blue:#93A5FF;--blue-tint:#1D2648;--blue-deep:#BCC7FF;--on-blue:#0E1322;--green:#4ADE80;--green-tint:#14301F;--amber:#F5B041;--amber-tint:#3A2A10;--logo-ink:#E7EAF3;--logo-acc:#93A5FF;--logo-bg:#1B2447;--ok-bg:#12301F;--ok-ink:#6FD19B;--navy:#1B2447}
-header{background:#1B2447;border-bottom-color:rgba(147,165,255,.18)}
+header{background:#1B2447;border-bottom-color:rgba(147,165,255,.18);color:var(--ink)}
 header nav{background:#1B2447;border-color:rgba(147,165,255,.18)}
 header nav a{color:#B4BCE0}
 header nav a:hover{color:#E7EAF3}
@@ -756,3 +756,17 @@ header nav a::after{background:#FFFFFF}
 .tl-track.five::before{left:10%;right:10%}
 .tl-track.five .tl-label{font-size:.68rem}
 @media (max-width:560px){ .flow-step:not(:last-child)::after{display:none} }
+
+/* Cost breakdown on the study form and the manage page */
+.cost{border:1px solid var(--line);border-radius:12px;background:var(--paper-2);padding:6px 14px;margin-top:12px}
+.cost-row{display:flex;gap:14px;align-items:baseline;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line)}
+.cost-row:last-of-type{border-bottom:0}
+.cost-row span{color:var(--ink-soft);min-width:0}
+.cost-row b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.cost-row.sum span{color:var(--ink);font-weight:600}
+.cost-row.sum b{color:var(--blue);font-size:1.08rem}
+.cost-row.over span,.cost-row.over b{color:var(--danger,#B42318)}
+/* A value the researcher can no longer change */
+.locked-val{margin:0;padding:11px 12px;border:1px dashed var(--line);border-radius:10px;background:var(--paper-2);color:var(--ink-soft)}
+.list .item h3 a{color:inherit;text-decoration:none}
+.list .item h3 a:hover{text-decoration:underline}

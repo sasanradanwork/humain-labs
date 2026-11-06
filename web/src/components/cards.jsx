@@ -18,8 +18,8 @@ export function StudyAction({ study, full = true, onApply, solid = false }) {
   const own = AUTH.researcher && study.researcherId === AUTH.researcher.id;
   if (own)
     return (
-      <a className={"btn" + (full ? " btn-full" : "")} href={`#/dashboard?study=${study.id}`}>
-        Your study: see applicants
+      <a className={"btn btn-blue" + (full ? " btn-full" : "")} href={`#/studies/${encodeURIComponent(study.id)}`}>
+        Manage this study
       </a>
     );
   if (role() === "researcher") return <span className="small soft">Participants apply from their own accounts.</span>;
@@ -109,6 +109,7 @@ export function StudyCard({ study: s, onApply }) {
   const v = studyVerified(s);
   const gName = studyGroupName(s);
   const group = s.groupId ? byId("groups", s.groupId) : null;
+  const own = AUTH.researcher && s.researcherId === AUTH.researcher.id;
   return (
     <article className="card">
       <div className="cover">
@@ -116,7 +117,7 @@ export function StudyCard({ study: s, onApply }) {
         <span className="chip">{s.field}</span>
       </div>
       <div className="body">
-        <h3>{s.title}</h3>
+        <h3>{own ? <a href={`#/studies/${encodeURIComponent(s.id)}`}>{s.title}</a> : s.title}</h3>
         <div className="small soft">
           {s.researcherName}, {s.institution}
         </div>

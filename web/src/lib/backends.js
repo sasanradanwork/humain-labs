@@ -6,6 +6,7 @@
 import { S, AUTH, COLS, computeStats, notify } from "./store.js";
 import { FREE_MAIL, UserError, newGroupId, today, uid } from "./util.js";
 import { harvardAuthors } from "./harvard.js";
+import { feeBreakdown, gbp } from "./money.js";
 import DEMO from "../data/seed.json";
 
 let onToast = () => {};
@@ -144,13 +145,26 @@ function docBackend(store, kind) {
       for (const [k, label] of TL) if (!s[k]) throw new UserError(`${label} is required.`);
       for (let i = 1; i < TL.length; i++) if (s[TL[i][0]] < s[TL[i - 1][0]]) throw new UserError(`${TL[i][1]} can't be before ${TL[i - 1][1].toLowerCase()}.`);
       if (s.endDate < today()) throw new UserError("The study end date can't be in the past.");
+      // The researcher funds the study up front, so the budget has to cover the fee and every reward.
+      const budget = Number(s.budget);
+      const wanted = Number(s.participantsWanted);
+      const reward = Number(s.rewardEach);
+      if (!(budget >= 1)) throw new UserError("Study budget is required.");
+      if (!Number.isInteger(wanted) || wanted < 1) throw new UserError("Participants needed must be a whole number of 1 or more.");
+      if (!(reward > 0)) throw new UserError("Reward for each participant is required.");
+      const split = feeBreakdown(budget, wanted, reward);
+      if (split.overspent)
+        throw new UserError(
+          `After the platform fee your budget leaves ${gbp(split.available)} for participants, but ${wanted} \u00d7 ${gbp(reward)} comes to ${gbp(split.allocated)}. Raise the budget, ask for fewer participants, or lower the reward.`
+        );
       if (s.groupId && !S.groups.some((g) => g.id === s.groupId && g.members.some((m) => m.researcherId === me.id)))
         throw new UserError("You can only link a study to a group you're a member of.");
-      const base = { ...s, researcherId: me.id, researcherName: me.name, researcherEmail: me.email, institution: me.institution };
+      const base = { ...s, budget, participantsWanted: wanted, rewardEach: reward, researcherId: me.id, researcherName: me.name, researcherEmail: me.email, institution: me.institution };
       if (id) {
         const ex = S.studies.find((x) => x.id === id);
         if (!ex || ex.researcherId !== me.id) throw new UserError("Only the researcher who posted this study can change it.");
-        const doc = { ...base, id, postedAt: ex.postedAt };
+        // Dates and money that participants depend on are fixed once a study is posted.
+        const doc = { ...base, id, postedAt: ex.postedAt, endDate: ex.endDate, validationEnd: ex.validationEnd, budget: ex.budget, participantsWanted: ex.participantsWanted, rewardEach: ex.rewardEach };
         await store.put("studies", doc);
         return doc;
       }

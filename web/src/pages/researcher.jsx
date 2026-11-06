@@ -1,5 +1,5 @@
 // The researcher side: directory, group pages, the group editor and the researcher area.
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Avatar, Icon, LinkedInLink, Radar, ScholarLink, Cover, DeadlinePill, VerifiedBadge, UnverifiedBadge, sortByName } from "../components/ui.jsx";
 import { GroupCard, ResearcherCard, Toolbar, groupHref, lookingFor, APP_STAGES } from "../components/cards.jsx";
 import { AUTH, S, appCount, byId, canEditGroup, groupStudies, groupsOf, memberResearchers, role } from "../lib/store.js";
@@ -11,6 +11,7 @@ import { IdCheckPanel } from "../components/idcheck.jsx";
 import { COUNTRY_NAMES, FIELDS, POSITIONS } from "../lib/lists.js";
 import { namesFromHarvard } from "../lib/harvard.js";
 import { ResearcherGate, isVisible } from "./public.jsx";
+import { FEE_PERCENT, feeBreakdown, gbp } from "../lib/money.js";
 
 export function groupByRef(ref) {
   if (!ref) return null;
@@ -449,42 +450,8 @@ const SetupPrompt = () => (
   </div>
 );
 
-export function Dashboard({ route, onNewStudy, onEditStudy, onDeleteStudy, onVerify, onScholar, onRate }) {
-  const { backend, toast } = useUI();
+export function Dashboard({ onVerify, onScholar }) {
   const me = AUTH.researcher;
-  const myStudies = useMemo(
-    () => (me ? S.studies.filter((s) => s.researcherId === me.id).sort((a, b) => String(b.postedAt).localeCompare(String(a.postedAt))) : []),
-    [me, S.studies]
-  );
-  const wanted = route.q.get("study");
-  const [picked, setPicked] = useState(wanted || "");
-  // A link to another study while this page is open should switch the table too.
-  useEffect(() => {
-    if (wanted) setPicked(wanted);
-  }, [wanted]);
-  const dashStudy = myStudies.some((s) => s.id === picked) ? picked : myStudies[0]?.id || "";
-  const [apps, setApps] = useState(null);
-  const [appsError, setAppsError] = useState("");
-  const applicantsRef = useRef(null);
-
-  useEffect(() => {
-    if (wanted) replaceRoute("#/dashboard");
-  }, [wanted]);
-
-  useEffect(() => {
-    let live = true;
-    setApps(null);
-    setAppsError("");
-    if (!dashStudy) return;
-    backend
-      .applicants(dashStudy)
-      .then((a) => live && setApps(a))
-      .catch((e) => live && setAppsError(e.message));
-    return () => {
-      live = false;
-    };
-  }, [dashStudy, backend, S.applications.length, S.appsVersion]);
-
   if (!AUTH.user)
     return (
       <div className="wrap">
@@ -505,59 +472,6 @@ export function Dashboard({ route, onNewStudy, onEditStudy, onDeleteStudy, onVer
     );
 
   const myGroups = groupsOf(me.id);
-  const dashStudyObj = byId("studies", dashStudy);
-  // Participants can be rated once the study has closed.
-  const dashClosed = !!dashStudyObj && !isOpen(dashStudyObj);
-  // Approve moves the participant to the next stage. Not eligible withdraws them.
-  async function moveApplicant(a, action) {
-    try {
-      if (action === "advance") {
-        await backend.advance(a.id);
-        toast(`${a.name} moved to ${APP_STAGES[Math.min((a.stage ?? 0) + 1, APP_STAGES.length - 1)]}`);
-      } else {
-        if (!window.confirm(`Withdraw ${a.name} as not eligible? They won't go on to the study.`)) return;
-        await backend.reject(a.id);
-        toast(`${a.name} was withdrawn as not eligible`);
-      }
-    } catch (e) {
-      toast(e.message);
-    }
-  }
-  async function exportCSV() {
-    const s = byId("studies", dashStudy);
-    if (!s) return;
-    let list;
-    try {
-      list = await backend.applicants(s.id);
-    } catch (e) {
-      return toast(e.message);
-    }
-    const rows = [["Name", "Email", "Age", "Country", "Notes", "Applied", "Status"], ...list.map((a) => [a.name, a.email, a.age, a.country, a.notes, a.date, a.status || "active"])];
-    const csv = rows.map((r) => r.map((x) => `"${String(x ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
-    const filename = `${s.title.replace(/[^\w]+/g, "-").toLowerCase()}-applicants.csv`;
-    if (backend.kind === "claude") {
-      let dl = null;
-      try {
-        dl = await window.claude.use("downloads");
-      } catch (e) {}
-      if (dl) {
-        try {
-          await dl.save({ filename, data: csv });
-        } catch (e) {
-          if (e?.code !== "declined") toast("The file couldn't be saved here.");
-        }
-        return;
-      }
-    }
-    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  }
 
   return (
     <div className="wrap">
@@ -677,154 +591,280 @@ export function Dashboard({ route, onNewStudy, onEditStudy, onDeleteStudy, onVer
         <div className="intro">
           <div>
             <h2>Your studies</h2>
-            <p className="soft small">Pick a study to see who has applied. Only you can see your applicants.</p>
+            <p className="soft small">Studies are posted and managed on the Studies page, where you can also see who has applied.</p>
           </div>
-          {me.verified ? (
-            <button className="btn btn-solid" onClick={onNewStudy}>
-              Post a new study
-            </button>
+          <a className="btn btn-solid" href="#/studies">
+            Go to studies
+          </a>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+/* ================= manage one study ================= */
+// The researcher's view of a study they posted: its money, who has applied, and the controls to change it.
+export function ManageStudy({ route, onEditStudy, onDeleteStudy, onRate }) {
+  const { backend, toast } = useUI();
+  const me = AUTH.researcher;
+  const study = byId("studies", route.id);
+  const mine = !!study && !!me && study.researcherId === me.id;
+  const [apps, setApps] = useState(null);
+  const [appsError, setAppsError] = useState("");
+
+  useEffect(() => {
+    let live = true;
+    setApps(null);
+    setAppsError("");
+    if (!mine) return;
+    backend
+      .applicants(study.id)
+      .then((a) => live && setApps(a))
+      .catch((e) => live && setAppsError(e.message));
+    return () => {
+      live = false;
+    };
+  }, [mine, study?.id, backend, S.applications.length, S.appsVersion]);
+
+  if (!AUTH.user)
+    return (
+      <div className="wrap">
+        <SignInPrompt title="Manage a study" text="Researchers sign in here to manage the studies they have posted." />
+      </div>
+    );
+  if (!mine)
+    return (
+      <div className="wrap">
+        <div className="intro">
+          <div>
+            <h1>Study not found</h1>
+            <p className="soft">This study doesn't exist, or it was posted by another researcher.</p>
+          </div>
+        </div>
+        <div className="empty" style={{ padding: 30 }}>
+          <a className="btn btn-blue" href="#/studies">
+            Back to studies
+          </a>
+        </div>
+      </div>
+    );
+
+  // Participants can be rated once the study has closed.
+  const closed = !isOpen(study);
+  const split = feeBreakdown(study.budget, study.participantsWanted, study.rewardEach);
+  const live = (apps || []).filter((a) => a.status !== "withdrawn");
+  const wanted = Number(study.participantsWanted) || 0;
+  const filled = Math.min(live.length, wanted);
+  const committed = (Number(study.rewardEach) || 0) * filled;
+  const refundable = Math.max(0, split.allocated - committed);
+
+  // Approve moves the participant to the next stage. Not eligible withdraws them.
+  async function moveApplicant(a, action) {
+    try {
+      if (action === "advance") {
+        await backend.advance(a.id);
+        toast(`${a.name} moved to ${APP_STAGES[Math.min((a.stage ?? 0) + 1, APP_STAGES.length - 1)]}`);
+      } else {
+        if (!window.confirm(`Withdraw ${a.name} as not eligible? They won't go on to the study.`)) return;
+        await backend.reject(a.id);
+        toast(`${a.name} was withdrawn as not eligible`);
+      }
+    } catch (e) {
+      toast(e.message);
+    }
+  }
+  async function exportCSV() {
+    const s = study;
+    let list;
+    try {
+      list = await backend.applicants(s.id);
+    } catch (e) {
+      return toast(e.message);
+    }
+    const rows = [["Name", "Email", "Age", "Country", "Notes", "Applied", "Status"], ...list.map((a) => [a.name, a.email, a.age, a.country, a.notes, a.date, a.status || "active"])];
+    const csv = rows.map((r) => r.map((x) => `"${String(x ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
+    const filename = `${s.title.replace(/[^\w]+/g, "-").toLowerCase()}-applicants.csv`;
+    if (backend.kind === "claude") {
+      let dl = null;
+      try {
+        dl = await window.claude.use("downloads");
+      } catch (e) {}
+      if (dl) {
+        try {
+          await dl.save({ filename, data: csv });
+        } catch (e) {
+          if (e?.code !== "declined") toast("The file couldn't be saved here.");
+        }
+        return;
+      }
+    }
+    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  return (
+    <div className="wrap">
+      <div className="intro">
+        <div>
+          <a className="small" href="#/studies">
+            &larr; All studies
+          </a>
+          <h1>{study.title}</h1>
+          <p className="soft">
+            Posted {fmtDate(study.postedAt)}, {plural(appCount(study.id), "applicant", "applicants")}
+          </p>
+          <div className="badges" style={{ marginTop: 6 }}>
+            <DeadlinePill study={study} />
+            {closed ? (
+              <span className="unverified">Closed to new applicants</span>
+            ) : !isVisible(study) ? (
+              <span className="unverified">Hidden from participants until you verify</span>
+            ) : null}
+          </div>
+        </div>
+        <div className="btns" style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <button className="btn btn-blue" onClick={() => onEditStudy(study)}>
+            Edit
+          </button>
+          <button className="btn btn-danger" onClick={() => onDeleteStudy(study)}>
+            Remove
+          </button>
+        </div>
+      </div>
+
+      <section className="dash-sec">
+        <div className="intro">
+          <div>
+            <h2>Budget</h2>
+            <p className="soft small">Paid up front when the study is posted. Fixed once it is live.</p>
+          </div>
+        </div>
+        <div className="cost">
+          <div className="cost-row">
+            <span>Study budget</span>
+            <b>{gbp(split.budget)}</b>
+          </div>
+          <div className="cost-row">
+            <span>Platform fee ({FEE_PERCENT})</span>
+            <b>&minus;{gbp(split.fee)}</b>
+          </div>
+          <div className="cost-row sum">
+            <span>
+              Rewards for {wanted} {wanted === 1 ? "participant" : "participants"} &times; {gbp(study.rewardEach)}
+            </span>
+            <b>{gbp(split.allocated)}</b>
+          </div>
+          <div className="cost-row">
+            <span>
+              Places filled, {filled} of {wanted}
+            </span>
+            <b>{gbp(committed)}</b>
+          </div>
+          <div className="cost-row sum">
+            <span>Refunded if the rest go unfilled</span>
+            <b>{gbp(refundable)}</b>
+          </div>
+        </div>
+      </section>
+
+      <section className="dash-sec">
+        <div className="dashbar">
+          <strong>Applicants</strong>
+          <button className="btn" style={{ marginLeft: "auto" }} onClick={exportCSV} disabled={!apps?.length}>
+            <Icon.down /> Export CSV
+          </button>
+        </div>
+        <div id="applicants">
+          {appsError ? (
+            <div className="empty" style={{ padding: 30 }}>
+              <div>{appsError}</div>
+            </div>
+          ) : apps === null ? (
+            <div className="loading" style={{ padding: 30 }}>
+              Loading applicants…
+            </div>
           ) : (
-            <button className="btn btn-solid" onClick={onVerify} title="Only verified researchers can post studies">
-              Verify to post a study
-            </button>
+            <div className="tablewrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Age</th>
+                    <th>Country</th>
+                    <th>Notes</th>
+                    <th>Applied</th>
+                    <th>Track record</th>
+                    <th>Status</th>
+                    <th>Progress</th>
+                    <th>Rating</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {apps.length ? (
+                    apps.map((a) => (
+                      <tr key={a.id}>
+                        <td>{a.name}</td>
+                        <td>{a.email}</td>
+                        <td>{a.age}</td>
+                        <td>{a.country}</td>
+                        <td style={{ maxWidth: 260 }}>{a.notes}</td>
+                        <td style={{ whiteSpace: "nowrap" }}>{fmtDate(a.date)}</td>
+                        <td style={{ whiteSpace: "nowrap" }}>
+                          {a.ratingSummary?.count ? (
+                            `★ ${a.ratingSummary.average} (${plural(a.ratingSummary.count, "rating", "ratings")})`
+                          ) : (
+                            <span className="soft">No ratings yet</span>
+                          )}
+                        </td>
+                        <td style={{ whiteSpace: "nowrap" }}>
+                          {a.status === "withdrawn" ? (
+                            <span className="unverified">
+                              {a.withdrawReason === "eligibility" ? "Not eligible" : "Withdrew"} {fmtDate(a.withdrawnAt)}
+                            </span>
+                          ) : (
+                            APP_STAGES[a.stage ?? 0]
+                          )}
+                        </td>
+                        <td style={{ whiteSpace: "nowrap" }}>
+                          {a.status !== "withdrawn" && (a.stage ?? 0) < APP_STAGES.length - 1 && (
+                            <button className="link small" onClick={() => moveApplicant(a, "advance")}>
+                              Approve: {APP_STAGES[(a.stage ?? 0) + 1]}
+                            </button>
+                          )}
+                          {a.status !== "withdrawn" && (a.stage ?? 0) <= 1 && (
+                            <button className="link small" style={{ marginLeft: 12 }} onClick={() => moveApplicant(a, "reject")}>
+                              Not eligible
+                            </button>
+                          )}
+                        </td>
+                        <td style={{ whiteSpace: "nowrap" }}>
+                          {closed && a.status !== "withdrawn" && onRate && (
+                            <button className="link small" onClick={() => onRate(a, study)}>
+                              {a.rating ? `★ ${a.rating.stars}. Edit` : "Rate"}
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="10" className="soft" style={{ textAlign: "center", padding: 36 }}>
+                        No applications yet.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
-        {myStudies.length ? (
-          <>
-            <div className="list" style={{ marginBottom: 18 }}>
-              {myStudies.map((s) => (
-                <div className={"item" + (s.id === dashStudy ? " sel" : "")} key={s.id}>
-                  <div>
-                    <h3>{s.title}</h3>
-                    <div className="small soft">
-                      Posted {fmtDate(s.postedAt)}, {plural(appCount(s.id), "applicant", "applicants")}
-                    </div>
-                    <div className="badges" style={{ marginTop: 6 }}>
-                      <DeadlinePill study={s} />
-                      {!isOpen(s) ? (
-                        <span className="unverified">Closed to new applicants</span>
-                      ) : !isVisible(s) ? (
-                        <span className="unverified">Hidden from participants until you verify</span>
-                      ) : null}
-                    </div>
-                  </div>
-                  <div className="btns">
-                    <button
-                      className="btn"
-                      onClick={() => {
-                        setPicked(s.id);
-                        setTimeout(() => applicantsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
-                      }}
-                    >
-                      Applicants
-                    </button>
-                    <button className="btn btn-blue" onClick={() => onEditStudy(s)}>
-                      Edit
-                    </button>
-                    <button className="btn btn-danger" onClick={() => onDeleteStudy(s)}>
-                      Remove
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="dashbar">
-              <strong>{byId("studies", dashStudy)?.title || ""}</strong>
-              <button className="btn" style={{ marginLeft: "auto" }} onClick={exportCSV} disabled={!apps?.length}>
-                <Icon.down /> Export CSV
-              </button>
-            </div>
-            <div id="applicants" ref={applicantsRef}>
-              {appsError ? (
-                <div className="empty" style={{ padding: 30 }}>
-                  <div>{appsError}</div>
-                </div>
-              ) : apps === null ? (
-                <div className="loading" style={{ padding: 30 }}>
-                  Loading applicants…
-                </div>
-              ) : (
-                <div className="tablewrap">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Age</th>
-                        <th>Country</th>
-                        <th>Notes</th>
-                        <th>Applied</th>
-                        <th>Track record</th>
-                        <th>Status</th>
-                        <th>Progress</th>
-                        <th>Rating</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {apps.length ? (
-                        apps.map((a) => (
-                          <tr key={a.id}>
-                            <td>{a.name}</td>
-                            <td>{a.email}</td>
-                            <td>{a.age}</td>
-                            <td>{a.country}</td>
-                            <td style={{ maxWidth: 260 }}>{a.notes}</td>
-                            <td style={{ whiteSpace: "nowrap" }}>{fmtDate(a.date)}</td>
-                            <td style={{ whiteSpace: "nowrap" }}>
-                              {a.ratingSummary?.count ? (
-                                `★ ${a.ratingSummary.average} (${plural(a.ratingSummary.count, "rating", "ratings")})`
-                              ) : (
-                                <span className="soft">No ratings yet</span>
-                              )}
-                            </td>
-                            <td style={{ whiteSpace: "nowrap" }}>
-                              {a.status === "withdrawn" ? (
-                                <span className="unverified">
-                                  {a.withdrawReason === "eligibility" ? "Not eligible" : "Withdrew"} {fmtDate(a.withdrawnAt)}
-                                </span>
-                              ) : (
-                                APP_STAGES[a.stage ?? 0]
-                              )}
-                            </td>
-                            <td style={{ whiteSpace: "nowrap" }}>
-                              {a.status !== "withdrawn" && (a.stage ?? 0) < APP_STAGES.length - 1 && (
-                                <button className="link small" onClick={() => moveApplicant(a, "advance")}>
-                                  Approve: {APP_STAGES[(a.stage ?? 0) + 1]}
-                                </button>
-                              )}
-                              {a.status !== "withdrawn" && (a.stage ?? 0) <= 1 && (
-                                <button className="link small" style={{ marginLeft: 12 }} onClick={() => moveApplicant(a, "reject")}>
-                                  Not eligible
-                                </button>
-                              )}
-                            </td>
-                            <td style={{ whiteSpace: "nowrap" }}>
-                              {dashClosed && a.status !== "withdrawn" && onRate && (
-                                <button className="link small" onClick={() => onRate(a, dashStudyObj)}>
-                                  {a.rating ? `★ ${a.rating.stars}. Edit` : "Rate"}
-                                </button>
-                              )}
-                            </td>
-                          </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td colSpan="10" className="soft" style={{ textAlign: "center", padding: 36 }}>
-                            No applications yet.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          </>
-        ) : (
-          <div className="empty" style={{ padding: 30 }}>
-            <div>You haven't posted any studies yet.</div>
-          </div>
-        )}
       </section>
     </div>
   );

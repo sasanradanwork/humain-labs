@@ -19,7 +19,8 @@ async function verifiedProfile(repo, id, over = {}) {
   await repo.upsert("researchers", { ...(await repo.get("researchers", r.json.id)), verified: { method: "institution-email", domain: "uni.ac.uk", at: "2026-09-01" }, idVerified: { at: "2026-09-02" } });
   return r.json;
 }
-const TL = () => ({ eligibilityStart: soon(12), eligibilityEnd: soon(14), experimentStart: soon(15), experimentEnd: soon(20), validationEnd: soon(22), endDate: soon(23) });
+const MONEY = { budget: 500, participantsWanted: 20, rewardEach: 20 };
+const TL = () => ({ ...MONEY, eligibilityStart: soon(12), eligibilityEnd: soon(14), experimentStart: soon(15), experimentEnd: soon(20), validationEnd: soon(22), endDate: soon(23) });
 const soon = (days = 10) => new Date(Date.now() + days * 86400000).toISOString().slice(0, 10);
 const participant = async (repo, id, over = {}) => {
   const r = await H.putParticipant({ repo, principal: user(id), body: { name: "Participant " + id, email: id + "@example.com", age: 30, country: "Kenya", ...over } });
@@ -39,7 +40,9 @@ test("principal header is decoded", () => {
 test("participants get studies only; the directory and counts need a researcher profile", async () => {
   const repo = fresh();
   const pub = await H.publicData({ repo });
-  assert.equal(pub.json.studies.length, 6);
+  // Counted from the seed, so the test doesn't go stale as its closing dates pass.
+  const openInSeed = seed.studies.filter((x) => x.closesAt >= new Date().toISOString().slice(0, 10)).length;
+  assert.equal(pub.json.studies.length, openInSeed);
   assert.ok(pub.json.studies.every((s) => s.trend && s.trend.weekly.length === 8 && s.trend.weekly.every((w) => w <= 1)));
   assert.ok(!("researchers" in pub.json));
   // Visitors only get public groups, with no member list
@@ -157,6 +160,51 @@ test("researcher accounts can't apply to studies", async () => {
   await H.putProfile({ repo, principal: user("u1"), body: profile() });
   const r = await run(H.apply, { repo, principal: user("u1"), body: { studyId: "s1", name: "A", email: "a@example.com", age: 30, country: "United Kingdom", consent: true } });
   assert.equal(r.status, 403);
+});
+
+test("a study budget has to cover the platform fee and every reward", async () => {
+  const repo = fresh();
+  await verifiedProfile(repo, "u1");
+  const base = { title: "Survey", description: "15 min", criteria: "18+", closesAt: soon(3), ...TL() };
+  const body = (over) => ({ ...base, ...over });
+  // The budget is required, and so are the numbers it is split into
+  assert.equal((await run(H.createStudy, { repo, principal: user("u1"), body: body({ budget: "" }) })).status, 400);
+  assert.equal((await run(H.createStudy, { repo, principal: user("u1"), body: body({ participantsWanted: 0 }) })).status, 400);
+  assert.equal((await run(H.createStudy, { repo, principal: user("u1"), body: body({ rewardEach: 0 }) })).status, 400);
+  // Fractions of a penny are refused rather than rounded away
+  assert.equal((await run(H.createStudy, { repo, principal: user("u1"), body: body({ rewardEach: 20.005 }) })).status, 400);
+  // £100 leaves £80 after the fee, so 5 x £20 does not fit but 4 x £20 does
+  assert.equal((await run(H.createStudy, { repo, principal: user("u1"), body: body({ budget: 100, participantsWanted: 5, rewardEach: 20 }) })).status, 400);
+  const ok200 = await run(H.createStudy, { repo, principal: user("u1"), body: body({ budget: 100, participantsWanted: 4, rewardEach: 20 }) });
+  assert.equal(ok200.status, 201);
+  assert.equal(ok200.json.budget, 100);
+  // Participants are told the reward and the number of places, but not the researcher's total budget
+  const pub = (await H.publicData({ repo })).json.studies.find((x) => x.id === ok200.json.id);
+  assert.equal(pub.rewardEach, 20);
+  assert.equal(pub.participantsWanted, 4);
+  assert.ok(!("budget" in pub));
+});
+
+test("the end date and the money are fixed once a study is posted", async () => {
+  const repo = fresh();
+  await verifiedProfile(repo, "u1");
+  const base = { title: "Survey", description: "15 min", criteria: "18+", closesAt: soon(3), ...TL() };
+  const s = (await run(H.createStudy, { repo, principal: user("u1"), body: base })).status === 201
+    ? (await repo.all("studies")).find((x) => x.title === "Survey")
+    : null;
+  assert.ok(s);
+  const edit = (over) => run(H.updateStudy, { repo, principal: user("u1"), params: { id: s.id }, body: { ...base, ...over } });
+  assert.equal((await edit({ endDate: soon(90) })).status, 400);
+  assert.equal((await edit({ validationEnd: soon(80) })).status, 400);
+  assert.equal((await edit({ budget: 900 })).status, 400);
+  assert.equal((await edit({ rewardEach: 5 })).status, 400);
+  assert.equal((await edit({ participantsWanted: 3 })).status, 400);
+  // Everything else about the study still changes, and the fixed values survive the edit
+  const saved = await edit({ title: "Survey, revised", experimentStart: soon(16) });
+  assert.equal(saved.status, 200);
+  assert.equal(saved.json.title, "Survey, revised");
+  assert.equal(saved.json.endDate, s.endDate);
+  assert.equal(saved.json.budget, s.budget);
 });
 
 test("studies need a full timeline in order", async () => {

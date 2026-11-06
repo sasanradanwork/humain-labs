@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Avatar, Icon, Logo } from "./components/ui.jsx";
 import { ApplyModal, ConfirmModal, RateModal, RorModal, ScholarModal, StudyModal, VerifyModal } from "./components/modals.jsx";
 import { About, Auth, Home, MyApplications, Reach, Studies } from "./pages/public.jsx";
-import { Dashboard, GroupEditor, GroupPage, Groups, ProfileEditor, Researchers, groupByRef } from "./pages/researcher.jsx";
+import { Dashboard, GroupEditor, GroupPage, Groups, ManageStudy, ProfileEditor, Researchers, groupByRef } from "./pages/researcher.jsx";
 import { AUTH, S, byId, role, useStore } from "./lib/store.js";
 import { fallbackBackend, pickBackend, setToaster } from "./lib/backends.js";
 import { UIProvider, navigate, useRoute, useTheme } from "./lib/ui.jsx";
@@ -102,6 +102,27 @@ export default function App() {
     []
   );
   const onApply = useCallback((study) => requireLogin(() => setModal({ kind: "apply", study })), [requireLogin]);
+  const onNewStudy = useCallback(
+    () => setModal(AUTH.researcher?.verified && AUTH.researcher?.idVerified ? { kind: "study" } : { kind: "verify" }),
+    []
+  );
+  const onEditStudy = useCallback((s) => setModal({ kind: "study", existing: s }), []);
+  const onRate = useCallback((a, s) => setModal({ kind: "rate", app: a, study: s }), []);
+  const onDeleteStudy = useCallback(
+    (s) =>
+      setModal({
+        kind: "confirm",
+        title: "Remove this study?",
+        text: `\u201c${s.title}\u201d will be taken down and its ${plural(appCount(s.id), "application", "applications")} deleted. This can't be undone.`,
+        label: "Remove study",
+        onConfirm: async () => {
+          await backend.deleteStudy(s.id);
+          toast("Study removed.");
+          navigate("#/studies");
+        },
+      }),
+    [backend, toast]
+  );
   const onWithdraw = useCallback(
     (app, study) =>
       setModal({
@@ -156,7 +177,17 @@ export default function App() {
         body = <Home onApply={onApply} setStudyQuery={(q) => setPageFilters("studies")({ ...filters.studies, q })} />;
         break;
       case "studies":
-        body = <Studies filters={filters.studies} setFilters={setPageFilters("studies")} onApply={onApply} />;
+        body = route.id ? (
+          <ManageStudy route={route} onEditStudy={onEditStudy} onDeleteStudy={onDeleteStudy} onRate={onRate} />
+        ) : (
+          <Studies
+            filters={filters.studies}
+            setFilters={setPageFilters("studies")}
+            onApply={onApply}
+            onNewStudy={onNewStudy}
+            onVerify={() => setModal({ kind: "verify" })}
+          />
+        );
         break;
       case "researchers":
         body = <Researchers filters={filters.researchers} setFilters={setPageFilters("researchers")} />;
@@ -212,28 +243,7 @@ export default function App() {
         );
         break;
       case "dashboard":
-        body = (
-          <Dashboard
-            route={route}
-            onVerify={() => setModal({ kind: "verify" })}
-            onScholar={() => setModal({ kind: "scholar" })}
-            onNewStudy={() => setModal(AUTH.researcher?.verified && AUTH.researcher?.idVerified ? { kind: "study" } : { kind: "verify" })}
-            onEditStudy={(s) => setModal({ kind: "study", existing: s })}
-            onRate={(a, s) => setModal({ kind: "rate", app: a, study: s })}
-            onDeleteStudy={(s) =>
-              setModal({
-                kind: "confirm",
-                title: "Remove this study?",
-                text: `“${s.title}” will be taken down and its ${plural(appCount(s.id), "application", "applications")} deleted. This can't be undone.`,
-                label: "Remove study",
-                onConfirm: async () => {
-                  await backend.deleteStudy(s.id);
-                  toast("Study removed.");
-                },
-              })
-            }
-          />
-        );
+        body = <Dashboard onVerify={() => setModal({ kind: "verify" })} onScholar={() => setModal({ kind: "scholar" })} />;
         break;
       case "profile":
         body = (

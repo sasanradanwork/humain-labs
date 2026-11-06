@@ -16,6 +16,16 @@ function int(v, name, { min = 0, max = 1e9, required = false } = {}) {
   if (!Number.isInteger(n) || n < min || n > max) throw bad(`${name} must be a whole number between ${min} and ${max}.`);
   return n;
 }
+// An amount of money in pounds. Anything finer than a penny is rejected rather than rounded.
+function money(v, name, { min = 0, max = 1e6, required = false } = {}) {
+  if (v === "" || v == null) { if (required) throw bad(`${name} is required.`); return null; }
+  const n = Number(v);
+  if (!Number.isFinite(n)) throw bad(`${name} must be an amount in pounds.`);
+  const p = n * 100;
+  if (Math.abs(p - Math.round(p)) > 1e-6) throw bad(`${name} can only go down to the penny.`);
+  if (n < min || n > max) throw bad(`${name} must be between £${min.toFixed(2)} and £${max.toFixed(2)}.`);
+  return Math.round(p) / 100;
+}
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 function email(v, name, opts = {}) {
   const s = str(v, name, { ...opts, max: 254 });
@@ -83,4 +93,4 @@ function list(v, name, max) {
   return v;
 }
 
-module.exports = { HttpError, bad, str, int, email, url, linkedin, orcid, scholar, ror, date, handle, oneOf, choice, list, FORMATS, OPENING_TYPES };
+module.exports = { HttpError, bad, str, int, money, email, url, linkedin, orcid, scholar, ror, date, handle, oneOf, choice, list, FORMATS, OPENING_TYPES };

@@ -5,6 +5,8 @@ import { AUTH, S, groupsOf, role } from "../lib/store.js";
 import { DAY_MS, FORMATS, FREE_MAIL, plural, today, UserError } from "../lib/util.js";
 import { COUNTRY_NAMES, FIELDS } from "../lib/lists.js";
 import { ChoiceField } from "./fields.jsx";
+import { FEE_PERCENT, feeBreakdown, gbp } from "../lib/money.js";
+import { fmtDate } from "../lib/util.js";
 import { IdCheckPanel } from "./idcheck.jsx";
 
 export function ApplyModal({ study: s, onClose }) {
@@ -122,12 +124,69 @@ export function ApplyModal({ study: s, onClose }) {
   );
 }
 
+// A date that is fixed once the study is posted, shown as plain text in its place.
+function LockedDate({ label, value }) {
+  return (
+    <Field label={label}>
+      <p className="locked-val">
+        {value ? fmtDate(value) : "Not set"} <span className="small soft">fixed</span>
+      </p>
+    </Field>
+  );
+}
+
+// What the researcher pays and where it goes, worked out as they type.
+function CostPreview({ budget, participantsWanted, rewardEach }) {
+  const split = feeBreakdown(budget, participantsWanted, rewardEach);
+  const n = Number(participantsWanted) || 0;
+  return (
+    <div className="cost" aria-live="polite">
+      <div className="cost-row">
+        <span>Study budget, paid up front</span>
+        <b>{gbp(split.budget)}</b>
+      </div>
+      <div className="cost-row">
+        <span>Platform fee ({FEE_PERCENT})</span>
+        <b>&minus;{gbp(split.fee)}</b>
+      </div>
+      <div className="cost-row sum">
+        <span>Left for participants</span>
+        <b>{gbp(split.available)}</b>
+      </div>
+      <div className="cost-row">
+        <span>
+          {n || 0} {n === 1 ? "participant" : "participants"} &times; {gbp(rewardEach)}
+        </span>
+        <b>{gbp(split.allocated)}</b>
+      </div>
+      <div className={"cost-row sum" + (split.overspent ? " over" : "")}>
+        <span>{split.overspent ? "Over budget by" : "Not allocated"}</span>
+        <b>{gbp(Math.abs(split.unallocated))}</b>
+      </div>
+      <p className="small soft" style={{ margin: "10px 0 0" }}>
+        {split.overspent
+          ? "Raise the budget, ask for fewer participants, or lower the reward."
+          : `Each participant is paid ${gbp(rewardEach)} as they complete the study. If you don't fill all ${n || 0} places, the rewards you don't use are refunded to whatever you paid with.`}
+      </p>
+    </div>
+  );
+}
+
 export function StudyModal({ existing, onClose, onSaved }) {
   const { backend, toast } = useUI();
   const me = AUTH.researcher;
   const s = existing || { field: me.field, country: me.country, format: "Online" };
   const mine = groupsOf(me.id);
   const maxDate = new Date(Date.now() + 365 * DAY_MS).toISOString().slice(0, 10);
+  // Dates and money participants depend on are fixed once the study is posted.
+  const locked = !!existing;
+  const [money, setMoney] = useState({
+    budget: s.budget ?? "",
+    participantsWanted: s.participantsWanted ?? "",
+    rewardEach: s.rewardEach ?? "",
+  });
+  const onMoney = (k) => (e) => setMoney((m) => ({ ...m, [k]: e.target.value }));
+  const posted = locked ? feeBreakdown(s.budget, s.participantsWanted, s.rewardEach) : null;
   return (
     <Modal onClose={onClose}>
       <Form
@@ -173,13 +232,89 @@ export function StudyModal({ existing, onClose, onSaved }) {
             </Field>
           </div>
           <div className="row2">
-            <Field label="Reward (optional)">
-              <input name="compensation" maxLength="120" defaultValue={s.compensation || ""} placeholder="e.g. £10 voucher" />
+            <Field label="Reward, as participants see it">
+              <input name="compensation" maxLength="120" defaultValue={s.compensation || ""} placeholder="e.g. £20 bank transfer" />
             </Field>
             <Field label="Applications close on" required>
               <input name="closesAt" type="date" required min={today()} max={maxDate} defaultValue={s.closesAt || ""} />
             </Field>
           </div>
+
+          <fieldset className="tl-form">
+            <legend>Budget</legend>
+            {locked ? (
+              <>
+                <p className="small soft" style={{ marginTop: 0 }}>
+                  The budget is fixed once a study is posted, because it is paid up front and participants are paid from it.
+                </p>
+                <div className="cost">
+                  <div className="cost-row">
+                    <span>Study budget</span>
+                    <b>{gbp(posted.budget)}</b>
+                  </div>
+                  <div className="cost-row">
+                    <span>Platform fee ({FEE_PERCENT})</span>
+                    <b>&minus;{gbp(posted.fee)}</b>
+                  </div>
+                  <div className="cost-row sum">
+                    <span>
+                      {s.participantsWanted || 0} &times; {gbp(s.rewardEach)} for participants
+                    </span>
+                    <b>{gbp(posted.allocated)}</b>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <Field label="Study budget (£)" required>
+                  <input
+                    name="budget"
+                    type="number"
+                    required
+                    min="1"
+                    max="1000000"
+                    step="0.01"
+                    inputMode="decimal"
+                    value={money.budget}
+                    onChange={onMoney("budget")}
+                    placeholder="e.g. 500"
+                  />
+                </Field>
+                <div className="row2">
+                  <Field label="Participants needed" required>
+                    <input
+                      name="participantsWanted"
+                      type="number"
+                      required
+                      min="1"
+                      max="10000"
+                      step="1"
+                      inputMode="numeric"
+                      value={money.participantsWanted}
+                      onChange={onMoney("participantsWanted")}
+                      placeholder="e.g. 20"
+                    />
+                  </Field>
+                  <Field label="Reward for each participant (£)" required>
+                    <input
+                      name="rewardEach"
+                      type="number"
+                      required
+                      min="0.01"
+                      max="100000"
+                      step="0.01"
+                      inputMode="decimal"
+                      value={money.rewardEach}
+                      onChange={onMoney("rewardEach")}
+                      placeholder="e.g. 20"
+                    />
+                  </Field>
+                </div>
+                <CostPreview {...money} />
+              </>
+            )}
+          </fieldset>
+
           <fieldset className="tl-form">
             <legend>Study timeline</legend>
             <div className="row2">
@@ -199,14 +334,29 @@ export function StudyModal({ existing, onClose, onSaved }) {
               </Field>
             </div>
             <div className="row2">
-              <Field label="Validation complete by" required>
-                <input name="validationEnd" type="date" required min={today()} max={maxDate} defaultValue={s.validationEnd || ""} />
-              </Field>
-              <Field label="Study ends on" required>
-                <input name="endDate" type="date" required min={today()} max={maxDate} defaultValue={s.endDate || ""} />
-              </Field>
+              {locked ? (
+                <LockedDate label="Validation complete by" value={s.validationEnd} />
+              ) : (
+                <Field label="Validation complete by" required>
+                  <input name="validationEnd" type="date" required min={today()} max={maxDate} defaultValue={s.validationEnd || ""} />
+                </Field>
+              )}
+              {locked ? (
+                <LockedDate label="Study ends on" value={s.endDate} />
+              ) : (
+                <Field label="Study ends on" required>
+                  <input name="endDate" type="date" required min={today()} max={maxDate} defaultValue={s.endDate || ""} />
+                </Field>
+              )}
             </div>
+            {locked && (
+              <p className="small soft">
+                The validation and end dates are fixed, so participants know when they will be paid. The dates before them can still move, as long as
+                they stay in order.
+              </p>
+            )}
           </fieldset>
+
           <Field label="What's involved" required>
             <textarea name="description" rows="3" required maxLength="2000" defaultValue={s.description || ""} />
           </Field>
