@@ -929,3 +929,16 @@ header nav a::after{background:#FFFFFF}
 .trust-card h3{font-size:1.1rem;color:#FFFFFF;margin:0;text-shadow:0 1px 10px rgba(0,0,0,.5)}
 .trust-card p{margin:0;color:rgba(255,255,255,.88);text-shadow:0 1px 8px rgba(0,0,0,.55)}
 @media (forced-colors:active){ .trust-card::before{background:Canvas} .trust-card h3,.trust-card p{color:CanvasText} }
+
+/* ---- the lab scene across the foot of the status page ---- */
+/* No card and no background of its own: it sits on the page and the content fades into it. */
+.status-art{position:relative;width:100%;aspect-ratio:1200/250;overflow:hidden;margin-top:30px;
+  --art-rig:#E9EDF8;--art-edge:#C3CBE3;--art-slot:#DBE1F0;--art-body:#44539C;--art-coat:#8E9DDE;
+  --art-glass:#58BFB6;--art-hat:#E9A63A;--art-shadow:#AEB8D6;--art-card:#FFFFFF}
+:root[data-theme="dark"] .status-art{--art-rig:#2C3763;--art-edge:#45518C;--art-slot:#1E2749;--art-body:#C3CCFF;
+  --art-coat:#6E7FD0;--art-glass:#6CCFC6;--art-hat:#F5B041;--art-shadow:#121936;--art-card:#1B2447}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .status-art{--art-rig:#2C3763;--art-edge:#45518C;--art-slot:#1E2749;--art-body:#C3CCFF;--art-coat:#6E7FD0;--art-glass:#6CCFC6;--art-hat:#F5B041;--art-shadow:#121936;--art-card:#1B2447} }
+.status-art svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+/* the upper edge dissolves into the page, so the content runs into the scene */
+.status-art::before{content:"";position:absolute;left:0;right:0;top:0;height:30%;z-index:1;background:linear-gradient(to top,transparent,var(--paper) 88%)}
+

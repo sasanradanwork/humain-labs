@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { SHIPPED, UPCOMING } from "../lib/changelog.js";
 import { fmtDate } from "../lib/util.js";
 import { Icon } from "../components/ui.jsx";
+import { StatusArt } from "../components/statusart.jsx";
 import { AUTH } from "../lib/store.js";
 
 const WINDOW = 90;
@@ -277,7 +278,8 @@ export function Status() {
   const time = checks.at ? checks.at.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }) : "";
 
   return (
-    <div className="wrap status-page">
+    <>
+      <div className="wrap status-page">
       <div className="intro">
         <div>
           <p className="eyebrow">Status</p>
@@ -383,6 +385,8 @@ export function Status() {
           </ul>
         )}
       </section>
-    </div>
+      </div>
+      <StatusArt />
+    </>
   );
 }
