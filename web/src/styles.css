@@ -346,10 +346,8 @@ body.on-home main{padding-top:0}
 .home-sec{margin-top:56px}
 .h2big{font-size:1.6rem}
 .trust{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.trust > div{border:1px solid var(--line);border-radius:16px;padding:22px;background:var(--card);display:grid;gap:8px;align-content:start}
-.trust h3{font-size:1.05rem}
 .tnum{width:36px;height:36px;border-radius:999px;background:var(--blue-tint);color:var(--blue);display:inline-flex;align-items:center;justify-content:center;font-weight:600;font-family:'Outfit',sans-serif}
-@media (max-width:760px){ .trust{grid-template-columns:1fr} }
+@media (max-width:760px){ .trust{grid-template-columns:1fr} .trust-card{min-height:230px} }
 
 .verified{display:inline-flex;align-items:center;gap:5px;font-size:.72rem;font-weight:500;line-height:1.35;padding:.24rem .6rem;border-radius:999px;background:var(--ok-bg);color:var(--ok-ink);white-space:nowrap}
 .verified .vd{font-weight:400;opacity:.85}
@@ -863,11 +861,10 @@ header nav a::after{background:#FFFFFF}
 .vote.readonly{gap:12px;color:var(--ink-soft)}
 .vote-count{display:inline-flex;align-items:center;gap:5px;font-size:.82rem;font-variant-numeric:tabular-nums}
 /* A whole section that opens on click, with its own heading as the control */
-.sec-toggle{display:flex;align-items:center;gap:14px;width:100%;padding:14px 0;border:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.sec-toggle{display:flex;align-items:center;gap:16px;width:100%;padding:16px 0;border:0;border-top:1px solid var(--line);background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
 .sec-toggle > span{flex:1;min-width:0;display:grid;gap:2px}
 .sec-toggle h2{margin:0;font-size:1.3rem}
 .sec-toggle .chev{flex:none;color:var(--ink-soft);transition:transform .2s ease}
-.dash-sec.is-open .sec-toggle{border-bottom-color:transparent}
 .dash-sec.is-open .sec-toggle .chev{transform:rotate(180deg)}
 .sec-toggle:hover h2{color:var(--blue)}
 .sec-toggle:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:8px}
@@ -894,10 +891,10 @@ header nav a::after{background:#FFFFFF}
 .status-banner .status-when{margin-left:0}
 
 /* ---- section headings with an icon ---- */
-.sec-title{display:grid;grid-template-columns:auto 1fr;column-gap:12px;align-items:center}
+.sec-title{display:grid;grid-template-columns:42px 1fr;column-gap:16px;row-gap:3px;align-items:center}
 .sec-title h2{grid-column:2}
 .sec-title .soft{grid-column:2}
-.sec-ico{grid-row:1 / span 2;width:38px;height:38px;border-radius:11px;display:inline-flex;align-items:center;justify-content:center}
+.sec-ico{grid-row:1 / span 2;justify-self:start;width:42px;height:42px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center}
 .sec-ico.next{background:var(--blue-tint);color:var(--blue)}
 .sec-ico.past{background:var(--green-tint);color:var(--green)}
 .log-item.upcoming .log-when{display:inline-flex;align-items:center;gap:5px}
@@ -919,3 +916,16 @@ header nav a::after{background:#FFFFFF}
   .log-item.open-item > div{grid-column:2}
   .log-item.open-item .rail{grid-row:1 / span 2}
 }
+
+/* ---- home: the three cards carry a photo, with the words over a scrim ---- */
+.trust-card{position:relative;isolation:isolate;min-height:330px;border-radius:18px;overflow:hidden;padding:20px;display:flex;flex-direction:column;justify-content:space-between;gap:18px;background-color:#0E1322;background-size:cover;background-position:center;box-shadow:0 10px 30px rgba(16,24,40,.16)}
+/* The scrim is what keeps the text readable, so it is heaviest where the words sit. */
+.trust-card::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(to top,rgba(8,12,24,.93) 0%,rgba(8,12,24,.86) 30%,rgba(8,12,24,.52) 56%,rgba(8,12,24,.2) 78%,rgba(8,12,24,.08) 100%)}
+.trust-card > *{position:relative}
+.trust-card .tnum{background:rgba(255,255,255,.16);color:#FFFFFF;backdrop-filter:blur(3px)}
+.trust-card .tnum.ok{background:rgba(74,222,128,.22);color:#D6FBE4}
+.trust-card .tnum.warm{background:rgba(245,176,65,.22);color:#FDE6C2}
+.trust-text{display:grid;gap:6px}
+.trust-card h3{font-size:1.1rem;color:#FFFFFF;margin:0;text-shadow:0 1px 10px rgba(0,0,0,.5)}
+.trust-card p{margin:0;color:rgba(255,255,255,.88);text-shadow:0 1px 8px rgba(0,0,0,.55)}
+@media (forced-colors:active){ .trust-card::before{background:Canvas} .trust-card h3,.trust-card p{color:CanvasText} }

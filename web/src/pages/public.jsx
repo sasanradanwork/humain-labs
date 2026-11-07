@@ -21,6 +21,32 @@ export const trending = (n = 5) =>
 /* ================= home ================= */
 const TREND_MS = 7000;
 
+// The three cards at the foot of the home page. Each one carries a photo, with the words
+// over a scrim dark enough to stay readable whatever the picture is doing underneath.
+const TRUST = [
+  {
+    img: "img/hlg_verified.jpg",
+    tone: "ok",
+    icon: <Icon.check />,
+    title: "Only verified researchers",
+    body: "Researchers confirm an email address at their institution before they can post a study, and the badge shows on every study.",
+  },
+  {
+    img: "img/hlg_data.jpg",
+    tone: "warm",
+    icon: <Icon.mail />,
+    title: "Your details go to one person",
+    body: "When you apply, only the researcher running that study sees your details, and they contact you directly.",
+  },
+  {
+    img: "img/hlg_office.jpg",
+    tone: "",
+    icon: <Icon.inst />,
+    title: "Separate spaces",
+    body: "Participants and researchers have their own accounts and their own views, so each side sees what's relevant to them.",
+  },
+];
+
 export function Home({ onApply, setStudyQuery }) {
   const top = trending(5);
   const n = visibleStudies().length;
@@ -125,31 +151,15 @@ export function Home({ onApply, setStudyQuery }) {
           )}
         </section>
         <section className="home-sec trust">
-          <div>
-            <span className="tnum ok">
-              <Icon.check />
-            </span>
-            <h3>Only verified researchers</h3>
-            <p className="soft small">
-              Researchers confirm an email address at their institution before they can post a study, and the badge shows on every study.
-            </p>
-          </div>
-          <div>
-            <span className="tnum warm">
-              <Icon.mail />
-            </span>
-            <h3>Your details go to one person</h3>
-            <p className="soft small">When you apply, only the researcher running that study sees your details, and they contact you directly.</p>
-          </div>
-          <div>
-            <span className="tnum">
-              <Icon.inst />
-            </span>
-            <h3>Separate spaces</h3>
-            <p className="soft small">
-              Participants and researchers have their own accounts and their own views, so each side sees what's relevant to them.
-            </p>
-          </div>
+          {TRUST.map((t) => (
+            <article className="trust-card" key={t.title} style={{ backgroundImage: `url(${t.img})` }}>
+              <span className={"tnum " + t.tone}>{t.icon}</span>
+              <div className="trust-text">
+                <h3>{t.title}</h3>
+                <p className="small">{t.body}</p>
+              </div>
+            </article>
+          ))}
         </section>
         <HowItWorks />
       </div>
