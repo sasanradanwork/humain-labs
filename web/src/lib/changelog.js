@@ -41,14 +41,17 @@ export const SHIPPED = [
 
 export const UPCOMING = [
   {
+    id: "payments",
     title: "Payments",
     body: "Taking the study budget up front, holding it, and paying each participant once they complete. Nothing is charged today: budgets are recorded but no money moves.",
   },
   {
+    id: "sign-in",
     title: "Email and password sign-in",
     body: "Signing in without a Microsoft or GitHub account.",
   },
   {
+    id: "messaging",
     title: "Messaging between researchers and participants",
     body: "Confirming eligibility without leaving the platform.",
   },

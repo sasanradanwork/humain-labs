@@ -16,6 +16,12 @@
       ]
     },
     {
+      "route": "/api/roadmap*",
+      "allowedRoles": [
+        "anonymous"
+      ]
+    },
+    {
       "route": "/api/public",
       "allowedRoles": [
         "anonymous"

@@ -37,6 +37,8 @@ function route(name, methods, path, handler) {
 
 route("health", ["GET"], "health", async () => ({ status: 200, json: { ok: true, backend: "azure" } }));
 route("status", ["GET"], "status", H.statusData);
+route("roadmap", ["GET"], "roadmap", H.roadmap);
+route("roadmapVote", ["POST"], "roadmap/{id}/vote", H.roadmapVote);
 route("public", ["GET"], "public", H.publicData);
 route("network", ["GET"], "network", H.network);
 route("ror", ["GET"], "ror", async (ctx) => H.rorSearch({ ...ctx, query: ctx.query }));

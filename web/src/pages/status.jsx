@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { SHIPPED, UPCOMING } from "../lib/changelog.js";
 import { fmtDate } from "../lib/util.js";
 import { Icon } from "../components/ui.jsx";
+import { AUTH } from "../lib/store.js";
 
 const WINDOW = 90;
 const dayKey = (ms) => new Date(ms).toISOString().slice(0, 10);
@@ -134,9 +135,107 @@ function Part({ part, ok, byDay, loading }) {
   );
 }
 
+// Votes on what to build next. Everyone sees the counts; casting one needs an account, so the
+// numbers mean something rather than counting whoever clicked most.
+function useVotes() {
+  const [state, setState] = useState({ items: {}, available: false, busy: null });
+  const load = useCallback(() => {
+    fetch("/api/roadmap", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error("bad"))))
+      .then((d) => {
+        const items = {};
+        (d.items || []).forEach((i) => (items[i.id] = i));
+        setState({ items, available: !!d.available, busy: null });
+      })
+      .catch(() => setState({ items: {}, available: false, busy: null }));
+  }, []);
+  useEffect(load, [load]);
+
+  const cast = useCallback((id, vote) => {
+    setState((s) => ({ ...s, busy: id }));
+    fetch(`/api/roadmap/${encodeURIComponent(id)}/vote`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ vote }),
+    })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error("bad"))))
+      .then((i) => setState((s) => ({ ...s, items: { ...s.items, [i.id]: i }, busy: null })))
+      .catch(() => setState((s) => ({ ...s, busy: null })));
+  }, []);
+  return [state, cast];
+}
+
+function VoteButtons({ item, votes, cast }) {
+  const tally = votes.items[item.id] || { up: 0, down: 0, mine: null };
+  const busy = votes.busy === item.id;
+  // Without an account the counts still show, as plain figures rather than buttons that would fail.
+  if (!AUTH.user)
+    return (
+      <div className="vote readonly" aria-label={`${tally.up} for, ${tally.down} against`}>
+        <span className="vote-count">
+          <Icon.voteUp />
+          {tally.up}
+        </span>
+        <span className="vote-count">
+          <Icon.voteDown />
+          {tally.down}
+        </span>
+      </div>
+    );
+  return (
+    <div className="vote" role="group" aria-label={`How much do you want ${item.title}?`}>
+      <button
+        className={"vote-btn" + (tally.mine === "up" ? " on" : "")}
+        onClick={() => cast(item.id, "up")}
+        disabled={busy}
+        aria-pressed={tally.mine === "up"}
+        title={tally.mine === "up" ? "Take your vote back" : "Build this sooner"}
+      >
+        <Icon.voteUp />
+        <span>{tally.up}</span>
+      </button>
+      <button
+        className={"vote-btn down" + (tally.mine === "down" ? " on" : "")}
+        onClick={() => cast(item.id, "down")}
+        disabled={busy}
+        aria-pressed={tally.mine === "down"}
+        title={tally.mine === "down" ? "Take your vote back" : "This one can wait"}
+      >
+        <Icon.voteDown />
+        <span>{tally.down}</span>
+      </button>
+    </div>
+  );
+}
+
+// Updates stay closed until opened, so the list reads as a summary rather than a wall of text.
+function UpdateItem({ entry, open, onToggle }) {
+  const id = "upd-" + entry.date + "-" + entry.title.replace(/\W+/g, "-").toLowerCase();
+  return (
+    <li className={"log-item open-item" + (open ? " is-open" : "")}>
+      <span className="log-when small soft">
+        <time dateTime={entry.date}>{fmtDate(entry.date)}</time>
+      </span>
+      <div>
+        <button className="log-toggle" onClick={onToggle} aria-expanded={open} aria-controls={id}>
+          <strong>{entry.title}</strong>
+          <Icon.chev />
+        </button>
+        {open && (
+          <p className="small soft" id={id} style={{ margin: "6px 0 0" }}>
+            {entry.body}
+          </p>
+        )}
+      </div>
+    </li>
+  );
+}
+
 export function Status() {
   const [checks, recheck] = useChecks();
   const hist = useHistory();
+  const [votes, cast] = useVotes();
+  const [openUpdate, setOpenUpdate] = useState(null);
   const byDay = new Map((hist?.days || []).map((d) => [d.day, d]));
 
   const results = PARTS.map((p) => checks.parts[p.key]);
@@ -196,12 +295,15 @@ export function Status() {
         <div className="intro">
           <div>
             <h2>Coming next</h2>
-            <p className="soft small">What we are building. No dates promised until the work is done.</p>
+            <p className="soft small">
+              What we are building. No dates promised until the work is done.
+              {votes.available ? (AUTH.user ? " Tell us which you want first." : " Sign in to say which you want first.") : ""}
+            </p>
           </div>
         </div>
         <ul className="log">
           {UPCOMING.map((u) => (
-            <li key={u.title} className="log-item upcoming">
+            <li key={u.id} className="log-item upcoming">
               <span className="log-when small soft">Planned</span>
               <div>
                 <strong>{u.title}</strong>
@@ -209,32 +311,29 @@ export function Status() {
                   {u.body}
                 </p>
               </div>
+              {votes.available && <VoteButtons item={u} votes={votes} cast={cast} />}
             </li>
           ))}
         </ul>
+        {votes.available && !AUTH.user && (
+          <p className="small soft" style={{ marginTop: 12 }}>
+            <a href="#/auth?mode=signin">Sign in</a> to vote. One vote each, and you can change it later.
+          </p>
+        )}
       </section>
 
       <section className="dash-sec">
         <div className="intro">
           <div>
             <h2>Updates</h2>
-            <p className="soft small">Newest first.</p>
+            <p className="soft small">Newest first. Open one to read what changed.</p>
           </div>
         </div>
         <ul className="log">
-          {SHIPPED.map((u) => (
-            <li key={u.date + u.title} className="log-item">
-              <span className="log-when small soft">
-                <time dateTime={u.date}>{fmtDate(u.date)}</time>
-              </span>
-              <div>
-                <strong>{u.title}</strong>
-                <p className="small soft" style={{ margin: "2px 0 0" }}>
-                  {u.body}
-                </p>
-              </div>
-            </li>
-          ))}
+          {SHIPPED.map((u) => {
+            const key = u.date + u.title;
+            return <UpdateItem key={key} entry={u} open={openUpdate === key} onToggle={() => setOpenUpdate(openUpdate === key ? null : key)} />;
+          })}
         </ul>
       </section>
     </div>

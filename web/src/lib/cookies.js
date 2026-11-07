@@ -33,3 +33,4 @@ export function setConsent({ preferences }) {
   } catch (e) {}
   window.dispatchEvent(new CustomEvent("humain-cookies"));
 }
+

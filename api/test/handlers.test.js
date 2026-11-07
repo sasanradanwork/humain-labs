@@ -403,6 +403,36 @@ test("researchers move applicants through the stages, or withdraw them at eligib
   assert.equal((await run(H.rejectApplication, { repo, principal: user("u1"), params: { id: a.id } })).status, 409);
 });
 
+test("roadmap votes need an account, count once, and can be changed or taken back", async () => {
+  const repo = fresh();
+  const vote = (body, principal) => run(H.roadmapVote, { repo, principal, params: { id: "payments" }, body });
+  // Without signing in there is no vote to cast
+  const anon = await vote({ vote: "up" });
+  assert.equal(anon.status, 401);
+  assert.match(anon.json.error, /sign in/i);
+  // A signed-in person votes once
+  assert.deepEqual((await vote({ vote: "up" }, user("u1"))).json, { id: "payments", up: 1, down: 0, mine: "up" });
+  // Voting again changes their mind rather than stacking
+  assert.deepEqual((await vote({ vote: "down" }, user("u1"))).json, { id: "payments", up: 0, down: 1, mine: "down" });
+  // The same arrow twice takes the vote back
+  assert.deepEqual((await vote({ vote: "down" }, user("u1"))).json, { id: "payments", up: 0, down: 0, mine: null });
+  // Other accounts each count once more
+  await vote({ vote: "up" }, user("u1"));
+  await vote({ vote: "up" }, user("u2"));
+  assert.equal((await vote({ vote: "up" }, user("u3"))).json.up, 3);
+  // Only listed items can be voted on
+  assert.equal((await run(H.roadmapVote, { repo, principal: user("u1"), params: { id: "nonsense" }, body: { vote: "up" } })).status, 400);
+  // Anyone may read the counts; only a signed-in reader is told which way they voted
+  const open = (await H.roadmap({ repo })).json;
+  assert.equal(open.available, true);
+  assert.equal(open.items.length, 3);
+  assert.deepEqual(open.items.find((i) => i.id === "payments"), { id: "payments", up: 3, down: 0, mine: null });
+  assert.equal((await H.roadmap({ repo, principal: user("u2") })).json.items.find((i) => i.id === "payments").mine, "up");
+  // Without the container the page is told so, rather than shown zeroes as fact
+  const broken = { ...repo, all: async () => { throw new Error("no container"); } };
+  assert.deepEqual((await H.roadmap({ repo: broken })).json, { items: [], available: false });
+});
+
 test("the status endpoint records its own checks and reports the window", async () => {
   const repo = fresh();
   const t0 = Date.parse("2026-11-07T10:00:00Z");

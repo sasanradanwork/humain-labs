@@ -24,6 +24,8 @@ const repo = memoryRepo(JSON.parse(fs.readFileSync(path.join(__dirname, "seed-da
 const routes = [
   ["GET", /^health$/, async () => ({ status: 200, json: { ok: true, backend: "azure" } })],
   ["GET", /^status$/, H.statusData],
+  ["GET", /^roadmap$/, H.roadmap],
+  ["POST", /^roadmap\/([^/]+)\/vote$/, H.roadmapVote],
   ["GET", /^public$/, H.publicData], ["GET", /^network$/, H.network],
   ["GET", /^ror$/, H.rorSearch], ["POST", /^profile\/scholar$/, H.fetchScholar], ["POST", /^verification\/start$/, H.verifyStart], ["POST", /^verification\/confirm$/, H.verifyConfirm], ["GET", /^me$/, H.me], ["PUT", /^profile$/, H.putProfile],
   ["POST", /^groups$/, H.createGroup], ["PUT", /^groups\/([^/]+)$/, H.updateGroup], ["DELETE", /^groups\/([^/]+)$/, H.deleteGroup],

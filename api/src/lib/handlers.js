@@ -772,6 +772,48 @@ async function statusData({ repo, now = Date.now() }) {
   });
 }
 
+/* ---------- roadmap votes ---------- */
+// Signed-in people say which planned work they want first. A vote belongs to the account that
+// cast it, so it counts once and can be changed later. Anyone can read the counts; only a
+// signed-in person can add to them, which keeps the numbers worth reading.
+const VOTE_IDS = ["payments", "sign-in", "messaging"];
+const voterKey = (principal) => (principal ? "u:" + principal.userId : null);
+const tally = (doc, voter) => ({
+  id: doc.id,
+  up: Object.values(doc.voters || {}).filter((v) => v === "up").length,
+  down: Object.values(doc.voters || {}).filter((v) => v === "down").length,
+  mine: voter ? (doc.voters || {})[voter] || null : null,
+});
+
+async function roadmap({ repo, principal }) {
+  const voter = voterKey(principal);
+  let rows = [];
+  try {
+    rows = await repo.all("votes");
+  } catch (e) {
+    // No votes container yet, or the database is unreachable. The page hides the buttons.
+    return ok({ items: [], available: false });
+  }
+  const byId = new Map(rows.map((r) => [r.id, r]));
+  return ok({ items: VOTE_IDS.map((id) => tally(byId.get(id) || { id }, voter)), available: true });
+}
+
+async function roadmapVote({ repo, principal, params, body }) {
+  const id = V.oneOf(params.id, "Item", VOTE_IDS);
+  if (!id) throw bad("That isn't something you can vote on.");
+  const choice = V.oneOf(body && body.vote, "Vote", ["up", "down"], null);
+  const voter = voterKey(principal);
+  if (!voter) throw new HttpError(401, "Sign in to vote on what gets built next.");
+  const existing = await repo.get("votes", id);
+  const doc = existing || { id, voters: {} };
+  doc.voters = { ...(doc.voters || {}) };
+  // Choosing the same arrow again takes the vote back.
+  if (!choice || doc.voters[voter] === choice) delete doc.voters[voter];
+  else doc.voters[voter] = choice;
+  await repo.upsert("votes", doc);
+  return ok(tally(doc, voter));
+}
+
 async function idStart({ repo, principal, body, idcheck = startStripeCheck, env = process.env }) {
   needUser(principal);
   const researcher = await myResearcher(repo, principal);
@@ -811,6 +853,6 @@ module.exports = {
   idStart, identityEvent,
   publicData, network, me, verifyStart, verifyConfirm, fetchScholar, rorSearch, putProfile, createGroup, updateGroup, deleteGroup,
   createStudy, updateStudy, deleteStudy, studyApplicants, apply, myApplications, canEditGroup,
-  statusData, putParticipant, withdrawApplication, rateApplication, advanceApplication, rejectApplication,
+  statusData, roadmap, roadmapVote, putParticipant, withdrawApplication, rateApplication, advanceApplication, rejectApplication,
   participantEmailStart, participantEmailConfirm, deleteParticipant, deleteResearcherProfile,
 };

@@ -839,3 +839,26 @@ header nav a::after{background:#FFFFFF}
 .svc-pct{white-space:nowrap}
 .status-note{max-width:70ch;margin-top:6px}
 @media (max-width:560px){ .ub{height:30px;gap:1px} .svc-foot{font-size:.74rem} }
+
+/* ---- roadmap votes and collapsible updates ---- */
+.log-item.upcoming{grid-template-columns:132px 1fr auto}
+.vote{display:flex;gap:6px;align-items:flex-start}
+.vote-btn{display:inline-flex;align-items:center;gap:5px;min-height:34px;padding:.3rem .6rem;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--ink-soft);font:inherit;font-size:.82rem;font-variant-numeric:tabular-nums;cursor:pointer}
+.vote-btn:hover{border-color:var(--blue);color:var(--ink)}
+.vote-btn.on{border-color:var(--blue);background:var(--blue-tint);color:var(--blue);font-weight:600}
+.vote-btn.down:hover{border-color:var(--amber)}
+.vote-btn.down.on{border-color:var(--amber);background:var(--amber-tint);color:var(--amber)}
+.vote-btn:disabled{opacity:.55;cursor:default}
+.vote-btn:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+@media (max-width:560px){ .log-item.upcoming{grid-template-columns:1fr} .vote{margin-top:8px} .vote-btn{min-height:44px;padding:.3rem .9rem} }
+
+.log-toggle{display:flex;align-items:center;gap:10px;width:100%;padding:0;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer;min-height:32px}
+.log-toggle strong{flex:1;min-width:0}
+.log-toggle .chev{flex:none;color:var(--ink-soft);transition:transform .2s ease}
+.log-item.is-open .log-toggle .chev{transform:rotate(180deg)}
+.log-toggle:hover strong{color:var(--blue)}
+.log-toggle:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:6px}
+@media (prefers-reduced-motion:reduce){ .log-toggle .chev{transition:none} }
+/* Counts shown to visitors who are not signed in */
+.vote.readonly{gap:12px;color:var(--ink-soft)}
+.vote-count{display:inline-flex;align-items:center;gap:5px;font-size:.82rem;font-variant-numeric:tabular-nums}
