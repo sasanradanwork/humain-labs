@@ -35,6 +35,8 @@ export const replaceRoute = (hash) => {
   window.dispatchEvent(new HashChangeEvent("hashchange"));
 };
 
+import { prefsAllowed } from "./cookies.js";
+
 /* ---------- theme ---------- */
 export function useTheme() {
   const [theme, setTheme] = useState(() => document.documentElement.dataset.theme || "");
@@ -43,7 +45,8 @@ export function useTheme() {
     const next = dark ? "light" : "dark";
     document.documentElement.dataset.theme = next;
     try {
-      localStorage.setItem("humain-labs-theme", next);
+      // Remembering the choice between visits is a preference, so it waits on that consent.
+      if (prefsAllowed()) localStorage.setItem("humain-labs-theme", next);
     } catch (e) {}
     setTheme(next);
   }, [dark]);

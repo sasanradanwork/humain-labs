@@ -6,6 +6,7 @@ export const SITE = {
   companyNumber: "17557713",
   address: "[Registered office address]",
   linkedin: "https://www.linkedin.com/company/humainlabs",
+  x: "https://x.com/HumAInLabsltd",
   contactEmail: "partners@humainlabs.org",
   reportEmail: "info@humainlabs.org",
   privacyEmail: "privacy@humain.example",

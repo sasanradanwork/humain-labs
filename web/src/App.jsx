@@ -10,6 +10,8 @@ import { appCount, canEditGroup } from "./lib/store.js";
 import { plural } from "./lib/util.js";
 import { SITE } from "./lib/site.js";
 import { Privacy, Terms } from "./pages/legal.jsx";
+import { Status } from "./pages/status.jsx";
+import { CookieButton } from "./components/cookies.jsx";
 import { ParticipantProfile } from "./pages/participant.jsx";
 import { IdGate } from "./components/idcheck.jsx";
 
@@ -22,7 +24,7 @@ const NAV = {
 const TITLES = {
   about: "About", auth: "Sign in or register", home: "Research needs people", studies: "Open studies", researchers: "Researchers",
   groups: "Research groups", reach: "Global reach", mine: "My applications", dashboard: "Researcher area", profile: "Your profile",
-  terms: "Terms and conditions", privacy: "Privacy policy", participant: "Your details",
+  terms: "Terms and conditions", privacy: "Privacy policy", participant: "Your details", status: "Status",
 };
 const PAGES = new Set(Object.keys(TITLES));
 
@@ -276,6 +278,9 @@ export default function App() {
       case "privacy":
         body = <Privacy />;
         break;
+      case "status":
+        body = <Status />;
+        break;
       case "about":
         body = <About />;
         break;
@@ -423,8 +428,12 @@ export default function App() {
             <a href="#/about?to=contact">Contact</a>
             <a href="#/terms">Terms and conditions</a>
             <a href="#/privacy">Privacy policy</a>
+            <a href="#/status">Status</a>
             <a className="footer-social" href={SITE.linkedin} target="_blank" rel="noreferrer" aria-label="HumAIn Labs on LinkedIn" title="LinkedIn">
               <Icon.linkedin />
+            </a>
+            <a className="footer-social" href={SITE.x} target="_blank" rel="noreferrer" aria-label="HumAIn Labs on X" title="X">
+              <Icon.x />
             </a>
           </nav>
           <p className="small soft footer-legal">
@@ -432,6 +441,8 @@ export default function App() {
           </p>
         </div>
       </footer>
+
+      <CookieButton />
 
       {modal?.kind === "apply" && <ApplyModal study={modal.study} onClose={closeModal} />}
       {modal?.kind === "verify" && <VerifyModal onClose={closeModal} />}
