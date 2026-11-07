@@ -149,6 +149,7 @@ export default function App() {
         : TITLES[route.page];
     document.title = `${name} · HumAIn Labs`;
     document.body.classList.toggle("on-home", route.page === "home");
+    document.body.classList.toggle("on-status", route.page === "status" && !route.id);
     document.body.dataset.role = role();
   }, [route, backend, AUTH.researcher]);
 

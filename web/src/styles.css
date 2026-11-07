@@ -932,13 +932,29 @@ header nav a::after{background:#FFFFFF}
 
 /* ---- the lab scene across the foot of the status page ---- */
 /* No card and no background of its own: it sits on the page and the content fades into it. */
-.status-art{position:relative;width:100%;aspect-ratio:1200/250;overflow:hidden;margin-top:30px;
+.status-art{position:relative;width:100%;aspect-ratio:1700/250;overflow:hidden;margin-top:26px;
   --art-rig:#E9EDF8;--art-edge:#C3CBE3;--art-slot:#DBE1F0;--art-body:#44539C;--art-coat:#8E9DDE;
-  --art-glass:#58BFB6;--art-hat:#E9A63A;--art-shadow:#AEB8D6;--art-card:#FFFFFF}
+  --art-glass:#58BFB6;--art-hat:#E9A63A;--art-shadow:#AEB8D6;--art-card:#FFFFFF;--art-bench:var(--paper-2)}
 :root[data-theme="dark"] .status-art{--art-rig:#2C3763;--art-edge:#45518C;--art-slot:#1E2749;--art-body:#C3CCFF;
-  --art-coat:#6E7FD0;--art-glass:#6CCFC6;--art-hat:#F5B041;--art-shadow:#121936;--art-card:#1B2447}
-@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .status-art{--art-rig:#2C3763;--art-edge:#45518C;--art-slot:#1E2749;--art-body:#C3CCFF;--art-coat:#6E7FD0;--art-glass:#6CCFC6;--art-hat:#F5B041;--art-shadow:#121936;--art-card:#1B2447} }
+  --art-coat:#6E7FD0;--art-glass:#6CCFC6;--art-hat:#F5B041;--art-shadow:#121936;--art-card:#1B2447;--art-bench:var(--paper-2)}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .status-art{--art-rig:#2C3763;--art-edge:#45518C;--art-slot:#1E2749;--art-body:#C3CCFF;--art-coat:#6E7FD0;--art-glass:#6CCFC6;--art-hat:#F5B041;--art-shadow:#121936;--art-card:#1B2447;--art-bench:var(--paper-2)} }
 .status-art svg{position:absolute;inset:0;width:100%;height:100%;display:block}
 /* the upper edge dissolves into the page, so the content runs into the scene */
 .status-art::before{content:"";position:absolute;left:0;right:0;top:0;height:30%;z-index:1;background:linear-gradient(to top,transparent,var(--paper) 88%)}
 
+
+/* The status page finishes with artwork, which sits flush against the footer. */
+body.on-status main{padding-bottom:0}
+body.on-status footer{margin-top:0}
+
+/* a little life in the scene: a turning cog, a blinking warning, lights coming good */
+@keyframes art-spin{to{transform:rotate(360deg)}}
+@keyframes art-blink{0%,45%{opacity:1}55%,100%{opacity:.18}}
+@keyframes art-pulse{0%,100%{opacity:1}50%{opacity:.45}}
+@keyframes art-led{0%,20%{opacity:.2}45%,100%{opacity:1}}
+.art-cog{transform-box:fill-box;transform-origin:center;animation:art-spin 9s linear infinite}
+.art-blink{animation:art-blink 1.6s steps(1,end) infinite}
+.art-pulse{animation:art-pulse 2.6s ease-in-out infinite}
+.art-led{animation:art-led 3.2s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){ .art-cog,.art-blink,.art-pulse,.art-led{animation:none} }
+@media (max-width:760px){ .status-art{aspect-ratio:1240/250} }

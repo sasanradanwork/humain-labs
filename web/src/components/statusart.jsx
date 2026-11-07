@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 // The scene across the foot of the status page: the lab behind the platform.
 // Drawn here rather than shipped as a picture so it stays sharp at any width, follows the
 // theme, and costs nothing to download. Every colour is a variable set in the stylesheet.
@@ -14,10 +16,10 @@ const WARM = "var(--art-hat)";
 // and faces at this size turn into noise. Origin sits at the feet.
 function Person({ x, y, s = 1, flip = false, pose = "stand" }) {
   const arm = {
-    stand: "M-14 -52 q -8 15 -5 27",
+    stand: "M14 -53 q 14 -2 16 -13",
     point: "M14 -52 q 17 2 24 -8",
-    hold: "M14 -52 q 12 9 4 18",
-    type: "M14 -52 q 14 6 11 17",
+    hold: "M14 -55 q 13 -5 16 -14",
+    type: "M14 -52 q 14 6 11 14",
     alert: "M14 -54 q 15 -6 14 -22",
   }[pose];
   return (
@@ -49,9 +51,9 @@ function Flask({ x, y, s = 1, fill = GLASS }) {
 }
 
 // A small badge that floats above the bench, marking each stage of the story.
-function Badge({ x, y, tone, children }) {
+function Badge({ x, y, tone, children, className }) {
   return (
-    <g transform={`translate(${x} ${y})`}>
+    <g transform={`translate(${x} ${y})`} className={className}>
       <circle cx="0" cy="0" r="21" fill="var(--art-card)" stroke={tone} strokeWidth="2.4" />
       {children}
     </g>
@@ -59,15 +61,28 @@ function Badge({ x, y, tone, children }) {
 }
 
 export function StatusArt() {
+  // A wide screen gets a wider frame, which draws the scene smaller against the full-width
+  // bench. A phone gets the tight frame, so the figures stay big enough to make out.
+  const [wide, setWide] = useState(true);
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 761px)");
+    const sync = () => setWide(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+  const frame = wide ? 1700 : 1240;
+  const inset = wide ? 250 : 20;
   const RED = "#E05252";
   const GREEN = "#3FBF72";
   return (
     <div className="status-art" aria-hidden="true">
-      <svg viewBox="0 0 1200 250" preserveAspectRatio="xMidYMax meet" focusable="false">
+      <svg viewBox={`0 0 ${frame} 250`} preserveAspectRatio="xMidYMax meet" focusable="false">
         {/* left to right: something breaks, it gets fixed, it comes good */}
 
+        <g transform={`translate(${inset} 0)`}>
         {/* 1. the error is raised */}
-        <Badge x={178} y={112} tone={RED}>
+        <Badge x={178} y={112} tone={RED} className="art-pulse">
           <path d="M0 -9 V 2 M0 7 h .01" stroke={RED} strokeWidth="3.4" strokeLinecap="round" />
         </Badge>
         <rect x="104" y="146" width="130" height="60" rx="8" fill={RIG} stroke={EDGE} strokeWidth="2.2" />
@@ -78,17 +93,19 @@ export function StatusArt() {
         {/* 2. it is being fixed */}
         <Person x={470} y={250} s={1.46} pose="point" />
         <Badge x={610} y={116} tone={WARM}>
-          <circle cx="0" cy="0" r="7" fill="none" stroke={WARM} strokeWidth="3" />
-          <g stroke={WARM} strokeWidth="3" strokeLinecap="round">
-            {[0, 45, 90, 135].map((a) => (
-              <path key={a} d="M0 -11.5 V -8 M0 8 V 11.5" transform={`rotate(${a})`} />
-            ))}
+          <g className="art-cog">
+            <circle cx="0" cy="0" r="7" fill="none" stroke={WARM} strokeWidth="3" />
+            <g stroke={WARM} strokeWidth="3" strokeLinecap="round">
+              {[0, 45, 90, 135].map((a) => (
+                <path key={a} d="M0 -11.5 V -8 M0 8 V 11.5" transform={`rotate(${a})`} />
+              ))}
+            </g>
           </g>
         </Badge>
         <rect x="556" y="148" width="112" height="58" rx="8" fill={RIG} stroke={EDGE} strokeWidth="2.2" />
         <rect x="566" y="158" width="44" height="38" rx="4" fill={SLOT} />
         <path d="M612 158 l 22 -14 v 38 l -22 14 z" fill={SLOT} stroke={EDGE} strokeWidth="2" strokeLinejoin="round" opacity=".9" />
-        <circle cx="644" cy="196" r="3.4" fill={WARM} />
+        <circle className="art-blink" cx="644" cy="196" r="3.4" fill={WARM} />
         <Flask x={712} y={181} s={1.08} fill={WARM} />
         <Person x={800} y={250} s={1.44} pose="hold" flip />
 
@@ -101,16 +118,17 @@ export function StatusArt() {
         {[0, 1, 2].map((i) => (
           <g key={i}>
             <rect x="1002" y={152 + i * 18} width="98" height="12" rx="4" fill={SLOT} />
-            <circle cx={1090} cy={158 + i * 18} r="3" fill={GREEN} />
+            <circle className="art-led" style={{ animationDelay: `${i * 0.45}s` }} cx={1090} cy={158 + i * 18} r="3" fill={GREEN} />
             <path d={`M1012 ${158 + i * 18} h 40`} stroke={EDGE} strokeWidth="2.2" strokeLinecap="round" />
           </g>
         ))}
 
-        {/* the bench, drawn over the people so they stand behind it */}
-        <rect x="-10" y="206" width="1220" height="44" fill={RIG} />
-        <rect x="-10" y="200" width="1220" height="11" rx="5.5" fill={SLOT} stroke={EDGE} strokeWidth="2.2" />
+        </g>
+        {/* the bench runs the whole frame, drawn over the people so they stand behind it */}
+        <rect x="-400" y="206" width="2600" height="44" fill="var(--art-bench)" />
+        <rect x="-400" y="200" width="2600" height="11" rx="5.5" fill={SLOT} stroke={EDGE} strokeWidth="2.2" />
         <g stroke={EDGE} strokeWidth="2" opacity=".4">
-          <path d="M360 215 V 250 M860 215 V 250" />
+          <path d={`M${inset + 220} 215 V 250 M${inset + 980} 215 V 250`} />
         </g>
       </svg>
     </div>
