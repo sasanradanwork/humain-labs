@@ -216,6 +216,9 @@ function UpdateItem({ entry, open, onToggle }) {
       <span className="log-when small soft">
         <time dateTime={entry.date}>{fmtDate(entry.date)}</time>
       </span>
+      <span className="rail" aria-hidden="true">
+        <i className="rail-dot" />
+      </span>
       <div>
         <button className="log-toggle" onClick={onToggle} aria-expanded={open} aria-controls={id}>
           <strong>{entry.title}</strong>
@@ -228,6 +231,23 @@ function UpdateItem({ entry, open, onToggle }) {
         )}
       </div>
     </li>
+  );
+}
+
+// A heartbeat trace across the banner. The pattern is drawn twice and scrolled by exactly half
+// its width, so it loops without a visible join. It flattens when everything is down, which is
+// what a monitor would show, and holds still for anyone who asked for less motion.
+function Pulse({ flat }) {
+  // An 80-wide beat drawn four times across a 320-wide box. The scroll moves it by 160, which is
+  // exactly two beats, so the pattern meets itself and the loop has no seam.
+  const beat = (x) => `M${x} 20 h26 l5 -13 l6 26 l6 -19 l5 6 h32`;
+  const trace = [0, 80, 160, 240].map(beat).join(" ");
+  return (
+    <span className={"heartbeat" + (flat ? " flat" : "")} aria-hidden="true">
+      <svg viewBox="0 0 320 40" preserveAspectRatio="none" focusable="false">
+        <path d={flat ? "M0 20 H320" : trace} />
+      </svg>
+    </span>
   );
 }
 
@@ -264,15 +284,22 @@ export function Status() {
           <h1>HumAIn Labs status</h1>
           <p className="soft lead">Checked live in your browser each time you open this page.</p>
         </div>
-        <button className="btn" onClick={recheck} disabled={checks.phase === "checking"}>
-          Check again
-        </button>
       </div>
 
       <section className={"status-banner " + banner.tone} aria-live="polite">
         {banner.tone === "ok" ? <Icon.check /> : <Icon.alert />}
         <strong>{banner.text}</strong>
+        <Pulse flat={banner.tone === "down"} />
         {time && <span className="status-when">Checked {time}</span>}
+        <button
+          className={"status-refresh" + (checks.phase === "checking" ? " spinning" : "")}
+          onClick={recheck}
+          disabled={checks.phase === "checking"}
+          aria-label="Check again"
+          title="Check again"
+        >
+          <Icon.refresh />
+        </button>
       </section>
 
       {isDemo ? (
@@ -295,7 +322,10 @@ export function Status() {
 
       <section className={"dash-sec" + (showNext ? " is-open" : "")} style={{ marginTop: 40 }}>
         <button className="sec-toggle" onClick={() => setShowNext(!showNext)} aria-expanded={showNext} aria-controls="next-log">
-          <span>
+          <span className="sec-title">
+            <span className="sec-ico next" aria-hidden="true">
+              <Icon.roadmap />
+            </span>
             <h2>Coming next</h2>
             <span className="soft small">
               {UPCOMING.length} planned. No dates promised until the work is done.
@@ -309,7 +339,9 @@ export function Status() {
             <ul className="log" id="next-log">
               {UPCOMING.map((u) => (
                 <li key={u.id} className="log-item upcoming">
-                  <span className="log-when small soft">Planned</span>
+                  <span className="log-when small soft">
+                    <Icon.pin /> Planned
+                  </span>
                   <div>
                     <strong>{u.title}</strong>
                     <p className="small soft" style={{ margin: "2px 0 0" }}>
@@ -331,7 +363,10 @@ export function Status() {
 
       <section className={"dash-sec" + (showUpdates ? " is-open" : "")}>
         <button className="sec-toggle" onClick={() => setShowUpdates(!showUpdates)} aria-expanded={showUpdates} aria-controls="update-log">
-          <span>
+          <span className="sec-title">
+            <span className="sec-ico past" aria-hidden="true">
+              <Icon.history />
+            </span>
             <h2>Updates</h2>
             <span className="soft small">
               {SHIPPED.length} so far, newest first. {showUpdates ? "Open one to read what changed." : "Tap to see them."}

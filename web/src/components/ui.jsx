@@ -75,6 +75,31 @@ export const Icon = {
       <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.35V9h3.41v1.56h.05a3.74 3.74 0 0 1 3.37-1.85c3.6 0 4.27 2.37 4.27 5.46zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13M7.12 20.45H3.56V9h3.56zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0" />
     </svg>
   ),
+  refresh: () => (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M20.5 11a8.5 8.5 0 1 0-.9 5" />
+      <path d="M20.4 20.2V15h-5.2" />
+    </svg>
+  ),
+  roadmap: () => (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M12 2.6 13.9 8l5.6.2-4.4 3.5 1.6 5.4L12 14l-4.7 3.1 1.6-5.4L4.5 8.2 10.1 8z" />
+      <path d="M12 19.5V22" />
+    </svg>
+  ),
+  history: () => (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M3.5 12a8.5 8.5 0 1 0 2.2-5.7" />
+      <path d="M3.3 3.4v4.3h4.3" />
+      <path d="M12 7.6V12l3 1.8" />
+    </svg>
+  ),
+  pin: () => (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11" />
+      <circle cx="12" cy="10" r="2.4" />
+    </svg>
+  ),
   voteUp: () => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M12 19V5M5 12l7-7 7 7" />

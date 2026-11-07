@@ -816,7 +816,7 @@ header nav a::after{background:#FFFFFF}
 .status-banner.part{background:var(--amber)}
 .status-banner.down{background:#B42318}
 .status-banner.wait,.status-banner.demo{background:var(--ink-soft)}
-@media (max-width:560px){ .status-banner{flex-wrap:wrap} .status-banner .status-when{margin-left:0;width:100%} }
+@media (max-width:560px){ .status-banner{flex-wrap:wrap} .status-banner .status-when{margin-left:auto} .heartbeat{flex-basis:100%;order:9;height:26px} }
 
 .svc{margin-bottom:30px}
 .svc-head{display:flex;gap:14px;align-items:flex-start;justify-content:space-between}
@@ -873,3 +873,49 @@ header nav a::after{background:#FFFFFF}
 .sec-toggle:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:8px}
 .sec-toggle + .log .log-item:first-child{border-top:0}
 @media (prefers-reduced-motion:reduce){ .sec-toggle .chev{transition:none} }
+
+/* ---- status banner: a heartbeat trace and an inline recheck ---- */
+.status-banner{position:relative;overflow:hidden}
+.heartbeat{flex:1 1 90px;min-width:70px;height:34px;overflow:hidden;opacity:.5;pointer-events:none}
+.heartbeat svg{width:200%;height:100%;display:block;animation:beat-scroll 3.4s linear infinite}
+.heartbeat svg path{fill:none;stroke:#FFFFFF;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.heartbeat.flat{opacity:.55}
+.heartbeat.flat svg{animation-duration:9s}
+@keyframes beat-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){ .heartbeat svg{animation:none} }
+.status-banner > *:not(.heartbeat){position:relative;z-index:1}
+.status-refresh{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;flex:none;border:0;border-radius:999px;background:rgba(255,255,255,.18);color:#FFFFFF;cursor:pointer}
+.status-refresh:hover{background:rgba(255,255,255,.3)}
+.status-refresh:disabled{cursor:default}
+.status-refresh:focus-visible{outline:2px solid #FFFFFF;outline-offset:2px}
+.status-refresh.spinning svg{animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){ .status-refresh.spinning svg{animation:none} }
+.status-banner .status-when{margin-left:0}
+
+/* ---- section headings with an icon ---- */
+.sec-title{display:grid;grid-template-columns:auto 1fr;column-gap:12px;align-items:center}
+.sec-title h2{grid-column:2}
+.sec-title .soft{grid-column:2}
+.sec-ico{grid-row:1 / span 2;width:38px;height:38px;border-radius:11px;display:inline-flex;align-items:center;justify-content:center}
+.sec-ico.next{background:var(--blue-tint);color:var(--blue)}
+.sec-ico.past{background:var(--green-tint);color:var(--green)}
+.log-item.upcoming .log-when{display:inline-flex;align-items:center;gap:5px}
+
+/* ---- a timeline down the left of the updates ---- */
+.log-item.open-item{grid-template-columns:120px 16px 1fr;gap:14px;border-top:0;padding:0 0 2px}
+.rail{position:relative;display:block}
+.rail::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:2px;margin-left:-1px;background:var(--line)}
+.log-item.open-item:first-child .rail::before{top:17px}
+.log-item.open-item:last-child .rail::before{bottom:auto;height:17px}
+.rail-dot{position:absolute;left:50%;top:13px;width:9px;height:9px;margin-left:-4.5px;border-radius:999px;background:var(--card);border:2px solid var(--line);transition:border-color .2s ease,background .2s ease}
+.log-item.open-item:hover .rail-dot,.log-item.open-item.is-open .rail-dot{border-color:var(--blue);background:var(--blue)}
+.log-item.open-item .log-when{padding-top:11px}
+.log-item.open-item > div{padding-bottom:14px}
+@media (prefers-reduced-motion:reduce){ .rail-dot{transition:none} }
+@media (max-width:560px){
+  .log-item.open-item{grid-template-columns:16px 1fr;gap:12px}
+  .log-item.open-item .log-when{grid-column:2;padding-top:0}
+  .log-item.open-item > div{grid-column:2}
+  .log-item.open-item .rail{grid-row:1 / span 2}
+}
