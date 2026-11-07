@@ -26,21 +26,18 @@ const TREND_MS = 7000;
 const TRUST = [
   {
     img: "img/hlg_verified.jpg",
-    tone: "ok",
     icon: <Icon.check />,
     title: "Only verified researchers",
     body: "Researchers confirm an email address at their institution before they can post a study, and the badge shows on every study.",
   },
   {
     img: "img/hlg_data.jpg",
-    tone: "warm",
     icon: <Icon.mail />,
     title: "Your details go to one person",
     body: "When you apply, only the researcher running that study sees your details, and they contact you directly.",
   },
   {
     img: "img/hlg_office.jpg",
-    tone: "",
     icon: <Icon.inst />,
     title: "Separate spaces",
     body: "Participants and researchers have their own accounts and their own views, so each side sees what's relevant to them.",
@@ -153,7 +150,7 @@ export function Home({ onApply, setStudyQuery }) {
         <section className="home-sec trust">
           {TRUST.map((t) => (
             <article className="trust-card" key={t.title} style={{ backgroundImage: `url(${t.img})` }}>
-              <span className={"tnum " + t.tone}>{t.icon}</span>
+              <span className="tnum">{t.icon}</span>
               <div className="trust-text">
                 <h3>{t.title}</h3>
                 <p className="small">{t.body}</p>
@@ -659,39 +656,6 @@ export function About() {
           Most studies struggle to find the right participants, and most people never hear about the research they could take part in. HumAIn Labs puts
           open studies, verified researchers and research groups in one place, so both sides can find each other without cold emails and noticeboards.
         </p>
-      </section>
-
-      <section className="home-sec">
-        <h2 className="h2big">What we do</h2>
-        <div className="trust" style={{ marginTop: 16 }}>
-          <div>
-            <span className="tnum ok">
-              <Icon.check />
-            </span>
-            <h3>Verify researchers</h3>
-            <p className="soft small">
-              Every researcher confirms an email address at their institution before they can post a study, so participants know who they're dealing
-              with.
-            </p>
-          </div>
-          <div>
-            <span className="tnum">
-              <Icon.inst />
-            </span>
-            <h3>Give groups a home</h3>
-            <p className="soft small">
-              Research groups get a page with their people, publications and the roles they're hiring for, whether that's a PhD student or a
-              collaborator.
-            </p>
-          </div>
-          <div>
-            <span className="tnum warm">
-              <Icon.mail />
-            </span>
-            <h3>Keep it direct</h3>
-            <p className="soft small">Applications go straight to the researcher running the study, and nobody else sees them.</p>
-          </div>
-        </div>
       </section>
 
       <section className="home-sec" id="hlg">
