@@ -862,3 +862,14 @@ header nav a::after{background:#FFFFFF}
 /* Counts shown to visitors who are not signed in */
 .vote.readonly{gap:12px;color:var(--ink-soft)}
 .vote-count{display:inline-flex;align-items:center;gap:5px;font-size:.82rem;font-variant-numeric:tabular-nums}
+/* A whole section that opens on click, with its own heading as the control */
+.sec-toggle{display:flex;align-items:center;gap:14px;width:100%;padding:14px 0;border:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.sec-toggle > span{flex:1;min-width:0;display:grid;gap:2px}
+.sec-toggle h2{margin:0;font-size:1.3rem}
+.sec-toggle .chev{flex:none;color:var(--ink-soft);transition:transform .2s ease}
+.dash-sec.is-open .sec-toggle{border-bottom-color:transparent}
+.dash-sec.is-open .sec-toggle .chev{transform:rotate(180deg)}
+.sec-toggle:hover h2{color:var(--blue)}
+.sec-toggle:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:8px}
+.sec-toggle + .log .log-item:first-child{border-top:0}
+@media (prefers-reduced-motion:reduce){ .sec-toggle .chev{transition:none} }

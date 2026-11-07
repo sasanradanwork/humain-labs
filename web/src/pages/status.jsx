@@ -236,6 +236,7 @@ export function Status() {
   const hist = useHistory();
   const [votes, cast] = useVotes();
   const [openUpdate, setOpenUpdate] = useState(null);
+  const [showUpdates, setShowUpdates] = useState(false);
   const byDay = new Map((hist?.days || []).map((d) => [d.day, d]));
 
   const results = PARTS.map((p) => checks.parts[p.key]);
@@ -322,19 +323,24 @@ export function Status() {
         )}
       </section>
 
-      <section className="dash-sec">
-        <div className="intro">
-          <div>
+      <section className={"dash-sec" + (showUpdates ? " is-open" : "")}>
+        <button className="sec-toggle" onClick={() => setShowUpdates(!showUpdates)} aria-expanded={showUpdates} aria-controls="update-log">
+          <span>
             <h2>Updates</h2>
-            <p className="soft small">Newest first. Open one to read what changed.</p>
-          </div>
-        </div>
-        <ul className="log">
-          {SHIPPED.map((u) => {
-            const key = u.date + u.title;
-            return <UpdateItem key={key} entry={u} open={openUpdate === key} onToggle={() => setOpenUpdate(openUpdate === key ? null : key)} />;
-          })}
-        </ul>
+            <span className="soft small">
+              {SHIPPED.length} so far, newest first. {showUpdates ? "Open one to read what changed." : "Tap to see them."}
+            </span>
+          </span>
+          <Icon.chev />
+        </button>
+        {showUpdates && (
+          <ul className="log" id="update-log">
+            {SHIPPED.map((u) => {
+              const key = u.date + u.title;
+              return <UpdateItem key={key} entry={u} open={openUpdate === key} onToggle={() => setOpenUpdate(openUpdate === key ? null : key)} />;
+            })}
+          </ul>
+        )}
       </section>
     </div>
   );
