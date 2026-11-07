@@ -10,6 +10,12 @@
       ]
     },
     {
+      "route": "/api/status",
+      "allowedRoles": [
+        "anonymous"
+      ]
+    },
+    {
       "route": "/api/public",
       "allowedRoles": [
         "anonymous"

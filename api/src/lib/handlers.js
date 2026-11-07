@@ -725,6 +725,53 @@ async function rejectApplication({ repo, principal, params, now = Date.now() }) 
   return ok({ id: a.id, status: "withdrawn", withdrawnAt, withdrawReason: "eligibility" });
 }
 
+/* ---------- uptime ---------- */
+// The service writes down its own checks so the status page can show more than "right now".
+// One successful record proves three things at once: the site served a page, the API answered it,
+// and the database took the write. A total outage leaves a gap instead of a red mark, because
+// nothing is running to write one; the page shows those gaps grey rather than counting them as up.
+const UPTIME_DAYS = 90;
+const dayKey = (ms) => new Date(ms).toISOString().slice(0, 10);
+let lastRecorded = 0;
+
+async function recordCheck(repo, now) {
+  // Once a minute is plenty for a status page and keeps ordinary page loads cheap.
+  if (now - lastRecorded < 60000) return;
+  lastRecorded = now;
+  const id = dayKey(now);
+  const existing = await repo.get("uptime", id);
+  const doc = existing || { id, day: id, checks: 0, fails: 0, firstAt: new Date(now).toISOString() };
+  doc.checks = (doc.checks || 0) + 1;
+  doc.lastAt = new Date(now).toISOString();
+  await repo.upsert("uptime", doc);
+}
+
+async function statusData({ repo, now = Date.now() }) {
+  let recorded = true;
+  try {
+    await recordCheck(repo, now);
+  } catch (e) {
+    // The database is unreachable or the container isn't there yet. Say so rather than guess.
+    recorded = false;
+  }
+  let rows = [];
+  try {
+    rows = await repo.all("uptime");
+  } catch (e) {
+    recorded = false;
+  }
+  const cutoff = dayKey(now - (UPTIME_DAYS - 1) * 86400000);
+  const kept = rows.filter((r) => r.day >= cutoff).sort((a, b) => String(a.day).localeCompare(String(b.day)));
+  const since = rows.length ? rows.map((r) => r.day).sort()[0] : null;
+  return ok({
+    days: kept.map((r) => ({ day: r.day, checks: r.checks || 0, fails: r.fails || 0 })),
+    window: UPTIME_DAYS,
+    recordingSince: since,
+    database: recorded,
+    now: new Date(now).toISOString(),
+  });
+}
+
 async function idStart({ repo, principal, body, idcheck = startStripeCheck, env = process.env }) {
   needUser(principal);
   const researcher = await myResearcher(repo, principal);
@@ -764,6 +811,6 @@ module.exports = {
   idStart, identityEvent,
   publicData, network, me, verifyStart, verifyConfirm, fetchScholar, rorSearch, putProfile, createGroup, updateGroup, deleteGroup,
   createStudy, updateStudy, deleteStudy, studyApplicants, apply, myApplications, canEditGroup,
-  putParticipant, withdrawApplication, rateApplication, advanceApplication, rejectApplication,
+  statusData, putParticipant, withdrawApplication, rateApplication, advanceApplication, rejectApplication,
   participantEmailStart, participantEmailConfirm, deleteParticipant, deleteResearcherProfile,
 };

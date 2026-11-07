@@ -808,3 +808,34 @@ header nav a::after{background:#FFFFFF}
 .ck-fixed{color:var(--ink-soft);white-space:nowrap;padding-top:2px}
 .ck-switch{display:inline-flex;align-items:center;gap:8px;white-space:nowrap;cursor:pointer;padding-top:2px}
 .ck-switch input{width:18px;height:18px;accent-color:var(--blue)}
+
+/* ---- status page: banner, per-service rows and the 90-day bars ---- */
+.status-banner{display:flex;align-items:center;gap:12px;border-radius:14px;padding:18px 20px;margin-bottom:34px;color:#FFFFFF;background:var(--green)}
+.status-banner strong{font-size:1.15rem;font-weight:600}
+.status-banner .status-when{margin-left:auto;font-size:.82rem;opacity:.9;white-space:nowrap}
+.status-banner.part{background:var(--amber)}
+.status-banner.down{background:#B42318}
+.status-banner.wait,.status-banner.demo{background:var(--ink-soft)}
+@media (max-width:560px){ .status-banner{flex-wrap:wrap} .status-banner .status-when{margin-left:0;width:100%} }
+
+.svc{margin-bottom:30px}
+.svc-head{display:flex;gap:14px;align-items:flex-start;justify-content:space-between}
+.svc-head h2{font-size:1.05rem;margin:0}
+.svc-pill{flex:none;font-size:.76rem;font-weight:600;padding:.26rem .66rem;border-radius:8px;white-space:nowrap;background:var(--green-tint);color:var(--green)}
+.svc-pill.down{background:#FEE4E2;color:#B42318}
+.svc-pill.checking,.svc-pill.unknown{background:var(--paper-2);color:var(--ink-soft)}
+:root[data-theme="dark"] .svc-pill.down{background:#41140F;color:#FDA29B}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .svc-pill.down{background:#41140F;color:#FDA29B} }
+
+/* One slot per day. Grey means nobody checked, so it is never read as working. */
+.ub{display:flex;gap:2px;align-items:stretch;height:38px;margin-top:12px}
+.ub-day{position:relative;flex:1 1 0;min-width:2px;border-radius:2px;background:var(--line)}
+.ub-day.up{background:var(--green)}
+.ub-day.part{background:var(--amber)}
+.ub-day.down{background:#D92D20}
+.ub-day:hover{filter:brightness(.88)}
+.svc-foot{display:flex;align-items:center;gap:10px;margin-top:8px}
+.svc-rule{flex:1;height:1px;background:var(--line)}
+.svc-pct{white-space:nowrap}
+.status-note{max-width:70ch;margin-top:6px}
+@media (max-width:560px){ .ub{height:30px;gap:1px} .svc-foot{font-size:.74rem} }

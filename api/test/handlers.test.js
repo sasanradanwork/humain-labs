@@ -403,6 +403,29 @@ test("researchers move applicants through the stages, or withdraw them at eligib
   assert.equal((await run(H.rejectApplication, { repo, principal: user("u1"), params: { id: a.id } })).status, 409);
 });
 
+test("the status endpoint records its own checks and reports the window", async () => {
+  const repo = fresh();
+  const t0 = Date.parse("2026-11-07T10:00:00Z");
+  const first = await H.statusData({ repo, now: t0 });
+  assert.equal(first.json.window, 90);
+  assert.equal(first.json.database, true);
+  assert.deepEqual(first.json.days, [{ day: "2026-11-07", checks: 1, fails: 0 }]);
+  // Writes are throttled, so a burst of page loads does not become a burst of writes
+  await H.statusData({ repo, now: t0 + 1000 });
+  assert.equal((await H.statusData({ repo, now: t0 + 2000 })).json.days[0].checks, 1);
+  // A minute later it records again, on the same day
+  assert.equal((await H.statusData({ repo, now: t0 + 61000 })).json.days[0].checks, 2);
+  // Days outside the window are left out
+  await H.statusData({ repo, now: t0 + 200 * 86400000 });
+  const later = await H.statusData({ repo, now: t0 + 200 * 86400000 + 61000 });
+  assert.ok(!later.json.days.some((d) => d.day === "2026-11-07"));
+  // A database that cannot be reached is reported, not glossed over
+  const broken = { ...repo, get: async () => { throw new Error("down"); }, all: async () => { throw new Error("down"); } };
+  const out = await H.statusData({ repo: broken, now: t0 + 400 * 86400000 });
+  assert.equal(out.json.database, false);
+  assert.deepEqual(out.json.days, []);
+});
+
 test("participants see their own record, but not what researchers wrote about them", async () => {
   const repo = fresh();
   await verifiedProfile(repo, "u1");
