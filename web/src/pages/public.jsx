@@ -383,9 +383,7 @@ export function Studies({ filters, setFilters, onApply, onNewStudy, onVerify }) 
             </button>
           )}
         </div>
-        <div className="art">
-          <Cover seed="hero-studies" label="x" />
-        </div>
+        <div className="art art-photo" style={{ backgroundImage: "url(img/hlg_explore.jpg)" }} role="img" aria-label="A light bulb lit by trails of coloured light" />
       </section>
       <Toolbar
         page="studies"

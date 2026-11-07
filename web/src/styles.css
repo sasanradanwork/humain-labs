@@ -86,6 +86,7 @@ main{padding:36px 0 80px;min-height:60vh}
 .band .art{min-height:220px}
 .band .badge{background:var(--card)}
 .band .art svg{display:block;width:100%;height:100%}
+.band .art-photo{background-size:cover;background-position:center;background-color:#0B0A14}
 @media (max-width:760px){.band{grid-template-columns:1fr}.band .art{min-height:140px;order:-1}.band .txt{padding:26px}}
 
 /* toolbar */
@@ -429,8 +430,8 @@ body.on-home main{padding-top:0}
 .theme-btn:hover{background:var(--paper-2);color:var(--ink)}
 body.on-home header .theme-btn{border-color:rgba(231,234,243,.35);color:#E7EAF3}
 body.on-home header .theme-btn:hover{background:rgba(231,234,243,.12);color:#fff}
-body.on-home header .btn-solid{background:#93A5FF;border-color:#93A5FF;color:var(--navy)}
-body.on-home header .btn-solid:hover{background:#B4C1FF;border-color:#B4C1FF;color:var(--navy)}
+header .btn-solid{background:transparent;border-color:rgba(231,234,243,.6);color:#E7EAF3}
+header .btn-solid:hover{background:#E7EAF3;border-color:#E7EAF3;color:var(--navy)}
 
 .deadline{display:inline-flex;align-items:center;gap:4px;font-size:.72rem;font-weight:600;line-height:1.35;padding:.24rem .6rem;border-radius:999px;background:#FEE4E2;color:#B42318;white-space:nowrap}
 .deadline.urgent{background:#D92D20;color:#fff}
