@@ -945,7 +945,7 @@ header nav a::after{background:#FFFFFF}
 
 /* The status page finishes with artwork, which sits flush against the footer. */
 body.on-status main{padding-bottom:0}
-body.on-status footer{margin-top:0}
+body.on-status footer{margin-top:0;border-top:0}
 
 /* a little life in the scene: a turning cog, a blinking warning, lights coming good */
 @keyframes art-spin{to{transform:rotate(360deg)}}

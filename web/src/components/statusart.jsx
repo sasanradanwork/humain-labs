@@ -12,9 +12,34 @@ const COAT = "var(--art-coat)";
 const GLASS = "var(--art-glass)";
 const WARM = "var(--art-hat)";
 
+// Four heads of hair, so the figures read as four people rather than one repeated.
+const HAIR = {
+  fringe: <path d="M-11 -83 q 2 -11 11 -11 q 9 0 11 11 q -6 -6 -13 -3 q -5 3 -9 3 z" />,
+  bun: (
+    <>
+      <path d="M-11 -83 q 2 -11 11 -11 q 9 0 11 11 q -11 -5 -22 0 z" />
+      <circle cx="0" cy="-95" r="5" />
+    </>
+  ),
+  curls: (
+    <>
+      <path d="M-11 -82 q 1 -12 11 -12 q 10 0 11 12 q -11 -5 -22 0 z" />
+      <circle cx="-7" cy="-89" r="5.5" />
+      <circle cx="0" cy="-93" r="6" />
+      <circle cx="7" cy="-89" r="5.5" />
+    </>
+  ),
+  ponytail: (
+    <>
+      <path d="M-11 -83 q 2 -11 11 -11 q 9 0 11 11 q -11 -5 -22 0 z" />
+      <path d="M9 -87 q 11 1 11 10 q 0 7 -6 7 q 4 -9 -5 -12 z" />
+    </>
+  ),
+};
+
 // A figure in a lab coat, drawn as flat shapes with no face: the scene is about the work,
 // and faces at this size turn into noise. Origin sits at the feet.
-function Person({ x, y, s = 1, flip = false, pose = "stand" }) {
+function Person({ x, y, s = 1, flip = false, pose = "stand", hair = "fringe" }) {
   const arm = {
     stand: "M14 -53 q 14 -2 16 -13",
     point: "M14 -52 q 17 2 24 -8",
@@ -32,7 +57,7 @@ function Person({ x, y, s = 1, flip = false, pose = "stand" }) {
         <path d={arm} />
       </g>
       <circle cx="0" cy="-80" r="11" fill={BODY} />
-      <path d="M-11 -83 q 2 -11 11 -11 q 9 0 11 11 q -11 -5 -22 0 z" fill={BODY} opacity=".5" />
+      <g fill={BODY} opacity=".5">{HAIR[hair]}</g>
     </g>
   );
 }
@@ -88,10 +113,10 @@ export function StatusArt() {
         <rect x="104" y="146" width="130" height="60" rx="8" fill={RIG} stroke={EDGE} strokeWidth="2.2" />
         <rect x="115" y="156" width="108" height="40" rx="4" fill={SLOT} />
         <path d="M126 164 l 22 18 l 18 -12 l 26 22" fill="none" stroke={RED} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" />
-        <Person x={296} y={250} s={1.42} pose="alert" flip />
+        <Person x={296} y={250} s={1.42} pose="alert" flip hair="bun" />
 
         {/* 2. it is being fixed */}
-        <Person x={470} y={250} s={1.46} pose="point" />
+        <Person x={470} y={250} s={1.46} pose="point" hair="curls" />
         <Badge x={610} y={116} tone={WARM}>
           <g className="art-cog">
             <circle cx="0" cy="0" r="7" fill="none" stroke={WARM} strokeWidth="3" />
@@ -107,10 +132,10 @@ export function StatusArt() {
         <path d="M612 158 l 22 -14 v 38 l -22 14 z" fill={SLOT} stroke={EDGE} strokeWidth="2" strokeLinejoin="round" opacity=".9" />
         <circle className="art-blink" cx="644" cy="196" r="3.4" fill={WARM} />
         <Flask x={712} y={181} s={1.08} fill={WARM} />
-        <Person x={800} y={250} s={1.44} pose="hold" flip />
+        <Person x={800} y={250} s={1.44} pose="hold" flip hair="ponytail" />
 
         {/* 3. everything is sorted */}
-        <Person x={932} y={250} s={1.38} pose="stand" />
+        <Person x={932} y={250} s={1.38} pose="stand" hair="fringe" />
         <Badge x={1052} y={110} tone={GREEN}>
           <path d="M-8 1 l 6 6 l 11 -13" fill="none" stroke={GREEN} strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" />
         </Badge>
@@ -125,11 +150,9 @@ export function StatusArt() {
 
         </g>
         {/* the bench runs the whole frame, drawn over the people so they stand behind it */}
-        <rect x="-400" y="206" width="2600" height="44" fill="var(--art-bench)" />
+        <rect x="-400" y="206" width="2600" height="90" fill="var(--art-bench)" />
         <rect x="-400" y="200" width="2600" height="11" rx="5.5" fill={SLOT} stroke={EDGE} strokeWidth="2.2" />
-        <g stroke={EDGE} strokeWidth="2" opacity=".4">
-          <path d={`M${inset + 220} 215 V 250 M${inset + 980} 215 V 250`} />
-        </g>
+
       </svg>
     </div>
   );
