@@ -236,6 +236,7 @@ export function Status() {
   const hist = useHistory();
   const [votes, cast] = useVotes();
   const [openUpdate, setOpenUpdate] = useState(null);
+  const [showNext, setShowNext] = useState(false);
   const [showUpdates, setShowUpdates] = useState(false);
   const byDay = new Map((hist?.days || []).map((d) => [d.day, d]));
 
@@ -292,34 +293,39 @@ export function Status() {
         </>
       )}
 
-      <section className="dash-sec" style={{ marginTop: 40 }}>
-        <div className="intro">
-          <div>
+      <section className={"dash-sec" + (showNext ? " is-open" : "")} style={{ marginTop: 40 }}>
+        <button className="sec-toggle" onClick={() => setShowNext(!showNext)} aria-expanded={showNext} aria-controls="next-log">
+          <span>
             <h2>Coming next</h2>
-            <p className="soft small">
-              What we are building. No dates promised until the work is done.
+            <span className="soft small">
+              {UPCOMING.length} planned. No dates promised until the work is done.
               {votes.available ? (AUTH.user ? " Tell us which you want first." : " Sign in to say which you want first.") : ""}
-            </p>
-          </div>
-        </div>
-        <ul className="log">
-          {UPCOMING.map((u) => (
-            <li key={u.id} className="log-item upcoming">
-              <span className="log-when small soft">Planned</span>
-              <div>
-                <strong>{u.title}</strong>
-                <p className="small soft" style={{ margin: "2px 0 0" }}>
-                  {u.body}
-                </p>
-              </div>
-              {votes.available && <VoteButtons item={u} votes={votes} cast={cast} />}
-            </li>
-          ))}
-        </ul>
-        {votes.available && !AUTH.user && (
-          <p className="small soft" style={{ marginTop: 12 }}>
-            <a href="#/auth?mode=signin">Sign in</a> to vote. One vote each, and you can change it later.
-          </p>
+            </span>
+          </span>
+          <Icon.chev />
+        </button>
+        {showNext && (
+          <>
+            <ul className="log" id="next-log">
+              {UPCOMING.map((u) => (
+                <li key={u.id} className="log-item upcoming">
+                  <span className="log-when small soft">Planned</span>
+                  <div>
+                    <strong>{u.title}</strong>
+                    <p className="small soft" style={{ margin: "2px 0 0" }}>
+                      {u.body}
+                    </p>
+                  </div>
+                  {votes.available && <VoteButtons item={u} votes={votes} cast={cast} />}
+                </li>
+              ))}
+            </ul>
+            {votes.available && !AUTH.user && (
+              <p className="small soft" style={{ marginTop: 12 }}>
+                <a href="#/auth?mode=signin">Sign in</a> to vote. One vote each, and you can change it later.
+              </p>
+            )}
+          </>
         )}
       </section>
 
