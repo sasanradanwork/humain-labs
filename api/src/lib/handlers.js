@@ -5,7 +5,7 @@ const crypto = require("node:crypto");
 const V = require("./validate");
 const { feeBreakdown, gbp } = require("./money");
 const { trendFor } = require("./trending");
-const { newGroupId } = require("./ids");
+const { newGroupId, newResearcherId } = require("./ids");
 const { FIELDS, POSITIONS, COUNTRY_NAMES } = require("./lists");
 const { harvardAuthors } = require("./harvard");
 const { HttpError, bad } = V;
@@ -68,8 +68,21 @@ function participantStats(apps) {
   };
 }
 
-// What other researchers may see. Sign-in ids and pending verification codes never leave the server.
-const publicResearcher = ({ userId, verification, idCheck, ...r }) => r;
+// What other researchers may see. Sign-in ids and pending verification codes never leave the
+// server, and nor does who endorsed whom: endorsements leave as counts per year, so a
+// researcher can see their standing without seeing which colleagues voted for them.
+const publicResearcher = ({ userId, verification, idCheck, endorsements, ...r }) => ({
+  ...r,
+  endorsed: Object.fromEntries(Object.entries(endorsements || {}).map(([y, v]) => [y, Object.keys(v || {}).length])),
+});
+// The same, plus the years the person asking has already endorsed them for, so their own
+// buttons show the right state.
+const researcherFor = (r, meId) => ({
+  ...publicResearcher(r),
+  youEndorsed: Object.entries(r.endorsements || {})
+    .filter(([, v]) => meId && v && v[meId])
+    .map(([y]) => Number(y)),
+});
 // Public group pages, as seen by anyone: no member list, owner id or review notes. Members are counted only.
 const publicGroup = ({ members, ownerId, review, citations, ...g }) => ({ ...g, memberCount: (members || []).length });
 function canEditGroup(g, researcherId) {
@@ -129,7 +142,7 @@ async function network({ repo, principal }) {
   const rIds = new Map(researchers.map((r) => [r.id, r]));
   const openStudies = allStudies.filter((s) => rIds.get(s.researcherId)?.verified && isOpen(s)).length;
   return ok({
-    researchers: researchers.map(publicResearcher), groups, myStudies,
+    researchers: researchers.map((r) => researcherFor(r, me.id)), groups, myStudies,
     stats: {
       total: applications.length, byCountry, byStudy,
       participants: participants.length, participantsByCountry: countBy(participants),
@@ -161,6 +174,89 @@ function setReview(doc, review) {
 const studyText = (s) => ({ "Study title": s.title, "What's involved": s.description, "Who can take part": s.criteria, Reward: s.compensation });
 const ID_REQUIRED = "Verify your identity first. You can do this from your details page or your researcher area, and it only takes a few minutes.";
 
+/**
+ * The fuller profile: everything a researcher's own page shows beyond the basics.
+ * Each list is capped and every field validated, because all of it is public.
+ */
+function profileDetail(b) {
+  const year = new Date().getFullYear();
+  const span = (x, i, what) => ({
+    from: V.int(x.from, `${what} ${i + 1} start year`, { min: 1900, max: year + 1 }),
+    // Left empty, the role reads as current.
+    to: V.int(x.to, `${what} ${i + 1} end year`, { min: 1900, max: year + 10 }),
+  });
+  return {
+    interests: V.list(b.interests, "Research interests", 16)
+      .map((x, i) => V.str(x, `Research interest ${i + 1}`, { max: 60 }))
+      .filter(Boolean),
+    highlights: V.list(b.highlights, "Highlights", 8).map((raw, i) => {
+      const h = raw || {};
+      return {
+        title: V.str(h.title, `Highlight ${i + 1}`, { required: true, max: 160 }),
+        detail: V.str(h.detail, `Highlight ${i + 1} detail`, { max: 400 }),
+        year: V.int(h.year, `Highlight ${i + 1} year`, { min: 1900, max: year + 1 }),
+      };
+    }),
+    publications: V.list(b.publications, "Publications", 300).map((raw, i) => {
+      const p = raw || {};
+      const authorNames = V.list(p.authorNames, `Publication ${i + 1} authors`, 30)
+        .map((n, j) => V.str(n, `Publication ${i + 1}, author ${j + 1}`, { max: 120 }))
+        .filter(Boolean);
+      if (!authorNames.length) throw bad(`Publication ${i + 1} needs at least one author.`);
+      return {
+        title: V.str(p.title, `Publication ${i + 1} title`, { required: true, max: 300 }),
+        authorNames,
+        authors: harvardAuthors(authorNames),
+        venue: V.str(p.venue, `Publication ${i + 1} journal or venue`, { required: true, max: 200 }),
+        year: V.int(p.year, `Publication ${i + 1} year`, { min: 1900, max: year + 1, required: true }),
+        url: V.url(p.url, `Publication ${i + 1} link`),
+      };
+    }),
+    academicRoles: V.list(b.academicRoles, "Academic roles", 20).map((raw, i) => {
+      const a = raw || {};
+      return {
+        title: V.str(a.title, `Academic role ${i + 1}`, { required: true, max: 160 }),
+        org: V.str(a.org, `Academic role ${i + 1} institution`, { max: 160 }),
+        ...span(a, i, "Academic role"),
+      };
+    }),
+    researchRoles: V.list(b.researchRoles, "Research roles", 20).map((raw, i) => {
+      const a = raw || {};
+      return {
+        // Editor-in-Chief, Associate Editor, programme committee, and so on.
+        title: V.str(a.title, `Research role ${i + 1}`, { required: true, max: 160 }),
+        org: V.str(a.org, `Research role ${i + 1} journal or body`, { max: 200 }),
+        ...span(a, i, "Research role"),
+      };
+    }),
+    memberships: V.list(b.memberships, "Professional memberships", 20).map((raw, i) => {
+      const m = raw || {};
+      return {
+        body: V.str(m.body, `Membership ${i + 1}`, { required: true, max: 200 }),
+        grade: V.str(m.grade, `Membership ${i + 1} grade`, { max: 80 }),
+        since: V.int(m.since, `Membership ${i + 1} year joined`, { min: 1900, max: year + 1 }),
+      };
+    }),
+  };
+}
+
+/**
+ * Who this researcher supervises. Stored as ids so the entries stay correct when
+ * someone changes their name, and checked here so a profile can't list a stranger.
+ */
+async function supervisionList(repo, b, selfId) {
+  const out = [], seen = new Set();
+  for (const raw of V.list(b && b.supervising, "Supervising", 60)) {
+    const s = raw || {};
+    const id = V.str(s.researcherId, "Supervised researcher", { required: true, max: 64 });
+    if (seen.has(id) || id === selfId) continue;
+    if (!(await repo.get("researchers", id))) throw bad("Everyone you supervise must be a registered researcher. Add them with @ and their name.");
+    seen.add(id);
+    out.push({ researcherId: id, role: V.str(s.role, "Supervision role", { max: 80 }) || "PhD student" });
+  }
+  return out;
+}
+
 async function putProfile({ repo, principal, body, screen }) {
   needUser(principal);
   const existing = await myResearcher(repo, principal);
@@ -179,11 +275,19 @@ async function putProfile({ repo, principal, body, screen }) {
     scholar: V.scholar(b.scholar),
     orcid: V.orcid(b.orcid),
     bio: V.str(b.bio, "Bio", { required: true, max: 600 }),
+    ...profileDetail(b),
   };
   const review = await screenFields({ Bio: p.bio }, { screen });
   const sameHandle = await repo.where("researchers", "handle", p.handle);
   if (sameHandle.some((r) => !existing || r.id !== existing.id)) throw new HttpError(409, `@${p.handle} is already taken. Choose another handle.`);
-  const doc = setReview({ ...(existing || {}), ...p, id: existing?.id || newId(), userId: principal.userId, createdAt: existing?.createdAt || today(), updatedAt: today() }, review);
+  p.supervising = await supervisionList(repo, b, existing?.id);
+  // Every researcher gets a permanent HLR identifier, issued once and kept for good.
+  let publicId = existing?.publicId;
+  if (!publicId) {
+    publicId = newResearcherId();
+    for (let i = 0; i < 5 && (await repo.where("researchers", "publicId", publicId)).length; i++) publicId = newResearcherId();
+  }
+  const doc = setReview({ ...(existing || {}), ...p, publicId, id: existing?.id || newId(), userId: principal.userId, createdAt: existing?.createdAt || today(), updatedAt: today() }, review);
   // Verification vouches for a specific institution, so it lapses if the institution changes.
   if (existing?.verified && existing.institution !== p.institution) delete doc.verified;
   await repo.upsert("researchers", doc);
@@ -814,6 +918,35 @@ async function roadmapVote({ repo, principal, params, body }) {
   return ok(tally(doc, voter));
 }
 
+/**
+ * Peer endorsement: one researcher vouching for another's work in a given year.
+ *
+ * Deliberately narrow, because this feeds a public ranking:
+ *   - only a verified researcher may endorse, so an endorsement costs an institution-checked account
+ *   - one endorsement per pair per year, and endorsing again takes it back
+ *   - nobody can endorse themselves
+ *   - only the current year and the one before it, so standings for closed years stay put
+ * Who endorsed whom is kept on the record but never sent out; only counts are.
+ */
+async function endorseResearcher({ repo, principal, params, body, now = Date.now() }) {
+  const me = await needResearcher(repo, principal);
+  if (!me.verified) throw new HttpError(403, "Verify your institution email before endorsing another researcher.");
+  const target = await repo.get("researchers", String(params.id || ""));
+  if (!target) throw new HttpError(404, "That researcher isn't listed any more.");
+  if (target.id === me.id) throw bad("You can't endorse yourself.");
+  const thisYear = new Date(now).getFullYear();
+  const year = V.int(body && body.year, "Year", { min: thisYear - 1, max: thisYear, required: true });
+
+  const endorsements = { ...(target.endorsements || {}) };
+  const forYear = { ...(endorsements[String(year)] || {}) };
+  if (forYear[me.id]) delete forYear[me.id];
+  else forYear[me.id] = today(now);
+  endorsements[String(year)] = forYear;
+  const doc = { ...target, endorsements };
+  await repo.upsert("researchers", doc);
+  return ok(researcherFor(doc, me.id));
+}
+
 async function idStart({ repo, principal, body, idcheck = startStripeCheck, env = process.env }) {
   needUser(principal);
   const researcher = await myResearcher(repo, principal);
@@ -853,6 +986,6 @@ module.exports = {
   idStart, identityEvent,
   publicData, network, me, verifyStart, verifyConfirm, fetchScholar, rorSearch, putProfile, createGroup, updateGroup, deleteGroup,
   createStudy, updateStudy, deleteStudy, studyApplicants, apply, myApplications, canEditGroup,
-  statusData, roadmap, roadmapVote, putParticipant, withdrawApplication, rateApplication, advanceApplication, rejectApplication,
+  statusData, roadmap, roadmapVote, endorseResearcher, putParticipant, withdrawApplication, rateApplication, advanceApplication, rejectApplication,
   participantEmailStart, participantEmailConfirm, deleteParticipant, deleteResearcherProfile,
 };

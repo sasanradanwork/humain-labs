@@ -142,6 +142,7 @@ main{padding:36px 0 80px;min-height:60vh}
 .metrics b{display:block;font-family:var(--serif);font-size:1.9rem;font-weight:600;color:var(--blue);line-height:1.1}
 .metrics span{font-size:.78rem;color:var(--ink-soft)}
 .two{display:grid;grid-template-columns:2fr 1fr;gap:40px}
+.two > *{min-width:0}
 @media (max-width:860px){.two{grid-template-columns:1fr}}
 .sec{margin-bottom:34px}
 .sec h2{margin-bottom:14px;display:flex;align-items:center;gap:8px}
@@ -976,4 +977,107 @@ body.on-status footer{margin-top:0;border-top:0}
   .band .art-photo::after{
     background:linear-gradient(to bottom, rgb(var(--band-rgb)/0) 48%, rgb(var(--band-rgb)/.72) 84%, rgb(var(--band-rgb)) 100%);
   }
+}
+
+/* ---- researcher pages: profile, standing charts and the leaderboard ---- */
+
+/* The name on a card is a real link, but shouldn't look different from the heading it is. */
+a.plain{color:inherit;text-decoration:none}
+.card.click h3 a.plain:hover,.card.click:hover h3 a.plain{text-decoration:underline}
+
+.rhero{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;margin:14px 0 18px}
+.rhero h1{margin:0 0 4px}
+.rhero > div:nth-child(2){flex:1 1 320px}
+.rhero-act{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+@media (max-width:640px){ .rhero{gap:14px} .rhero-act{width:100%} }
+
+h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
+
+/* Highlights, roles, memberships and group lists all read as the same kind of list. */
+.hl-list,.role-list{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.hl-list li{display:flex;gap:10px;align-items:flex-start}
+.hl-list li > svg{color:var(--amber);flex:none;margin-top:3px}
+.role-list li{border-left:2px solid var(--line);padding-left:12px}
+.role-list li strong,.role-list li > a{display:block}
+
+.pub-list{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:14px}
+.pub-list li{display:grid;grid-template-columns:52px 1fr;gap:12px;align-items:start}
+.pub-year{font-variant-numeric:tabular-nums;color:var(--ink-soft);font-size:.86rem;padding-top:2px}
+
+/* ---- charts ---- */
+.chart{margin:4px 0 2px}
+.bars{width:100%;height:auto;display:block;overflow:visible}
+.ax-grid{stroke:var(--line);stroke-width:1}
+.ax-line{stroke:var(--line);stroke-width:1.5}
+.ax-label{fill:var(--ink-soft);font-size:9.5px;font-variant-numeric:tabular-nums}
+.ax-value{fill:var(--ink);font-size:9.5px;font-weight:600;font-variant-numeric:tabular-nums}
+.bar-pub{fill:var(--blue)}
+.bar-end{fill:var(--amber)}
+/* An invisible full-height target, so a short bar is still easy to hover. */
+.bar-hit{fill:transparent}
+.bar-g:hover .bar-pub,.bar-g:hover .bar-end{filter:brightness(1.08)}
+.chart-key{display:flex;flex-wrap:wrap;gap:16px;margin-top:6px;color:var(--ink-soft);font-size:.82rem}
+.chart-key span{display:inline-flex;align-items:center;gap:6px}
+.chart-key i{width:10px;height:10px;border-radius:3px;display:inline-block;flex:none}
+.chart-key .key-pub{background:var(--blue)}
+.chart-key .key-end{background:var(--amber)}
+
+/* ---- standing ---- */
+.standing{display:grid;grid-template-columns:minmax(150px,.75fr) 1.25fr;gap:22px;align-items:center;
+  border:1px solid var(--line);border-radius:16px;padding:18px;background:var(--card)}
+@media (max-width:720px){ .standing{grid-template-columns:1fr} }
+.pct{display:grid;gap:4px}
+.pct b{font-family:'Outfit',sans-serif;font-size:2.6rem;line-height:1;color:var(--blue)}
+.pct > span{color:var(--ink-soft);font-size:.86rem}
+
+/* The table scrolls inside its own box rather than widening the page: a grid track is
+   sized by its content's minimum width, and a six-column table's is wider than a phone. */
+.table-wrap{overflow-x:auto;margin-top:16px}
+.rank-table{width:100%;border-collapse:collapse;font-size:.9rem;min-width:420px}
+.rank-note{margin-top:10px;line-height:1.55}
+.rank-table th,.rank-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+.rank-table thead th{color:var(--ink-soft);font-weight:600;font-size:.82rem;white-space:nowrap}
+.rank-table tbody th{font-weight:600}
+.rank-table.lb tbody tr{cursor:pointer}
+.rank-table.lb tbody tr:hover{background:var(--paper-2)}
+.rank-table.lb tbody tr.me{background:var(--blue-tint)}
+@media (max-width:640px){
+  /* Publications and endorsements are in the points column's tooltip, so the table still fits. */
+  .rank-table th:nth-child(3),.rank-table td:nth-child(3){display:none}
+  .rank-table th,.rank-table td{padding:8px 6px}
+}
+
+.endorse-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:16px}
+.lb-year{display:flex;gap:8px;align-items:center}
+.lb-year select{padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit}
+.lb-you{border:1px solid var(--blue);background:var(--blue-tint);color:var(--ink);border-radius:12px;padding:12px 14px;margin-bottom:18px}
+
+/* ---- sponsor tiers: the outline travels round the card ---- */
+/* Each tier names its own colour once; the resting border and the travelling arc both use it. */
+.tier-gold{--tier:var(--gold)}
+.tier-silver{--tier:var(--silver)}
+.tier-standard{--tier:var(--blue)}
+/* The resting ring is faded, so the arc passing over it is the thing that catches the eye. */
+.tier{position:relative;isolation:isolate;border-color:color-mix(in oklab, var(--tier) 38%, transparent)}
+.tier::before{
+  content:"";position:absolute;inset:-1px;border-radius:17px;padding:2px;
+  /* Over the card's own border rather than behind it, and masked to that 2px edge so it
+     never touches the text. */
+  z-index:1;pointer-events:none;color:var(--tier);
+  background:conic-gradient(from var(--spin),
+    transparent 0turn, var(--tier) .06turn, var(--tier) .09turn, transparent .2turn, transparent 1turn);
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite:exclude;
+  filter:drop-shadow(0 0 5px color-mix(in oklab, var(--tier) 55%, transparent));
+  animation:tier-spin 5s linear infinite;
+}
+.tier-silver::before{animation-delay:-1.7s}
+.tier-standard::before{animation-delay:-3.4s}
+@property --spin{syntax:'<angle>';initial-value:0turn;inherits:false}
+@keyframes tier-spin{to{--spin:1turn}}
+/* Standing still, the ring should still read as the tier's own outline. */
+@media (prefers-reduced-motion:reduce){
+  .tier{border-color:var(--tier)}
+  .tier::before{animation:none;display:none}
 }

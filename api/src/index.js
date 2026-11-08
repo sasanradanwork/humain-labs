@@ -61,6 +61,7 @@ route("participantDelete", ["DELETE"], "participant", H.deleteParticipant);
 route("participantEmailStart", ["POST"], "participant/email/start", H.participantEmailStart);
 route("participantEmailConfirm", ["POST"], "participant/email/confirm", H.participantEmailConfirm);
 route("profileDelete", ["DELETE"], "profile", H.deleteResearcherProfile);
+route("researcherEndorse", ["POST"], "researchers/{id}/endorse", H.endorseResearcher);
 route("applicationsWithdraw", ["POST"], "applications/{id}/withdraw", H.withdrawApplication);
 route("applicationsRate", ["PUT"], "applications/{id}/rating", H.rateApplication);
 route("applicationsAdvance", ["POST"], "applications/{id}/advance", H.advanceApplication);

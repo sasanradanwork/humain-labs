@@ -657,3 +657,130 @@ test("public groups: only the owner or a lead can publish a group, and visitors 
 function profile2() {
   return { name: "Lab", institution: "HumAIn", country: "United Kingdom", field: "Computer science", email: "lab@example.com", summary: "A lab", about: "We study things.", publications: [] };
 }
+
+/* ---------- researcher identifiers, profile detail, endorsements and ranking ---------- */
+
+test("every researcher gets a permanent HLR identifier, kept across edits", async () => {
+  const repo = fresh();
+  const { isResearcherId, isGroupId } = require("../src/lib/ids");
+  const a = await H.putProfile({ repo, principal: user("u-hlr"), body: profile({ handle: "hlr-one" }) });
+  assert.match(a.json.publicId, /^HLR-[0-9A-Z]{4}-[0-9A-Z]{4}-[0-9A-Z]{2}$/);
+  assert.ok(isResearcherId(a.json.publicId));
+  // An HLR is not an HLG and vice versa, so the two can never be confused.
+  assert.equal(isGroupId(a.json.publicId), false);
+  const b = await H.putProfile({ repo, principal: user("u-hlr"), body: profile({ handle: "hlr-one", name: "Renamed Person" }) });
+  assert.equal(b.json.publicId, a.json.publicId, "the identifier survives a rename");
+  // A mistyped character is rejected rather than pointing at someone else.
+  const bad = a.json.publicId.slice(0, -1) + (a.json.publicId.endsWith("A") ? "B" : "A");
+  assert.equal(isResearcherId(bad), false);
+});
+
+test("the fuller profile is validated and saved", async () => {
+  const repo = fresh();
+  const other = await verifiedProfile(repo, "u-sup-target");
+  const r = await H.putProfile({
+    repo, principal: user("u-detail"),
+    body: profile({
+      handle: "detailed",
+      interests: ["Attention", " Memory ", ""],
+      publications: [{ title: "A study", authorNames: ["Kaur, A."], venue: "Nature", year: 2025 }],
+      highlights: [{ title: "Best paper", year: 2025, detail: "For the study." }],
+      academicRoles: [{ title: "Lecturer", org: "HumAIn", from: 2020 }],
+      researchRoles: [{ title: "Associate Editor", org: "Nature", from: 2024 }],
+      memberships: [{ body: "BPS", grade: "Fellow", since: 2019 }],
+      supervising: [{ researcherId: other.id, role: "PhD student" }],
+    }),
+  });
+  assert.equal(r.status, 201);
+  assert.deepEqual(r.json.interests, ["Attention", "Memory"], "blanks are dropped and names trimmed");
+  assert.equal(r.json.publications[0].authors, "Kaur, A.", "authors are stored Harvard style");
+  assert.equal(r.json.researchRoles[0].title, "Associate Editor");
+  assert.equal(r.json.supervising[0].researcherId, other.id);
+  assert.equal(r.json.academicRoles[0].to, null, "an open-ended role has no end year");
+});
+
+test("a profile can't list a publication with no author, or supervise a stranger", async () => {
+  const repo = fresh();
+  const noAuthor = await run(H.putProfile, { repo, principal: user("u-bad1"), body: profile({ handle: "bad-one", publications: [{ title: "T", authorNames: [], venue: "V", year: 2025 }] }) });
+  assert.equal(noAuthor.status, 400);
+  const stranger = await run(H.putProfile, { repo, principal: user("u-bad2"), body: profile({ handle: "bad-two", supervising: [{ researcherId: "nobody" }] }) });
+  assert.equal(stranger.status, 400);
+});
+
+test("endorsing is for verified researchers, once a year, and never yourself", async () => {
+  const repo = fresh();
+  const year = new Date().getFullYear();
+  const target = await verifiedProfile(repo, "u-target");
+  const voter = await verifiedProfile(repo, "u-voter");
+
+  assert.equal((await run(H.endorseResearcher, { repo, principal: null, params: { id: target.id }, body: { year } })).status, 401);
+  // A researcher who hasn't verified their institution email can't endorse.
+  await H.putProfile({ repo, principal: user("u-unver"), body: profile({ handle: "unverified" }) });
+  assert.equal((await run(H.endorseResearcher, { repo, principal: user("u-unver"), params: { id: target.id }, body: { year } })).status, 403);
+  assert.equal((await run(H.endorseResearcher, { repo, principal: user("u-voter"), params: { id: voter.id }, body: { year } })).status, 400, "no endorsing yourself");
+  assert.equal((await run(H.endorseResearcher, { repo, principal: user("u-voter"), params: { id: target.id }, body: { year: year - 5 } })).status, 400, "closed years stay put");
+
+  const one = await H.endorseResearcher({ repo, principal: user("u-voter"), params: { id: target.id }, body: { year } });
+  assert.equal(one.json.endorsed[String(year)], 1);
+  assert.deepEqual(one.json.youEndorsed, [year]);
+  // Endorsing again takes it back rather than stacking.
+  const off = await H.endorseResearcher({ repo, principal: user("u-voter"), params: { id: target.id }, body: { year } });
+  assert.equal(off.json.endorsed[String(year)], 0);
+  assert.deepEqual(off.json.youEndorsed, []);
+});
+
+test("who endorsed whom never leaves the server", async () => {
+  const repo = fresh();
+  const year = new Date().getFullYear();
+  const target = await verifiedProfile(repo, "u-t2");
+  await verifiedProfile(repo, "u-v2");
+  await H.endorseResearcher({ repo, principal: user("u-v2"), params: { id: target.id }, body: { year } });
+
+  const net = await H.network({ repo, principal: user("u-v2") });
+  const seen = net.json.researchers.find((x) => x.id === target.id);
+  assert.equal(seen.endorsements, undefined, "the voter list is stripped");
+  assert.equal(seen.endorsed[String(year)], 1, "only the count goes out");
+  assert.deepEqual(seen.youEndorsed, [year]);
+  // Someone else cannot see that u-v2 was the one who endorsed.
+  const third = await verifiedProfile(repo, "u-v3");
+  const asThird = await H.network({ repo, principal: user("u-v3") });
+  const seenByThird = asThird.json.researchers.find((x) => x.id === target.id);
+  assert.equal(seenByThird.endorsements, undefined);
+  assert.deepEqual(seenByThird.youEndorsed, [], "and it isn't attributed to them either");
+  assert.ok(third.id);
+});
+
+test("points, percentiles and the leaderboard add up", async () => {
+  const R = require("../src/lib/ranking");
+  const people = [
+    { id: "a", name: "Ada Byron", publications: [{ year: 2026, authorNames: ["Byron, A."] }, { year: 2026, authorNames: ["Other, B."] }], endorsed: { 2026: 2 } },
+    { id: "b", name: "Bea Cole", publications: [{ year: 2026, authorNames: ["Cole, B."] }], endorsed: {} },
+    { id: "c", name: "Cid Dee", publications: [{ year: 2026, authorNames: ["Dee, C."] }], endorsed: {} },
+    { id: "d", name: "Dot Eve", publications: [{ year: 2025, authorNames: ["Eve, D."] }], endorsed: {} },
+  ];
+  // 2 publications (20) + 1 as first author (5) + 2 endorsements (8)
+  const a = R.scoreFor(people[0], 2026);
+  assert.deepEqual([a.publications, a.firstAuthor, a.endorsements, a.points], [2, 1, 2, 33]);
+
+  const s = R.standings(people, 2026);
+  assert.equal(s.get("a").rank, 1);
+  assert.equal(s.get("b").rank, 2);
+  assert.equal(s.get("c").rank, 2, "a tie shares a rank");
+  assert.equal(s.get("b").percentile, s.get("c").percentile, "and shares a percentile");
+  // Nothing recorded that year is unranked, not last.
+  assert.equal(s.get("d").percentile, null);
+  assert.equal(s.get("d").rank, null);
+  // Midpoint percentile rank: never a flat 0 for the bottom or 100 for the top.
+  assert.ok(s.get("a").percentile < 100 && s.get("b").percentile > 0);
+
+  const board = R.leaderboard(people, 2026);
+  assert.deepEqual(board.map((x) => x.researcher.id), ["a", "b", "c"], "unranked people are left off");
+});
+
+test("a researcher's score reads the same from the stored map or the counts the API sends", async () => {
+  const R = require("../src/lib/ranking");
+  const stored = { id: "x", name: "Dr. Amara Nwosu", publications: [{ year: 2026, authorNames: ["Nwosu, A."] }], endorsements: { 2026: { v1: "d", v2: "d" } } };
+  const sent = { id: "x", name: "Dr. Amara Nwosu", publications: [{ year: 2026, authorNames: ["Nwosu, A."] }], endorsed: { 2026: 2 } };
+  assert.deepEqual(R.scoreFor(stored, 2026), R.scoreFor(sent, 2026));
+  assert.equal(R.scoreFor(stored, 2026).firstAuthor, 1, "a Harvard author string matches the display name");
+});

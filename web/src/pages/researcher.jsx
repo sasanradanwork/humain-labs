@@ -7,6 +7,7 @@ import { DAY_MS, fmtDate, FORMATS, gidKey, isOpen, makeHandle, matches, normCoun
 import { Field, Form, SubmitButton, navigate, replaceRoute, useUI } from "../lib/ui.jsx";
 import { AuthorNames, ChoiceField, InstitutionField } from "../components/fields.jsx";
 import { HlgBadge } from "../components/hlg.jsx";
+import { Repeater, YearSpan } from "../components/repeater.jsx";
 import { IdCheckPanel } from "../components/idcheck.jsx";
 import { COUNTRY_NAMES, FIELDS, POSITIONS } from "../lib/lists.js";
 import { namesFromHarvard } from "../lib/harvard.js";
@@ -38,11 +39,16 @@ export function Researchers({ filters, setFilters }) {
       <div className="intro">
         <div>
           <h1>Researchers</h1>
-          <p className="soft">Researchers across universities and countries. Reach out if you'd like to collaborate.</p>
+          <p className="soft">Researchers across universities and countries. Open a card for their full profile, or see how the year is going on the leaderboard.</p>
         </div>
-        <a className="btn btn-blue" href="#/profile">
-          Edit your profile
-        </a>
+        <div className="btns">
+          <a className="btn" href="#/researchers/leaderboard">
+            <Icon.trophy /> Leaderboard
+          </a>
+          <a className="btn btn-blue" href="#/profile">
+            Edit your profile
+          </a>
+        </div>
       </div>
       <Toolbar
         page="researchers"
@@ -1189,6 +1195,16 @@ export function ProfileEditor({ onVerify, onScholar, onRor, onDelete }) {
   const [handleAuto, setHandleAuto] = useState(!AUTH.researcher?.handle);
   const [handle, setHandle] = useState(AUTH.researcher?.handle || "");
   const [inst, setInst] = useState({ name: AUTH.researcher?.institution || "", ror: AUTH.researcher?.ror || "" });
+  const r0 = AUTH.researcher;
+  const [interests, setInterests] = useState((r0?.interests || []).join(", "));
+  const [pubs, setPubs] = useState(() => (r0?.publications || []).map((x) => ({ ...x, authorNames: x.authorNames?.length ? [...x.authorNames] : namesFromHarvard(x.authors) })));
+  const [highlights, setHighlights] = useState(() => (r0?.highlights || []).map((x) => ({ ...x })));
+  const [academic, setAcademic] = useState(() => (r0?.academicRoles || []).map((x) => ({ ...x })));
+  const [research, setResearch] = useState(() => (r0?.researchRoles || []).map((x) => ({ ...x })));
+  const [memberships, setMemberships] = useState(() => (r0?.memberships || []).map((x) => ({ ...x })));
+  const [supervising, setSupervising] = useState(() => (r0?.supervising || []).map((x) => ({ ...x })));
+  const [sup, setSup] = useState("");
+  const yr = new Date().getFullYear();
   if (!AUTH.user)
     return (
       <div className="wrap">
@@ -1223,6 +1239,19 @@ export function ProfileEditor({ onVerify, onScholar, onRor, onDelete }) {
               scholar: d.scholar,
               orcid: (d.orcid || "").replace(/^https?:\/\/orcid\.org\//i, ""),
               bio: d.bio,
+              interests: interests.split(",").map((x) => x.trim()).filter(Boolean),
+              publications: pubs.map((x) => ({
+                title: x.title,
+                authorNames: (x.authorNames || []).map((n) => n.trim()).filter(Boolean),
+                venue: x.venue,
+                year: Number(x.year) || 0,
+                url: x.url || "",
+              })),
+              highlights: highlights.map((x) => ({ title: x.title, detail: x.detail || "", year: x.year ? Number(x.year) : null })),
+              academicRoles: academic.map((x) => ({ title: x.title, org: x.org || "", from: x.from ? Number(x.from) : null, to: x.to ? Number(x.to) : null })),
+              researchRoles: research.map((x) => ({ title: x.title, org: x.org || "", from: x.from ? Number(x.from) : null, to: x.to ? Number(x.to) : null })),
+              memberships: memberships.map((x) => ({ body: x.body, grade: x.grade || "", since: x.since ? Number(x.since) : null })),
+              supervising: supervising.map((x) => ({ researcherId: x.researcherId, role: x.role || "PhD student" })),
             });
             toast(AUTH.researcher ? "Profile saved." : "Profile published.");
             await backend.refreshMe?.();
@@ -1349,6 +1378,186 @@ export function ProfileEditor({ onVerify, onScholar, onRor, onDelete }) {
               </button>
             )}
           </div>
+          <div className="fsec">
+            <h2>Research interests</h2>
+            <p className="hint">Shown as tags on your profile.</p>
+            <Field label="Interests">
+              <input
+                maxLength="500"
+                value={interests}
+                onChange={(e) => setInterests(e.target.value)}
+                placeholder="Separate with commas, e.g. Episodic memory, Sleep and consolidation"
+              />
+            </Field>
+          </div>
+
+          <div className="fsec">
+            <h2>Publications</h2>
+            <p className="hint">
+              These earn your yearly points, so the year on each one matters. Listed newest first on your profile.
+            </p>
+            <Repeater rows={pubs} setRows={setPubs} max={300} blank={{ title: "", authorNames: [""], venue: "", year: "", url: "" }} noun={["Publication", "No publications added."]}>
+              {(x, set) => (
+                <>
+                  <Field label="Title" required>
+                    <input required maxLength="300" value={x.title || ""} onChange={(e) => set("title", e.target.value)} />
+                  </Field>
+                  <div className="f field-stack">
+                    <span className="req">Authors</span>
+                    <AuthorNames names={x.authorNames?.length ? x.authorNames : [""]} onChange={(names) => set("authorNames", names)} />
+                  </div>
+                  <div className="row2">
+                    <Field label="Journal or venue" required>
+                      <input required maxLength="200" value={x.venue || ""} onChange={(e) => set("venue", e.target.value)} />
+                    </Field>
+                    <Field label="Year" required>
+                      <input type="number" required min="1900" max={yr + 1} value={x.year || ""} onChange={(e) => set("year", e.target.value)} />
+                    </Field>
+                  </div>
+                  <Field label="Link">
+                    <input type="url" value={x.url || ""} onChange={(e) => set("url", e.target.value)} placeholder="https://doi.org/…" />
+                  </Field>
+                </>
+              )}
+            </Repeater>
+          </div>
+
+          <div className="fsec">
+            <h2>Highlights</h2>
+            <p className="hint">Awards, grants, keynotes — anything worth pulling out of the list.</p>
+            <Repeater rows={highlights} setRows={setHighlights} max={8} blank={{ title: "", detail: "", year: "" }} noun={["Highlight", "No highlights added."]}>
+              {(x, set) => (
+                <>
+                  <div className="row2">
+                    <Field label="What it was" required>
+                      <input required maxLength="160" value={x.title || ""} onChange={(e) => set("title", e.target.value)} placeholder="Best paper award, CHI" />
+                    </Field>
+                    <Field label="Year">
+                      <input type="number" min="1900" max={yr + 1} value={x.year || ""} onChange={(e) => set("year", e.target.value)} />
+                    </Field>
+                  </div>
+                  <Field label="A line about it">
+                    <input maxLength="400" value={x.detail || ""} onChange={(e) => set("detail", e.target.value)} />
+                  </Field>
+                </>
+              )}
+            </Repeater>
+          </div>
+
+          <div className="fsec">
+            <h2>Academic roles</h2>
+            <p className="hint">Posts you have held. Leave the end year empty for the one you hold now.</p>
+            <Repeater rows={academic} setRows={setAcademic} max={20} blank={{ title: "", org: "", from: "", to: "" }} noun={["Academic role", "No academic roles added."]}>
+              {(x, set) => (
+                <>
+                  <div className="row2">
+                    <Field label="Title" required>
+                      <input required maxLength="160" value={x.title || ""} onChange={(e) => set("title", e.target.value)} placeholder="Senior lecturer" />
+                    </Field>
+                    <Field label="Institution">
+                      <input maxLength="160" value={x.org || ""} onChange={(e) => set("org", e.target.value)} />
+                    </Field>
+                  </div>
+                  <YearSpan row={x} set={set} year={yr} />
+                </>
+              )}
+            </Repeater>
+          </div>
+
+          <div className="fsec">
+            <h2>Research roles</h2>
+            <p className="hint">Editorial and review work: Editor-in-Chief, Associate Editor, programme committees, grant panels.</p>
+            <Repeater rows={research} setRows={setResearch} max={20} blank={{ title: "", org: "", from: "", to: "" }} noun={["Research role", "No research roles added."]}>
+              {(x, set) => (
+                <>
+                  <div className="row2">
+                    <Field label="Role" required>
+                      <input required maxLength="160" value={x.title || ""} onChange={(e) => set("title", e.target.value)} placeholder="Associate Editor" />
+                    </Field>
+                    <Field label="Journal or body">
+                      <input maxLength="200" value={x.org || ""} onChange={(e) => set("org", e.target.value)} />
+                    </Field>
+                  </div>
+                  <YearSpan row={x} set={set} year={yr} />
+                </>
+              )}
+            </Repeater>
+          </div>
+
+          <div className="fsec">
+            <h2>Supervision</h2>
+            <p className="hint">
+              Researchers you supervise. They need a HumAIn Labs profile first; their page will show you as their supervisor.
+            </p>
+            <div className="stack">
+              {supervising.map((x, i) => {
+                const who = byId("researchers", x.researcherId);
+                if (!who) return null;
+                return (
+                  <div className="mrow" key={x.researcherId}>
+                    <Avatar name={who.name} size={32} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <strong>{who.name}</strong>
+                      <div className="small soft">{who.institution}</div>
+                    </div>
+                    <input
+                      aria-label={`What ${who.name} is to you`}
+                      maxLength="80"
+                      value={x.role || ""}
+                      placeholder="PhD student"
+                      onChange={(e) => setSupervising(supervising.map((y, j) => (j === i ? { ...y, role: e.target.value } : y)))}
+                    />
+                    <button type="button" className="link small" onClick={() => setSupervising(supervising.filter((_, j) => j !== i))}>
+                      Remove
+                    </button>
+                  </div>
+                );
+              })}
+              {!supervising.length && <p className="rep-empty">Nobody added yet.</p>}
+              <Field label="Add a researcher">
+                <select
+                  value=""
+                  onChange={(e) => {
+                    const id = e.target.value;
+                    if (id && !supervising.some((y) => y.researcherId === id)) setSupervising([...supervising, { researcherId: id, role: "PhD student" }]);
+                    setSup("");
+                  }}
+                >
+                  <option value="">Choose a registered researcher</option>
+                  {S.researchers
+                    .filter((o) => o.id !== r0?.id && !supervising.some((y) => y.researcherId === o.id))
+                    .sort(sortByName)
+                    .map((o) => (
+                      <option key={o.id} value={o.id}>
+                        {o.name} — {o.institution}
+                      </option>
+                    ))}
+                </select>
+              </Field>
+            </div>
+          </div>
+
+          <div className="fsec">
+            <h2>Professional memberships</h2>
+            <Repeater rows={memberships} setRows={setMemberships} max={20} blank={{ body: "", grade: "", since: "" }} noun={["Membership", "No memberships added."]}>
+              {(x, set) => (
+                <>
+                  <Field label="Body" required>
+                    <input required maxLength="200" value={x.body || ""} onChange={(e) => set("body", e.target.value)} placeholder="British Psychological Society" />
+                  </Field>
+                  <div className="row2">
+                    <Field label="Grade">
+                      <input maxLength="80" value={x.grade || ""} onChange={(e) => set("grade", e.target.value)} placeholder="Fellow" />
+                    </Field>
+                    <Field label="Member since">
+                      <input type="number" min="1900" max={yr + 1} value={x.since || ""} onChange={(e) => set("since", e.target.value)} />
+                    </Field>
+                  </div>
+                </>
+              )}
+            </Repeater>
+          </div>
+
           <div className="fsec">
             <h2>Verification</h2>
             {isNew ? (

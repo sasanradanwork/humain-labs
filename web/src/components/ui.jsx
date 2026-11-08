@@ -138,6 +138,18 @@ export const Icon = {
       <path d="M20 6 9 17l-5-5" />
     </svg>
   ),
+  star: () => (
+    <svg width="15" height="15" viewBox="0 0 24 24" {...s({ strokeLinejoin: "round" })} aria-hidden="true">
+      <path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1L3.2 9.4l6.1-.9z" />
+    </svg>
+  ),
+  trophy: () => (
+    <svg width="15" height="15" viewBox="0 0 24 24" {...s({ strokeLinejoin: "round" })} aria-hidden="true">
+      <path d="M7 4h10v5a5 5 0 0 1-10 0z" />
+      <path d="M7 5H4v2a3 3 0 0 0 3 3M17 5h3v2a3 3 0 0 1-3 3" />
+      <path d="M12 14v3M9 20h6M10 17h4" />
+    </svg>
+  ),
   ms: () => (
     <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
       <path fill="#F25022" d="M2 2h9.5v9.5H2z" />

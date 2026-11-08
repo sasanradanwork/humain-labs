@@ -657,17 +657,18 @@ export function About() {
       </section>
 
       <section className="home-sec" id="hlg">
-        <h2 className="h2big">Your HLG identifier</h2>
+        <h2 className="h2big">Your HumAIn Labs identifier</h2>
         <div className="hlg-explain">
           <HlgBadge size={48} spin />
           <div>
             <p className="soft">
-              Every research group on HumAIn Labs gets a permanent identifier, the way researchers get an ORCID iD. It starts with HLG and looks like
-              HLG-XXXX-XXXX-XX. It doesn't change when a group renames or moves, so you can quote it on papers, adverts and applications.
+              Everyone listed on HumAIn Labs gets a permanent identifier, the way researchers get an ORCID iD. A research group's starts with HLG and
+              looks like HLG-XXXX-XXXX-XX; a researcher's starts with HLR and looks like HLR-XXXX-XXXX-XX. Neither changes when someone renames,
+              moves institution or changes their handle, so you can quote it on papers, adverts and applications.
             </p>
             <p className="soft small" style={{ marginTop: 8 }}>
-              The last two characters are a check, so a mistyped ID is caught straight away. Wherever a group's ID appears, the HumAIn Labs badge sits
-              beside it.
+              The last two characters are a check, so a mistyped ID is caught straight away rather than pointing at the wrong record. Wherever an ID
+              appears, the HumAIn Labs badge sits beside it.
             </p>
           </div>
         </div>

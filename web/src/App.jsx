@@ -3,6 +3,7 @@ import { Avatar, Icon, Logo } from "./components/ui.jsx";
 import { ApplyModal, ConfirmModal, RateModal, RorModal, ScholarModal, VerifyModal } from "./components/modals.jsx";
 import { About, Auth, Home, MyApplications, Reach, Studies } from "./pages/public.jsx";
 import { Dashboard, GroupEditor, GroupPage, Groups, ManageStudy, ProfileEditor, Researchers, StudyEditor, groupByRef } from "./pages/researcher.jsx";
+import { Leaderboard, ResearcherPage, researcherByRef } from "./pages/researcherpage.jsx";
 import { AUTH, S, byId, role, useStore } from "./lib/store.js";
 import { fallbackBackend, pickBackend, setToaster } from "./lib/backends.js";
 import { UIProvider, navigate, useRoute, useTheme } from "./lib/ui.jsx";
@@ -146,6 +147,10 @@ export default function App() {
     const name =
       route.page === "groups" && route.id && route.id !== "new" && route.sub !== "edit"
         ? groupByRef(route.id)?.name || "Research group"
+        : route.page === "researchers" && route.id && route.id !== "leaderboard"
+        ? researcherByRef(route.id)?.name || "Researcher"
+        : route.page === "researchers" && route.id === "leaderboard"
+        ? "Leaderboard"
         : TITLES[route.page];
     document.title = `${name} · HumAIn Labs`;
     document.body.classList.toggle("on-home", route.page === "home");
@@ -196,7 +201,14 @@ export default function App() {
         );
         break;
       case "researchers":
-        body = <Researchers filters={filters.researchers} setFilters={setPageFilters("researchers")} />;
+        body =
+          route.id === "leaderboard" ? (
+            <Leaderboard />
+          ) : route.id ? (
+            <ResearcherPage id={route.id} />
+          ) : (
+            <Researchers filters={filters.researchers} setFilters={setPageFilters("researchers")} />
+          );
         break;
       case "groups":
         body =

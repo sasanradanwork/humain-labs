@@ -7,6 +7,7 @@ import { useState } from "react";
 
 export const studyTrend = (s) => s.trend || trendFor(s, S.applications);
 export const groupHref = (g) => `#/groups/${encodeURIComponent(g.publicId || g.id)}`;
+export const researcherHref = (r) => `#/researchers/${encodeURIComponent(r.publicId || r.id)}`;
 export function lookingFor(g) {
   const k = uniq((g.openings || []).map((o) => o.type));
   if (S.studies.some((s) => s.groupId === g.id)) k.push("Study participants");
@@ -172,8 +173,18 @@ export function StudyCard({ study: s, onApply }) {
 
 export function ResearcherCard({ researcher: r }) {
   const gs = groupsOf(r.id);
+  const go = () => navigate(researcherHref(r));
   return (
-    <article className="card">
+    <article
+      className="card click"
+      role="link"
+      tabIndex={0}
+      aria-label={r.name}
+      // Anything already clickable inside the card — the contact button, a group link,
+      // the stats pop-out — keeps its own behaviour.
+      onClick={(e) => !e.target.closest("a,button,.radar-mini") && go()}
+      onKeyDown={(e) => e.key === "Enter" && !e.target.closest("a,button") && go()}
+    >
       <div className="body">
         {r.metrics && (
           <>
@@ -200,7 +211,11 @@ export function ResearcherCard({ researcher: r }) {
         <div className="person">
           <Avatar name={r.name} size={48} />
           <div style={{ minWidth: 0 }}>
-            <h3>{r.name}</h3>
+            <h3>
+              <a className="plain" href={researcherHref(r)}>
+                {r.name}
+              </a>
+            </h3>
             <ContactReveal handle={r.handle} />
           </div>
         </div>

@@ -100,13 +100,16 @@ export function gidCheckChar(body) {
   }
   return GID_CHECK[(37 - p) % 36];
 }
-export function newGroupId() {
+function newPublicId(prefix) {
   const bytes = crypto.getRandomValues(new Uint8Array(9));
   let body = "";
   for (const b of bytes) body += GID_ALPHABET[b % 32];
   const raw = body + gidCheckChar(body);
-  return `HLG-${raw.slice(0, 4)}-${raw.slice(4, 8)}-${raw.slice(8)}`;
+  return `${prefix}-${raw.slice(0, 4)}-${raw.slice(4, 8)}-${raw.slice(8)}`;
 }
+export const newGroupId = () => newPublicId("HLG");
+// A researcher's own identifier, issued and formatted exactly like a group's.
+export const newResearcherId = () => newPublicId("HLR");
 export const gidKey = (s) => String(s || "").toUpperCase().replace(/[^0-9A-Z]/g, "");
 
 /* ---------- studies: closing dates and trending ---------- */

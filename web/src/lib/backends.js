@@ -4,7 +4,7 @@
 //  - Local: this browser's storage, with demo content (for opening the file on its own)
 // The Azure API enforces the rules on the server; the other two check them here.
 import { AUTH, COLS, S, computeStats, notify, participantStats } from "./store.js";
-import { FREE_MAIL, UserError, newGroupId, today, uid } from "./util.js";
+import { FREE_MAIL, UserError, newGroupId, newResearcherId, today, uid } from "./util.js";
 import { harvardAuthors } from "./harvard.js";
 import { feeBreakdown, gbp } from "./money.js";
 import DEMO from "../data/seed.json";
@@ -102,13 +102,32 @@ function docBackend(store, kind) {
       const existing = mine();
       if (S.researchers.some((r) => r.handle === p.handle && (!existing || r.id !== existing.id)))
         throw new UserError(`@${p.handle} is already taken. Choose another handle.`);
-      const doc = { ...(existing || {}), ...p, id: existing?.id || uid(), userId: session.userId, createdAt: existing?.createdAt || today(), updatedAt: today() };
+      const doc = { ...(existing || {}), ...p, id: existing?.id || uid(), publicId: existing?.publicId || newResearcherId(), userId: session.userId, createdAt: existing?.createdAt || today(), updatedAt: today() };
       // Verification vouches for one institution, so it lapses if the institution changes.
       if (existing?.verified && existing.institution !== p.institution) delete doc.verified;
       await store.put("researchers", doc);
       if (existing)
         for (const s of S.studies.filter((s) => s.researcherId === doc.id))
           await store.put("studies", { ...s, researcherName: doc.name, researcherEmail: doc.email, institution: doc.institution });
+      return doc;
+    },
+    // Mirrors endorseResearcher on the server: verified researchers only, never yourself,
+    // one endorsement per pair per year, and endorsing again takes it back.
+    async endorse(researcherId, year) {
+      const me = needResearcher();
+      if (!me.verified) throw new UserError("Verify your institution email before endorsing another researcher.");
+      const target = S.researchers.find((r) => r.id === researcherId);
+      if (!target) throw new UserError("That researcher isn't listed any more.");
+      if (target.id === me.id) throw new UserError("You can't endorse yourself.");
+      const thisYear = new Date().getFullYear();
+      if (!(year === thisYear || year === thisYear - 1)) throw new UserError("You can only endorse work from this year or last year.");
+      const endorsements = { ...(target.endorsements || {}) };
+      const forYear = { ...(endorsements[String(year)] || {}) };
+      if (forYear[me.id]) delete forYear[me.id];
+      else forYear[me.id] = today();
+      endorsements[String(year)] = forYear;
+      const doc = { ...target, endorsements };
+      await store.put("researchers", doc);
       return doc;
     },
     async saveGroup(g0, id) {
@@ -572,6 +591,11 @@ function azureBackend() {
     },
     async saveProfile(p) {
       const r = await api("PUT", "profile", p);
+      await self.after();
+      return r;
+    },
+    async endorse(researcherId, year) {
+      const r = await api("POST", "researchers/" + encodeURIComponent(researcherId) + "/endorse", { year });
       await self.after();
       return r;
     },
