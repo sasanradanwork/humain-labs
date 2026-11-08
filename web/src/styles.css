@@ -958,3 +958,22 @@ body.on-status footer{margin-top:0;border-top:0}
 .art-led{animation:art-led 3.2s ease-in-out infinite}
 @media (prefers-reduced-motion:reduce){ .art-cog,.art-blink,.art-pulse,.art-led{animation:none} }
 @media (max-width:760px){ .status-art{aspect-ratio:1240/250} }
+
+/* The photo in a band bleeds into the panel beside it, instead of meeting it at a hard edge.
+   The fade is the panel's own colour, so it works in either theme. */
+.band{--band-rgb:233 235 250}
+:root[data-theme="dark"] .band{--band-rgb:29 38 72}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .band{--band-rgb:29 38 72} }
+.band .art-photo{position:relative}
+.band .art-photo::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to right, rgb(var(--band-rgb)) 0%, rgb(var(--band-rgb)/.6) 13%, rgb(var(--band-rgb)/0) 40%);
+}
+/* stacked on a phone, the photo sits above the words, so the fade runs down into them */
+@media (max-width:760px){
+  /* stacked, the band is a shallow strip, so sit the crop a little higher to keep the subject whole */
+  .band .art-photo{background-position:center 38%}
+  .band .art-photo::after{
+    background:linear-gradient(to bottom, rgb(var(--band-rgb)/0) 48%, rgb(var(--band-rgb)/.72) 84%, rgb(var(--band-rgb)) 100%);
+  }
+}
