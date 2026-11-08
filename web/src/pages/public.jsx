@@ -90,7 +90,6 @@ export function Home({ onApply, setStudyQuery }) {
       </section>
       <div className="wrap">
         <section
-          data-reveal
           className={"home-sec trend" + (paused || reducedMotion() ? " paused" : "")}
           id="trend"
           aria-label="Trending studies"
@@ -148,9 +147,9 @@ export function Home({ onApply, setStudyQuery }) {
             </div>
           )}
         </section>
-        <section className="home-sec trust" data-reveal>
-          {TRUST.map((t, i) => (
-            <article className="trust-card" key={t.title} data-reveal data-delay={String(i)} style={{ backgroundImage: `url(${t.img})` }}>
+        <section className="home-sec trust">
+          {TRUST.map((t) => (
+            <article className="trust-card" key={t.title} style={{ backgroundImage: `url(${t.img})` }}>
               <span className="tnum">{t.icon}</span>
               <div className="trust-text">
                 <h3>{t.title}</h3>
@@ -243,14 +242,14 @@ function MoneyFlow() {
 
 function HowItWorks() {
   return (
-    <section className="home-sec how" aria-labelledby="how-title" data-reveal>
+    <section className="home-sec how" aria-labelledby="how-title">
       <h2 className="h2big" id="how-title">How it works</h2>
       <p className="soft" style={{ maxWidth: "66ch", marginTop: 8 }}>
         HumAIn Labs sits between researchers and participants. Researchers post the study and fund
         it, and we hold the money until the work is done.
       </p>
       <div className="how-lanes" style={{ marginTop: 20 }}>
-        <div className="how-lane" data-reveal>
+        <div className="how-lane">
           <h3>For participants</h3>
           <ol className="how-steps">
             {PARTICIPANT_STEPS.map(([t, d], i) => (
@@ -264,7 +263,7 @@ function HowItWorks() {
             ))}
           </ol>
         </div>
-        <div className="how-lane" data-reveal data-delay="1">
+        <div className="how-lane">
           <h3>For researchers</h3>
           <ol className="how-steps">
             {RESEARCHER_STEPS.map(([t, d], i) => (
@@ -657,7 +656,7 @@ export function About() {
         </p>
       </section>
 
-      <section className="home-sec" id="hlg" data-reveal>
+      <section className="home-sec" id="hlg">
         <h2 className="h2big">Your HLG identifier</h2>
         <div className="hlg-explain">
           <HlgBadge size={48} spin />
@@ -674,7 +673,7 @@ export function About() {
         </div>
       </section>
 
-      <section className="home-sec" data-reveal>
+      <section className="home-sec">
         <h2 className="h2big">Meet the team</h2>
         <p className="soft" style={{ maxWidth: "66ch", marginTop: 8 }}>
           HumAIn Labs is built by people who have been on both sides of a study: waiting on recruitment that stalls, and hearing about research only
@@ -722,7 +721,7 @@ export function About() {
         </div>
       </section>
 
-      <section className="home-sec" data-reveal>
+      <section className="home-sec">
         <div className="intro">
           <div>
             <h2 className="h2big">Partners</h2>
@@ -749,7 +748,7 @@ export function About() {
         </div>
       </section>
 
-      <section className="home-sec" data-reveal>
+      <section className="home-sec">
         <div className="intro">
           <div>
             <h2 className="h2big">Sponsors</h2>
@@ -775,7 +774,7 @@ export function About() {
         </div>
       </section>
 
-      <section className="home-sec about-cta" data-reveal>
+      <section className="home-sec about-cta">
         <h2>Want to work with us?</h2>
         <p className="soft">
           If your institution, funder or community would like to partner with HumAIn Labs, tell us what you have in mind and we'll take it from there.
@@ -787,7 +786,7 @@ export function About() {
         </div>
       </section>
 
-      <section className="home-sec" id="contact" data-reveal>
+      <section className="home-sec" id="contact">
         <h2>Contact</h2>
         <p className="soft">Choose the address that fits your question.</p>
         <div className="contact-grid">

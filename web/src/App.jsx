@@ -10,7 +10,6 @@ import { appCount, canEditGroup } from "./lib/store.js";
 import { plural } from "./lib/util.js";
 import { SITE } from "./lib/site.js";
 import { Privacy, Terms } from "./pages/legal.jsx";
-import { scanReveal, startReveal } from "./lib/reveal.js";
 import { Status } from "./pages/status.jsx";
 import { CookieButton } from "./components/cookies.jsx";
 import { ParticipantProfile } from "./pages/participant.jsx";
@@ -150,21 +149,9 @@ export default function App() {
         : TITLES[route.page];
     document.title = `${name} · HumAIn Labs`;
     document.body.classList.toggle("on-home", route.page === "home");
-    document.body.classList.toggle(
-      "on-public",
-      ["home", "studies", "researchers", "groups", "reach", "about", "terms", "privacy", "status"].includes(route.page) && !route.id
-    );
     document.body.classList.toggle("on-status", route.page === "status" && !route.id);
     document.body.dataset.role = role();
-    // Whatever the new page rendered gets picked up by the observer.
-    scanReveal();
   }, [route, backend, AUTH.researcher]);
-
-  // One observer for the life of the app.
-  useEffect(() => {
-    startReveal();
-    scanReveal();
-  }, []);
 
   useEffect(() => {
     if (backend && !PAGES.has(route.page)) navigate("#/studies");
