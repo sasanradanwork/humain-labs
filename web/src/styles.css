@@ -958,3 +958,104 @@ body.on-status footer{margin-top:0;border-top:0}
 .art-led{animation:art-led 3.2s ease-in-out infinite}
 @media (prefers-reduced-motion:reduce){ .art-cog,.art-blink,.art-pulse,.art-led{animation:none} }
 @media (max-width:760px){ .status-art{aspect-ratio:1240/250} }
+
+/* ===================================================================
+   Liquid glass, on the pages anyone can see.
+   Panels are translucent and blurred over a soft backdrop, with a bright
+   top edge so they read as a pane of glass rather than a flat tint.
+   The work areas keep their solid surfaces, where legibility matters more.
+   =================================================================== */
+body.on-public{
+  --gl-bg:rgba(255,255,255,.46);
+  --gl-edge:rgba(255,255,255,.75);
+  --gl-line:rgba(120,136,196,.22);
+  --gl-shadow:0 14px 40px rgba(26,36,78,.10);
+  --gl-blur:blur(18px) saturate(1.45);
+}
+:root[data-theme="dark"] body.on-public,
+body.on-public:is(:root[data-theme="dark"] *){
+  --gl-bg:rgba(34,44,86,.46);
+  --gl-edge:rgba(255,255,255,.10);
+  --gl-line:rgba(147,165,255,.20);
+  --gl-shadow:0 14px 40px rgba(0,0,0,.34);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) body.on-public{
+    --gl-bg:rgba(34,44,86,.46);
+    --gl-edge:rgba(255,255,255,.10);
+    --gl-line:rgba(147,165,255,.20);
+    --gl-shadow:0 14px 40px rgba(0,0,0,.34);
+  }
+}
+
+/* The light behind the glass. Fixed, so panels drift over it as the page scrolls. */
+body.on-public::before{
+  content:"";position:fixed;inset:-10% -10% 0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(46rem 32rem at 10% -2%, rgba(147,165,255,.62), transparent 60%),
+    radial-gradient(38rem 28rem at 92% 8%, rgba(108,207,198,.46), transparent 58%),
+    radial-gradient(44rem 32rem at 74% 70%, rgba(185,164,242,.42), transparent 62%),
+    radial-gradient(34rem 26rem at 16% 86%, rgba(245,176,65,.24), transparent 60%);
+}
+:root[data-theme="dark"] body.on-public::before{opacity:.55}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) body.on-public::before{opacity:.55} }
+
+body.on-public .card,
+body.on-public .toolbar,
+body.on-public .empty,
+body.on-public .list .item,
+body.on-public .cost,
+body.on-public .trust-card,
+body.on-public .status-now,
+body.on-public .tl-form,
+body.on-public .contact-card,
+body.on-public .how-lane,
+body.on-public .how-money,
+body.on-public .flow-box,
+body.on-public .svc-pill,
+body.on-public .pstat{
+  background:var(--gl-bg);
+  border-color:var(--gl-line);
+  -webkit-backdrop-filter:var(--gl-blur);
+  backdrop-filter:var(--gl-blur);
+  box-shadow:var(--gl-shadow), inset 0 1px 0 var(--gl-edge);
+}
+body.on-public .band{
+  background:var(--gl-bg);
+  border:1px solid var(--gl-line);
+  -webkit-backdrop-filter:var(--gl-blur);
+  backdrop-filter:var(--gl-blur);
+  box-shadow:var(--gl-shadow), inset 0 1px 0 var(--gl-edge);
+}
+/* the photo cards keep their pictures; only the frame turns to glass */
+body.on-public .trust-card{backdrop-filter:none;-webkit-backdrop-filter:none;border:1px solid var(--gl-line)}
+body.on-public .card:hover{box-shadow:0 20px 50px rgba(26,36,78,.16), inset 0 1px 0 var(--gl-edge)}
+/* where the page background shows through the glass, keep text crisp */
+body.on-public .cover{backdrop-filter:none;-webkit-backdrop-filter:none}
+
+/* Without backdrop-filter the panels fall back to a solid surface rather than a wash. */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  body.on-public .card,body.on-public .toolbar,body.on-public .empty,body.on-public .list .item,
+  body.on-public .cost,body.on-public .band,body.on-public .status-now,body.on-public .tl-form,
+  body.on-public .contact-card,body.on-public .how-lane,body.on-public .how-money,
+  body.on-public .flow-box,body.on-public .pstat{background:var(--card)}
+}
+/* Some people ask their system to cut transparency; give them the solid version. */
+@media (prefers-reduced-transparency:reduce){
+  body.on-public::before{opacity:.25}
+  body.on-public .card,body.on-public .toolbar,body.on-public .empty,body.on-public .list .item,
+  body.on-public .cost,body.on-public .band,body.on-public .status-now,body.on-public .tl-form,
+  body.on-public .contact-card,body.on-public .how-lane,body.on-public .how-money,
+  body.on-public .flow-box,body.on-public .pstat{
+    background:var(--card);-webkit-backdrop-filter:none;backdrop-filter:none;
+  }
+}
+
+/* ---- sections rise into place as they are scrolled to ---- */
+/* Only hidden once the observer is running, so a page without scripts still reads. */
+html.reveal-on [data-reveal]{opacity:0;transform:translateY(18px)}
+html.reveal-on [data-reveal].is-in{opacity:1;transform:none;transition:opacity .62s cubic-bezier(.22,.8,.3,1),transform .62s cubic-bezier(.22,.8,.3,1)}
+html.reveal-on [data-reveal][data-delay="1"].is-in{transition-delay:.09s}
+html.reveal-on [data-reveal][data-delay="2"].is-in{transition-delay:.18s}
+html.reveal-on [data-reveal][data-delay="3"].is-in{transition-delay:.27s}
+@media (prefers-reduced-motion:reduce){ html.reveal-on [data-reveal]{opacity:1;transform:none} }
