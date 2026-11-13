@@ -49,6 +49,13 @@ function orcid(v) {
   if (!/^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/i.test(s)) throw bad("ORCID iD looks like 0000-0002-1825-0097.");
   return s.toUpperCase();
 }
+// A DOI, however it was pasted: bare, with a doi: prefix, or as a doi.org link.
+function doi(v, name = "DOI") {
+  const t = str(v, name, { max: 200 }).trim().replace(/^https?:\/\/(dx\.)?doi\.org\//i, "").replace(/^doi:\s*/i, "");
+  if (!t) return "";
+  if (!/^10\.\d{4,9}\/\S+$/.test(t)) throw bad(`${name} looks like 10.1038/s41586-020-2649-2.`);
+  return t.toLowerCase();
+}
 function scholar(v) {
   const s = url(v, "Google Scholar profile");
   if (s && !/^https?:\/\/scholar\.google\.[a-z.]+\/citations\?user=[\w-]+/i.test(s)) throw bad("Google Scholar link should look like https://scholar.google.com/citations?user=…");
@@ -93,4 +100,4 @@ function list(v, name, max) {
   return v;
 }
 
-module.exports = { HttpError, bad, str, int, money, email, url, linkedin, orcid, scholar, ror, date, handle, oneOf, choice, list, FORMATS, OPENING_TYPES };
+module.exports = { HttpError, bad, str, int, money, email, url, linkedin, orcid, doi, scholar, ror, date, handle, oneOf, choice, list, FORMATS, OPENING_TYPES };

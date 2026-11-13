@@ -1,11 +1,13 @@
 // A researcher's own page: who they are, what they've published, the roles they hold,
 // and where their work stood each year. Reached by opening a card in the directory.
 import { useState } from "react";
-import { Avatar, Icon, LinkedInLink, Radar, ScholarLink, VerifiedBadge, UnverifiedBadge } from "../components/ui.jsx";
+import { Avatar, Flag, Icon, LinkedInLink, Radar, ScholarLink, VerifiedBadge, UnverifiedBadge } from "../components/ui.jsx";
 import { HlgBadge } from "../components/hlg.jsx";
+import { InterestTree } from "../components/interests.jsx";
 import { PointsBars, PubBars, ordinal } from "../components/charts.jsx";
 import { AUTH, S, byId, groupsOf, role } from "../lib/store.js";
-import { fmtDate, gidKey, plural, uniq } from "../lib/util.js";
+import { DISCIPLINES } from "../lib/lists.js";
+import { fmtDate, gidKey, plural } from "../lib/util.js";
 import { navigate, useUI } from "../lib/ui.jsx";
 import { groupHref, researcherHref } from "../components/cards.jsx";
 import { ResearcherGate } from "./public.jsx";
@@ -140,10 +142,14 @@ function Standing({ r }) {
 
 /* ================= the page ================= */
 
-export function ResearcherPage({ id }) {
-  if (role() !== "researcher") return <ResearcherGate title="Researchers" />;
+export function ResearcherPage({ id, own: ownPage = false }) {
   const r = researcherByRef(id);
   const { toast } = useUI();
+  // A profile set to public is readable by anyone, exactly as a public group is. A
+  // private one needs a researcher account, so visitors see the gate instead.
+  if (r && r.visibility !== "public" && role() !== "researcher" && AUTH.researcher?.id !== r.id)
+    return <ResearcherGate title="Researchers" />;
+  if (!r && role() !== "researcher") return <ResearcherGate title="Researchers" />;
   if (!r)
     return (
       <div className="wrap">
@@ -178,7 +184,9 @@ export function ResearcherPage({ id }) {
   const academic = r.academicRoles || [];
   const research = r.researchRoles || [];
   const memberships = r.memberships || [];
-  const interests = uniq([...(r.interests || [])]);
+  // Stored as paths; a profile written before that holds plain strings, which read as
+  // one-step paths.
+  const interests = (r.interests || []).map((x) => (Array.isArray(x) ? x : [x])).filter((x) => x.length);
 
   const copyId = async () => {
     try {
@@ -192,13 +200,24 @@ export function ResearcherPage({ id }) {
   return (
     <div className="wrap">
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-        <a className="back" href="#/researchers">
-          ← Back to researchers
-        </a>
-        {own && (
-          <a className="btn btn-blue" href="#/profile">
-            Edit your profile
+        {ownPage ? (
+          <a className="back" href="#/dashboard">
+            ← Researcher area
           </a>
+        ) : (
+          <a className="back" href="#/researchers">
+            ← Back to researchers
+          </a>
+        )}
+        {own && (
+          <div className="btns">
+            <span className={"vis-pill" + (r.visibility === "public" ? " on" : "")} title={r.visibility === "public" ? "Anyone can see this page." : "Only signed-in researchers can see this page."}>
+              <Icon.globe /> {r.visibility === "public" ? "Public profile" : "Private profile"}
+            </span>
+            <a className="btn btn-blue" href="#/profile/edit">
+              <Icon.pencil /> Edit your profile
+            </a>
+          </div>
         )}
       </div>
 
@@ -213,9 +232,10 @@ export function ResearcherPage({ id }) {
             {r.department ? `, ${r.department}` : ""}
           </div>
           <div className="small soft" style={{ display: "flex", gap: 6, alignItems: "center", marginTop: 2 }}>
-            <Icon.globe /> {r.country}
+            <Flag country={r.country} /> {r.country}
           </div>
           <div className="badges" style={{ marginTop: 10 }}>
+            {r.discipline && <span className="badge badge-disc">{r.discipline}</span>}
             <span className="badge">{r.field}</span>
             {r.verified ? <VerifiedBadge v={r.verified} /> : <UnverifiedBadge />}
             {r.idVerified && (
@@ -244,12 +264,6 @@ export function ResearcherPage({ id }) {
               Copy
             </button>
           </span>
-        )}
-        {r.orcid && (
-          <a className="idchip" href={`https://orcid.org/${r.orcid}`} target="_blank" rel="noopener" title="Their ORCID iD">
-            <span className="idlabel">ORCID</span>
-            <code>{r.orcid}</code>
-          </a>
         )}
         <span className="idchip">
           <span className="idlabel">Handle</span>
@@ -308,13 +322,7 @@ export function ResearcherPage({ id }) {
             {interests.length > 0 && (
               <>
                 <h3 className="sub">Research interests</h3>
-                <div className="badges">
-                  {interests.map((i) => (
-                    <span className="badge" key={i}>
-                      {i}
-                    </span>
-                  ))}
-                </div>
+                <InterestTree interests={interests} root={r.discipline} />
               </>
             )}
           </section>
@@ -484,8 +492,12 @@ export function Leaderboard() {
   if (role() !== "researcher") return <ResearcherGate title="Leaderboard" />;
   const now = thisYear();
   const [year, setYear] = useState(now);
-  const rows = leaderboard(S.researchers, year, 25);
-  const mine = AUTH.researcher ? standings(S.researchers, year).get(AUTH.researcher.id) : null;
+  const [disc, setDisc] = useState("");
+  // Ranking within a discipline means ranking against that discipline only, so the
+  // percentile is read against the people filtered in, not against everyone.
+  const field = disc ? S.researchers.filter((r) => r.discipline === disc) : S.researchers;
+  const rows = leaderboard(field, year, 25);
+  const mine = AUTH.researcher ? standings(field, year).get(AUTH.researcher.id) : null;
 
   return (
     <div className="wrap">
@@ -498,18 +510,32 @@ export function Leaderboard() {
           <p className="soft">
             Researchers ranked by what they published and the endorsements their peers gave them, one year at a time. Points are{" "}
             {PUBLICATION_POINTS} a publication, {FIRST_AUTHOR_BONUS} more as first author, and {ENDORSEMENT_POINTS} an endorsement.
+            {disc ? ` Ranked within ${disc} only.` : ""}
           </p>
         </div>
-        <label className="lb-year">
-          <span className="small soft">Year</span>
-          <select value={year} onChange={(e) => setYear(Number(e.target.value))}>
-            {Array.from({ length: YEARS_SHOWN }, (_, i) => now - i).map((y) => (
-              <option key={y} value={y}>
-                {y}
-              </option>
-            ))}
-          </select>
-        </label>
+        <div className="lb-filters">
+          <label className="lb-year">
+            <span className="small soft">Discipline</span>
+            <select value={disc} onChange={(e) => setDisc(e.target.value)}>
+              <option value="">All disciplines</option>
+              {DISCIPLINES.map((d) => (
+                <option key={d} value={d}>
+                  {d}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="lb-year">
+            <span className="small soft">Year</span>
+            <select value={year} onChange={(e) => setYear(Number(e.target.value))}>
+              {Array.from({ length: YEARS_SHOWN }, (_, i) => now - i).map((y) => (
+                <option key={y} value={y}>
+                  {y}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
       </div>
 
       {mine && mine.points > 0 && (
@@ -520,7 +546,7 @@ export function Leaderboard() {
 
       {!rows.length ? (
         <div className="empty">
-          <div>Nothing recorded for {year} yet.</div>
+          <div>Nothing recorded for {year}{disc ? ` in ${disc}` : ""} yet.</div>
         </div>
       ) : (
         <div className="table-wrap">
@@ -547,7 +573,10 @@ export function Leaderboard() {
                   <a href={researcherHref(x.researcher)} onClick={(e) => e.stopPropagation()}>
                     {x.researcher.name}
                   </a>
-                  <div className="small soft">{x.researcher.institution}</div>
+                  <div className="small soft">
+                    {x.researcher.discipline ? `${x.researcher.discipline} · ` : ""}
+                    {x.researcher.institution}
+                  </div>
                 </td>
                 <td>
                   {x.publications}

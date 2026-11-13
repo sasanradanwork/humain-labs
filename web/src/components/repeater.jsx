@@ -12,7 +12,19 @@ import { Field } from "../lib/ui.jsx";
  */
 export function Repeater({ rows, setRows, blank, noun, children, max = 100 }) {
   const [one, empty] = noun;
-  const set = (i) => (k, v) => setRows(rows.map((r, j) => (j === i ? { ...r, [k]: v } : r)));
+  // A row is usually an object of named fields, but an interest path is an array of
+  // steps. Cloning has to keep whichever it is: spreading an array into an object
+  // would turn ["", ""] into {0:"", 1:""}.
+  const clone = (row) => (Array.isArray(row) ? [...row] : { ...row });
+  const set = (i) => (k, v) =>
+    setRows(
+      rows.map((r, j) => {
+        if (j !== i) return r;
+        const next = clone(r);
+        next[k] = v;
+        return next;
+      })
+    );
   return (
     <>
       <div>
@@ -35,7 +47,7 @@ export function Repeater({ rows, setRows, blank, noun, children, max = 100 }) {
         )}
       </div>
       {rows.length < max && (
-        <button type="button" className="btn" onClick={() => setRows([...rows, { ...blank }])}>
+        <button type="button" className="btn" onClick={() => setRows([...rows, clone(blank)])}>
           Add {rows.length ? "another" : /^[aeiou]/i.test(one) ? "an" : "a"} {one.toLowerCase()}
         </button>
       )}

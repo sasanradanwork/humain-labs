@@ -21,4 +21,19 @@ const COUNTRY_NAMES = [
   "Sweden", "Switzerland", "Tanzania", "Thailand", "Turkey", "Uganda", "Ukraine", "United Arab Emirates",
   "United Kingdom", "United States", "Vietnam",
 ];
-module.exports = { FIELDS, POSITIONS, COUNTRY_NAMES };
+// The four disciplines a researcher files themselves under. The leaderboard and the
+// researchers page filter on these exact values.
+const DISCIPLINES = ["Science", "Technology", "Engineering", "Mathematics"];
+// ISO 3166-1 alpha-2 for each country above, so a flag can be drawn beside the name.
+const COUNTRY_CODES = {
+  "Argentina": "AR", "Australia": "AU", "Bangladesh": "BD", "Belgium": "BE", "Brazil": "BR", "Canada": "CA",
+  "Chile": "CL", "China": "CN", "Colombia": "CO", "Denmark": "DK", "Egypt": "EG", "Ethiopia": "ET",
+  "Finland": "FI", "France": "FR", "Germany": "DE", "Ghana": "GH", "Greece": "GR", "India": "IN",
+  "Indonesia": "ID", "Ireland": "IE", "Italy": "IT", "Japan": "JP", "Kenya": "KE", "Malaysia": "MY",
+  "Mexico": "MX", "Morocco": "MA", "Netherlands": "NL", "New Zealand": "NZ", "Nigeria": "NG", "Norway": "NO",
+  "Pakistan": "PK", "Peru": "PE", "Philippines": "PH", "Poland": "PL", "Portugal": "PT", "Saudi Arabia": "SA",
+  "Singapore": "SG", "South Africa": "ZA", "South Korea": "KR", "Spain": "ES", "Sweden": "SE",
+  "Switzerland": "CH", "Tanzania": "TZ", "Thailand": "TH", "Turkey": "TR", "Uganda": "UG", "Ukraine": "UA",
+  "United Arab Emirates": "AE", "United Kingdom": "GB", "United States": "US", "Vietnam": "VN",
+};
+module.exports = { FIELDS, POSITIONS, COUNTRY_NAMES, DISCIPLINES, COUNTRY_CODES };

@@ -1081,3 +1081,68 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
   .tier{border-color:var(--tier)}
   .tier::before{animation:none;display:none}
 }
+
+/* A flag sits beside a country name wherever one is shown. Decorative: the name is
+   always written next to it, and Windows, which has no flag glyphs, shows the ISO
+   letters instead — still a country marker. */
+.flag{line-height:1;flex:none;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+
+/* A section heading with a link opposite it. */
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.sec-head h2{margin-bottom:0}
+
+/* ---- research interests, drawn as a tree ---- */
+/* Each level indents and hangs off an elbow from its parent, so a path reads
+   left to right: Technology → HCI → Technostress. */
+.itree{margin-top:4px}
+.itree ul{list-style:none;margin:0;padding:0}
+.itree li > ul{padding-left:20px}
+.itree li{position:relative;padding:3px 0 3px 0}
+.itree li > ul > li{padding-left:16px}
+.itree li > ul > li::before{
+  /* the vertical run from the parent down past this child */
+  content:"";position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--line);
+}
+.itree li > ul > li:last-child::before{bottom:auto;height:16px}
+.itree li > ul > li::after{
+  /* the elbow into this child */
+  content:"";position:absolute;left:0;top:16px;width:11px;height:1px;background:var(--line);
+}
+.itree .node{
+  display:inline-block;padding:3px 10px;border-radius:999px;border:1px solid var(--line);
+  background:var(--card);font-size:.84rem;color:var(--ink-soft);
+}
+.itree .node-root{border-color:var(--blue);color:var(--blue);background:var(--blue-tint);font-weight:600}
+/* The deeper a step, the more specific: the leaf is the one worth reading. */
+.itree li > ul > li > .node{color:var(--ink)}
+
+.badge-disc{border-color:var(--blue);color:var(--blue);background:var(--blue-tint)}
+
+/* Whether your own profile is listed publicly, shown beside the edit button. */
+.vis-pill{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;
+  border:1px solid var(--line);color:var(--ink-soft);font-size:.82rem;background:var(--card)}
+.vis-pill.on{border-color:var(--green);color:var(--green);background:color-mix(in oklab, var(--green) 10%, transparent)}
+
+/* The actions beside a page heading: evenly spaced, and aligned with each other
+   rather than with the paragraph above them. */
+.intro-btns{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.intro-btns .btn{display:inline-flex;align-items:center;gap:7px}
+@media (max-width:640px){ .intro-btns{width:100%} .intro-btns .btn{flex:1 1 auto;justify-content:center} }
+
+.lb-filters{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+
+/* ---- adding a publication by DOI ---- */
+.doi-add{border:1px solid var(--line);border-radius:14px;padding:14px;background:var(--paper-2);margin-bottom:16px}
+.doi-row{display:flex;gap:8px}
+.doi-row input{flex:1;min-width:0}
+.doi-row .btn{white-space:nowrap}
+.doi-err{color:var(--danger,#B42318);margin:6px 0 0}
+.doi-note{display:flex;align-items:center;gap:6px;margin:0 0 10px;flex-wrap:wrap}
+.doi-note code{font-size:.8rem}
+@media (max-width:560px){ .doi-row{flex-wrap:wrap} .doi-row .btn{width:100%} }
+
+/* ---- an interest path, entered step by step ---- */
+.ipath{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.ipath input{min-width:130px;flex:1 1 130px}
+.ipath-step{display:inline-flex;align-items:center;gap:6px;flex:1 1 150px;min-width:0}
+.ipath-arrow{color:var(--ink-soft);flex:none}

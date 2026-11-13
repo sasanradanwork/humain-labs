@@ -1,6 +1,7 @@
 import { useId } from "react";
 import { hash, initials, rng, RADAR_AXES, radarScale, fmtDate, daysLeft, sortName } from "../lib/util.js";
 import { S, AUTH } from "../lib/store.js";
+import { COUNTRY_CODES } from "../lib/lists.js";
 
 /* ---------- icons ---------- */
 const s = (p) => ({ fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", ...p });
@@ -136,6 +137,19 @@ export const Icon = {
   check: () => (
     <svg width="12" height="12" viewBox="0 0 24 24" {...s({ strokeWidth: 3, strokeLinejoin: "round" })} aria-hidden="true">
       <path d="M20 6 9 17l-5-5" />
+    </svg>
+  ),
+  pencil: () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" {...s({ strokeLinejoin: "round" })} aria-hidden="true">
+      <path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z" />
+      <path d="M14.5 5.5 18.5 9.5" />
+    </svg>
+  ),
+  people: () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" {...s({ strokeLinejoin: "round" })} aria-hidden="true">
+      <circle cx="9" cy="8" r="3.4" />
+      <path d="M3 20a6 6 0 0 1 12 0" />
+      <path d="M16.5 5.2a3.4 3.4 0 0 1 0 6.6M17 14.6a6 6 0 0 1 4 5.4" />
     </svg>
   ),
   star: () => (
@@ -288,6 +302,25 @@ export function Cover({ seed, label = "" }) {
       ))}
       <circle cx={blob[0].toFixed(1)} cy={blob[1].toFixed(1)} r={blob[2].toFixed(1)} style={{ fill: fg }} opacity=".85" />
     </svg>
+  );
+}
+
+/**
+ * A country's flag, beside its name.
+ *
+ * Drawn from the two regional-indicator letters for the country's ISO code, so there is
+ * no image to download and it stays sharp at any size. Windows ships no flag glyphs and
+ * shows the two letters instead, which still reads as a country marker. The flag is
+ * decorative: the country's name is always written next to it.
+ */
+export function Flag({ country, size = 15 }) {
+  const code = COUNTRY_CODES[country];
+  if (!code) return null;
+  const emoji = String.fromCodePoint(...[...code].map((c) => 0x1f1e6 + c.charCodeAt(0) - 65));
+  return (
+    <span className="flag" style={{ fontSize: size }} aria-hidden="true">
+      {emoji}
+    </span>
   );
 }
 

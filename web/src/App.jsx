@@ -18,8 +18,8 @@ import { IdGate } from "./components/idcheck.jsx";
 
 // Researchers and participants see different parts of the site.
 const NAV = {
-  guest: [["home", "Home"], ["studies", "Studies"], ["groups", "Groups"], ["reach", "Reach"], ["about", "About"]],
-  participant: [["home", "Home"], ["studies", "Studies"], ["groups", "Groups"], ["reach", "Reach"], ["mine", "My applications"], ["participant", "Your details"]],
+  guest: [["home", "Home"], ["studies", "Studies"], ["researchers", "Researchers"], ["groups", "Groups"], ["reach", "Reach"], ["about", "About"]],
+  participant: [["home", "Home"], ["studies", "Studies"], ["researchers", "Researchers"], ["groups", "Groups"], ["reach", "Reach"], ["mine", "My applications"], ["participant", "Your details"]],
   researcher: [["home", "Home"], ["studies", "Studies"], ["researchers", "Researchers"], ["groups", "Groups"], ["reach", "Reach"], ["dashboard", "Profile"]],
 };
 const TITLES = {
@@ -51,7 +51,7 @@ export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [filters, setFilters] = useState({
     studies: { q: "", field: "", country: "", format: "", sort: "" },
-    researchers: { q: "", field: "", country: "", institution: "", verified: false },
+    researchers: { q: "", discipline: "", field: "", country: "", institution: "", verified: false },
     groups: { q: "", field: "", country: "", looking: "", open: false },
   });
 
@@ -264,7 +264,9 @@ export default function App() {
         body = <Dashboard onVerify={() => setModal({ kind: "verify" })} onScholar={() => setModal({ kind: "scholar" })} />;
         break;
       case "profile":
-        body = (
+        body = AUTH.researcher && route.id !== "edit" ? (
+          <ResearcherPage id={AUTH.researcher.id} own />
+        ) : (
           <ProfileEditor
             onDelete={() =>
               setModal({

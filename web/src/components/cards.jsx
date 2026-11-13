@@ -1,5 +1,5 @@
 // Cards and the search/filter toolbar shared by the three directory pages.
-import { Avatar, Cover, DeadlinePill, Icon, LinkedInLink, Radar, ScholarLink, TrendChips, VerifiedBadge, UnverifiedBadge } from "./ui.jsx";
+import { Avatar, Cover, DeadlinePill, Flag, Icon, LinkedInLink, Radar, ScholarLink, TrendChips, VerifiedBadge, UnverifiedBadge } from "./ui.jsx";
 import { AUTH, S, applied, byId, groupsOf, memberResearchers, role, studyGroupName, studyVerified } from "../lib/store.js";
 import { fmtDate, plural, trendFor, uniq } from "../lib/util.js";
 import { navigate } from "../lib/ui.jsx";
@@ -136,7 +136,7 @@ export function StudyCard({ study: s, onApply }) {
             <span className="small soft">{gName}</span>
           ))}
         <div className="small soft" style={{ display: "flex", gap: 5, alignItems: "center" }}>
-          <Icon.globe /> {s.country}
+          <Flag country={s.country} /> {s.country}
         </div>
         <dl className="facts">
           {s.format && (
@@ -240,9 +240,10 @@ export function ResearcherCard({ researcher: r }) {
           </span>
         </div>
         <div className="small soft" style={{ display: "flex", gap: 6, alignItems: "center" }}>
-          <Icon.globe /> {r.country}
+          <Flag country={r.country} /> {r.country}
         </div>
-        <div>
+        <div className="badges">
+          {r.discipline && <span className="badge badge-disc">{r.discipline}</span>}
           <span className="badge">{r.field}</span>
         </div>
         <p className="small grow" style={{ marginTop: 6 }}>
@@ -289,7 +290,7 @@ export function GroupCard({ group: g }) {
         <h3>{g.name}</h3>
         <div className="small soft">{g.institution}</div>
         <div className="small soft" style={{ display: "flex", gap: 5, alignItems: "center" }}>
-          <Icon.globe /> {g.country}
+          <Flag country={g.country} /> {g.country}
         </div>
         <p className="small grow" style={{ marginTop: 6 }}>
           {g.summary}

@@ -44,7 +44,14 @@ test("participants get studies only; the directory and counts need a researcher 
   const openInSeed = seed.studies.filter((x) => x.closesAt >= new Date().toISOString().slice(0, 10)).length;
   assert.equal(pub.json.studies.length, openInSeed);
   assert.ok(pub.json.studies.every((s) => s.trend && s.trend.weekly.length === 8 && s.trend.weekly.every((w) => w <= 1)));
-  assert.ok(!("researchers" in pub.json));
+  // Profiles set to public are listed to visitors, exactly as public groups are — but
+  // never a private one, never an unverified one, and never with an email on it.
+  const pubR = pub.json.researchers;
+  assert.ok(pubR.length > 0 && pubR.length < seed.researchers.length, "some, not all");
+  assert.ok(pubR.every((r) => r.visibility === "public" && r.verified));
+  assert.ok(pubR.every((r) => !("email" in r) && !("userId" in r) && !("verification" in r) && !("endorsements" in r)));
+  assert.ok(seed.researchers.some((r) => r.visibility !== "public"), "the seed has a private profile to exclude");
+  assert.ok(!pubR.some((r) => r.visibility !== "public"));
   // Visitors only get public groups, with no member list
   assert.ok(pub.json.groups.every((g) => g.visibility === "public" && !("members" in g) && !("ownerId" in g)));
   // Global reach is open to everyone, as country counts only
@@ -682,7 +689,7 @@ test("the fuller profile is validated and saved", async () => {
     repo, principal: user("u-detail"),
     body: profile({
       handle: "detailed",
-      interests: ["Attention", " Memory ", ""],
+      interests: [["Attention"], [" Human–computer interaction ", "Technostress"], [""], "Memory"],
       publications: [{ title: "A study", authorNames: ["Kaur, A."], venue: "Nature", year: 2025 }],
       highlights: [{ title: "Best paper", year: 2025, detail: "For the study." }],
       academicRoles: [{ title: "Lecturer", org: "HumAIn", from: 2020 }],
@@ -692,7 +699,9 @@ test("the fuller profile is validated and saved", async () => {
     }),
   });
   assert.equal(r.status, 201);
-  assert.deepEqual(r.json.interests, ["Attention", "Memory"], "blanks are dropped and names trimmed");
+  // An interest is a path; blanks drop out, steps are trimmed, and a plain string from
+  // an older profile reads as a one-step path.
+  assert.deepEqual(r.json.interests, [["Attention"], ["Human–computer interaction", "Technostress"], ["Memory"]]);
   assert.equal(r.json.publications[0].authors, "Kaur, A.", "authors are stored Harvard style");
   assert.equal(r.json.researchRoles[0].title, "Associate Editor");
   assert.equal(r.json.supervising[0].researcherId, other.id);
@@ -783,4 +792,74 @@ test("a researcher's score reads the same from the stored map or the counts the 
   const sent = { id: "x", name: "Dr. Amara Nwosu", publications: [{ year: 2026, authorNames: ["Nwosu, A."] }], endorsed: { 2026: 2 } };
   assert.deepEqual(R.scoreFor(stored, 2026), R.scoreFor(sent, 2026));
   assert.equal(R.scoreFor(stored, 2026).firstAuthor, 1, "a Harvard author string matches the display name");
+});
+
+/* ---------- disciplines, profile visibility, DOIs ---------- */
+
+test("a profile carries a discipline and a visibility, both checked against their lists", async () => {
+  const repo = fresh();
+  const { DISCIPLINES } = require("../src/lib/lists");
+  assert.deepEqual(DISCIPLINES, ["Science", "Technology", "Engineering", "Mathematics"]);
+
+  const r = await H.putProfile({ repo, principal: user("u-disc"), body: profile({ handle: "disc-one", discipline: "Technology", visibility: "public" }) });
+  assert.equal(r.json.discipline, "Technology");
+  assert.equal(r.json.visibility, "public");
+
+  // Left out, a profile is private and unfiled: neither is guessed for them.
+  const plain = await H.putProfile({ repo, principal: user("u-disc2"), body: profile({ handle: "disc-two" }) });
+  assert.equal(plain.json.visibility, "private");
+  assert.equal(plain.json.discipline, "");
+
+  const bogus = await run(H.putProfile, { repo, principal: user("u-disc3"), body: profile({ handle: "disc-three", discipline: "Astrology" }) });
+  assert.equal(bogus.status, 400);
+  const bogusVis = await run(H.putProfile, { repo, principal: user("u-disc4"), body: profile({ handle: "disc-four", visibility: "everyone" }) });
+  assert.equal(bogusVis.status, 400);
+});
+
+test("a private profile stays out of the public listing until it is made public", async () => {
+  const repo = fresh();
+  const before = (await H.publicData({ repo })).json.researchers.length;
+  const r = await verifiedProfile(repo, "u-vis", { handle: "vis-one", visibility: "private" });
+  assert.equal((await H.publicData({ repo })).json.researchers.length, before, "private changes nothing");
+
+  await H.putProfile({ repo, principal: user("u-vis"), body: profile({ handle: "vis-one", visibility: "public" }) });
+  // putProfile keeps the record's verification, so it qualifies for the public list now.
+  const after = (await H.publicData({ repo })).json.researchers;
+  assert.equal(after.length, before + 1);
+  assert.ok(after.some((x) => x.id === r.id));
+});
+
+test("an unverified profile is never listed publicly, however it is set", async () => {
+  const repo = fresh();
+  const before = (await H.publicData({ repo })).json.researchers.length;
+  await H.putProfile({ repo, principal: user("u-unv"), body: profile({ handle: "unv-one", visibility: "public" }) });
+  assert.equal((await H.publicData({ repo })).json.researchers.length, before);
+});
+
+test("publication DOIs are normalised however they are pasted, and junk is refused", async () => {
+  const repo = fresh();
+  const pub = (doi) => profile({ handle: "doi-" + Math.random().toString(36).slice(2, 8), publications: [{ title: "T", authorNames: ["Kaur, A."], venue: "V", year: 2025, doi }] });
+  for (const [given, want] of [
+    ["10.1038/s41586-020-2649-2", "10.1038/s41586-020-2649-2"],
+    ["https://doi.org/10.1145/3313831.3376234", "10.1145/3313831.3376234"],
+    ["doi: 10.1016/J.CHB.2021.106763", "10.1016/j.chb.2021.106763"],
+  ]) {
+    const r = await H.putProfile({ repo, principal: user("u-doi-" + want.length), body: pub(given) });
+    assert.equal(r.json.publications[0].doi, want);
+  }
+  assert.equal((await run(H.putProfile, { repo, principal: user("u-doi-bad"), body: pub("not a doi") })).status, 400);
+});
+
+test("the discipline splits the leaderboard without changing how points are counted", async () => {
+  const R = require("../src/lib/ranking");
+  const people = [
+    { id: "a", name: "Ada Byron", discipline: "Technology", publications: [{ year: 2026, authorNames: ["Byron, A."] }], endorsed: { 2026: 5 } },
+    { id: "b", name: "Bea Cole", discipline: "Mathematics", publications: [{ year: 2026, authorNames: ["Cole, B."] }], endorsed: {} },
+  ];
+  // Ranked across everyone, Bea is behind Ada; ranked within her own discipline she leads it.
+  assert.equal(R.standings(people, 2026).get("b").rank, 2);
+  const maths = people.filter((p) => p.discipline === "Mathematics");
+  assert.equal(R.standings(maths, 2026).get("b").rank, 1);
+  // Filtering changes the field, never the score.
+  assert.equal(R.scoreFor(people[1], 2026).points, R.standings(maths, 2026).get("b").points);
 });

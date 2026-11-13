@@ -1,6 +1,6 @@
 // Home, Studies, Reach, My applications, About and the sign-in / register page.
 import { useEffect, useRef, useState } from "react";
-import { Cover, DeadlinePill, HomeBackdrop, Icon, Spark, TrendChips, VerifiedBadge } from "../components/ui.jsx";
+import { Cover, DeadlinePill, Flag, HomeBackdrop, Icon, Spark, TrendChips, VerifiedBadge } from "../components/ui.jsx";
 import { StudyAction, StudyCard, Toolbar, studyTrend, ApplicationStages } from "../components/cards.jsx";
 import { AUTH, S, byId, role, studyGroupName, studyVerified } from "../lib/store.js";
 import { countryInfo, fmtDate, isOpen, matches, plural, today, uniq } from "../lib/util.js";
@@ -701,7 +701,7 @@ export function About() {
                 </div>
                 {f.based && (
                   <div className="small soft" style={{ display: "flex", gap: 6, alignItems: "center", marginTop: 8 }}>
-                    <Icon.globe /> {f.based}
+                    <Flag country={f.based} /> {f.based}
                   </div>
                 )}
                 <p className="small grow" style={{ marginTop: 8 }}>
@@ -868,7 +868,7 @@ export function Auth({ route, afterAuth, setAfterAuth }) {
     const target =
       as === "researcher"
         ? mode === "register"
-          ? "#/profile"
+          ? "#/profile/edit"
           : "#/dashboard"
         : afterAuth?.hash && afterAuth.hash !== "#/"
         ? afterAuth.hash
@@ -908,7 +908,7 @@ export function Auth({ route, afterAuth, setAfterAuth }) {
           setAfterAuth(null);
           if (as === "researcher") {
             toast(AUTH.researcher ? `Signed in as ${AUTH.researcher.name}.` : "Now set up your researcher profile.");
-            navigate(AUTH.researcher ? "#/dashboard" : "#/profile");
+            navigate(AUTH.researcher ? "#/dashboard" : "#/profile/edit");
             return;
           }
           toast(
@@ -1019,7 +1019,7 @@ export function ResearcherGate({ title }) {
             <a className="btn btn-solid" href="#/studies">
               Back to open studies
             </a>
-            <a className="btn" href="#/profile">
+            <a className="btn" href="#/profile/edit">
               Set up a researcher profile on this account
             </a>
           </div>

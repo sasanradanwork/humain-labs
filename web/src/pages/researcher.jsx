@@ -1,15 +1,16 @@
 // The researcher side: directory, group pages, the group editor and the researcher area.
 import { useEffect, useRef, useState } from "react";
 import { Avatar, Icon, LinkedInLink, Radar, ScholarLink, Cover, DeadlinePill, VerifiedBadge, UnverifiedBadge, sortByName } from "../components/ui.jsx";
-import { GroupCard, ResearcherCard, Toolbar, groupHref, lookingFor, APP_STAGES } from "../components/cards.jsx";
+import { GroupCard, ResearcherCard, Toolbar, groupHref, researcherHref, lookingFor, APP_STAGES } from "../components/cards.jsx";
 import { AUTH, S, appCount, byId, canEditGroup, groupStudies, groupsOf, memberResearchers, role } from "../lib/store.js";
 import { DAY_MS, fmtDate, FORMATS, gidKey, isOpen, makeHandle, matches, normCountry, OPENING_TYPES, plural, ROLE_SUGGESTIONS, sortName, today, uniq } from "../lib/util.js";
 import { Field, Form, SubmitButton, navigate, replaceRoute, useUI } from "../lib/ui.jsx";
 import { AuthorNames, ChoiceField, InstitutionField } from "../components/fields.jsx";
 import { HlgBadge } from "../components/hlg.jsx";
 import { Repeater, YearSpan } from "../components/repeater.jsx";
+import { cleanDoi, lookupDoi } from "../lib/doi.js";
 import { IdCheckPanel } from "../components/idcheck.jsx";
-import { COUNTRY_NAMES, FIELDS, POSITIONS } from "../lib/lists.js";
+import { COUNTRY_NAMES, DISCIPLINES, FIELDS, POSITIONS } from "../lib/lists.js";
 import { namesFromHarvard } from "../lib/harvard.js";
 import { ResearcherGate, isVisible } from "./public.jsx";
 import { FEE_PERCENT, feeBreakdown, gbp } from "../lib/money.js";
@@ -22,13 +23,19 @@ export function groupByRef(ref) {
 
 /* ================= researcher directory ================= */
 export function Researchers({ filters, setFilters }) {
-  if (role() !== "researcher") return <ResearcherGate title="Researchers" />;
+  const guest = role() !== "researcher";
   const f = filters;
-  const list = S.researchers
+  // Your own card is not in the directory: your profile lives under Profile, so the
+  // list is other people. Visitors see only the profiles set to public.
+  const everyone = S.researchers.filter(
+    (r) => r.id !== AUTH.researcher?.id && (!guest || r.visibility === "public")
+  );
+  const list = everyone
     .filter(
       (r) =>
         matches(f.q, [r.name, "@" + r.handle, r.position, r.institution, r.department, r.field, r.country, r.bio]) &&
         (!f.field || r.field === f.field) &&
+        (!f.discipline || r.discipline === f.discipline) &&
         (!f.country || r.country === f.country) &&
         (!f.institution || r.institution === f.institution) &&
         (!f.verified || r.verified)
@@ -39,15 +46,27 @@ export function Researchers({ filters, setFilters }) {
       <div className="intro">
         <div>
           <h1>Researchers</h1>
-          <p className="soft">Researchers across universities and countries. Open a card for their full profile, or see how the year is going on the leaderboard.</p>
+          <p className="soft">
+            {guest
+              ? "Researchers who have chosen to be listed publicly. Sign in as a researcher to see everyone."
+              : "Researchers across universities and countries. Open a card for their full profile, or see how the year is going on the leaderboard."}
+          </p>
         </div>
-        <div className="btns">
-          <a className="btn" href="#/researchers/leaderboard">
-            <Icon.trophy /> Leaderboard
-          </a>
-          <a className="btn btn-blue" href="#/profile">
-            Edit your profile
-          </a>
+        <div className="intro-btns">
+          {!guest && (
+            <a className="btn" href="#/researchers/leaderboard">
+              <Icon.trophy /> Leaderboard
+            </a>
+          )}
+          {guest ? (
+            <a className="btn btn-blue" href="#/profile/edit">
+              <Icon.people /> Join as a researcher
+            </a>
+          ) : (
+            <a className="btn btn-blue" href="#/profile">
+              <Icon.pencil /> Your profile
+            </a>
+          )}
         </div>
       </div>
       <Toolbar
@@ -57,12 +76,13 @@ export function Researchers({ filters, setFilters }) {
         hint="Search by name, @handle or topic"
         noun={["researcher", "researchers"]}
         count={list.length}
-        total={S.researchers.length}
+        total={everyone.length}
         toggle={{ key: "verified", label: "Verified only" }}
         defs={[
-          ["field", "All fields", uniq(S.researchers.map((r) => r.field))],
-          ["institution", "All institutions", uniq(S.researchers.map((r) => r.institution))],
-          ["country", "All countries", uniq(S.researchers.map((r) => r.country))],
+          ["discipline", "All disciplines", DISCIPLINES.filter((d) => everyone.some((r) => r.discipline === d))],
+          ["field", "All fields", uniq(everyone.map((r) => r.field))],
+          ["institution", "All institutions", uniq(everyone.map((r) => r.institution))],
+          ["country", "All countries", uniq(everyone.map((r) => r.country))],
         ]}
       >
         {list.map((r) => (
@@ -164,13 +184,10 @@ export function GroupPage({ route, onApply }) {
 
   const gs = groupStudies(g);
   const recruited = gs.reduce((n, s) => n + appCount(s.id), 0);
-  const pubs = [...(g.publications || [])].sort((a, b) => b.year - a.year);
   const openings = g.openings || [];
   const mem = memberResearchers(g);
   // Public pages for visitors carry a member count only; names are shown to signed-in researchers.
   const memberTotal = g.members ? mem.length : g.memberCount || 0;
-  const withStats = mem.filter((m) => m.r.metrics);
-  const citations = withStats.reduce((n, m) => n + (m.r.metrics.citations || 0), 0);
   const copyId = async () => {
     try {
       await navigator.clipboard.writeText(g.publicId);
@@ -233,27 +250,6 @@ export function GroupPage({ route, onApply }) {
         <div>
           <b>{memberTotal}</b>
           <span>Members</span>
-        </div>
-        <div>
-          <b>{pubs.length}</b>
-          <span>Publications</span>
-        </div>
-        <div>
-          {withStats.length ? (
-            <>
-              <b title={`Summed from the OpenAlex figures of ${plural(withStats.length, "member", "members")} who have linked their ORCID`}>
-                {citations.toLocaleString()}
-              </b>
-              <span>Citations{withStats.length < mem.length ? `, from ${withStats.length} of ${mem.length}` : ""}</span>
-            </>
-          ) : (
-            <>
-              <b className="muted" title="Citations are summed from members' OpenAlex figures. No member has linked an ORCID yet.">
-                —
-              </b>
-              <span>Citations</span>
-            </>
-          )}
         </div>
         <div>
           <b>{gs.length}</b>
@@ -335,47 +331,26 @@ export function GroupPage({ route, onApply }) {
               </div>
             ))}
           </section>
-          <section className="sec">
-            <h2>
-              <Icon.book /> Publications
-            </h2>
-            {pubs.length ? (
-              <ol className="pubs">
-                {pubs.map((p) => (
-                  <li key={p.title}>
-                    <span className="y">{p.year}</span>
-                    <div>
-                      <div className="ti">
-                        {p.url ? (
-                          <a href={p.url} target="_blank" rel="noopener">
-                            {p.title}
-                          </a>
-                        ) : (
-                          p.title
-                        )}
-                      </div>
-                      <div className="small soft" style={{ marginTop: 3 }}>
-                        {String(p.authors || "").replace(/\.\s*$/, "")}. <em>{p.venue}</em>
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            ) : (
-              <p className="soft small">No publications listed yet.</p>
-            )}
-          </section>
         </div>
         <aside>
           <section className="sec">
-            <h2>Who's in the group</h2>
+            <div className="sec-head">
+              <h2>Who's in the group</h2>
+              <a className="link small" href="#/researchers">
+                All researchers →
+              </a>
+            </div>
             <div className="members">
               {!g.members && <p className="soft small">Members are shown to signed-in researchers.</p>}
               {mem.map((m) => (
                 <div className="person" key={m.researcherId}>
                   <Avatar name={m.r.name} size={42} />
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontWeight: 600, fontSize: ".92rem" }}>{m.r.name}</div>
+                    <div style={{ fontWeight: 600, fontSize: ".92rem" }}>
+                      <a className="plain" href={researcherHref(m.r)}>
+                        {m.r.name}
+                      </a>
+                    </div>
                     <div className="small" style={{ color: /lead/i.test(m.role) ? "var(--blue)" : "var(--ink-soft)" }}>
                       {m.role}
                     </div>
@@ -450,7 +425,7 @@ const SetupPrompt = () => (
       Your profile puts you in the researcher directory, lets other researchers add you to their groups with @, and lets you create groups and post
       studies.
     </p>
-    <a className="btn btn-solid" href="#/profile">
+    <a className="btn btn-solid" href="#/profile/edit">
       Set up profile
     </a>
   </div>
@@ -516,7 +491,7 @@ export function Dashboard({ onVerify, onScholar }) {
         <div className="btns" style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
           <LinkedInLink url={me.linkedin} className="btn icon-btn" />
           <ScholarLink url={me.scholar} className="btn icon-btn" />
-          <a className="btn btn-blue" href="#/profile">
+          <a className="btn btn-blue" href="#/profile/edit">
             Edit profile
           </a>
         </div>
@@ -1190,13 +1165,82 @@ export function ManageStudy({ route, onEditStudy, onDeleteStudy, onRate }) {
 }
 
 /* ================= profile editor ================= */
+/**
+ * Paste a DOI, get a filled-in publication.
+ *
+ * The row is added already filled and still editable, so a lookup is a starting point
+ * rather than something you have to accept. Everything can still be typed by hand:
+ * Crossref does not have every paper, and a book chapter or a preprint may not be there
+ * at all.
+ */
+function DoiAdd({ onAdd, known }) {
+  const [doi, setDoi] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+
+  const go = async () => {
+    setErr("");
+    const already = known.includes(cleanDoi(doi));
+    if (already) return setErr("That DOI is already in your list.");
+    setBusy(true);
+    try {
+      const row = await lookupDoi(doi);
+      onAdd(row);
+      setDoi("");
+    } catch (e) {
+      setErr(e.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="doi-add">
+      <Field label="Add by DOI">
+        <div className="doi-row">
+          <input
+            value={doi}
+            maxLength="200"
+            placeholder="10.1038/s41586-020-2649-2"
+            onChange={(e) => {
+              setDoi(e.target.value);
+              setErr("");
+            }}
+            // Enter would submit the whole profile form, which is not what this is for.
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                if (doi.trim() && !busy) go();
+              }
+            }}
+          />
+          <button type="button" className="btn btn-blue" onClick={go} disabled={busy || !doi.trim()}>
+            {busy ? "Looking up…" : "Look up"}
+          </button>
+        </div>
+      </Field>
+      {err ? (
+        <p className="small doi-err">{err}</p>
+      ) : (
+        <p className="small soft">Or add one by hand below. A DOI link works too.</p>
+      )}
+    </div>
+  );
+}
+
 export function ProfileEditor({ onVerify, onScholar, onRor, onDelete }) {
   const { backend, toast } = useUI();
   const [handleAuto, setHandleAuto] = useState(!AUTH.researcher?.handle);
   const [handle, setHandle] = useState(AUTH.researcher?.handle || "");
   const [inst, setInst] = useState({ name: AUTH.researcher?.institution || "", ror: AUTH.researcher?.ror || "" });
   const r0 = AUTH.researcher;
-  const [interests, setInterests] = useState((r0?.interests || []).join(", "));
+  // Paths, not a comma list. A profile saved before this change holds plain strings,
+  // which read as one-step paths.
+  const [interests, setInterests] = useState(() =>
+    (r0?.interests || []).map((x) => (Array.isArray(x) ? [...x] : [x])).filter((x) => x.length)
+  );
+  const [discipline, setDiscipline] = useState(r0?.discipline || "");
+  const [visibility, setVisibility] = useState(r0?.visibility || "private");
   const [pubs, setPubs] = useState(() => (r0?.publications || []).map((x) => ({ ...x, authorNames: x.authorNames?.length ? [...x.authorNames] : namesFromHarvard(x.authors) })));
   const [highlights, setHighlights] = useState(() => (r0?.highlights || []).map((x) => ({ ...x })));
   const [academic, setAcademic] = useState(() => (r0?.academicRoles || []).map((x) => ({ ...x })));
@@ -1221,7 +1265,7 @@ export function ProfileEditor({ onVerify, onScholar, onRor, onDelete }) {
         </a>
         <h1 style={{ marginTop: 14 }}>{isNew ? "Set up your researcher profile" : "Edit your profile"}</h1>
         <p className="soft lead">This is what appears in the researcher directory and on the groups you belong to. Fields marked * are required.</p>
-        {!isNew && <IdCheckPanel returnTo="#/profile" />}
+        {!isNew && <IdCheckPanel returnTo="#/profile/edit" />}
         <Form
           id="profile-form"
           onSubmit={async (d) => {
@@ -1239,13 +1283,17 @@ export function ProfileEditor({ onVerify, onScholar, onRor, onDelete }) {
               scholar: d.scholar,
               orcid: (d.orcid || "").replace(/^https?:\/\/orcid\.org\//i, ""),
               bio: d.bio,
-              interests: interests.split(",").map((x) => x.trim()).filter(Boolean),
+              discipline,
+              visibility,
+              interests: interests.map((path) => path.map((x) => x.trim()).filter(Boolean)).filter((path) => path.length),
               publications: pubs.map((x) => ({
                 title: x.title,
                 authorNames: (x.authorNames || []).map((n) => n.trim()).filter(Boolean),
                 venue: x.venue,
                 year: Number(x.year) || 0,
                 url: x.url || "",
+                doi: x.doi || "",
+                citations: x.citations == null ? null : Number(x.citations),
               })),
               highlights: highlights.map((x) => ({ title: x.title, detail: x.detail || "", year: x.year ? Number(x.year) : null })),
               academicRoles: academic.map((x) => ({ title: x.title, org: x.org || "", from: x.from ? Number(x.from) : null, to: x.to ? Number(x.to) : null })),
@@ -1316,6 +1364,24 @@ export function ProfileEditor({ onVerify, onScholar, onRor, onDelete }) {
                 <ChoiceField label="Country" name="country" options={COUNTRY_NAMES} required defaultValue={p.country} />
                 <ChoiceField label="Field of research" name="field" options={FIELDS} required defaultValue={p.field} />
               </div>
+              <div className="row2">
+                <Field label="Discipline" hint={<div className="counter" style={{ textAlign: "left" }}>Groups you on the leaderboard and roots your interests</div>}>
+                  <select value={discipline} onChange={(e) => setDiscipline(e.target.value)}>
+                    <option value="">Choose one</option>
+                    {DISCIPLINES.map((d) => (
+                      <option key={d} value={d}>
+                        {d}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+                <Field label="Who can see your profile">
+                  <select value={visibility} onChange={(e) => setVisibility(e.target.value)}>
+                    <option value="private">Signed-in researchers only</option>
+                    <option value="public">Anyone — list it publicly</option>
+                  </select>
+                </Field>
+              </div>
             </div>
           </div>
           <div className="fsec">
@@ -1380,25 +1446,61 @@ export function ProfileEditor({ onVerify, onScholar, onRor, onDelete }) {
           </div>
           <div className="fsec">
             <h2>Research interests</h2>
-            <p className="hint">Shown as tags on your profile.</p>
-            <Field label="Interests">
-              <input
-                maxLength="500"
-                value={interests}
-                onChange={(e) => setInterests(e.target.value)}
-                placeholder="Separate with commas, e.g. Episodic memory, Sleep and consolidation"
-              />
-            </Field>
+            <p className="hint">
+              Each one is a path narrowing down from your discipline, drawn as a tree on your profile:{" "}
+              <strong>{discipline || "Technology"} → Human–computer interaction → Technostress</strong>. Paths that start the same way
+              share a branch.
+            </p>
+            <Repeater
+              rows={interests}
+              setRows={setInterests}
+              max={24}
+              blank={["", ""]}
+              noun={["Interest", "No interests added."]}
+            >
+              {(path, _set, i) => (
+                <div className="ipath">
+                  <span className="node node-root">{discipline || "Your discipline"}</span>
+                  {path.concat("").slice(0, 4).map((step, j) => (
+                    <span className="ipath-step" key={j}>
+                      <span className="ipath-arrow" aria-hidden="true">→</span>
+                      <input
+                        aria-label={`Interest ${i + 1}, level ${j + 1}`}
+                        maxLength="60"
+                        value={step}
+                        placeholder={j === 0 ? "Broad area" : "Narrower"}
+                        onChange={(e) => {
+                          const next = [...path];
+                          next[j] = e.target.value;
+                          setInterests(interests.map((x, k) => (k === i ? next.filter((v, n) => v || n < next.length - 1) : x)));
+                        }}
+                      />
+                    </span>
+                  ))}
+                </div>
+              )}
+            </Repeater>
           </div>
 
           <div className="fsec">
             <h2>Publications</h2>
             <p className="hint">
-              These earn your yearly points, so the year on each one matters. Listed newest first on your profile.
+              Paste a DOI and the rest fills itself in from Crossref. These earn your yearly points, so the year on each one matters.
+              Listed newest first on your profile.
             </p>
-            <Repeater rows={pubs} setRows={setPubs} max={300} blank={{ title: "", authorNames: [""], venue: "", year: "", url: "" }} noun={["Publication", "No publications added."]}>
+            <DoiAdd
+              onAdd={(row) => setPubs([row, ...pubs])}
+              known={pubs.map((x) => x.doi).filter(Boolean)}
+            />
+            <Repeater rows={pubs} setRows={setPubs} max={300} blank={{ title: "", authorNames: [""], venue: "", year: "", url: "", doi: "", citations: null }} noun={["Publication", "No publications added."]}>
               {(x, set) => (
                 <>
+                  {x.doi && (
+                    <p className="small soft doi-note">
+                      <Icon.check /> From DOI <code>{x.doi}</code>
+                      {typeof x.citations === "number" ? ` · ${plural(x.citations, "citation", "citations")} at the time of lookup` : ""}
+                    </p>
+                  )}
                   <Field label="Title" required>
                     <input required maxLength="300" value={x.title || ""} onChange={(e) => set("title", e.target.value)} />
                   </Field>

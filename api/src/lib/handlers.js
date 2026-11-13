@@ -6,7 +6,7 @@ const V = require("./validate");
 const { feeBreakdown, gbp } = require("./money");
 const { trendFor } = require("./trending");
 const { newGroupId, newResearcherId } = require("./ids");
-const { FIELDS, POSITIONS, COUNTRY_NAMES } = require("./lists");
+const { FIELDS, POSITIONS, COUNTRY_NAMES, DISCIPLINES } = require("./lists");
 const { harvardAuthors } = require("./harvard");
 const { HttpError, bad } = V;
 
@@ -107,6 +107,12 @@ async function publicData({ repo, now = Date.now() }) {
   const openStudies = studies.filter((s) => rById.get(s.researcherId)?.verified && isOpen(s, now));
   return ok({
     groups: groups.filter((g) => g.visibility === "public").map(publicGroup),
+    // Researchers who chose to be listed publicly, exactly as public groups are. Their
+    // email stays behind the sign-in, because a public profile is not an invitation to
+    // be mailed by anyone who finds the page.
+    researchers: researchers
+      .filter((r) => r.visibility === "public" && r.verified)
+      .map(({ email, supervising, ...r }) => publicResearcher(r)),
     reach: {
       total: applications.length, byCountry,
       participants: participants.length, participantsByCountry: count(participants),
@@ -186,9 +192,17 @@ function profileDetail(b) {
     to: V.int(x.to, `${what} ${i + 1} end year`, { min: 1900, max: year + 10 }),
   });
   return {
-    interests: V.list(b.interests, "Research interests", 16)
-      .map((x, i) => V.str(x, `Research interest ${i + 1}`, { max: 60 }))
-      .filter(Boolean),
+    // An interest is a path down from the researcher's discipline — ["HCI", "Technostress"]
+    // — so the profile can draw them as a tree. A plain string reads as a one-step path,
+    // which is what profiles written before this change hold.
+    interests: V.list(b.interests, "Research interests", 24)
+      .map((x, i) =>
+        (Array.isArray(x) ? x : [x])
+          .slice(0, 4)
+          .map((part, j) => V.str(part, `Research interest ${i + 1}, level ${j + 1}`, { max: 60 }))
+          .filter(Boolean)
+      )
+      .filter((path) => path.length),
     highlights: V.list(b.highlights, "Highlights", 8).map((raw, i) => {
       const h = raw || {};
       return {
@@ -210,6 +224,10 @@ function profileDetail(b) {
         venue: V.str(p.venue, `Publication ${i + 1} journal or venue`, { required: true, max: 200 }),
         year: V.int(p.year, `Publication ${i + 1} year`, { min: 1900, max: year + 1, required: true }),
         url: V.url(p.url, `Publication ${i + 1} link`),
+        // Recorded when the entry came from a DOI lookup, so the page can link straight to
+        // the paper and a repeated DOI can be spotted.
+        doi: V.doi(p.doi, `Publication ${i + 1} DOI`),
+        citations: V.int(p.citations, `Publication ${i + 1} citation count`, { min: 0, max: 10000000 }),
       };
     }),
     academicRoles: V.list(b.academicRoles, "Academic roles", 20).map((raw, i) => {
@@ -275,6 +293,12 @@ async function putProfile({ repo, principal, body, screen }) {
     scholar: V.scholar(b.scholar),
     orcid: V.orcid(b.orcid),
     bio: V.str(b.bio, "Bio", { required: true, max: 600 }),
+    // Which of the four broad disciplines they file themselves under: it roots their
+    // interest tree and groups them on the leaderboard.
+    discipline: V.oneOf(b.discipline, "Discipline", DISCIPLINES, ""),
+    // Public profiles are listed to visitors who are not signed in, exactly as public
+    // groups are. Private is the default, because a profile is personal.
+    visibility: V.oneOf(b.visibility, "Profile visibility", ["public", "private"], "private"),
     ...profileDetail(b),
   };
   const review = await screenFields({ Bio: p.bio }, { screen });

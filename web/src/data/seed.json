@@ -35,174 +35,197 @@
       "orcid": "",
       "publicId": "HLR-QZ10-7BPM-BA",
       "interests": [
-        "nudge durability",
-        "mobile-money adoption",
-        "informal credit",
-        "present bias"
+        [
+          "Cognition",
+          "Sleep and consolidation"
+        ],
+        [
+          "Population health",
+          "Vaccine uptake"
+        ],
+        [
+          "Population health",
+          "Health literacy"
+        ]
       ],
       "publications": [
         {
-          "title": "Measuring mobile-money adoption at scale with risk preferences",
+          "title": "A field experiment on mobile-money adoption and nudge durability",
           "authorNames": [
             "Nwosu, A.",
-            "Tanaka, A."
+            "Adeyemi, T.",
+            "Cho, H.",
+            "Mensah, K."
           ],
-          "authors": "Nwosu, A., Tanaka, A.",
+          "authors": "Nwosu, A., Adeyemi, T., Cho, H., Mensah, K.",
+          "venue": "Journal of Economic Behavior & Organization",
+          "year": 2025,
+          "url": "",
+          "doi": "10.5197/pnas.197924",
+          "citations": 10
+        },
+        {
+          "title": "Risk preferences in older adults: evidence from a 120-participant study",
+          "authorNames": [
+            "Nwosu, A.",
+            "Adeyemi, T.",
+            "Mehta, R."
+          ],
+          "authors": "Nwosu, A., Adeyemi, T., Mehta, R.",
+          "venue": "Journal of Economic Behavior & Organization",
+          "year": 2025,
+          "url": "",
+          "doi": "10.5258/chb.273073",
+          "citations": 16
+        },
+        {
+          "title": "Savings defaults in remote teams: evidence from a 804-participant study",
+          "authorNames": [
+            "Lim, W. J.",
+            "Nwosu, A.",
+            "Ackerman, L."
+          ],
+          "authors": "Lim, W. J., Nwosu, A., Ackerman, L.",
           "venue": "Journal of Development Economics",
-          "year": 2026,
-          "url": ""
-        },
-        {
-          "title": "Measuring nudge durability at scale with savings defaults",
-          "authorNames": [
-            "Whitfield, S.",
-            "Nwosu, A.",
-            "Mensah, K.",
-            "Price, J."
-          ],
-          "authors": "Whitfield, S., Nwosu, A., Mensah, K., Price, J.",
-          "venue": "Journal of Economic Behavior & Organization",
           "year": 2025,
-          "url": ""
-        },
-        {
-          "title": "Does risk preferences change nudge durability? A preregistered replication",
-          "authorNames": [
-            "Mehta, R.",
-            "Nwosu, A.",
-            "Ackerman, L.",
-            "Okafor, E."
-          ],
-          "authors": "Mehta, R., Nwosu, A., Ackerman, L., Okafor, E.",
-          "venue": "Journal of Economic Behavior & Organization",
-          "year": 2025,
-          "url": ""
+          "url": "",
+          "doi": "10.7844/s886868",
+          "citations": 28
         },
         {
           "title": "A field experiment on mobile-money adoption and informal credit",
           "authorNames": [
-            "Haddad, N.",
+            "Boateng, K.",
             "Nwosu, A.",
-            "Dam, J. v."
+            "Dalgaard, H."
           ],
-          "authors": "Haddad, N., Nwosu, A., Dam, J. v.",
+          "authors": "Boateng, K., Nwosu, A., Dalgaard, H.",
           "venue": "Journal of Development Economics",
           "year": 2024,
-          "url": ""
+          "url": "",
+          "doi": "10.3386/pnas.640926",
+          "citations": 27
         },
         {
           "title": "Does nudge durability change risk preferences? A preregistered replication",
           "authorNames": [
-            "Dam, J. v.",
             "Nwosu, A.",
-            "Haddad, N.",
-            "Eze, I."
+            "Dalgaard, H.",
+            "Rahimi, L.",
+            "Dam, J. v."
           ],
-          "authors": "Dam, J. v., Nwosu, A., Haddad, N., Eze, I.",
-          "venue": "Behavioural Public Policy",
+          "authors": "Nwosu, A., Dalgaard, H., Rahimi, L., Dam, J. v.",
+          "venue": "Experimental Economics",
           "year": 2024,
-          "url": ""
+          "url": "",
+          "doi": "10.1719/pnas.646238",
+          "citations": 6
         },
         {
-          "title": "A field experiment on risk preferences and informal credit",
+          "title": "Risk preferences in new parents: evidence from a 512-participant study",
           "authorNames": [
             "Nwosu, A.",
-            "Haddad, N."
+            "Rahimi, L.",
+            "Mehta, R.",
+            "Dam, J. v."
           ],
-          "authors": "Nwosu, A., Haddad, N.",
-          "venue": "Behavioural Public Policy",
+          "authors": "Nwosu, A., Rahimi, L., Mehta, R., Dam, J. v.",
+          "venue": "Journal of Economic Behavior & Organization",
           "year": 2024,
-          "url": ""
+          "url": "",
+          "doi": "10.3184/pnas.679726",
+          "citations": 51
         },
         {
           "title": "Present bias in shift workers: evidence from a 804-participant study",
           "authorNames": [
-            "Dam, J. v.",
+            "Dalgaard, H.",
             "Nwosu, A.",
-            "Marín, S."
+            "Mensah, K."
           ],
-          "authors": "Dam, J. v., Nwosu, A., Marín, S.",
+          "authors": "Dalgaard, H., Nwosu, A., Mensah, K.",
           "venue": "Experimental Economics",
           "year": 2022,
-          "url": ""
+          "url": "",
+          "doi": "10.3639/j.605854",
+          "citations": 5
         },
         {
           "title": "A field experiment on risk preferences and nudge durability",
           "authorNames": [
-            "Whitfield, S.",
+            "Cho, H.",
             "Nwosu, A."
           ],
-          "authors": "Whitfield, S., Nwosu, A.",
+          "authors": "Cho, H., Nwosu, A.",
           "venue": "Journal of Development Economics",
           "year": 2022,
-          "url": ""
+          "url": "",
+          "doi": "10.8729/chb.323425",
+          "citations": 42
         }
       ],
       "academicRoles": [
         {
-          "title": "Reader",
+          "title": "Associate professor",
           "org": "Lagos Business School",
-          "from": 2024,
+          "from": 2022,
           "to": null
         },
         {
-          "title": "Lecturer",
+          "title": "Senior lecturer",
           "org": "University of Otago",
           "from": 2020,
-          "to": 2024
+          "to": 2022
         },
         {
-          "title": "Postdoctoral researcher",
-          "org": "University of Leeds",
+          "title": "Research assistant",
+          "org": "KU Leuven",
           "from": 2017,
           "to": 2020
         }
       ],
       "researchRoles": [
         {
-          "title": "Editor-in-Chief",
+          "title": "Ethics committee member",
           "org": "Journal of Development Economics",
-          "from": 2019,
+          "from": 2021,
           "to": null
         }
       ],
       "memberships": [
         {
-          "body": "Royal Economic Society",
+          "body": "Economic Science Association",
           "grade": "Fellow",
-          "since": 2012
+          "since": 2013
         },
         {
           "body": "African Economic Research Consortium",
-          "grade": "Fellow",
-          "since": 2012
-        },
-        {
-          "body": "Economic Science Association",
-          "grade": "Fellow",
-          "since": 2019
+          "grade": "Member",
+          "since": 2021
         }
       ],
       "highlights": [
         {
-          "title": "Best paper award, Experimental Economics",
-          "detail": "Awarded for work on mobile-money adoption.",
-          "year": 2023
+          "title": "Best paper award, Behavioural Public Policy",
+          "detail": "Awarded for work on informal credit.",
+          "year": 2021
         }
       ],
       "supervising": [
         {
-          "researcherId": "r3",
+          "researcherId": "r15",
           "role": "PhD student"
         }
       ],
       "endorsements": {
         "2026": {
-          "r7": "2026-01-15",
-          "r2": "2026-01-11",
-          "r9": "2026-07-15"
+          "r12": "2026-01-15",
+          "r3": "2026-01-11",
+          "r17": "2026-07-15"
         }
-      }
+      },
+      "discipline": "Science",
+      "visibility": "private"
     },
     {
       "id": "r2",
@@ -239,146 +262,212 @@
       "orcid": "",
       "publicId": "HLR-PKVY-CT3S-7Y",
       "interests": [
-        "longitudinal cohorts",
-        "open data practice",
-        "measurement error",
-        "participant retention"
+        [
+          "Behavioural science",
+          "Nudge durability"
+        ],
+        [
+          "Behavioural science",
+          "Habit formation"
+        ],
+        [
+          "Cognition",
+          "Attention under load"
+        ]
       ],
       "publications": [
         {
-          "title": "Measuring participant retention at scale with measurement error",
+          "title": "Rethinking open data practice: what 512 participants tell us",
           "authorNames": [
-            "Haddad, N.",
+            "Dalgaard, H.",
             "Ackerman, L.",
-            "Dam, J. v."
+            "Marín, S."
           ],
-          "authors": "Haddad, N., Ackerman, L., Dam, J. v.",
-          "venue": "Scientific Reports",
+          "authors": "Dalgaard, H., Ackerman, L., Marín, S.",
+          "venue": "Nature Human Behaviour",
           "year": 2025,
-          "url": ""
+          "url": "",
+          "doi": "10.9196/chb.578147",
+          "citations": 20
         },
         {
-          "title": "Does longitudinal cohorts change open data practice? A preregistered replication",
+          "title": "Does measurement error change field experiments? A preregistered replication",
           "authorNames": [
-            "Mehta, R.",
-            "Ackerman, L."
+            "Nwosu, A.",
+            "Ackerman, L.",
+            "Eze, I."
           ],
-          "authors": "Mehta, R., Ackerman, L.",
+          "authors": "Nwosu, A., Ackerman, L., Eze, I.",
           "venue": "Royal Society Open Science",
           "year": 2025,
-          "url": ""
+          "url": "",
+          "doi": "10.9157/pnas.392860",
+          "citations": 15
+        },
+        {
+          "title": "Does longitudinal cohorts change measurement error? A preregistered replication",
+          "authorNames": [
+            "Ackerman, L.",
+            "Ferreira, T.",
+            "Eze, I.",
+            "Dam, J. v."
+          ],
+          "authors": "Ackerman, L., Ferreira, T., Eze, I., Dam, J. v.",
+          "venue": "Scientific Reports",
+          "year": 2024,
+          "url": "",
+          "doi": "10.8680/pnas.358301",
+          "citations": 48
+        },
+        {
+          "title": "Field experiments in first-year undergraduates: evidence from a 1200-participant study",
+          "authorNames": [
+            "Ackerman, L.",
+            "Marín, S."
+          ],
+          "authors": "Ackerman, L., Marín, S.",
+          "venue": "Nature Human Behaviour",
+          "year": 2024,
+          "url": "",
+          "doi": "10.9789/pnas.656930",
+          "citations": 12
         },
         {
           "title": "A field experiment on replication and measurement error",
           "authorNames": [
             "Ackerman, L.",
-            "Rahimi, L.",
-            "Haddad, N.",
+            "Boateng, K.",
+            "Price, J.",
             "Adeyemi, T."
           ],
-          "authors": "Ackerman, L., Rahimi, L., Haddad, N., Adeyemi, T.",
+          "authors": "Ackerman, L., Boateng, K., Price, J., Adeyemi, T.",
           "venue": "Scientific Reports",
           "year": 2023,
-          "url": ""
+          "url": "",
+          "doi": "10.9932/chb.987586",
+          "citations": 8
         },
         {
           "title": "Longitudinal cohorts in new parents: evidence from a 240-participant study",
           "authorNames": [
-            "Mehta, R.",
+            "Eze, I.",
             "Ackerman, L."
           ],
-          "authors": "Mehta, R., Ackerman, L.",
+          "authors": "Eze, I., Ackerman, L.",
           "venue": "Royal Society Open Science",
           "year": 2023,
-          "url": ""
+          "url": "",
+          "doi": "10.9053/s602874",
+          "citations": 64
         },
         {
           "title": "Measuring measurement error at scale with open data practice",
           "authorNames": [
-            "Rahimi, L.",
             "Ackerman, L.",
-            "Mehta, R."
+            "Eze, I.",
+            "Nwosu, A."
           ],
-          "authors": "Rahimi, L., Ackerman, L., Mehta, R.",
+          "authors": "Ackerman, L., Eze, I., Nwosu, A.",
           "venue": "Nature Human Behaviour",
           "year": 2023,
-          "url": ""
+          "url": "",
+          "doi": "10.8326/pnas.389962",
+          "citations": 12
         },
         {
           "title": "Measuring open data practice at scale with field experiments",
           "authorNames": [
-            "Mehta, R.",
+            "Adeyemi, T.",
             "Ackerman, L.",
-            "Mensah, K.",
-            "Adeyemi, T."
+            "Lim, W. J.",
+            "Raman, P."
           ],
-          "authors": "Mehta, R., Ackerman, L., Mensah, K., Adeyemi, T.",
+          "authors": "Adeyemi, T., Ackerman, L., Lim, W. J., Raman, P.",
           "venue": "PLOS ONE",
           "year": 2022,
-          "url": ""
+          "url": "",
+          "doi": "10.2830/chb.657537",
+          "citations": 5
         }
       ],
       "academicRoles": [
         {
-          "title": "Reader",
+          "title": "Associate professor",
           "org": "Utrecht University",
           "from": 2022,
           "to": null
         },
         {
           "title": "Senior lecturer",
-          "org": "University of Otago",
-          "from": 2018,
+          "org": "KU Leuven",
+          "from": 2019,
           "to": 2022
         },
         {
-          "title": "Postdoctoral researcher",
-          "org": "University of Leeds",
-          "from": 2014,
-          "to": 2018
+          "title": "Research assistant",
+          "org": "University of Otago",
+          "from": 2016,
+          "to": 2019
         }
       ],
       "researchRoles": [
         {
-          "title": "Guest editor, special issue",
+          "title": "Associate Editor",
+          "org": "PLOS ONE",
+          "from": 2019,
+          "to": null
+        },
+        {
+          "title": "Editorial board member",
           "org": "Royal Society Open Science",
+          "from": 2022,
+          "to": null
+        },
+        {
+          "title": "Grant review panellist",
+          "org": "Scientific Reports",
           "from": 2023,
           "to": null
         },
         {
-          "title": "Editor-in-Chief",
-          "org": "Nature Human Behaviour",
-          "from": 2020,
+          "title": "Programme committee member",
+          "org": "Scientific Reports",
+          "from": 2022,
           "to": null
         }
       ],
       "memberships": [
         {
           "body": "UK Reproducibility Network",
-          "grade": "Senior member",
-          "since": 2022
+          "grade": "Member",
+          "since": 2012
         },
         {
           "body": "Royal Society of Arts",
-          "grade": "Member",
-          "since": 2022
+          "grade": "Senior member",
+          "since": 2012
         }
       ],
       "highlights": [
         {
-          "title": "Open data award",
-          "detail": "For releasing the full longitudinal cohorts dataset and analysis code.",
-          "year": 2021
+          "title": "Best paper award, PLOS ONE",
+          "detail": "Awarded for work on open data practice.",
+          "year": 2022
         }
       ],
       "supervising": [],
       "endorsements": {
         "2025": {
-          "r8": "2025-06-14",
-          "r12": "2025-04-14",
-          "r7": "2025-03-10"
+          "r14": "2025-05-13",
+          "r13": "2025-05-12",
+          "r19": "2025-01-10"
+        },
+        "2026": {
+          "r7": "2026-02-16"
         }
-      }
+      },
+      "discipline": "Science",
+      "visibility": "public"
     },
     {
       "id": "r3",
@@ -415,183 +504,208 @@
       "scholar": "",
       "publicId": "HLR-8SES-SHWW-3S",
       "interests": [
-        "open data practice",
-        "measurement error",
-        "participant retention",
-        "replication"
+        [
+          "Language",
+          "Code-switching"
+        ],
+        [
+          "Behavioural science",
+          "Savings defaults"
+        ],
+        [
+          "Behavioural science",
+          "Nudge durability"
+        ],
+        [
+          "Population health",
+          "Vaccine uptake"
+        ]
       ],
       "publications": [
         {
-          "title": "Rethinking replication: what 1200 participants tell us",
+          "title": "Measurement error in older adults: evidence from a 804-participant study",
           "authorNames": [
-            "Ackerman, L.",
             "Cho, H.",
-            "Price, J."
+            "Adeyemi, T.",
+            "Whitfield, S."
           ],
-          "authors": "Ackerman, L., Cho, H., Price, J.",
-          "venue": "PLOS ONE",
+          "authors": "Cho, H., Adeyemi, T., Whitfield, S.",
+          "venue": "Royal Society Open Science",
           "year": 2026,
-          "url": ""
+          "url": "",
+          "doi": "10.5445/pnas.723157",
+          "citations": 26
         },
         {
-          "title": "A field experiment on participant retention and longitudinal cohorts",
+          "title": "A field experiment on measurement error and open data practice",
           "authorNames": [
             "Cho, H.",
-            "Rahimi, L.",
-            "Haddad, N.",
-            "Adeyemi, T."
+            "Price, J.",
+            "Ferreira, T.",
+            "Raman, P."
           ],
-          "authors": "Cho, H., Rahimi, L., Haddad, N., Adeyemi, T.",
+          "authors": "Cho, H., Price, J., Ferreira, T., Raman, P.",
+          "venue": "Royal Society Open Science",
+          "year": 2026,
+          "url": "",
+          "doi": "10.2398/chb.112202",
+          "citations": 8
+        },
+        {
+          "title": "Participant retention in first-year undergraduates: evidence from a 120-participant study",
+          "authorNames": [
+            "Adeyemi, T.",
+            "Cho, H."
+          ],
+          "authors": "Adeyemi, T., Cho, H.",
           "venue": "Nature Human Behaviour",
           "year": 2026,
-          "url": ""
+          "url": "",
+          "doi": "10.3420/pnas.503350",
+          "citations": 17
         },
         {
           "title": "Open data practice in first-year undergraduates: evidence from a 380-participant study",
           "authorNames": [
             "Cho, H.",
-            "Dam, J. v.",
-            "Mensah, K.",
-            "Marín, S."
+            "Dalgaard, H.",
+            "Okafor, E.",
+            "Mensah, K."
           ],
-          "authors": "Cho, H., Dam, J. v., Mensah, K., Marín, S.",
+          "authors": "Cho, H., Dalgaard, H., Okafor, E., Mensah, K.",
           "venue": "Royal Society Open Science",
           "year": 2025,
-          "url": ""
+          "url": "",
+          "doi": "10.7106/s515363",
+          "citations": 3
         },
         {
           "title": "A field experiment on participant retention and field experiments",
           "authorNames": [
-            "Ackerman, L.",
+            "Mehta, R.",
             "Cho, H.",
             "Whitfield, S."
           ],
-          "authors": "Ackerman, L., Cho, H., Whitfield, S.",
-          "venue": "Nature Human Behaviour",
+          "authors": "Mehta, R., Cho, H., Whitfield, S.",
+          "venue": "PLOS ONE",
           "year": 2025,
-          "url": ""
+          "url": "",
+          "doi": "10.7628/j.212734",
+          "citations": 4
         },
         {
           "title": "Does longitudinal cohorts change open data practice? A preregistered replication",
           "authorNames": [
             "Cho, H.",
-            "Adeyemi, T.",
-            "Lim, W. J.",
-            "Mehta, R."
+            "Price, J.",
+            "Eze, I.",
+            "Ackerman, L."
           ],
-          "authors": "Cho, H., Adeyemi, T., Lim, W. J., Mehta, R.",
+          "authors": "Cho, H., Price, J., Eze, I., Ackerman, L.",
           "venue": "Scientific Reports",
           "year": 2024,
-          "url": ""
+          "url": "",
+          "doi": "10.6824/j.512250",
+          "citations": 84
         },
         {
           "title": "Does participant retention change field experiments? A preregistered replication",
           "authorNames": [
             "Cho, H.",
-            "Dam, J. v.",
-            "Ackerman, L.",
-            "Marín, S."
+            "Dalgaard, H.",
+            "Marín, S.",
+            "Tanaka, A."
           ],
-          "authors": "Cho, H., Dam, J. v., Ackerman, L., Marín, S.",
+          "authors": "Cho, H., Dalgaard, H., Marín, S., Tanaka, A.",
           "venue": "Nature Human Behaviour",
           "year": 2023,
-          "url": ""
+          "url": "",
+          "doi": "10.1053/pnas.882375",
+          "citations": 60
         },
         {
           "title": "Does longitudinal cohorts change measurement error? A preregistered replication",
           "authorNames": [
             "Cho, H.",
-            "Haddad, N."
+            "Boateng, K."
           ],
-          "authors": "Cho, H., Haddad, N.",
+          "authors": "Cho, H., Boateng, K.",
           "venue": "Scientific Reports",
           "year": 2023,
-          "url": ""
+          "url": "",
+          "doi": "10.2890/chb.460505",
+          "citations": 24
         }
       ],
       "academicRoles": [
         {
           "title": "Senior lecturer",
           "org": "National University of Singapore",
-          "from": 2022,
+          "from": 2020,
           "to": null
         },
         {
           "title": "Lecturer",
-          "org": "KU Leuven",
-          "from": 2020,
-          "to": 2022
+          "org": "University of Cape Town",
+          "from": 2018,
+          "to": 2020
         },
         {
-          "title": "Research assistant",
-          "org": "KU Leuven",
-          "from": 2017,
-          "to": 2020
+          "title": "Postdoctoral researcher",
+          "org": "Universidade de São Paulo",
+          "from": 2015,
+          "to": 2018
         }
       ],
       "researchRoles": [
         {
-          "title": "Guest editor, special issue",
-          "org": "PLOS ONE",
-          "from": 2020,
-          "to": null
-        },
-        {
-          "title": "Guest editor, special issue",
-          "org": "Nature Human Behaviour",
-          "from": 2020,
-          "to": null
-        },
-        {
           "title": "Editorial board member",
-          "org": "Scientific Reports",
-          "from": 2025,
+          "org": "PLOS ONE",
+          "from": 2022,
           "to": null
         },
         {
           "title": "Standing reviewer",
           "org": "PLOS ONE",
-          "from": 2022,
+          "from": 2020,
           "to": null
         }
       ],
       "memberships": [
         {
-          "body": "UK Reproducibility Network",
+          "body": "Academy of Social Sciences",
           "grade": "Fellow",
           "since": 2018
         },
         {
           "body": "Royal Society of Arts",
-          "grade": "Senior member",
-          "since": 2020
+          "grade": "Chartered member",
+          "since": 2024
         }
       ],
       "highlights": [
         {
-          "title": "Research council grant",
-          "detail": "A four-year programme on measurement error.",
-          "year": 2025
+          "title": "Royal Society of Arts early career prize",
+          "detail": "Recognising work on replication.",
+          "year": 2024
         }
       ],
-      "supervising": [
-        {
-          "researcherId": "r16",
-          "role": "PhD student"
-        },
-        {
-          "researcherId": "r8",
-          "role": "PhD student"
-        }
-      ],
+      "supervising": [],
       "endorsements": {
         "2025": {
-          "r8": "2025-04-15",
-          "r11": "2025-06-10",
-          "r13": "2025-08-14",
-          "r1": "2025-03-17"
+          "r14": "2025-06-10",
+          "r2": "2025-08-14",
+          "r9": "2025-03-17",
+          "r12": "2025-01-16"
+        },
+        "2026": {
+          "r9": "2026-09-11",
+          "r1": "2026-08-16",
+          "r16": "2026-05-16"
         }
-      }
+      },
+      "discipline": "Science",
+      "visibility": "public"
     },
     {
       "id": "r4",
@@ -616,175 +730,209 @@
       "scholar": "",
       "publicId": "HLR-VERY-NA7J-56",
       "interests": [
-        "health literacy",
-        "digital triage",
-        "screening adherence",
-        "community health workers"
+        [
+          "Language",
+          "Code-switching"
+        ]
       ],
       "publications": [
+        {
+          "title": "Measuring health literacy at scale with air quality and asthma",
+          "authorNames": [
+            "Marín, S.",
+            "Okafor, E.",
+            "Lim, W. J."
+          ],
+          "authors": "Marín, S., Okafor, E., Lim, W. J.",
+          "venue": "The Lancet Public Health",
+          "year": 2026,
+          "url": "",
+          "doi": "10.9260/chb.424728",
+          "citations": 26
+        },
         {
           "title": "Screening adherence in shift workers: evidence from a 804-participant study",
           "authorNames": [
             "Marín, S.",
-            "Dam, J. v."
+            "Dalgaard, H."
           ],
-          "authors": "Marín, S., Dam, J. v.",
+          "authors": "Marín, S., Dalgaard, H.",
           "venue": "International Journal of Epidemiology",
-          "year": 2026,
-          "url": ""
+          "year": 2025,
+          "url": "",
+          "doi": "10.5112/s854431",
+          "citations": 30
         },
         {
           "title": "Health literacy across three countries: a pooled analysis",
           "authorNames": [
             "Marín, S.",
-            "Mensah, K.",
+            "Lim, W. J.",
             "Okafor, E."
           ],
-          "authors": "Marín, S., Mensah, K., Okafor, E.",
-          "venue": "The Lancet Public Health",
-          "year": 2026,
-          "url": ""
+          "authors": "Marín, S., Lim, W. J., Okafor, E.",
+          "venue": "BMJ Open",
+          "year": 2025,
+          "url": "",
+          "doi": "10.5168/s703341",
+          "citations": 20
         },
         {
           "title": "Vaccine uptake across three countries: a pooled analysis",
           "authorNames": [
-            "Cho, H.",
+            "Mensah, K.",
             "Marín, S."
           ],
-          "authors": "Cho, H., Marín, S.",
+          "authors": "Mensah, K., Marín, S.",
           "venue": "Journal of Medical Internet Research",
-          "year": 2025,
-          "url": ""
-        },
-        {
-          "title": "Measuring vaccine uptake at scale with air quality and asthma",
-          "authorNames": [
-            "Adeyemi, T.",
-            "Marín, S.",
-            "Price, J."
-          ],
-          "authors": "Adeyemi, T., Marín, S., Price, J.",
-          "venue": "International Journal of Epidemiology",
           "year": 2024,
-          "url": ""
+          "url": "",
+          "doi": "10.3125/s468821",
+          "citations": 12
         },
         {
-          "title": "Does health literacy change digital triage? A preregistered replication",
-          "authorNames": [
-            "Whitfield, S.",
-            "Marín, S.",
-            "Price, J."
-          ],
-          "authors": "Whitfield, S., Marín, S., Price, J.",
-          "venue": "Journal of Medical Internet Research",
-          "year": 2023,
-          "url": ""
-        },
-        {
-          "title": "Rethinking health literacy: what 120 participants tell us",
+          "title": "A field experiment on digital triage and air quality and asthma",
           "authorNames": [
             "Ackerman, L.",
-            "Marín, S.",
-            "Lim, W. J.",
-            "Eze, I."
+            "Marín, S."
           ],
-          "authors": "Ackerman, L., Marín, S., Lim, W. J., Eze, I.",
-          "venue": "Journal of Medical Internet Research",
+          "authors": "Ackerman, L., Marín, S.",
+          "venue": "The Lancet Public Health",
           "year": 2023,
-          "url": ""
+          "url": "",
+          "doi": "10.5468/chb.505079",
+          "citations": 88
+        },
+        {
+          "title": "Rethinking health literacy: what 240 participants tell us",
+          "authorNames": [
+            "Dam, J. v.",
+            "Marín, S."
+          ],
+          "authors": "Dam, J. v., Marín, S.",
+          "venue": "International Journal of Epidemiology",
+          "year": 2023,
+          "url": "",
+          "doi": "10.8944/j.285839",
+          "citations": 60
+        },
+        {
+          "title": "Rethinking community health workers: what 512 participants tell us",
+          "authorNames": [
+            "Price, J.",
+            "Marín, S.",
+            "Rahimi, L."
+          ],
+          "authors": "Price, J., Marín, S., Rahimi, L.",
+          "venue": "International Journal of Epidemiology",
+          "year": 2023,
+          "url": "",
+          "doi": "10.3407/j.867180",
+          "citations": 56
         },
         {
           "title": "A field experiment on digital triage and vaccine uptake",
           "authorNames": [
+            "Ackerman, L.",
             "Marín, S.",
-            "Lim, W. J.",
-            "Nwosu, A."
+            "Dam, J. v."
           ],
-          "authors": "Marín, S., Lim, W. J., Nwosu, A.",
+          "authors": "Ackerman, L., Marín, S., Dam, J. v.",
           "venue": "The Lancet Public Health",
           "year": 2022,
-          "url": ""
+          "url": "",
+          "doi": "10.5557/s694000",
+          "citations": 20
         },
         {
-          "title": "Vaccine uptake across three countries: a pooled analysis",
+          "title": "Measuring vaccine uptake at scale with community health workers",
           "authorNames": [
-            "Whitfield, S.",
             "Marín, S.",
-            "Nwosu, A."
+            "Nwosu, A.",
+            "Haddad, N."
           ],
-          "authors": "Whitfield, S., Marín, S., Nwosu, A.",
-          "venue": "Journal of Medical Internet Research",
+          "authors": "Marín, S., Nwosu, A., Haddad, N.",
+          "venue": "BMJ Open",
           "year": 2022,
-          "url": ""
+          "url": "",
+          "doi": "10.4452/s317250",
+          "citations": 160
         }
       ],
       "academicRoles": [
         {
           "title": "Lecturer",
           "org": "Universidad de Buenos Aires",
-          "from": 2020,
-          "to": null
-        },
-        {
-          "title": "Postdoctoral researcher",
-          "org": "University of Cape Town",
-          "from": 2018,
-          "to": 2020
-        },
-        {
-          "title": "Research assistant",
-          "org": "KU Leuven",
-          "from": 2015,
-          "to": 2018
-        }
-      ],
-      "researchRoles": [
-        {
-          "title": "Associate Editor",
-          "org": "The Lancet Public Health",
           "from": 2022,
           "to": null
         },
         {
-          "title": "Ethics committee member",
-          "org": "Society for Social Medicine",
+          "title": "Postdoctoral researcher",
+          "org": "Universidade de São Paulo",
+          "from": 2019,
+          "to": 2022
+        },
+        {
+          "title": "Research assistant",
+          "org": "University of Otago",
+          "from": 2015,
+          "to": 2019
+        }
+      ],
+      "researchRoles": [
+        {
+          "title": "Editor-in-Chief",
+          "org": "Journal of Medical Internet Research",
           "from": 2024,
+          "to": null
+        },
+        {
+          "title": "Editorial board member",
+          "org": "The Lancet Public Health",
+          "from": 2025,
+          "to": null
+        },
+        {
+          "title": "Associate Editor",
+          "org": "BMJ Open",
+          "from": 2025,
           "to": null
         }
       ],
       "memberships": [
         {
-          "body": "Society for Social Medicine",
-          "grade": "Fellow",
-          "since": 2012
-        },
-        {
           "body": "Faculty of Public Health",
-          "grade": "Chartered member",
-          "since": 2017
-        },
-        {
-          "body": "International Epidemiological Association",
-          "grade": "Fellow",
-          "since": 2024
+          "grade": "Member",
+          "since": 2020
         }
       ],
-      "highlights": [],
+      "highlights": [
+        {
+          "title": "Best paper award, Journal of Medical Internet Research",
+          "detail": "Awarded for work on community health workers.",
+          "year": 2026
+        },
+        {
+          "title": "International Epidemiological Association early career prize",
+          "detail": "Recognising work on digital triage.",
+          "year": 2021
+        }
+      ],
       "supervising": [],
       "endorsements": {
         "2025": {
-          "r14": "2025-07-10"
+          "r14": "2025-01-17"
         },
         "2026": {
-          "r13": "2026-08-18",
-          "r8": "2026-02-11",
-          "r7": "2026-04-11",
-          "r11": "2026-01-15",
-          "r3": "2026-02-13",
-          "r14": "2026-07-11",
-          "r5": "2026-02-15"
+          "r12": "2026-08-18",
+          "r6": "2026-02-11",
+          "r20": "2026-04-11",
+          "r8": "2026-01-15",
+          "r11": "2026-02-13"
         }
-      }
+      },
+      "discipline": "Science",
+      "visibility": "private"
     },
     {
       "id": "r5",
@@ -821,152 +969,180 @@
       "orcid": "",
       "publicId": "HLR-JGDR-R654-2O",
       "interests": [
-        "field experiments",
-        "measurement error",
-        "open data practice",
-        "replication"
+        [
+          "Human–computer interaction",
+          "Interface trust"
+        ],
+        [
+          "Human–computer interaction",
+          "Technostress"
+        ],
+        [
+          "Machine learning",
+          "Federated learning"
+        ]
       ],
       "publications": [
         {
-          "title": "A field experiment on open data practice and longitudinal cohorts",
-          "authorNames": [
-            "Dam, J. v.",
-            "Mehta, R."
-          ],
-          "authors": "Dam, J. v., Mehta, R.",
-          "venue": "Royal Society Open Science",
-          "year": 2026,
-          "url": ""
-        },
-        {
-          "title": "Measuring field experiments at scale with measurement error",
-          "authorNames": [
-            "Ackerman, L.",
-            "Mehta, R.",
-            "Lim, W. J."
-          ],
-          "authors": "Ackerman, L., Mehta, R., Lim, W. J.",
-          "venue": "Nature Human Behaviour",
-          "year": 2026,
-          "url": ""
-        },
-        {
-          "title": "Does longitudinal cohorts change participant retention? A preregistered replication",
-          "authorNames": [
-            "Mensah, K.",
-            "Mehta, R."
-          ],
-          "authors": "Mensah, K., Mehta, R.",
-          "venue": "Nature Human Behaviour",
-          "year": 2025,
-          "url": ""
-        },
-        {
-          "title": "Does field experiments change measurement error? A preregistered replication",
+          "title": "Rethinking participant retention: what 804 participants tell us",
           "authorNames": [
             "Mehta, R.",
-            "Marín, S."
+            "Nwosu, A.",
+            "Tanaka, A.",
+            "Cho, H."
           ],
-          "authors": "Mehta, R., Marín, S.",
-          "venue": "Royal Society Open Science",
-          "year": 2025,
-          "url": ""
-        },
-        {
-          "title": "Rethinking open data practice: what 804 participants tell us",
-          "authorNames": [
-            "Mensah, K.",
-            "Mehta, R."
-          ],
-          "authors": "Mensah, K., Mehta, R.",
+          "authors": "Mehta, R., Nwosu, A., Tanaka, A., Cho, H.",
           "venue": "Scientific Reports",
+          "year": 2026,
+          "url": "",
+          "doi": "10.8445/chb.854929",
+          "citations": 18
+        },
+        {
+          "title": "Replication in remote teams: evidence from a 120-participant study",
+          "authorNames": [
+            "Dalgaard, H.",
+            "Mehta, R.",
+            "Okafor, E."
+          ],
+          "authors": "Dalgaard, H., Mehta, R., Okafor, E.",
+          "venue": "Nature Human Behaviour",
+          "year": 2026,
+          "url": "",
+          "doi": "10.4951/j.127384",
+          "citations": 16
+        },
+        {
+          "title": "Does measurement error change replication? A preregistered replication",
+          "authorNames": [
+            "Mehta, R.",
+            "Boateng, K."
+          ],
+          "authors": "Mehta, R., Boateng, K.",
+          "venue": "Scientific Reports",
+          "year": 2025,
+          "url": "",
+          "doi": "10.1983/j.782403",
+          "citations": 12
+        },
+        {
+          "title": "Field experiments in first-year undergraduates: evidence from a 380-participant study",
+          "authorNames": [
+            "Mehta, R.",
+            "Price, J.",
+            "Rahimi, L.",
+            "Nwosu, A."
+          ],
+          "authors": "Mehta, R., Price, J., Rahimi, L., Nwosu, A.",
+          "venue": "PLOS ONE",
           "year": 2024,
-          "url": ""
+          "url": "",
+          "doi": "10.3593/s875314",
+          "citations": 27
         },
         {
-          "title": "Rethinking replication: what 804 participants tell us",
+          "title": "A field experiment on participant retention and measurement error",
           "authorNames": [
+            "Rahimi, L.",
             "Mehta, R.",
-            "Marín, S."
+            "Adeyemi, T."
           ],
-          "authors": "Mehta, R., Marín, S.",
-          "venue": "Nature Human Behaviour",
-          "year": 2023,
-          "url": ""
-        },
-        {
-          "title": "A field experiment on replication and measurement error",
-          "authorNames": [
-            "Eze, I.",
-            "Mehta, R.",
-            "Marín, S."
-          ],
-          "authors": "Eze, I., Mehta, R., Marín, S.",
+          "authors": "Rahimi, L., Mehta, R., Adeyemi, T.",
           "venue": "Scientific Reports",
           "year": 2023,
-          "url": ""
+          "url": "",
+          "doi": "10.5479/pnas.152564",
+          "citations": 0
+        },
+        {
+          "title": "Field experiments in remote teams: evidence from a 380-participant study",
+          "authorNames": [
+            "Adeyemi, T.",
+            "Mehta, R.",
+            "Okafor, E.",
+            "Dalgaard, H."
+          ],
+          "authors": "Adeyemi, T., Mehta, R., Okafor, E., Dalgaard, H.",
+          "venue": "Nature Human Behaviour",
+          "year": 2023,
+          "url": "",
+          "doi": "10.4903/pnas.573830",
+          "citations": 20
         },
         {
           "title": "Does participant retention change field experiments? A preregistered replication",
           "authorNames": [
-            "Rahimi, L.",
             "Mehta, R.",
-            "Haddad, N.",
-            "Okafor, E."
+            "Eze, I.",
+            "Boateng, K.",
+            "Adeyemi, T."
           ],
-          "authors": "Rahimi, L., Mehta, R., Haddad, N., Okafor, E.",
+          "authors": "Mehta, R., Eze, I., Boateng, K., Adeyemi, T.",
+          "venue": "Royal Society Open Science",
+          "year": 2022,
+          "url": "",
+          "doi": "10.1261/pnas.131049",
+          "citations": 30
+        },
+        {
+          "title": "Rethinking open data practice: what 1200 participants tell us",
+          "authorNames": [
+            "Mehta, R.",
+            "Ackerman, L.",
+            "Lim, W. J.",
+            "Boateng, K."
+          ],
+          "authors": "Mehta, R., Ackerman, L., Lim, W. J., Boateng, K.",
+          "venue": "Nature Human Behaviour",
+          "year": 2022,
+          "url": "",
+          "doi": "10.1542/chb.976107",
+          "citations": 15
+        },
+        {
+          "title": "Measurement error across three countries: a pooled analysis",
+          "authorNames": [
+            "Mehta, R.",
+            "Boateng, K."
+          ],
+          "authors": "Mehta, R., Boateng, K.",
           "venue": "PLOS ONE",
           "year": 2022,
-          "url": ""
-        },
-        {
-          "title": "Measuring open data practice at scale with field experiments",
-          "authorNames": [
-            "Rahimi, L.",
-            "Mehta, R."
-          ],
-          "authors": "Rahimi, L., Mehta, R.",
-          "venue": "Royal Society Open Science",
-          "year": 2022,
-          "url": ""
-        },
-        {
-          "title": "Longitudinal cohorts in rural households: evidence from a 804-participant study",
-          "authorNames": [
-            "Nwosu, A.",
-            "Mehta, R.",
-            "Whitfield, S."
-          ],
-          "authors": "Nwosu, A., Mehta, R., Whitfield, S.",
-          "venue": "Royal Society Open Science",
-          "year": 2022,
-          "url": ""
+          "url": "",
+          "doi": "10.2526/j.421365",
+          "citations": 10
         }
       ],
       "academicRoles": [
         {
-          "title": "Senior lecturer",
-          "org": "University of Manchester",
-          "from": 2021,
-          "to": null
-        },
-        {
           "title": "Lecturer",
-          "org": "University of Cape Town",
-          "from": 2018,
-          "to": 2021
+          "org": "University of Manchester",
+          "from": 2019,
+          "to": null
         },
         {
           "title": "Postdoctoral researcher",
           "org": "University of Leeds",
+          "from": 2017,
+          "to": 2019
+        },
+        {
+          "title": "Research assistant",
+          "org": "Universidade de São Paulo",
           "from": 2014,
-          "to": 2018
+          "to": 2017
         }
       ],
       "researchRoles": [
         {
-          "title": "Guest editor, special issue",
-          "org": "Nature Human Behaviour",
+          "title": "Programme committee member",
+          "org": "Academy of Social Sciences",
+          "from": 2021,
+          "to": null
+        },
+        {
+          "title": "Ethics committee member",
+          "org": "Royal Society Open Science",
           "from": 2020,
           "to": null
         }
@@ -974,49 +1150,50 @@
       "memberships": [
         {
           "body": "Royal Society of Arts",
-          "grade": "Member",
-          "since": 2018
-        },
-        {
-          "body": "Academy of Social Sciences",
           "grade": "Fellow",
-          "since": 2021
+          "since": 2017
         }
       ],
       "highlights": [
         {
-          "title": "UK Reproducibility Network early career prize",
-          "detail": "Recognising work on open data practice.",
-          "year": 2026
+          "title": "Research council grant",
+          "detail": "A four-year programme on field experiments.",
+          "year": 2025
         },
         {
           "title": "Open data award",
-          "detail": "For releasing the full field experiments dataset and analysis code.",
+          "detail": "For releasing the full replication dataset and analysis code.",
           "year": 2021
         }
       ],
       "supervising": [
         {
-          "researcherId": "r16",
-          "role": "PhD student"
+          "researcherId": "r12",
+          "role": "MRes student"
         },
         {
-          "researcherId": "r7",
+          "researcherId": "r14",
+          "role": "Postdoctoral researcher"
+        },
+        {
+          "researcherId": "r9",
           "role": "PhD student"
         }
       ],
       "endorsements": {
         "2025": {
-          "r14": "2025-05-15",
-          "r11": "2025-09-18",
-          "r13": "2025-06-12",
-          "r8": "2025-07-14",
-          "r2": "2025-06-15"
+          "r20": "2025-06-18",
+          "r15": "2025-09-15",
+          "r4": "2025-03-16",
+          "r11": "2025-05-15",
+          "r14": "2025-06-11"
         },
         "2026": {
-          "r2": "2026-06-14"
+          "r12": "2026-05-11"
         }
-      }
+      },
+      "discipline": "Technology",
+      "visibility": "public"
     },
     {
       "id": "r6",
@@ -1048,197 +1225,224 @@
       "scholar": "",
       "publicId": "HLR-70KR-444Q-W7",
       "interests": [
-        "sign language syntax",
-        "corpus annotation",
-        "code-switching",
-        "second-language acquisition"
+        [
+          "Behavioural science",
+          "Present bias"
+        ],
+        [
+          "Behavioural science",
+          "Habit formation"
+        ]
       ],
       "publications": [
         {
-          "title": "Does sign language syntax change corpus annotation? A preregistered replication",
-          "authorNames": [
-            "Tanaka, A.",
-            "Whitfield, S."
-          ],
-          "authors": "Tanaka, A., Whitfield, S.",
-          "venue": "Language",
-          "year": 2026,
-          "url": ""
-        },
-        {
-          "title": "Code-switching in first-year undergraduates: evidence from a 120-participant study",
+          "title": "Sign language syntax in secondary school pupils: evidence from a 1200-participant study",
           "authorNames": [
             "Adeyemi, T.",
             "Tanaka, A."
           ],
           "authors": "Adeyemi, T., Tanaka, A.",
+          "venue": "Linguistic Inquiry",
+          "year": 2026,
+          "url": "",
+          "doi": "10.2398/j.355342",
+          "citations": 3
+        },
+        {
+          "title": "Does prosody and meaning change corpus annotation? A preregistered replication",
+          "authorNames": [
+            "Lim, W. J.",
+            "Tanaka, A.",
+            "Dam, J. v.",
+            "Haddad, N."
+          ],
+          "authors": "Lim, W. J., Tanaka, A., Dam, J. v., Haddad, N.",
+          "venue": "Journal of Memory and Language",
+          "year": 2026,
+          "url": "",
+          "doi": "10.5293/j.239276",
+          "citations": 3
+        },
+        {
+          "title": "Code-switching in first-year undergraduates: evidence from a 120-participant study",
+          "authorNames": [
+            "Raman, P.",
+            "Tanaka, A."
+          ],
+          "authors": "Raman, P., Tanaka, A.",
           "venue": "Journal of Memory and Language",
           "year": 2025,
-          "url": ""
+          "url": "",
+          "doi": "10.4541/s686895",
+          "citations": 40
         },
         {
           "title": "Measuring code-switching at scale with dialect contact",
           "authorNames": [
             "Tanaka, A.",
-            "Okafor, E.",
-            "Whitfield, S.",
-            "Rahimi, L."
+            "Haddad, N.",
+            "Eze, I.",
+            "Nwosu, A."
           ],
-          "authors": "Tanaka, A., Okafor, E., Whitfield, S., Rahimi, L.",
-          "venue": "Language",
+          "authors": "Tanaka, A., Haddad, N., Eze, I., Nwosu, A.",
+          "venue": "Journal of Memory and Language",
           "year": 2025,
-          "url": ""
+          "url": "",
+          "doi": "10.4469/s526550",
+          "citations": 28
         },
         {
           "title": "Second-language acquisition across three countries: a pooled analysis",
           "authorNames": [
             "Tanaka, A.",
-            "Haddad, N.",
             "Nwosu, A.",
-            "Dam, J. v."
+            "Dalgaard, H.",
+            "Okafor, E."
           ],
-          "authors": "Tanaka, A., Haddad, N., Nwosu, A., Dam, J. v.",
+          "authors": "Tanaka, A., Nwosu, A., Dalgaard, H., Okafor, E.",
           "venue": "Applied Linguistics",
           "year": 2024,
-          "url": ""
+          "url": "",
+          "doi": "10.2351/s465281",
+          "citations": 19
         },
         {
           "title": "Corpus annotation across three countries: a pooled analysis",
           "authorNames": [
-            "Marín, S.",
+            "Adeyemi, T.",
             "Tanaka, A.",
-            "Adeyemi, T."
+            "Raman, P."
           ],
-          "authors": "Marín, S., Tanaka, A., Adeyemi, T.",
+          "authors": "Adeyemi, T., Tanaka, A., Raman, P.",
           "venue": "Linguistic Inquiry",
           "year": 2024,
-          "url": ""
+          "url": "",
+          "doi": "10.8475/j.804039",
+          "citations": 72
         },
         {
           "title": "Measuring corpus annotation at scale with prosody and meaning",
           "authorNames": [
             "Tanaka, A.",
-            "Cho, H.",
-            "Eze, I.",
-            "Dam, J. v."
+            "Mensah, K.",
+            "Rahimi, L.",
+            "Ferreira, T."
           ],
-          "authors": "Tanaka, A., Cho, H., Eze, I., Dam, J. v.",
+          "authors": "Tanaka, A., Mensah, K., Rahimi, L., Ferreira, T.",
           "venue": "Language",
           "year": 2023,
-          "url": ""
+          "url": "",
+          "doi": "10.8741/chb.112202",
+          "citations": 112
         },
         {
           "title": "Does prosody and meaning change code-switching? A preregistered replication",
           "authorNames": [
             "Tanaka, A.",
-            "Okafor, E.",
-            "Marín, S."
+            "Adeyemi, T.",
+            "Dalgaard, H."
           ],
-          "authors": "Tanaka, A., Okafor, E., Marín, S.",
+          "authors": "Tanaka, A., Adeyemi, T., Dalgaard, H.",
           "venue": "Linguistic Inquiry",
           "year": 2023,
-          "url": ""
+          "url": "",
+          "doi": "10.2037/j.727434",
+          "citations": 48
         },
         {
           "title": "Does sign language syntax change corpus annotation? A preregistered replication",
           "authorNames": [
-            "Eze, I.",
+            "Whitfield, S.",
             "Tanaka, A."
           ],
-          "authors": "Eze, I., Tanaka, A.",
+          "authors": "Whitfield, S., Tanaka, A.",
           "venue": "Language",
           "year": 2023,
-          "url": ""
+          "url": "",
+          "doi": "10.8977/j.968524",
+          "citations": 32
         },
         {
           "title": "Dialect contact across three countries: a pooled analysis",
           "authorNames": [
-            "Cho, H.",
+            "Mensah, K.",
             "Tanaka, A.",
-            "Eze, I.",
-            "Dam, J. v."
+            "Whitfield, S.",
+            "Ferreira, T."
           ],
-          "authors": "Cho, H., Tanaka, A., Eze, I., Dam, J. v.",
+          "authors": "Mensah, K., Tanaka, A., Whitfield, S., Ferreira, T.",
           "venue": "Applied Linguistics",
           "year": 2022,
-          "url": ""
+          "url": "",
+          "doi": "10.5760/pnas.953988",
+          "citations": 20
         }
       ],
       "academicRoles": [
         {
-          "title": "Associate professor",
+          "title": "Reader",
           "org": "Kyoto University",
-          "from": 2022,
+          "from": 2021,
           "to": null
         },
         {
-          "title": "Lecturer",
-          "org": "University of Otago",
-          "from": 2018,
-          "to": 2022
+          "title": "Senior lecturer",
+          "org": "Universidade de São Paulo",
+          "from": 2017,
+          "to": 2021
         },
         {
-          "title": "Postdoctoral researcher",
-          "org": "University of Leeds",
-          "from": 2016,
-          "to": 2018
+          "title": "Lecturer",
+          "org": "KU Leuven",
+          "from": 2014,
+          "to": 2017
         }
       ],
       "researchRoles": [
         {
-          "title": "Associate Editor",
-          "org": "Applied Linguistics",
-          "from": 2025,
+          "title": "Standing reviewer",
+          "org": "Language",
+          "from": 2024,
           "to": null
         },
         {
-          "title": "Ethics committee member",
-          "org": "Linguistic Inquiry",
-          "from": 2023,
+          "title": "Grant review panellist",
+          "org": "Journal of Memory and Language",
+          "from": 2021,
           "to": null
         }
       ],
       "memberships": [
         {
-          "body": "Linguistic Society of America",
-          "grade": "Member",
-          "since": 2023
+          "body": "Association for Computational Linguistics",
+          "grade": "Chartered member",
+          "since": 2014
         },
         {
           "body": "Philological Society",
-          "grade": "Chartered member",
-          "since": 2016
-        },
-        {
-          "body": "Association for Computational Linguistics",
           "grade": "Senior member",
-          "since": 2022
+          "since": 2020
         }
       ],
-      "highlights": [],
-      "supervising": [
+      "highlights": [
         {
-          "researcherId": "r14",
-          "role": "PhD student"
-        },
-        {
-          "researcherId": "r13",
-          "role": "Postdoctoral researcher"
-        },
-        {
-          "researcherId": "r16",
-          "role": "PhD student"
+          "title": "Research council grant",
+          "detail": "A four-year programme on sign language syntax.",
+          "year": 2026
         }
       ],
+      "supervising": [],
       "endorsements": {
         "2025": {
-          "r10": "2025-01-14"
+          "r18": "2025-01-14"
         },
         "2026": {
-          "r10": "2026-08-17",
-          "r9": "2026-08-18"
+          "r18": "2026-08-17",
+          "r16": "2026-08-18"
         }
-      }
+      },
+      "discipline": "Science",
+      "visibility": "public"
     },
     {
       "id": "r7",
@@ -1275,91 +1479,116 @@
       "scholar": "",
       "publicId": "HLR-C1GF-Y4T5-S5",
       "interests": [
-        "mobile-money adoption",
-        "risk preferences",
-        "present bias",
-        "nudge durability"
+        [
+          "Population health",
+          "Vaccine uptake"
+        ],
+        [
+          "Population health",
+          "Screening adherence"
+        ],
+        [
+          "Language",
+          "Prosody and meaning"
+        ],
+        [
+          "Language",
+          "Code-switching"
+        ]
       ],
       "publications": [
         {
-          "title": "A field experiment on present bias and informal credit",
+          "title": "Nudge durability across three countries: a pooled analysis",
           "authorNames": [
             "Mensah, K.",
-            "Adeyemi, T.",
-            "Price, J."
-          ],
-          "authors": "Mensah, K., Adeyemi, T., Price, J.",
-          "venue": "Experimental Economics",
-          "year": 2025,
-          "url": ""
-        },
-        {
-          "title": "Does risk preferences change mobile-money adoption? A preregistered replication",
-          "authorNames": [
-            "Eze, I.",
-            "Mensah, K."
-          ],
-          "authors": "Eze, I., Mensah, K.",
-          "venue": "Behavioural Public Policy",
-          "year": 2025,
-          "url": ""
-        },
-        {
-          "title": "Informal credit in shift workers: evidence from a 1200-participant study",
-          "authorNames": [
-            "Mensah, K.",
-            "Marín, S."
-          ],
-          "authors": "Mensah, K., Marín, S.",
-          "venue": "Experimental Economics",
-          "year": 2025,
-          "url": ""
-        },
-        {
-          "title": "Rethinking informal credit: what 120 participants tell us",
-          "authorNames": [
-            "Mensah, K.",
-            "Rahimi, L.",
+            "Boateng, K.",
             "Adeyemi, T."
           ],
-          "authors": "Mensah, K., Rahimi, L., Adeyemi, T.",
-          "venue": "Journal of Economic Behavior & Organization",
-          "year": 2024,
-          "url": ""
+          "authors": "Mensah, K., Boateng, K., Adeyemi, T.",
+          "venue": "Experimental Economics",
+          "year": 2026,
+          "url": "",
+          "doi": "10.9313/s544645",
+          "citations": 8
+        },
+        {
+          "title": "Rethinking nudge durability: what 1200 participants tell us",
+          "authorNames": [
+            "Mensah, K.",
+            "Ackerman, L."
+          ],
+          "authors": "Mensah, K., Ackerman, L.",
+          "venue": "Journal of Development Economics",
+          "year": 2026,
+          "url": "",
+          "doi": "10.2832/pnas.688644",
+          "citations": 14
+        },
+        {
+          "title": "Present bias in new parents: evidence from a 240-participant study",
+          "authorNames": [
+            "Mensah, K.",
+            "Tanaka, A."
+          ],
+          "authors": "Mensah, K., Tanaka, A.",
+          "venue": "Behavioural Public Policy",
+          "year": 2026,
+          "url": "",
+          "doi": "10.1849/chb.293344",
+          "citations": 1
+        },
+        {
+          "title": "Nudge durability across three countries: a pooled analysis",
+          "authorNames": [
+            "Tanaka, A.",
+            "Mensah, K."
+          ],
+          "authors": "Tanaka, A., Mensah, K.",
+          "venue": "Experimental Economics",
+          "year": 2025,
+          "url": "",
+          "doi": "10.3707/chb.714932",
+          "citations": 16
         },
         {
           "title": "Savings defaults in shift workers: evidence from a 120-participant study",
           "authorNames": [
             "Mensah, K.",
-            "Rahimi, L."
+            "Cho, H."
           ],
-          "authors": "Mensah, K., Rahimi, L.",
-          "venue": "Journal of Economic Behavior & Organization",
+          "authors": "Mensah, K., Cho, H.",
+          "venue": "Behavioural Public Policy",
           "year": 2023,
-          "url": ""
+          "url": "",
+          "doi": "10.2327/chb.347961",
+          "citations": 52
         },
         {
-          "title": "Does nudge durability change risk preferences? A preregistered replication",
+          "title": "Rethinking present bias: what 120 participants tell us",
           "authorNames": [
-            "Ackerman, L.",
+            "Dalgaard, H.",
             "Mensah, K.",
-            "Adeyemi, T."
+            "Cho, H."
           ],
-          "authors": "Ackerman, L., Mensah, K., Adeyemi, T.",
-          "venue": "Journal of Development Economics",
+          "authors": "Dalgaard, H., Mensah, K., Cho, H.",
+          "venue": "Experimental Economics",
           "year": 2023,
-          "url": ""
+          "url": "",
+          "doi": "10.3904/pnas.782591",
+          "citations": 20
         },
         {
           "title": "A field experiment on savings defaults and present bias",
           "authorNames": [
-            "Cho, H.",
+            "Tanaka, A.",
             "Mensah, K."
           ],
-          "authors": "Cho, H., Mensah, K.",
+          "authors": "Tanaka, A., Mensah, K.",
           "venue": "Behavioural Public Policy",
           "year": 2022,
-          "url": ""
+          "url": "",
+          "doi": "10.7320/chb.673162",
+          "citations": 10
         }
       ],
       "academicRoles": [
@@ -1371,38 +1600,33 @@
         },
         {
           "title": "Research assistant",
-          "org": "University of Otago",
-          "from": 2019,
+          "org": "KU Leuven",
+          "from": 2018,
           "to": 2022
         }
       ],
       "researchRoles": [
         {
-          "title": "Guest editor, special issue",
-          "org": "Journal of Economic Behavior & Organization",
-          "from": 2023,
+          "title": "Editorial board member",
+          "org": "Journal of Development Economics",
+          "from": 2022,
           "to": null
         },
         {
-          "title": "Grant review panellist",
-          "org": "Experimental Economics",
-          "from": 2020,
+          "title": "Deputy Editor",
+          "org": "Journal of Economic Behavior & Organization",
+          "from": 2025,
           "to": null
         }
       ],
       "memberships": [
         {
-          "body": "Royal Economic Society",
-          "grade": "Member",
-          "since": 2022
+          "body": "African Economic Research Consortium",
+          "grade": "Senior member",
+          "since": 2018
         },
         {
           "body": "Economic Science Association",
-          "grade": "Senior member",
-          "since": 2023
-        },
-        {
-          "body": "African Economic Research Consortium",
           "grade": "Senior member",
           "since": 2022
         }
@@ -1410,23 +1634,30 @@
       "highlights": [
         {
           "title": "Research council grant",
-          "detail": "A four-year programme on present bias.",
-          "year": 2023
+          "detail": "A four-year programme on risk preferences.",
+          "year": 2025
+        },
+        {
+          "title": "Open data award",
+          "detail": "For releasing the full present bias dataset and analysis code.",
+          "year": 2022
         }
       ],
       "supervising": [],
       "endorsements": {
         "2025": {
-          "r2": "2025-07-17"
+          "r3": "2025-07-17"
         },
         "2026": {
-          "r16": "2026-08-10",
-          "r6": "2026-03-18",
-          "r12": "2026-09-17",
-          "r15": "2026-02-18",
-          "r14": "2026-07-15"
+          "r12": "2026-09-18",
+          "r13": "2026-08-11",
+          "r17": "2026-09-16",
+          "r1": "2026-06-17",
+          "r3": "2026-06-11"
         }
-      }
+      },
+      "discipline": "Science",
+      "visibility": "public"
     },
     {
       "id": "r8",
@@ -1446,173 +1677,235 @@
       "scholar": "",
       "publicId": "HLR-ZNZ4-2RNE-A3",
       "interests": [
-        "nudge durability",
-        "mobile-money adoption",
-        "risk preferences",
-        "present bias"
+        [
+          "Language",
+          "Second-language acquisition"
+        ],
+        [
+          "Language",
+          "Prosody and meaning"
+        ],
+        [
+          "Behavioural science",
+          "Habit formation"
+        ],
+        [
+          "Population health",
+          "Vaccine uptake"
+        ]
       ],
       "publications": [
         {
-          "title": "Measuring present bias at scale with informal credit",
+          "title": "Risk preferences in remote teams: evidence from a 512-participant study",
           "authorNames": [
-            "Price, J.",
             "Eze, I.",
-            "Okafor, E.",
-            "Ackerman, L."
+            "Tanaka, A."
           ],
-          "authors": "Price, J., Eze, I., Okafor, E., Ackerman, L.",
-          "venue": "Journal of Economic Behavior & Organization",
+          "authors": "Eze, I., Tanaka, A.",
+          "venue": "Behavioural Public Policy",
           "year": 2026,
-          "url": ""
+          "url": "",
+          "doi": "10.6474/j.723407",
+          "citations": 9
         },
         {
-          "title": "Does risk preferences change present bias? A preregistered replication",
+          "title": "A field experiment on risk preferences and mobile-money adoption",
           "authorNames": [
-            "Whitfield, S.",
             "Eze, I.",
-            "Marín, S.",
-            "Haddad, N."
+            "Nwosu, A.",
+            "Okafor, E."
           ],
-          "authors": "Whitfield, S., Eze, I., Marín, S., Haddad, N.",
-          "venue": "Journal of Development Economics",
+          "authors": "Eze, I., Nwosu, A., Okafor, E.",
+          "venue": "Experimental Economics",
           "year": 2026,
-          "url": ""
+          "url": "",
+          "doi": "10.6613/pnas.653977",
+          "citations": 2
         },
         {
-          "title": "Does nudge durability change mobile-money adoption? A preregistered replication",
+          "title": "Rethinking mobile-money adoption: what 120 participants tell us",
           "authorNames": [
+            "Lim, W. J.",
             "Eze, I.",
-            "Ackerman, L."
+            "Adeyemi, T.",
+            "Tanaka, A."
           ],
-          "authors": "Eze, I., Ackerman, L.",
+          "authors": "Lim, W. J., Eze, I., Adeyemi, T., Tanaka, A.",
           "venue": "Experimental Economics",
           "year": 2025,
-          "url": ""
+          "url": "",
+          "doi": "10.1435/chb.493981",
+          "citations": 24
+        },
+        {
+          "title": "Does nudge durability change informal credit? A preregistered replication",
+          "authorNames": [
+            "Eze, I.",
+            "Dalgaard, H."
+          ],
+          "authors": "Eze, I., Dalgaard, H.",
+          "venue": "Journal of Development Economics",
+          "year": 2024,
+          "url": "",
+          "doi": "10.7186/j.389306",
+          "citations": 12
         },
         {
           "title": "Nudge durability across three countries: a pooled analysis",
           "authorNames": [
-            "Mensah, K.",
-            "Eze, I."
-          ],
-          "authors": "Mensah, K., Eze, I.",
-          "venue": "Journal of Development Economics",
-          "year": 2025,
-          "url": ""
-        },
-        {
-          "title": "Does nudge durability change present bias? A preregistered replication",
-          "authorNames": [
             "Eze, I.",
-            "Dam, J. v."
+            "Tanaka, A.",
+            "Marín, S.",
+            "Haddad, N."
           ],
-          "authors": "Eze, I., Dam, J. v.",
-          "venue": "Journal of Development Economics",
+          "authors": "Eze, I., Tanaka, A., Marín, S., Haddad, N.",
+          "venue": "Behavioural Public Policy",
           "year": 2024,
-          "url": ""
+          "url": "",
+          "doi": "10.2828/s652034",
+          "citations": 39
         },
         {
-          "title": "Does mobile-money adoption change present bias? A preregistered replication",
+          "title": "Rethinking savings defaults: what 240 participants tell us",
           "authorNames": [
-            "Lim, W. J.",
+            "Marín, S.",
             "Eze, I.",
-            "Okafor, E.",
             "Mehta, R."
           ],
-          "authors": "Lim, W. J., Eze, I., Okafor, E., Mehta, R.",
-          "venue": "Journal of Economic Behavior & Organization",
+          "authors": "Marín, S., Eze, I., Mehta, R.",
+          "venue": "Experimental Economics",
+          "year": 2024,
+          "url": "",
+          "doi": "10.4576/chb.270053",
+          "citations": 24
+        },
+        {
+          "title": "A field experiment on present bias and nudge durability",
+          "authorNames": [
+            "Haddad, N.",
+            "Eze, I.",
+            "Mehta, R.",
+            "Lim, W. J."
+          ],
+          "authors": "Haddad, N., Eze, I., Mehta, R., Lim, W. J.",
+          "venue": "Experimental Economics",
           "year": 2023,
-          "url": ""
+          "url": "",
+          "doi": "10.1429/s500103",
+          "citations": 34
         },
         {
           "title": "Does risk preferences change nudge durability? A preregistered replication",
           "authorNames": [
             "Eze, I.",
-            "Okafor, E.",
-            "Ackerman, L."
+            "Marín, S.",
+            "Adeyemi, T."
           ],
-          "authors": "Eze, I., Okafor, E., Ackerman, L.",
-          "venue": "Journal of Economic Behavior & Organization",
+          "authors": "Eze, I., Marín, S., Adeyemi, T.",
+          "venue": "Journal of Development Economics",
           "year": 2022,
-          "url": ""
+          "url": "",
+          "doi": "10.4789/chb.502992",
+          "citations": 70
         },
         {
-          "title": "Rethinking savings defaults: what 240 participants tell us",
+          "title": "Does informal credit change nudge durability? A preregistered replication",
           "authorNames": [
-            "Dam, J. v.",
             "Eze, I.",
-            "Ackerman, L.",
-            "Whitfield, S."
+            "Dalgaard, H.",
+            "Marín, S.",
+            "Nwosu, A."
           ],
-          "authors": "Dam, J. v., Eze, I., Ackerman, L., Whitfield, S.",
-          "venue": "Journal of Economic Behavior & Organization",
+          "authors": "Eze, I., Dalgaard, H., Marín, S., Nwosu, A.",
+          "venue": "Experimental Economics",
           "year": 2022,
-          "url": ""
+          "url": "",
+          "doi": "10.5874/s311157",
+          "citations": 80
         }
       ],
       "academicRoles": [
         {
           "title": "Associate professor",
           "org": "Lagos Business School",
-          "from": 2023,
+          "from": 2022,
           "to": null
         },
         {
           "title": "Senior lecturer",
-          "org": "University of Otago",
-          "from": 2020,
-          "to": 2023
+          "org": "University of Leeds",
+          "from": 2019,
+          "to": 2022
         },
         {
-          "title": "Postdoctoral researcher",
-          "org": "University of Otago",
-          "from": 2017,
-          "to": 2020
+          "title": "Research assistant",
+          "org": "University of Leeds",
+          "from": 2015,
+          "to": 2019
         }
       ],
       "researchRoles": [
         {
+          "title": "Associate Editor",
+          "org": "Experimental Economics",
+          "from": 2019,
+          "to": null
+        },
+        {
           "title": "Programme committee member",
-          "org": "Journal of Economic Behavior & Organization",
+          "org": "Experimental Economics",
           "from": 2023,
           "to": null
         }
       ],
       "memberships": [
         {
-          "body": "Royal Economic Society",
-          "grade": "Chartered member",
-          "since": 2023
+          "body": "African Economic Research Consortium",
+          "grade": "Senior member",
+          "since": 2012
         },
         {
           "body": "Economic Science Association",
-          "grade": "Chartered member",
-          "since": 2022
+          "grade": "Senior member",
+          "since": 2019
         }
       ],
-      "highlights": [],
-      "supervising": [
+      "highlights": [
         {
-          "researcherId": "r10",
-          "role": "PhD student"
+          "title": "Best paper award, Experimental Economics",
+          "detail": "Awarded for work on nudge durability.",
+          "year": 2023
         },
         {
-          "researcherId": "r14",
+          "title": "Invited keynote, Journal of Development Economics",
+          "detail": "On what mobile-money adoption means for practice.",
+          "year": 2021
+        }
+      ],
+      "supervising": [
+        {
+          "researcherId": "r13",
+          "role": "MRes student"
+        },
+        {
+          "researcherId": "r10",
           "role": "MRes student"
         }
       ],
       "endorsements": {
         "2025": {
-          "r10": "2025-05-18"
+          "r19": "2025-05-18"
         },
         "2026": {
-          "r12": "2026-01-16",
-          "r1": "2026-02-14",
-          "r6": "2026-09-13",
-          "r10": "2026-06-13",
-          "r11": "2026-07-15"
+          "r2": "2026-02-14",
+          "r12": "2026-09-13",
+          "r20": "2026-06-13",
+          "r15": "2026-07-15",
+          "r17": "2026-08-11"
         }
-      }
+      },
+      "discipline": "Science",
+      "visibility": "public"
     },
     {
       "id": "r9",
@@ -1632,248 +1925,225 @@
       "scholar": "",
       "publicId": "HLR-9DCX-M0VR-ZX",
       "interests": [
-        "present bias",
-        "mobile-money adoption",
-        "nudge durability",
-        "risk preferences"
+        [
+          "Behavioural science",
+          "Nudge durability"
+        ],
+        [
+          "Behavioural science",
+          "Savings defaults"
+        ],
+        [
+          "Language",
+          "Prosody and meaning"
+        ],
+        [
+          "Population health",
+          "Screening adherence"
+        ],
+        [
+          "Population health",
+          "Health literacy"
+        ]
       ],
       "publications": [
-        {
-          "title": "Measuring informal credit at scale with risk preferences",
-          "authorNames": [
-            "Lim, W. J.",
-            "Adeyemi, T.",
-            "Mehta, R."
-          ],
-          "authors": "Lim, W. J., Adeyemi, T., Mehta, R.",
-          "venue": "Journal of Economic Behavior & Organization",
-          "year": 2026,
-          "url": ""
-        },
-        {
-          "title": "Measuring risk preferences at scale with mobile-money adoption",
-          "authorNames": [
-            "Tanaka, A.",
-            "Adeyemi, T.",
-            "Whitfield, S."
-          ],
-          "authors": "Tanaka, A., Adeyemi, T., Whitfield, S.",
-          "venue": "Experimental Economics",
-          "year": 2026,
-          "url": ""
-        },
-        {
-          "title": "A field experiment on informal credit and present bias",
-          "authorNames": [
-            "Adeyemi, T.",
-            "Haddad, N.",
-            "Mehta, R.",
-            "Tanaka, A."
-          ],
-          "authors": "Adeyemi, T., Haddad, N., Mehta, R., Tanaka, A.",
-          "venue": "Journal of Economic Behavior & Organization",
-          "year": 2026,
-          "url": ""
-        },
-        {
-          "title": "A field experiment on nudge durability and mobile-money adoption",
-          "authorNames": [
-            "Adeyemi, T.",
-            "Marín, S."
-          ],
-          "authors": "Adeyemi, T., Marín, S.",
-          "venue": "Journal of Development Economics",
-          "year": 2025,
-          "url": ""
-        },
         {
           "title": "Rethinking present bias: what 240 participants tell us",
           "authorNames": [
             "Adeyemi, T.",
-            "Haddad, N.",
-            "Eze, I."
+            "Raman, P."
           ],
-          "authors": "Adeyemi, T., Haddad, N., Eze, I.",
-          "venue": "Behavioural Public Policy",
-          "year": 2025,
-          "url": ""
+          "authors": "Adeyemi, T., Raman, P.",
+          "venue": "Journal of Economic Behavior & Organization",
+          "year": 2026,
+          "url": "",
+          "doi": "10.1761/pnas.698736",
+          "citations": 34
         },
         {
-          "title": "Mobile-money adoption in secondary school pupils: evidence from a 804-participant study",
-          "authorNames": [
-            "Mehta, R.",
-            "Adeyemi, T."
-          ],
-          "authors": "Mehta, R., Adeyemi, T.",
-          "venue": "Behavioural Public Policy",
-          "year": 2025,
-          "url": ""
-        },
-        {
-          "title": "Nudge durability across three countries: a pooled analysis",
+          "title": "Present bias in new parents: evidence from a 804-participant study",
           "authorNames": [
             "Adeyemi, T.",
-            "Tanaka, A.",
-            "Price, J."
+            "Mensah, K.",
+            "Raman, P."
           ],
-          "authors": "Adeyemi, T., Tanaka, A., Price, J.",
-          "venue": "Behavioural Public Policy",
-          "year": 2024,
-          "url": ""
+          "authors": "Adeyemi, T., Mensah, K., Raman, P.",
+          "venue": "Journal of Development Economics",
+          "year": 2025,
+          "url": "",
+          "doi": "10.1666/pnas.885650",
+          "citations": 10
         },
         {
-          "title": "A field experiment on informal credit and present bias",
+          "title": "Nudge durability in shift workers: evidence from a 380-participant study",
           "authorNames": [
-            "Whitfield, S.",
+            "Rahimi, L.",
             "Adeyemi, T.",
-            "Cho, H.",
-            "Tanaka, A."
+            "Boateng, K."
           ],
-          "authors": "Whitfield, S., Adeyemi, T., Cho, H., Tanaka, A.",
+          "authors": "Rahimi, L., Adeyemi, T., Boateng, K.",
           "venue": "Experimental Economics",
           "year": 2024,
-          "url": ""
+          "url": "",
+          "doi": "10.8668/s118235",
+          "citations": 42
         },
         {
-          "title": "Does nudge durability change risk preferences? A preregistered replication",
+          "title": "Risk preferences in new parents: evidence from a 240-participant study",
           "authorNames": [
-            "Nwosu, A.",
+            "Ackerman, L.",
             "Adeyemi, T.",
-            "Dam, J. v."
+            "Mehta, R."
           ],
-          "authors": "Nwosu, A., Adeyemi, T., Dam, J. v.",
-          "venue": "Experimental Economics",
+          "authors": "Ackerman, L., Adeyemi, T., Mehta, R.",
+          "venue": "Behavioural Public Policy",
           "year": 2024,
-          "url": ""
+          "url": "",
+          "doi": "10.7888/chb.936205",
+          "citations": 21
         },
         {
           "title": "A field experiment on informal credit and mobile-money adoption",
           "authorNames": [
             "Adeyemi, T.",
-            "Dam, J. v.",
-            "Marín, S."
+            "Ferreira, T.",
+            "Mensah, K."
           ],
-          "authors": "Adeyemi, T., Dam, J. v., Marín, S.",
+          "authors": "Adeyemi, T., Ferreira, T., Mensah, K.",
           "venue": "Behavioural Public Policy",
           "year": 2023,
-          "url": ""
+          "url": "",
+          "doi": "10.4591/chb.816323",
+          "citations": 16
         },
         {
           "title": "A field experiment on mobile-money adoption and nudge durability",
           "authorNames": [
             "Adeyemi, T.",
-            "Whitfield, S.",
-            "Nwosu, A."
+            "Nwosu, A.",
+            "Okafor, E."
           ],
-          "authors": "Adeyemi, T., Whitfield, S., Nwosu, A.",
+          "authors": "Adeyemi, T., Nwosu, A., Okafor, E.",
           "venue": "Behavioural Public Policy",
           "year": 2023,
-          "url": ""
+          "url": "",
+          "doi": "10.3328/j.550833",
+          "citations": 80
         },
         {
           "title": "Does risk preferences change mobile-money adoption? A preregistered replication",
           "authorNames": [
             "Adeyemi, T.",
-            "Eze, I.",
-            "Nwosu, A.",
-            "Haddad, N."
+            "Raman, P.",
+            "Ackerman, L.",
+            "Mehta, R."
           ],
-          "authors": "Adeyemi, T., Eze, I., Nwosu, A., Haddad, N.",
-          "venue": "Journal of Development Economics",
+          "authors": "Adeyemi, T., Raman, P., Ackerman, L., Mehta, R.",
+          "venue": "Behavioural Public Policy",
           "year": 2023,
-          "url": ""
+          "url": "",
+          "doi": "10.7526/pnas.250060",
+          "citations": 64
         },
         {
           "title": "Does mobile-money adoption change nudge durability? A preregistered replication",
           "authorNames": [
-            "Mehta, R.",
+            "Dam, J. v.",
             "Adeyemi, T.",
-            "Marín, S."
+            "Eze, I."
           ],
-          "authors": "Mehta, R., Adeyemi, T., Marín, S.",
+          "authors": "Dam, J. v., Adeyemi, T., Eze, I.",
           "venue": "Journal of Development Economics",
           "year": 2022,
-          "url": ""
+          "url": "",
+          "doi": "10.7674/pnas.873721",
+          "citations": 130
         },
         {
           "title": "Rethinking mobile-money adoption: what 512 participants tell us",
           "authorNames": [
-            "Mehta, R.",
+            "Haddad, N.",
             "Adeyemi, T.",
-            "Marín, S."
+            "Mensah, K."
           ],
-          "authors": "Mehta, R., Adeyemi, T., Marín, S.",
+          "authors": "Haddad, N., Adeyemi, T., Mensah, K.",
           "venue": "Experimental Economics",
           "year": 2022,
-          "url": ""
+          "url": "",
+          "doi": "10.8395/pnas.661107",
+          "citations": 10
         }
       ],
       "academicRoles": [
         {
           "title": "Research assistant",
           "org": "Lagos Business School",
-          "from": 2021,
+          "from": 2020,
           "to": null
         }
       ],
       "researchRoles": [
         {
-          "title": "Associate Editor",
-          "org": "Experimental Economics",
-          "from": 2025,
+          "title": "Editorial board member",
+          "org": "Behavioural Public Policy",
+          "from": 2021,
           "to": null
         },
         {
-          "title": "Editorial board member",
+          "title": "Associate Editor",
           "org": "Experimental Economics",
+          "from": 2021,
+          "to": null
+        },
+        {
+          "title": "Standing reviewer",
+          "org": "Journal of Development Economics",
           "from": 2023,
           "to": null
         },
         {
-          "title": "Editorial board member",
-          "org": "Experimental Economics",
-          "from": 2019,
-          "to": null
-        },
-        {
-          "title": "Grant review panellist",
-          "org": "Behavioural Public Policy",
-          "from": 2025,
+          "title": "Standing reviewer",
+          "org": "Journal of Economic Behavior & Organization",
+          "from": 2024,
           "to": null
         }
       ],
       "memberships": [
         {
-          "body": "Royal Economic Society",
+          "body": "Economic Science Association",
+          "grade": "Chartered member",
+          "since": 2017
+        },
+        {
+          "body": "African Economic Research Consortium",
           "grade": "Senior member",
-          "since": 2015
+          "since": 2014
         }
       ],
       "highlights": [
         {
-          "title": "Invited keynote, Journal of Economic Behavior & Organization",
-          "detail": "On what present bias means for practice.",
-          "year": 2023
+          "title": "Open data award",
+          "detail": "For releasing the full nudge durability dataset and analysis code.",
+          "year": 2022
         }
       ],
       "supervising": [],
       "endorsements": {
         "2025": {
-          "r12": "2025-03-13",
-          "r11": "2025-06-14",
-          "r3": "2025-02-11",
-          "r4": "2025-02-16",
-          "r6": "2025-03-18",
-          "r14": "2025-02-18",
-          "r7": "2025-07-11"
+          "r20": "2025-07-12",
+          "r6": "2025-04-15",
+          "r7": "2025-05-11",
+          "r13": "2025-02-11",
+          "r16": "2025-07-12",
+          "r12": "2025-09-11",
+          "r3": "2025-09-16"
         },
         "2026": {
-          "r5": "2026-05-14",
-          "r8": "2026-07-15",
-          "r10": "2026-07-11",
-          "r14": "2026-02-12"
+          "r13": "2026-05-17"
         }
-      }
+      },
+      "discipline": "Science",
+      "visibility": "public"
     },
     {
       "id": "r10",
@@ -1910,180 +2180,265 @@
       "scholar": "",
       "publicId": "HLR-EPR5-RT6G-S3",
       "interests": [
-        "longitudinal cohorts",
-        "open data practice",
-        "replication",
-        "participant retention"
+        [
+          "Language",
+          "Second-language acquisition"
+        ]
       ],
       "publications": [
         {
-          "title": "Does participant retention change field experiments? A preregistered replication",
-          "authorNames": [
-            "Rahimi, L.",
-            "Dam, J. v."
-          ],
-          "authors": "Rahimi, L., Dam, J. v.",
-          "venue": "Scientific Reports",
-          "year": 2026,
-          "url": ""
-        },
-        {
-          "title": "Does open data practice change measurement error? A preregistered replication",
+          "title": "Participant retention in remote teams: evidence from a 240-participant study",
           "authorNames": [
             "Dam, J. v.",
-            "Tanaka, A."
+            "Lim, W. J.",
+            "Mehta, R."
           ],
-          "authors": "Dam, J. v., Tanaka, A.",
+          "authors": "Dam, J. v., Lim, W. J., Mehta, R.",
+          "venue": "Royal Society Open Science",
+          "year": 2026,
+          "url": "",
+          "doi": "10.6088/pnas.587633",
+          "citations": 5
+        },
+        {
+          "title": "Measurement error across three countries: a pooled analysis",
+          "authorNames": [
+            "Dam, J. v.",
+            "Mehta, R."
+          ],
+          "authors": "Dam, J. v., Mehta, R.",
           "venue": "Nature Human Behaviour",
           "year": 2026,
-          "url": ""
+          "url": "",
+          "doi": "10.1734/pnas.775539",
+          "citations": 6
         },
         {
-          "title": "Rethinking longitudinal cohorts: what 804 participants tell us",
+          "title": "Measuring open data practice at scale with field experiments",
           "authorNames": [
-            "Mensah, K.",
             "Dam, J. v.",
-            "Ackerman, L."
+            "Boateng, K."
           ],
-          "authors": "Mensah, K., Dam, J. v., Ackerman, L.",
-          "venue": "PLOS ONE",
+          "authors": "Dam, J. v., Boateng, K.",
+          "venue": "Nature Human Behaviour",
+          "year": 2026,
+          "url": "",
+          "doi": "10.4637/j.118804",
+          "citations": 18
+        },
+        {
+          "title": "Measuring replication at scale with open data practice",
+          "authorNames": [
+            "Dam, J. v.",
+            "Eze, I.",
+            "Mehta, R.",
+            "Tanaka, A."
+          ],
+          "authors": "Dam, J. v., Eze, I., Mehta, R., Tanaka, A.",
+          "venue": "Scientific Reports",
           "year": 2025,
-          "url": ""
+          "url": "",
+          "doi": "10.1425/pnas.914536",
+          "citations": 18
+        },
+        {
+          "title": "Measuring field experiments at scale with measurement error",
+          "authorNames": [
+            "Dam, J. v.",
+            "Mehta, R.",
+            "Lim, W. J.",
+            "Whitfield, S."
+          ],
+          "authors": "Dam, J. v., Mehta, R., Lim, W. J., Whitfield, S.",
+          "venue": "Scientific Reports",
+          "year": 2025,
+          "url": "",
+          "doi": "10.4682/pnas.297115",
+          "citations": 6
+        },
+        {
+          "title": "Measurement error in shift workers: evidence from a 804-participant study",
+          "authorNames": [
+            "Dam, J. v.",
+            "Eze, I."
+          ],
+          "authors": "Dam, J. v., Eze, I.",
+          "venue": "Nature Human Behaviour",
+          "year": 2025,
+          "url": "",
+          "doi": "10.3734/chb.851911",
+          "citations": 30
         },
         {
           "title": "Measuring longitudinal cohorts at scale with open data practice",
           "authorNames": [
             "Dam, J. v.",
-            "Cho, H.",
-            "Haddad, N.",
-            "Whitfield, S."
+            "Tanaka, A.",
+            "Rahimi, L.",
+            "Dalgaard, H."
           ],
-          "authors": "Dam, J. v., Cho, H., Haddad, N., Whitfield, S.",
+          "authors": "Dam, J. v., Tanaka, A., Rahimi, L., Dalgaard, H.",
           "venue": "Scientific Reports",
           "year": 2024,
-          "url": ""
+          "url": "",
+          "doi": "10.6970/j.988609",
+          "citations": 18
         },
         {
-          "title": "Longitudinal cohorts in shift workers: evidence from a 120-participant study",
+          "title": "Measurement error across three countries: a pooled analysis",
           "authorNames": [
-            "Dam, J. v.",
-            "Okafor, E.",
-            "Marín, S."
-          ],
-          "authors": "Dam, J. v., Okafor, E., Marín, S.",
-          "venue": "PLOS ONE",
-          "year": 2024,
-          "url": ""
-        },
-        {
-          "title": "Measuring measurement error at scale with participant retention",
-          "authorNames": [
-            "Haddad, N.",
+            "Adeyemi, T.",
             "Dam, J. v."
           ],
-          "authors": "Haddad, N., Dam, J. v.",
-          "venue": "PLOS ONE",
+          "authors": "Adeyemi, T., Dam, J. v.",
+          "venue": "Royal Society Open Science",
           "year": 2024,
-          "url": ""
+          "url": "",
+          "doi": "10.5177/pnas.371020",
+          "citations": 27
+        },
+        {
+          "title": "Participant retention across three countries: a pooled analysis",
+          "authorNames": [
+            "Dam, J. v.",
+            "Eze, I."
+          ],
+          "authors": "Dam, J. v., Eze, I.",
+          "venue": "Nature Human Behaviour",
+          "year": 2024,
+          "url": "",
+          "doi": "10.7768/pnas.820096",
+          "citations": 18
         },
         {
           "title": "Field experiments across three countries: a pooled analysis",
           "authorNames": [
             "Dam, J. v.",
-            "Haddad, N.",
+            "Boateng, K.",
             "Price, J.",
-            "Eze, I."
+            "Lim, W. J."
           ],
-          "authors": "Dam, J. v., Haddad, N., Price, J., Eze, I.",
+          "authors": "Dam, J. v., Boateng, K., Price, J., Lim, W. J.",
           "venue": "Scientific Reports",
           "year": 2023,
-          "url": ""
+          "url": "",
+          "doi": "10.6560/j.255456",
+          "citations": 48
         },
         {
           "title": "Rethinking replication: what 804 participants tell us",
           "authorNames": [
-            "Lim, W. J.",
+            "Adeyemi, T.",
             "Dam, J. v.",
-            "Mehta, R."
+            "Haddad, N."
           ],
-          "authors": "Lim, W. J., Dam, J. v., Mehta, R.",
+          "authors": "Adeyemi, T., Dam, J. v., Haddad, N.",
           "venue": "Nature Human Behaviour",
           "year": 2022,
-          "url": ""
+          "url": "",
+          "doi": "10.1632/chb.254525",
+          "citations": 75
         },
         {
           "title": "Does longitudinal cohorts change replication? A preregistered replication",
           "authorNames": [
             "Dam, J. v.",
-            "Haddad, N."
+            "Boateng, K."
           ],
-          "authors": "Dam, J. v., Haddad, N.",
+          "authors": "Dam, J. v., Boateng, K.",
           "venue": "PLOS ONE",
           "year": 2022,
-          "url": ""
+          "url": "",
+          "doi": "10.6586/s333416",
+          "citations": 140
         }
       ],
       "academicRoles": [
         {
           "title": "Lecturer",
           "org": "Utrecht University",
-          "from": 2023,
+          "from": 2024,
           "to": null
         },
         {
           "title": "Postdoctoral researcher",
           "org": "Universidade de São Paulo",
-          "from": 2019,
-          "to": 2023
+          "from": 2021,
+          "to": 2024
         },
         {
           "title": "Research assistant",
-          "org": "Universidade de São Paulo",
-          "from": 2015,
-          "to": 2019
+          "org": "University of Otago",
+          "from": 2017,
+          "to": 2021
         }
       ],
       "researchRoles": [
         {
-          "title": "Standing reviewer",
+          "title": "Guest editor, special issue",
+          "org": "Royal Society Open Science",
+          "from": 2020,
+          "to": null
+        },
+        {
+          "title": "Editorial board member",
           "org": "PLOS ONE",
+          "from": 2023,
+          "to": null
+        },
+        {
+          "title": "Editorial board member",
+          "org": "Royal Society Open Science",
+          "from": 2021,
+          "to": null
+        },
+        {
+          "title": "Ethics committee member",
+          "org": "Scientific Reports",
           "from": 2024,
           "to": null
         }
       ],
       "memberships": [
         {
-          "body": "UK Reproducibility Network",
-          "grade": "Member",
-          "since": 2015
-        },
-        {
           "body": "Royal Society of Arts",
-          "grade": "Chartered member",
-          "since": 2023
-        }
-      ],
-      "highlights": [
-        {
-          "title": "Best paper award, Nature Human Behaviour",
-          "detail": "Awarded for work on open data practice.",
-          "year": 2025
+          "grade": "Senior member",
+          "since": 2024
         },
         {
-          "title": "Research council grant",
-          "detail": "A four-year programme on open data practice.",
-          "year": 2024
+          "body": "UK Reproducibility Network",
+          "grade": "Chartered member",
+          "since": 2014
+        },
+        {
+          "body": "Academy of Social Sciences",
+          "grade": "Fellow",
+          "since": 2012
         }
       ],
-      "supervising": [],
+      "highlights": [],
+      "supervising": [
+        {
+          "researcherId": "r5",
+          "role": "Postdoctoral researcher"
+        }
+      ],
       "endorsements": {
         "2025": {
-          "r16": "2025-01-13"
+          "r2": "2025-04-12"
         },
         "2026": {
-          "r8": "2026-02-11"
+          "r4": "2026-06-12",
+          "r3": "2026-08-12",
+          "r16": "2026-07-13",
+          "r8": "2026-02-17",
+          "r5": "2026-04-14",
+          "r6": "2026-05-12",
+          "r19": "2026-01-10"
         }
-      }
+      },
+      "discipline": "Science",
+      "visibility": "public"
     },
     {
       "id": "r11",
@@ -2103,83 +2458,113 @@
       "scholar": "",
       "publicId": "HLR-PEYQ-FXPG-HB",
       "interests": [
-        "replication",
-        "measurement error",
-        "longitudinal cohorts",
-        "open data practice"
+        [
+          "Language",
+          "Second-language acquisition"
+        ],
+        [
+          "Language",
+          "Code-switching"
+        ],
+        [
+          "Behavioural science",
+          "Present bias"
+        ],
+        [
+          "Behavioural science",
+          "Habit formation"
+        ],
+        [
+          "Cognition",
+          "Sleep and consolidation"
+        ],
+        [
+          "Cognition",
+          "Attention under load"
+        ]
       ],
       "publications": [
         {
-          "title": "Longitudinal cohorts in remote teams: evidence from a 512-participant study",
+          "title": "Does participant retention change longitudinal cohorts? A preregistered replication",
           "authorNames": [
             "Haddad, N.",
-            "Nwosu, A."
-          ],
-          "authors": "Haddad, N., Nwosu, A.",
-          "venue": "Scientific Reports",
-          "year": 2026,
-          "url": ""
-        },
-        {
-          "title": "A field experiment on open data practice and participant retention",
-          "authorNames": [
-            "Eze, I.",
-            "Haddad, N.",
-            "Mehta, R.",
-            "Price, J."
-          ],
-          "authors": "Eze, I., Haddad, N., Mehta, R., Price, J.",
-          "venue": "Scientific Reports",
-          "year": 2025,
-          "url": ""
-        },
-        {
-          "title": "Rethinking open data practice: what 804 participants tell us",
-          "authorNames": [
-            "Haddad, N.",
-            "Tanaka, A.",
-            "Eze, I."
-          ],
-          "authors": "Haddad, N., Tanaka, A., Eze, I.",
-          "venue": "Nature Human Behaviour",
-          "year": 2025,
-          "url": ""
-        },
-        {
-          "title": "Measuring open data practice at scale with participant retention",
-          "authorNames": [
-            "Haddad, N.",
-            "Adeyemi, T.",
-            "Marín, S."
-          ],
-          "authors": "Haddad, N., Adeyemi, T., Marín, S.",
-          "venue": "Royal Society Open Science",
-          "year": 2024,
-          "url": ""
-        },
-        {
-          "title": "Does measurement error change field experiments? A preregistered replication",
-          "authorNames": [
-            "Nwosu, A.",
-            "Haddad, N."
-          ],
-          "authors": "Nwosu, A., Haddad, N.",
-          "venue": "PLOS ONE",
-          "year": 2023,
-          "url": ""
-        },
-        {
-          "title": "Measuring replication at scale with participant retention",
-          "authorNames": [
-            "Haddad, N.",
-            "Tanaka, A.",
-            "Okafor, E.",
             "Whitfield, S."
           ],
-          "authors": "Haddad, N., Tanaka, A., Okafor, E., Whitfield, S.",
+          "authors": "Haddad, N., Whitfield, S.",
           "venue": "Scientific Reports",
-          "year": 2023,
-          "url": ""
+          "year": 2026,
+          "url": "",
+          "doi": "10.4746/chb.837223",
+          "citations": 1
+        },
+        {
+          "title": "Measuring longitudinal cohorts at scale with open data practice",
+          "authorNames": [
+            "Haddad, N.",
+            "Cho, H."
+          ],
+          "authors": "Haddad, N., Cho, H.",
+          "venue": "Scientific Reports",
+          "year": 2026,
+          "url": "",
+          "doi": "10.1476/pnas.502462",
+          "citations": 2
+        },
+        {
+          "title": "Measuring field experiments at scale with participant retention",
+          "authorNames": [
+            "Haddad, N.",
+            "Dam, J. v.",
+            "Okafor, E."
+          ],
+          "authors": "Haddad, N., Dam, J. v., Okafor, E.",
+          "venue": "Nature Human Behaviour",
+          "year": 2025,
+          "url": "",
+          "doi": "10.2272/s263601",
+          "citations": 32
+        },
+        {
+          "title": "Participant retention across three countries: a pooled analysis",
+          "authorNames": [
+            "Haddad, N.",
+            "Boateng, K.",
+            "Cho, H."
+          ],
+          "authors": "Haddad, N., Boateng, K., Cho, H.",
+          "venue": "Nature Human Behaviour",
+          "year": 2025,
+          "url": "",
+          "doi": "10.9881/chb.669143",
+          "citations": 20
+        },
+        {
+          "title": "Does participant retention change longitudinal cohorts? A preregistered replication",
+          "authorNames": [
+            "Haddad, N.",
+            "Raman, P."
+          ],
+          "authors": "Haddad, N., Raman, P.",
+          "venue": "Scientific Reports",
+          "year": 2025,
+          "url": "",
+          "doi": "10.7157/j.856607",
+          "citations": 2
+        },
+        {
+          "title": "Participant retention in remote teams: evidence from a 240-participant study",
+          "authorNames": [
+            "Haddad, N.",
+            "Mensah, K.",
+            "Whitfield, S.",
+            "Lim, W. J."
+          ],
+          "authors": "Haddad, N., Mensah, K., Whitfield, S., Lim, W. J.",
+          "venue": "Scientific Reports",
+          "year": 2024,
+          "url": "",
+          "doi": "10.7381/j.512091",
+          "citations": 21
         },
         {
           "title": "Participant retention across three countries: a pooled analysis",
@@ -2190,97 +2575,99 @@
           "authors": "Haddad, N., Nwosu, A.",
           "venue": "Royal Society Open Science",
           "year": 2022,
-          "url": ""
+          "url": "",
+          "doi": "10.5328/j.958641",
+          "citations": 70
         },
         {
           "title": "Participant retention in secondary school pupils: evidence from a 1200-participant study",
           "authorNames": [
-            "Price, J.",
             "Haddad, N.",
-            "Mensah, K."
+            "Whitfield, S.",
+            "Okafor, E."
           ],
-          "authors": "Price, J., Haddad, N., Mensah, K.",
-          "venue": "Nature Human Behaviour",
+          "authors": "Haddad, N., Whitfield, S., Okafor, E.",
+          "venue": "PLOS ONE",
           "year": 2022,
-          "url": ""
+          "url": "",
+          "doi": "10.6272/chb.131553",
+          "citations": 170
         }
       ],
       "academicRoles": [
         {
-          "title": "Reader",
+          "title": "Lecturer",
           "org": "Utrecht University",
-          "from": 2023,
+          "from": 2020,
           "to": null
         },
         {
-          "title": "Senior lecturer",
-          "org": "University of Leeds",
-          "from": 2019,
-          "to": 2023
+          "title": "Postdoctoral researcher",
+          "org": "University of Cape Town",
+          "from": 2018,
+          "to": 2020
         },
         {
           "title": "Research assistant",
-          "org": "University of Cape Town",
-          "from": 2015,
-          "to": 2019
+          "org": "University of Otago",
+          "from": 2014,
+          "to": 2018
         }
       ],
       "researchRoles": [
         {
-          "title": "Guest editor, special issue",
-          "org": "Nature Human Behaviour",
+          "title": "Associate Editor",
+          "org": "PLOS ONE",
+          "from": 2025,
+          "to": null
+        },
+        {
+          "title": "Editor-in-Chief",
+          "org": "PLOS ONE",
           "from": 2023,
           "to": null
         },
         {
           "title": "Editorial board member",
-          "org": "PLOS ONE",
-          "from": 2024,
+          "org": "Nature Human Behaviour",
+          "from": 2022,
           "to": null
         },
         {
           "title": "Ethics committee member",
-          "org": "Scientific Reports",
-          "from": 2024,
+          "org": "Royal Society Open Science",
+          "from": 2023,
           "to": null
         }
       ],
       "memberships": [
         {
-          "body": "Royal Society of Arts",
-          "grade": "Senior member",
-          "since": 2019
-        },
-        {
-          "body": "UK Reproducibility Network",
-          "grade": "Chartered member",
-          "since": 2023
+          "body": "Academy of Social Sciences",
+          "grade": "Fellow",
+          "since": 2016
         }
       ],
       "highlights": [
         {
-          "title": "Research council grant",
-          "detail": "A four-year programme on replication.",
-          "year": 2024
+          "title": "Best paper award, Nature Human Behaviour",
+          "detail": "Awarded for work on open data practice.",
+          "year": 2023
         }
       ],
-      "supervising": [
-        {
-          "researcherId": "r5",
-          "role": "PhD student"
-        }
-      ],
+      "supervising": [],
       "endorsements": {
         "2025": {
-          "r2": "2025-08-13"
+          "r3": "2025-08-13"
         },
         "2026": {
-          "r7": "2026-09-17",
-          "r3": "2026-07-14",
-          "r8": "2026-07-11",
+          "r15": "2026-09-17",
+          "r6": "2026-07-14",
+          "r17": "2026-07-11",
           "r1": "2026-06-13"
         }
-      }
+      },
+      "discipline": "Science",
+      "visibility": "public"
     },
     {
       "id": "r12",
@@ -2300,57 +2687,65 @@
       "scholar": "",
       "publicId": "HLR-5SP3-EMYE-NG",
       "interests": [
-        "longitudinal cohorts",
-        "field experiments",
-        "measurement error",
-        "participant retention"
+        [
+          "Cognition",
+          "Sleep and consolidation"
+        ]
       ],
       "publications": [
         {
           "title": "Does field experiments change open data practice? A preregistered replication",
           "authorNames": [
             "Lim, W. J.",
-            "Eze, I."
+            "Raman, P."
           ],
-          "authors": "Lim, W. J., Eze, I.",
+          "authors": "Lim, W. J., Raman, P.",
           "venue": "Royal Society Open Science",
           "year": 2025,
-          "url": ""
+          "url": "",
+          "doi": "10.8542/j.535475",
+          "citations": 2
         },
         {
           "title": "Participant retention across three countries: a pooled analysis",
           "authorNames": [
-            "Mensah, K.",
+            "Rahimi, L.",
             "Lim, W. J.",
-            "Eze, I."
+            "Price, J."
           ],
-          "authors": "Mensah, K., Lim, W. J., Eze, I.",
+          "authors": "Rahimi, L., Lim, W. J., Price, J.",
           "venue": "Royal Society Open Science",
           "year": 2024,
-          "url": ""
+          "url": "",
+          "doi": "10.6412/s795242",
+          "citations": 18
         },
         {
           "title": "Longitudinal cohorts across three countries: a pooled analysis",
           "authorNames": [
             "Lim, W. J.",
-            "Ackerman, L.",
-            "Price, J."
+            "Cho, H.",
+            "Marín, S."
           ],
-          "authors": "Lim, W. J., Ackerman, L., Price, J.",
+          "authors": "Lim, W. J., Cho, H., Marín, S.",
           "venue": "Scientific Reports",
           "year": 2023,
-          "url": ""
+          "url": "",
+          "doi": "10.5144/chb.208359",
+          "citations": 14
         },
         {
           "title": "Does measurement error change replication? A preregistered replication",
           "authorNames": [
-            "Ackerman, L.",
+            "Cho, H.",
             "Lim, W. J."
           ],
-          "authors": "Ackerman, L., Lim, W. J.",
+          "authors": "Cho, H., Lim, W. J.",
           "venue": "Scientific Reports",
           "year": 2022,
-          "url": ""
+          "url": "",
+          "doi": "10.3009/s842915",
+          "citations": 30
         }
       ],
       "academicRoles": [
@@ -2384,12 +2779,14 @@
       "supervising": [],
       "endorsements": {
         "2025": {
-          "r6": "2025-01-10"
+          "r11": "2025-01-10"
         },
         "2026": {
-          "r8": "2026-05-11"
+          "r16": "2026-05-11"
         }
-      }
+      },
+      "discipline": "Science",
+      "visibility": "public"
     },
     {
       "id": "r13",
@@ -2426,171 +2823,201 @@
       "scholar": "",
       "publicId": "HLR-QM3H-NKZ6-XJ",
       "interests": [
-        "participant retention",
-        "measurement error",
-        "longitudinal cohorts",
-        "field experiments"
+        [
+          "Machine learning",
+          "Model calibration"
+        ],
+        [
+          "Machine learning",
+          "Human-in-the-loop labelling"
+        ],
+        [
+          "Human–computer interaction",
+          "Attention and notifications"
+        ],
+        [
+          "Privacy and security",
+          "Consent interfaces"
+        ]
       ],
       "publications": [
         {
-          "title": "Rethinking open data practice: what 120 participants tell us",
+          "title": "Measuring field experiments at scale with measurement error",
           "authorNames": [
-            "Marín, S.",
             "Okafor, E.",
-            "Haddad, N."
+            "Rahimi, L.",
+            "Cho, H."
           ],
-          "authors": "Marín, S., Okafor, E., Haddad, N.",
-          "venue": "Nature Human Behaviour",
-          "year": 2026,
-          "url": ""
-        },
-        {
-          "title": "Measuring replication at scale with measurement error",
-          "authorNames": [
-            "Marín, S.",
-            "Okafor, E."
-          ],
-          "authors": "Marín, S., Okafor, E.",
+          "authors": "Okafor, E., Rahimi, L., Cho, H.",
           "venue": "Royal Society Open Science",
-          "year": 2026,
-          "url": ""
-        },
-        {
-          "title": "Does replication change field experiments? A preregistered replication",
-          "authorNames": [
-            "Okafor, E.",
-            "Adeyemi, T.",
-            "Mensah, K.",
-            "Nwosu, A."
-          ],
-          "authors": "Okafor, E., Adeyemi, T., Mensah, K., Nwosu, A.",
-          "venue": "Scientific Reports",
           "year": 2025,
-          "url": ""
+          "url": "",
+          "doi": "10.4082/chb.928482",
+          "citations": 17
         },
         {
-          "title": "Does measurement error change replication? A preregistered replication",
+          "title": "Field experiments in rural households: evidence from a 1200-participant study",
           "authorNames": [
             "Okafor, E.",
-            "Eze, I."
+            "Tanaka, A.",
+            "Dam, J. v."
           ],
-          "authors": "Okafor, E., Eze, I.",
-          "venue": "Scientific Reports",
-          "year": 2023,
-          "url": ""
+          "authors": "Okafor, E., Tanaka, A., Dam, J. v.",
+          "venue": "Royal Society Open Science",
+          "year": 2025,
+          "url": "",
+          "doi": "10.1525/j.266741",
+          "citations": 15
+        },
+        {
+          "title": "Measurement error across three countries: a pooled analysis",
+          "authorNames": [
+            "Okafor, E.",
+            "Rahimi, L."
+          ],
+          "authors": "Okafor, E., Rahimi, L.",
+          "venue": "Nature Human Behaviour",
+          "year": 2025,
+          "url": "",
+          "doi": "10.7552/j.140452",
+          "citations": 4
+        },
+        {
+          "title": "Measuring field experiments at scale with open data practice",
+          "authorNames": [
+            "Okafor, E.",
+            "Mehta, R."
+          ],
+          "authors": "Okafor, E., Mehta, R.",
+          "venue": "Royal Society Open Science",
+          "year": 2024,
+          "url": "",
+          "doi": "10.8127/pnas.532544",
+          "citations": 7
+        },
+        {
+          "title": "Open data practice across three countries: a pooled analysis",
+          "authorNames": [
+            "Okafor, E.",
+            "Dam, J. v."
+          ],
+          "authors": "Okafor, E., Dam, J. v.",
+          "venue": "PLOS ONE",
+          "year": 2024,
+          "url": "",
+          "doi": "10.8561/s273423",
+          "citations": 12
         },
         {
           "title": "Measuring replication at scale with measurement error",
           "authorNames": [
-            "Ackerman, L.",
+            "Cho, H.",
             "Okafor, E."
           ],
-          "authors": "Ackerman, L., Okafor, E.",
+          "authors": "Cho, H., Okafor, E.",
           "venue": "Nature Human Behaviour",
           "year": 2022,
-          "url": ""
+          "url": "",
+          "doi": "10.4373/chb.431581",
+          "citations": 110
         },
         {
           "title": "A field experiment on participant retention and measurement error",
           "authorNames": [
-            "Lim, W. J.",
+            "Dam, J. v.",
             "Okafor, E.",
-            "Mehta, R."
+            "Nwosu, A."
           ],
-          "authors": "Lim, W. J., Okafor, E., Mehta, R.",
-          "venue": "Royal Society Open Science",
+          "authors": "Dam, J. v., Okafor, E., Nwosu, A.",
+          "venue": "Nature Human Behaviour",
           "year": 2022,
-          "url": ""
+          "url": "",
+          "doi": "10.4824/pnas.812092",
+          "citations": 160
         },
         {
-          "title": "Participant retention across three countries: a pooled analysis",
+          "title": "Measuring participant retention at scale with longitudinal cohorts",
           "authorNames": [
-            "Mensah, K.",
-            "Okafor, E."
+            "Okafor, E.",
+            "Lim, W. J.",
+            "Marín, S."
           ],
-          "authors": "Mensah, K., Okafor, E.",
-          "venue": "Scientific Reports",
+          "authors": "Okafor, E., Lim, W. J., Marín, S.",
+          "venue": "PLOS ONE",
           "year": 2022,
-          "url": ""
+          "url": "",
+          "doi": "10.3763/j.891820",
+          "citations": 140
         }
       ],
       "academicRoles": [
         {
-          "title": "Senior lecturer",
+          "title": "Lecturer",
           "org": "University of Manchester",
-          "from": 2019,
+          "from": 2022,
           "to": null
         },
         {
-          "title": "Lecturer",
-          "org": "Universidade de São Paulo",
-          "from": 2016,
-          "to": 2019
+          "title": "Postdoctoral researcher",
+          "org": "University of Cape Town",
+          "from": 2020,
+          "to": 2022
         },
         {
-          "title": "Postdoctoral researcher",
-          "org": "University of Leeds",
-          "from": 2014,
-          "to": 2016
+          "title": "Research assistant",
+          "org": "University of Otago",
+          "from": 2017,
+          "to": 2020
         }
       ],
       "researchRoles": [
         {
-          "title": "Guest editor, special issue",
+          "title": "Standing reviewer",
           "org": "Royal Society Open Science",
-          "from": 2024,
+          "from": 2023,
           "to": null
         },
         {
-          "title": "Grant review panellist",
-          "org": "Nature Human Behaviour",
+          "title": "Programme committee member",
+          "org": "PLOS ONE",
           "from": 2020,
-          "to": null
-        },
-        {
-          "title": "Ethics committee member",
-          "org": "Royal Society Open Science",
-          "from": 2024,
           "to": null
         }
       ],
       "memberships": [
         {
-          "body": "Royal Society of Arts",
-          "grade": "Fellow",
-          "since": 2017
-        },
-        {
           "body": "Academy of Social Sciences",
-          "grade": "Chartered member",
-          "since": 2013
+          "grade": "Member",
+          "since": 2012
         }
       ],
       "highlights": [
         {
-          "title": "Open data award",
-          "detail": "For releasing the full longitudinal cohorts dataset and analysis code.",
-          "year": 2025
+          "title": "Invited keynote, Royal Society Open Science",
+          "detail": "On what participant retention means for practice.",
+          "year": 2022
         },
         {
-          "title": "Open data award",
-          "detail": "For releasing the full participant retention dataset and analysis code.",
-          "year": 2025
+          "title": "Invited keynote, Scientific Reports",
+          "detail": "On what longitudinal cohorts means for practice.",
+          "year": 2022
         }
       ],
       "supervising": [],
       "endorsements": {
         "2025": {
-          "r7": "2025-06-13",
-          "r8": "2025-08-15",
-          "r2": "2025-09-16",
-          "r4": "2025-02-13",
-          "r15": "2025-01-18"
+          "r14": "2025-06-13",
+          "r17": "2025-08-15",
+          "r3": "2025-09-16",
+          "r7": "2025-02-13",
+          "r8": "2025-01-18"
         },
         "2026": {
-          "r10": "2026-06-17"
+          "r20": "2026-06-17"
         }
-      }
+      },
+      "discipline": "Technology",
+      "visibility": "public"
     },
     {
       "id": "r14",
@@ -2610,88 +3037,177 @@
       "scholar": "",
       "publicId": "HLR-TBFQ-WYA1-J8",
       "interests": [
-        "participant retention",
-        "field experiments",
-        "longitudinal cohorts",
-        "open data practice"
+        [
+          "Human–computer interaction",
+          "Accessible design"
+        ],
+        [
+          "Human–computer interaction",
+          "Technostress"
+        ],
+        [
+          "Privacy and security",
+          "Consent interfaces"
+        ]
       ],
       "publications": [
         {
-          "title": "Does participant retention change longitudinal cohorts? A preregistered replication",
+          "title": "A field experiment on open data practice and replication",
           "authorNames": [
+            "Mensah, K.",
             "Whitfield, S.",
-            "Haddad, N.",
-            "Dam, J. v."
+            "Rahimi, L."
           ],
-          "authors": "Whitfield, S., Haddad, N., Dam, J. v.",
+          "authors": "Mensah, K., Whitfield, S., Rahimi, L.",
           "venue": "Scientific Reports",
           "year": 2026,
-          "url": ""
+          "url": "",
+          "doi": "10.9731/j.941399",
+          "citations": 4
         },
         {
-          "title": "Participant retention across three countries: a pooled analysis",
+          "title": "Measuring replication at scale with longitudinal cohorts",
+          "authorNames": [
+            "Boateng, K.",
+            "Whitfield, S.",
+            "Ferreira, T.",
+            "Haddad, N."
+          ],
+          "authors": "Boateng, K., Whitfield, S., Ferreira, T., Haddad, N.",
+          "venue": "Royal Society Open Science",
+          "year": 2026,
+          "url": "",
+          "doi": "10.7828/j.205359",
+          "citations": 8
+        },
+        {
+          "title": "Replication in secondary school pupils: evidence from a 240-participant study",
+          "authorNames": [
+            "Nwosu, A.",
+            "Whitfield, S."
+          ],
+          "authors": "Nwosu, A., Whitfield, S.",
+          "venue": "Royal Society Open Science",
+          "year": 2025,
+          "url": "",
+          "doi": "10.7738/chb.116447",
+          "citations": 0
+        },
+        {
+          "title": "Open data practice in remote teams: evidence from a 240-participant study",
+          "authorNames": [
+            "Haddad, N.",
+            "Whitfield, S."
+          ],
+          "authors": "Haddad, N., Whitfield, S.",
+          "venue": "Nature Human Behaviour",
+          "year": 2025,
+          "url": "",
+          "doi": "10.6612/chb.635065",
+          "citations": 34
+        },
+        {
+          "title": "A field experiment on longitudinal cohorts and replication",
           "authorNames": [
             "Whitfield, S.",
-            "Ackerman, L.",
-            "Mensah, K."
+            "Mehta, R.",
+            "Dalgaard, H.",
+            "Price, J."
           ],
-          "authors": "Whitfield, S., Ackerman, L., Mensah, K.",
-          "venue": "PLOS ONE",
+          "authors": "Whitfield, S., Mehta, R., Dalgaard, H., Price, J.",
+          "venue": "Nature Human Behaviour",
           "year": 2025,
-          "url": ""
+          "url": "",
+          "doi": "10.4629/chb.384533",
+          "citations": 48
         },
         {
-          "title": "Does open data practice change replication? A preregistered replication",
+          "title": "Measuring participant retention at scale with open data practice",
           "authorNames": [
+            "Whitfield, S.",
+            "Eze, I."
+          ],
+          "authors": "Whitfield, S., Eze, I.",
+          "venue": "PLOS ONE",
+          "year": 2024,
+          "url": "",
+          "doi": "10.4663/chb.849324",
+          "citations": 48
+        },
+        {
+          "title": "Rethinking replication: what 512 participants tell us",
+          "authorNames": [
+            "Dalgaard, H.",
             "Whitfield, S.",
             "Mehta, R."
           ],
-          "authors": "Whitfield, S., Mehta, R.",
+          "authors": "Dalgaard, H., Whitfield, S., Mehta, R.",
           "venue": "PLOS ONE",
-          "year": 2024,
-          "url": ""
+          "year": 2023,
+          "url": "",
+          "doi": "10.6475/s869635",
+          "citations": 48
         },
         {
-          "title": "Does longitudinal cohorts change replication? A preregistered replication",
+          "title": "Longitudinal cohorts in first-year undergraduates: evidence from a 240-participant study",
           "authorNames": [
-            "Price, J.",
             "Whitfield, S.",
-            "Haddad, N."
+            "Cho, H.",
+            "Raman, P."
           ],
-          "authors": "Price, J., Whitfield, S., Haddad, N.",
+          "authors": "Whitfield, S., Cho, H., Raman, P.",
+          "venue": "Scientific Reports",
+          "year": 2023,
+          "url": "",
+          "doi": "10.5663/s435792",
+          "citations": 20
+        },
+        {
+          "title": "A field experiment on measurement error and participant retention",
+          "authorNames": [
+            "Haddad, N.",
+            "Whitfield, S."
+          ],
+          "authors": "Haddad, N., Whitfield, S.",
           "venue": "Nature Human Behaviour",
           "year": 2023,
-          "url": ""
+          "url": "",
+          "doi": "10.4851/s148130",
+          "citations": 8
         },
         {
           "title": "Measurement error across three countries: a pooled analysis",
           "authorNames": [
-            "Okafor, E.",
+            "Tanaka, A.",
             "Whitfield, S.",
-            "Cho, H.",
-            "Rahimi, L."
+            "Mehta, R.",
+            "Ferreira, T."
           ],
-          "authors": "Okafor, E., Whitfield, S., Cho, H., Rahimi, L.",
-          "venue": "Nature Human Behaviour",
+          "authors": "Tanaka, A., Whitfield, S., Mehta, R., Ferreira, T.",
+          "venue": "Royal Society Open Science",
           "year": 2022,
-          "url": ""
+          "url": "",
+          "doi": "10.9840/chb.367853",
+          "citations": 10
         },
         {
-          "title": "Rethinking measurement error: what 380 participants tell us",
+          "title": "Measuring open data practice at scale with field experiments",
           "authorNames": [
-            "Mehta, R.",
             "Whitfield, S.",
-            "Lim, W. J."
+            "Eze, I.",
+            "Adeyemi, T."
           ],
-          "authors": "Mehta, R., Whitfield, S., Lim, W. J.",
+          "authors": "Whitfield, S., Eze, I., Adeyemi, T.",
           "venue": "Nature Human Behaviour",
           "year": 2022,
-          "url": ""
+          "url": "",
+          "doi": "10.6475/pnas.466738",
+          "citations": 20
         }
       ],
       "academicRoles": [
         {
-          "title": "Lecturer",
+          "title": "Senior lecturer",
           "org": "University of Manchester",
           "from": 2023,
           "to": null
@@ -2699,100 +3215,70 @@
         {
           "title": "Postdoctoral researcher",
           "org": "University of Leeds",
-          "from": 2019,
+          "from": 2021,
           "to": 2023
         },
         {
           "title": "Research assistant",
-          "org": "Universidade de São Paulo",
+          "org": "University of Leeds",
           "from": 2017,
-          "to": 2019
+          "to": 2021
         }
       ],
       "researchRoles": [
         {
-          "title": "Editor-in-Chief",
-          "org": "PLOS ONE",
-          "from": 2020,
-          "to": null
-        },
-        {
-          "title": "Guest editor, special issue",
-          "org": "Nature Human Behaviour",
-          "from": 2024,
-          "to": null
-        },
-        {
-          "title": "Standing reviewer",
+          "title": "Programme committee member",
           "org": "Scientific Reports",
           "from": 2024,
-          "to": null
-        },
-        {
-          "title": "Programme committee member",
-          "org": "Royal Society of Arts",
-          "from": 2021,
           "to": null
         }
       ],
       "memberships": [
         {
-          "body": "Academy of Social Sciences",
+          "body": "Royal Society of Arts",
           "grade": "Member",
-          "since": 2024
+          "since": 2013
         },
         {
           "body": "UK Reproducibility Network",
-          "grade": "Chartered member",
-          "since": 2015
-        },
-        {
-          "body": "Royal Society of Arts",
-          "grade": "Chartered member",
+          "grade": "Fellow",
           "since": 2023
         }
       ],
       "highlights": [
         {
-          "title": "Invited keynote, PLOS ONE",
-          "detail": "On what longitudinal cohorts means for practice.",
-          "year": 2025
+          "title": "Invited keynote, Scientific Reports",
+          "detail": "On what participant retention means for practice.",
+          "year": 2023
         }
       ],
       "supervising": [
         {
+          "researcherId": "r17",
+          "role": "PhD student"
+        },
+        {
+          "researcherId": "r1",
+          "role": "MRes student"
+        },
+        {
           "researcherId": "r9",
-          "role": "PhD student"
-        },
-        {
-          "researcherId": "r6",
-          "role": "Postdoctoral researcher"
-        },
-        {
-          "researcherId": "r13",
-          "role": "PhD student"
+          "role": "Visiting PhD student"
         }
       ],
       "endorsements": {
         "2025": {
-          "r4": "2025-08-11",
-          "r1": "2025-05-16",
-          "r7": "2025-05-14",
-          "r2": "2025-06-13",
+          "r7": "2025-01-11",
+          "r2": "2025-08-11",
+          "r15": "2025-05-16",
+          "r3": "2025-05-14",
+          "r16": "2025-06-13",
           "r10": "2025-06-14",
-          "r15": "2025-02-16",
-          "r12": "2025-01-11"
-        },
-        "2026": {
-          "r6": "2026-04-10",
-          "r16": "2026-03-18",
-          "r13": "2026-08-15",
-          "r5": "2026-04-14",
-          "r7": "2026-08-14",
-          "r8": "2026-01-10",
-          "r9": "2026-01-16"
+          "r12": "2025-02-16"
         }
-      }
+      },
+      "discipline": "Technology",
+      "visibility": "public"
     },
     {
       "id": "r15",
@@ -2812,123 +3298,141 @@
       "scholar": "",
       "publicId": "HLR-2V8M-PGRK-FN",
       "interests": [
-        "participant retention",
-        "measurement error",
-        "open data practice",
-        "field experiments"
+        [
+          "Machine learning",
+          "Federated learning"
+        ]
       ],
       "publications": [
         {
           "title": "Rethinking field experiments: what 804 participants tell us",
           "authorNames": [
             "Rahimi, L.",
-            "Lim, W. J.",
-            "Price, J."
+            "Mehta, R.",
+            "Eze, I."
           ],
-          "authors": "Rahimi, L., Lim, W. J., Price, J.",
-          "venue": "PLOS ONE",
+          "authors": "Rahimi, L., Mehta, R., Eze, I.",
+          "venue": "Nature Human Behaviour",
           "year": 2026,
-          "url": ""
+          "url": "",
+          "doi": "10.4476/chb.848152",
+          "citations": 15
         },
         {
-          "title": "Does replication change participant retention? A preregistered replication",
+          "title": "Field experiments across three countries: a pooled analysis",
           "authorNames": [
-            "Okafor, E.",
-            "Rahimi, L."
+            "Rahimi, L.",
+            "Mensah, K."
           ],
-          "authors": "Okafor, E., Rahimi, L.",
-          "venue": "PLOS ONE",
+          "authors": "Rahimi, L., Mensah, K.",
+          "venue": "Scientific Reports",
           "year": 2026,
-          "url": ""
+          "url": "",
+          "doi": "10.5349/s586608",
+          "citations": 10
         },
         {
           "title": "A field experiment on measurement error and longitudinal cohorts",
           "authorNames": [
-            "Eze, I.",
+            "Raman, P.",
             "Rahimi, L.",
-            "Cho, H.",
-            "Mensah, K."
+            "Tanaka, A.",
+            "Whitfield, S."
           ],
-          "authors": "Eze, I., Rahimi, L., Cho, H., Mensah, K.",
+          "authors": "Raman, P., Rahimi, L., Tanaka, A., Whitfield, S.",
           "venue": "Nature Human Behaviour",
           "year": 2024,
-          "url": ""
+          "url": "",
+          "doi": "10.3573/pnas.130348",
+          "citations": 42
         },
         {
           "title": "Field experiments in rural households: evidence from a 512-participant study",
           "authorNames": [
             "Rahimi, L.",
-            "Eze, I.",
-            "Tanaka, A."
+            "Price, J.",
+            "Lim, W. J."
           ],
-          "authors": "Rahimi, L., Eze, I., Tanaka, A.",
+          "authors": "Rahimi, L., Price, J., Lim, W. J.",
           "venue": "Nature Human Behaviour",
           "year": 2023,
-          "url": ""
+          "url": "",
+          "doi": "10.5606/pnas.243261",
+          "citations": 40
         },
         {
           "title": "A field experiment on measurement error and participant retention",
           "authorNames": [
+            "Raman, P.",
             "Rahimi, L.",
-            "Haddad, N.",
-            "Eze, I.",
-            "Mensah, K."
+            "Whitfield, S.",
+            "Dam, J. v."
           ],
-          "authors": "Rahimi, L., Haddad, N., Eze, I., Mensah, K.",
-          "venue": "Royal Society Open Science",
+          "authors": "Raman, P., Rahimi, L., Whitfield, S., Dam, J. v.",
+          "venue": "Scientific Reports",
           "year": 2022,
-          "url": ""
+          "url": "",
+          "doi": "10.4035/j.130869",
+          "citations": 55
         },
         {
-          "title": "Does open data practice change longitudinal cohorts? A preregistered replication",
+          "title": "A field experiment on open data practice and field experiments",
           "authorNames": [
+            "Nwosu, A.",
             "Rahimi, L.",
-            "Price, J.",
-            "Nwosu, A."
+            "Boateng, K."
           ],
-          "authors": "Rahimi, L., Price, J., Nwosu, A.",
+          "authors": "Nwosu, A., Rahimi, L., Boateng, K.",
           "venue": "Nature Human Behaviour",
           "year": 2022,
-          "url": ""
+          "url": "",
+          "doi": "10.9847/s294827",
+          "citations": 40
         }
       ],
       "academicRoles": [
         {
-          "title": "Senior lecturer",
+          "title": "Reader",
           "org": "University of Manchester",
           "from": 2022,
           "to": null
         },
         {
           "title": "Postdoctoral researcher",
-          "org": "KU Leuven",
-          "from": 2018,
+          "org": "University of Otago",
+          "from": 2020,
           "to": 2022
         },
         {
           "title": "Research assistant",
-          "org": "University of Leeds",
-          "from": 2014,
-          "to": 2018
+          "org": "University of Cape Town",
+          "from": 2016,
+          "to": 2020
         }
       ],
       "researchRoles": [
         {
-          "title": "Associate Editor",
-          "org": "Scientific Reports",
+          "title": "Deputy Editor",
+          "org": "Nature Human Behaviour",
+          "from": 2024,
+          "to": null
+        },
+        {
+          "title": "Editor-in-Chief",
+          "org": "Nature Human Behaviour",
+          "from": 2024,
+          "to": null
+        },
+        {
+          "title": "Ethics committee member",
+          "org": "PLOS ONE",
+          "from": 2024,
+          "to": null
+        },
+        {
+          "title": "Standing reviewer",
+          "org": "Nature Human Behaviour",
           "from": 2020,
-          "to": null
-        },
-        {
-          "title": "Editorial board member",
-          "org": "Royal Society Open Science",
-          "from": 2023,
-          "to": null
-        },
-        {
-          "title": "Grant review panellist",
-          "org": "Royal Society Open Science",
-          "from": 2021,
           "to": null
         }
       ],
@@ -2936,40 +3440,46 @@
         {
           "body": "UK Reproducibility Network",
           "grade": "Fellow",
-          "since": 2015
-        },
-        {
-          "body": "Academy of Social Sciences",
-          "grade": "Senior member",
-          "since": 2023
+          "since": 2021
         },
         {
           "body": "Royal Society of Arts",
-          "grade": "Chartered member",
-          "since": 2013
+          "grade": "Fellow",
+          "since": 2020
+        },
+        {
+          "body": "Academy of Social Sciences",
+          "grade": "Fellow",
+          "since": 2018
         }
       ],
       "highlights": [
         {
-          "title": "Research council grant",
-          "detail": "A four-year programme on participant retention.",
-          "year": 2025
-        },
-        {
           "title": "Royal Society of Arts early career prize",
-          "detail": "Recognising work on measurement error.",
-          "year": 2022
+          "detail": "Recognising work on participant retention.",
+          "year": 2023
         }
       ],
-      "supervising": [],
+      "supervising": [
+        {
+          "researcherId": "r18",
+          "role": "Visiting PhD student"
+        },
+        {
+          "researcherId": "r7",
+          "role": "MRes student"
+        }
+      ],
       "endorsements": {
         "2026": {
-          "r8": "2026-07-15",
-          "r4": "2026-04-10",
-          "r3": "2026-08-10",
-          "r1": "2026-07-14"
+          "r16": "2026-07-15",
+          "r7": "2026-04-10",
+          "r6": "2026-08-10",
+          "r2": "2026-07-14"
         }
-      }
+      },
+      "discipline": "Technology",
+      "visibility": "public"
     },
     {
       "id": "r16",
@@ -2989,140 +3499,191 @@
       "scholar": "",
       "publicId": "HLR-3953-0SJD-FS",
       "interests": [
-        "field experiments",
-        "open data practice",
-        "participant retention",
-        "measurement error"
+        [
+          "Human–computer interaction",
+          "Interface trust"
+        ],
+        [
+          "Machine learning",
+          "Human-in-the-loop labelling"
+        ],
+        [
+          "Machine learning",
+          "Federated learning"
+        ],
+        [
+          "Privacy and security",
+          "Consent interfaces"
+        ]
       ],
       "publications": [
         {
-          "title": "Participant retention in older adults: evidence from a 380-participant study",
+          "title": "Measuring replication at scale with longitudinal cohorts",
           "authorNames": [
             "Price, J.",
-            "Haddad, N."
+            "Ackerman, L."
           ],
-          "authors": "Price, J., Haddad, N.",
-          "venue": "PLOS ONE",
+          "authors": "Price, J., Ackerman, L.",
+          "venue": "Nature Human Behaviour",
           "year": 2026,
-          "url": ""
+          "url": "",
+          "doi": "10.8930/j.143292",
+          "citations": 0
         },
         {
-          "title": "Does measurement error change open data practice? A preregistered replication",
+          "title": "A field experiment on measurement error and field experiments",
           "authorNames": [
-            "Dam, J. v.",
-            "Price, J."
-          ],
-          "authors": "Dam, J. v., Price, J.",
-          "venue": "Scientific Reports",
-          "year": 2026,
-          "url": ""
-        },
-        {
-          "title": "A field experiment on open data practice and replication",
-          "authorNames": [
-            "Lim, W. J.",
             "Price, J.",
-            "Adeyemi, T."
+            "Marín, S.",
+            "Mehta, R.",
+            "Ferreira, T."
           ],
-          "authors": "Lim, W. J., Price, J., Adeyemi, T.",
-          "venue": "Scientific Reports",
-          "year": 2025,
-          "url": ""
+          "authors": "Price, J., Marín, S., Mehta, R., Ferreira, T.",
+          "venue": "Nature Human Behaviour",
+          "year": 2026,
+          "url": "",
+          "doi": "10.2746/s888895",
+          "citations": 2
         },
         {
-          "title": "Field experiments across three countries: a pooled analysis",
+          "title": "Does measurement error change replication? A preregistered replication",
           "authorNames": [
             "Mensah, K.",
             "Price, J."
           ],
           "authors": "Mensah, K., Price, J.",
-          "venue": "Royal Society Open Science",
+          "venue": "Scientific Reports",
+          "year": 2025,
+          "url": "",
+          "doi": "10.7155/chb.609278",
+          "citations": 4
+        },
+        {
+          "title": "Measuring participant retention at scale with field experiments",
+          "authorNames": [
+            "Price, J.",
+            "Haddad, N.",
+            "Rahimi, L."
+          ],
+          "authors": "Price, J., Haddad, N., Rahimi, L.",
+          "venue": "Nature Human Behaviour",
+          "year": 2025,
+          "url": "",
+          "doi": "10.2082/chb.880580",
+          "citations": 36
+        },
+        {
+          "title": "Measuring measurement error at scale with open data practice",
+          "authorNames": [
+            "Price, J.",
+            "Boateng, K.",
+            "Dalgaard, H.",
+            "Dam, J. v."
+          ],
+          "authors": "Price, J., Boateng, K., Dalgaard, H., Dam, J. v.",
+          "venue": "Scientific Reports",
           "year": 2024,
-          "url": ""
+          "url": "",
+          "doi": "10.8612/s596429",
+          "citations": 48
+        },
+        {
+          "title": "Measuring participant retention at scale with replication",
+          "authorNames": [
+            "Marín, S.",
+            "Price, J.",
+            "Boateng, K."
+          ],
+          "authors": "Marín, S., Price, J., Boateng, K.",
+          "venue": "PLOS ONE",
+          "year": 2024,
+          "url": "",
+          "doi": "10.3736/j.713327",
+          "citations": 21
+        },
+        {
+          "title": "A field experiment on replication and open data practice",
+          "authorNames": [
+            "Price, J.",
+            "Whitfield, S."
+          ],
+          "authors": "Price, J., Whitfield, S.",
+          "venue": "PLOS ONE",
+          "year": 2023,
+          "url": "",
+          "doi": "10.1541/chb.968020",
+          "citations": 18
+        },
+        {
+          "title": "Rethinking field experiments: what 120 participants tell us",
+          "authorNames": [
+            "Ackerman, L.",
+            "Price, J.",
+            "Okafor, E."
+          ],
+          "authors": "Ackerman, L., Price, J., Okafor, E.",
+          "venue": "Royal Society Open Science",
+          "year": 2023,
+          "url": "",
+          "doi": "10.5521/j.126140",
+          "citations": 34
         },
         {
           "title": "Rethinking longitudinal cohorts: what 240 participants tell us",
           "authorNames": [
-            "Ackerman, L.",
             "Price, J.",
-            "Dam, J. v.",
-            "Lim, W. J."
+            "Cho, H.",
+            "Whitfield, S.",
+            "Haddad, N."
           ],
-          "authors": "Ackerman, L., Price, J., Dam, J. v., Lim, W. J.",
-          "venue": "Nature Human Behaviour",
-          "year": 2024,
-          "url": ""
-        },
-        {
-          "title": "Longitudinal cohorts across three countries: a pooled analysis",
-          "authorNames": [
-            "Price, J.",
-            "Adeyemi, T."
-          ],
-          "authors": "Price, J., Adeyemi, T.",
-          "venue": "Nature Human Behaviour",
-          "year": 2024,
-          "url": ""
-        },
-        {
-          "title": "Rethinking longitudinal cohorts: what 1200 participants tell us",
-          "authorNames": [
-            "Dam, J. v.",
-            "Price, J.",
-            "Tanaka, A.",
-            "Cho, H."
-          ],
-          "authors": "Dam, J. v., Price, J., Tanaka, A., Cho, H.",
-          "venue": "PLOS ONE",
+          "authors": "Price, J., Cho, H., Whitfield, S., Haddad, N.",
+          "venue": "Scientific Reports",
           "year": 2023,
-          "url": ""
-        },
-        {
-          "title": "Does measurement error change participant retention? A preregistered replication",
-          "authorNames": [
-            "Okafor, E.",
-            "Price, J."
-          ],
-          "authors": "Okafor, E., Price, J.",
-          "venue": "PLOS ONE",
-          "year": 2023,
-          "url": ""
+          "url": "",
+          "doi": "10.1997/pnas.155318",
+          "citations": 60
         },
         {
           "title": "Replication in older adults: evidence from a 512-participant study",
           "authorNames": [
             "Price, J.",
-            "Ackerman, L.",
-            "Marín, S."
+            "Marín, S.",
+            "Mensah, K."
           ],
-          "authors": "Price, J., Ackerman, L., Marín, S.",
+          "authors": "Price, J., Marín, S., Mensah, K.",
           "venue": "Nature Human Behaviour",
           "year": 2022,
-          "url": ""
+          "url": "",
+          "doi": "10.6031/pnas.688760",
+          "citations": 55
         },
         {
           "title": "Measuring open data practice at scale with field experiments",
           "authorNames": [
-            "Mehta, R.",
+            "Adeyemi, T.",
             "Price, J.",
-            "Whitfield, S."
+            "Dam, J. v."
           ],
-          "authors": "Mehta, R., Price, J., Whitfield, S.",
+          "authors": "Adeyemi, T., Price, J., Dam, J. v.",
           "venue": "PLOS ONE",
           "year": 2022,
-          "url": ""
+          "url": "",
+          "doi": "10.6212/j.839612",
+          "citations": 160
         },
         {
           "title": "A field experiment on field experiments and measurement error",
           "authorNames": [
-            "Eze, I.",
             "Price, J.",
-            "Whitfield, S."
+            "Raman, P.",
+            "Ackerman, L."
           ],
-          "authors": "Eze, I., Price, J., Whitfield, S.",
-          "venue": "Royal Society Open Science",
+          "authors": "Price, J., Raman, P., Ackerman, L.",
+          "venue": "Scientific Reports",
           "year": 2022,
-          "url": ""
+          "url": "",
+          "doi": "10.9342/j.507760",
+          "citations": 10
         }
       ],
       "academicRoles": [
@@ -3135,21 +3696,204 @@
       ],
       "researchRoles": [
         {
-          "title": "Editorial board member",
-          "org": "Scientific Reports",
-          "from": 2022,
+          "title": "Guest editor, special issue",
+          "org": "Royal Society Open Science",
+          "from": 2024,
           "to": null
         },
         {
-          "title": "Deputy Editor",
-          "org": "Nature Human Behaviour",
-          "from": 2022,
-          "to": null
-        },
-        {
-          "title": "Standing reviewer",
-          "org": "Scientific Reports",
+          "title": "Associate Editor",
+          "org": "PLOS ONE",
           "from": 2020,
+          "to": null
+        }
+      ],
+      "memberships": [
+        {
+          "body": "Royal Society of Arts",
+          "grade": "Senior member",
+          "since": 2016
+        }
+      ],
+      "highlights": [
+        {
+          "title": "Open data award",
+          "detail": "For releasing the full measurement error dataset and analysis code.",
+          "year": 2023
+        },
+        {
+          "title": "Invited keynote, Nature Human Behaviour",
+          "detail": "On what open data practice means for practice.",
+          "year": 2021
+        }
+      ],
+      "supervising": [],
+      "endorsements": {
+        "2025": {
+          "r6": "2025-04-16",
+          "r12": "2025-07-15",
+          "r10": "2025-03-17"
+        },
+        "2026": {
+          "r1": "2026-03-14",
+          "r4": "2026-08-16",
+          "r18": "2026-04-14",
+          "r9": "2026-06-11",
+          "r5": "2026-04-11",
+          "r6": "2026-06-10",
+          "r7": "2026-02-11"
+        }
+      },
+      "discipline": "Technology",
+      "visibility": "public"
+    },
+    {
+      "id": "r17",
+      "name": "Dr. Priya Raman",
+      "handle": "priya-raman",
+      "position": "Senior lecturer",
+      "institution": "Indian Institute of Technology Madras",
+      "department": "Mechanical Engineering",
+      "country": "India",
+      "field": "Engineering",
+      "email": "p.raman@example.edu",
+      "bio": "Human factors in safety-critical control rooms, and how operators read a workload display.",
+      "createdAt": "2026-08-01",
+      "verified": {
+        "method": "institution-email",
+        "domain": "example.edu",
+        "at": "2026-08-02"
+      },
+      "linkedin": "https://www.linkedin.com/in/humain-demo-priya-raman",
+      "scholar": "",
+      "orcid": "",
+      "publicId": "HLR-S454-HNBA-MX",
+      "userId": "demo:p.raman@example.edu",
+      "discipline": "Engineering",
+      "interests": [
+        [
+          "Human factors",
+          "Control room design"
+        ],
+        [
+          "Systems",
+          "Sensor networks"
+        ]
+      ],
+      "visibility": "public",
+      "publications": [
+        {
+          "title": "Does measurement error change longitudinal cohorts? A preregistered replication",
+          "authorNames": [
+            "Dam, J. v.",
+            "Raman, P."
+          ],
+          "authors": "Dam, J. v., Raman, P.",
+          "venue": "PLOS ONE",
+          "year": 2026,
+          "url": "",
+          "doi": "10.5786/pnas.133557",
+          "citations": 7
+        },
+        {
+          "title": "Measuring replication at scale with participant retention",
+          "authorNames": [
+            "Raman, P.",
+            "Tanaka, A."
+          ],
+          "authors": "Raman, P., Tanaka, A.",
+          "venue": "PLOS ONE",
+          "year": 2026,
+          "url": "",
+          "doi": "10.6831/pnas.835658",
+          "citations": 15
+        },
+        {
+          "title": "Rethinking open data practice: what 512 participants tell us",
+          "authorNames": [
+            "Raman, P.",
+            "Tanaka, A.",
+            "Marín, S.",
+            "Dam, J. v."
+          ],
+          "authors": "Raman, P., Tanaka, A., Marín, S., Dam, J. v.",
+          "venue": "Scientific Reports",
+          "year": 2024,
+          "url": "",
+          "doi": "10.1075/j.355034",
+          "citations": 39
+        },
+        {
+          "title": "Longitudinal cohorts across three countries: a pooled analysis",
+          "authorNames": [
+            "Adeyemi, T.",
+            "Raman, P."
+          ],
+          "authors": "Adeyemi, T., Raman, P.",
+          "venue": "Royal Society Open Science",
+          "year": 2024,
+          "url": "",
+          "doi": "10.1385/pnas.652875",
+          "citations": 24
+        },
+        {
+          "title": "Rethinking measurement error: what 380 participants tell us",
+          "authorNames": [
+            "Raman, P.",
+            "Rahimi, L."
+          ],
+          "authors": "Raman, P., Rahimi, L.",
+          "venue": "Nature Human Behaviour",
+          "year": 2023,
+          "url": "",
+          "doi": "10.2869/pnas.158253",
+          "citations": 26
+        },
+        {
+          "title": "Does open data practice change replication? A preregistered replication",
+          "authorNames": [
+            "Boateng, K.",
+            "Raman, P."
+          ],
+          "authors": "Boateng, K., Raman, P.",
+          "venue": "PLOS ONE",
+          "year": 2022,
+          "url": "",
+          "doi": "10.6451/j.163407",
+          "citations": 10
+        }
+      ],
+      "academicRoles": [
+        {
+          "title": "Senior lecturer",
+          "org": "Indian Institute of Technology Madras",
+          "from": 2022,
+          "to": null
+        },
+        {
+          "title": "Postdoctoral researcher",
+          "org": "University of Leeds",
+          "from": 2020,
+          "to": 2022
+        },
+        {
+          "title": "Research assistant",
+          "org": "University of Leeds",
+          "from": 2017,
+          "to": 2020
+        }
+      ],
+      "researchRoles": [
+        {
+          "title": "Editorial board member",
+          "org": "Nature Human Behaviour",
+          "from": 2023,
+          "to": null
+        },
+        {
+          "title": "Associate Editor",
+          "org": "PLOS ONE",
+          "from": 2024,
           "to": null
         }
       ],
@@ -3157,25 +3901,703 @@
         {
           "body": "Academy of Social Sciences",
           "grade": "Chartered member",
-          "since": 2013
+          "since": 2014
+        },
+        {
+          "body": "UK Reproducibility Network",
+          "grade": "Member",
+          "since": 2019
+        },
+        {
+          "body": "Royal Society of Arts",
+          "grade": "Chartered member",
+          "since": 2018
         }
       ],
       "highlights": [
         {
-          "title": "Open data award",
-          "detail": "For releasing the full measurement error dataset and analysis code.",
+          "title": "Invited keynote, Scientific Reports",
+          "detail": "On what open data practice means for practice.",
           "year": 2025
         }
       ],
-      "supervising": [],
+      "supervising": [
+        {
+          "researcherId": "r20",
+          "role": "PhD student"
+        },
+        {
+          "researcherId": "r13",
+          "role": "PhD student"
+        }
+      ],
       "endorsements": {
         "2025": {
-          "r3": "2025-06-14",
-          "r10": "2025-04-16",
+          "r18": "2025-09-12",
           "r12": "2025-07-15"
         },
         "2026": {
-          "r8": "2026-08-10"
+          "r6": "2026-07-12",
+          "r14": "2026-02-12",
+          "r3": "2026-08-14",
+          "r7": "2026-08-16",
+          "r1": "2026-09-13"
+        }
+      }
+    },
+    {
+      "id": "r18",
+      "name": "Prof. Tomás Ferreira",
+      "handle": "tomas-ferreira",
+      "position": "Professor",
+      "institution": "Universidade de São Paulo",
+      "department": "Engineering",
+      "country": "Brazil",
+      "field": "Engineering",
+      "email": "t.ferreira@example.edu",
+      "bio": "Reliability modelling for sensor networks in the field, where half the sensors are offline.",
+      "createdAt": "2026-08-01",
+      "verified": {
+        "method": "institution-email",
+        "domain": "example.edu",
+        "at": "2026-08-02"
+      },
+      "linkedin": "https://www.linkedin.com/in/humain-demo-tomas-ferreira",
+      "scholar": "",
+      "orcid": "",
+      "publicId": "HLR-JPC8-AGP9-KH",
+      "userId": "demo:t.ferreira@example.edu",
+      "discipline": "Engineering",
+      "interests": [
+        [
+          "Human factors",
+          "Safety-critical interfaces"
+        ],
+        [
+          "Human factors",
+          "Control room design"
+        ]
+      ],
+      "visibility": "public",
+      "publications": [
+        {
+          "title": "Measurement error in older adults: evidence from a 380-participant study",
+          "authorNames": [
+            "Ferreira, T.",
+            "Nwosu, A."
+          ],
+          "authors": "Ferreira, T., Nwosu, A.",
+          "venue": "Scientific Reports",
+          "year": 2026,
+          "url": "",
+          "doi": "10.5069/s227304",
+          "citations": 7
+        },
+        {
+          "title": "Rethinking participant retention: what 240 participants tell us",
+          "authorNames": [
+            "Ferreira, T.",
+            "Eze, I.",
+            "Tanaka, A."
+          ],
+          "authors": "Ferreira, T., Eze, I., Tanaka, A.",
+          "venue": "PLOS ONE",
+          "year": 2026,
+          "url": "",
+          "doi": "10.4133/pnas.660706",
+          "citations": 12
+        },
+        {
+          "title": "Participant retention across three countries: a pooled analysis",
+          "authorNames": [
+            "Ferreira, T.",
+            "Marín, S.",
+            "Eze, I."
+          ],
+          "authors": "Ferreira, T., Marín, S., Eze, I.",
+          "venue": "Royal Society Open Science",
+          "year": 2025,
+          "url": "",
+          "doi": "10.2214/pnas.618813",
+          "citations": 4
+        },
+        {
+          "title": "Field experiments across three countries: a pooled analysis",
+          "authorNames": [
+            "Mensah, K.",
+            "Ferreira, T.",
+            "Boateng, K."
+          ],
+          "authors": "Mensah, K., Ferreira, T., Boateng, K.",
+          "venue": "Scientific Reports",
+          "year": 2025,
+          "url": "",
+          "doi": "10.9097/j.756194",
+          "citations": 16
+        },
+        {
+          "title": "Measurement error across three countries: a pooled analysis",
+          "authorNames": [
+            "Tanaka, A.",
+            "Ferreira, T.",
+            "Boateng, K.",
+            "Whitfield, S."
+          ],
+          "authors": "Tanaka, A., Ferreira, T., Boateng, K., Whitfield, S.",
+          "venue": "PLOS ONE",
+          "year": 2025,
+          "url": "",
+          "doi": "10.7369/pnas.512569",
+          "citations": 32
+        },
+        {
+          "title": "Open data practice in new parents: evidence from a 240-participant study",
+          "authorNames": [
+            "Ferreira, T.",
+            "Ackerman, L."
+          ],
+          "authors": "Ferreira, T., Ackerman, L.",
+          "venue": "PLOS ONE",
+          "year": 2024,
+          "url": "",
+          "doi": "10.7079/j.458667",
+          "citations": 10
+        },
+        {
+          "title": "Longitudinal cohorts in shift workers: evidence from a 240-participant study",
+          "authorNames": [
+            "Ferreira, T.",
+            "Nwosu, A.",
+            "Dalgaard, H."
+          ],
+          "authors": "Ferreira, T., Nwosu, A., Dalgaard, H.",
+          "venue": "PLOS ONE",
+          "year": 2024,
+          "url": "",
+          "doi": "10.9483/s814831",
+          "citations": 45
+        },
+        {
+          "title": "Measuring replication at scale with longitudinal cohorts",
+          "authorNames": [
+            "Ferreira, T.",
+            "Adeyemi, T.",
+            "Tanaka, A."
+          ],
+          "authors": "Ferreira, T., Adeyemi, T., Tanaka, A.",
+          "venue": "Scientific Reports",
+          "year": 2023,
+          "url": "",
+          "doi": "10.6227/s220883",
+          "citations": 40
+        },
+        {
+          "title": "A field experiment on measurement error and field experiments",
+          "authorNames": [
+            "Eze, I.",
+            "Ferreira, T."
+          ],
+          "authors": "Eze, I., Ferreira, T.",
+          "venue": "Royal Society Open Science",
+          "year": 2022,
+          "url": "",
+          "doi": "10.6882/j.662801",
+          "citations": 170
+        }
+      ],
+      "academicRoles": [
+        {
+          "title": "Professor",
+          "org": "Universidade de São Paulo",
+          "from": 2023,
+          "to": null
+        },
+        {
+          "title": "Senior lecturer",
+          "org": "University of Leeds",
+          "from": 2020,
+          "to": 2023
+        },
+        {
+          "title": "Research assistant",
+          "org": "Universidade de São Paulo",
+          "from": 2016,
+          "to": 2020
+        }
+      ],
+      "researchRoles": [
+        {
+          "title": "Editorial board member",
+          "org": "Scientific Reports",
+          "from": 2024,
+          "to": null
+        },
+        {
+          "title": "Ethics committee member",
+          "org": "Nature Human Behaviour",
+          "from": 2020,
+          "to": null
+        }
+      ],
+      "memberships": [
+        {
+          "body": "Royal Society of Arts",
+          "grade": "Senior member",
+          "since": 2012
+        },
+        {
+          "body": "UK Reproducibility Network",
+          "grade": "Member",
+          "since": 2024
+        }
+      ],
+      "highlights": [
+        {
+          "title": "UK Reproducibility Network early career prize",
+          "detail": "Recognising work on open data practice.",
+          "year": 2021
+        }
+      ],
+      "supervising": [
+        {
+          "researcherId": "r4",
+          "role": "Postdoctoral researcher"
+        },
+        {
+          "researcherId": "r8",
+          "role": "PhD student"
+        }
+      ],
+      "endorsements": {
+        "2026": {
+          "r10": "2026-04-12",
+          "r20": "2026-05-10",
+          "r1": "2026-02-16"
+        }
+      }
+    },
+    {
+      "id": "r19",
+      "name": "Dr. Hanne Dalgaard",
+      "handle": "hanne-dalgaard",
+      "position": "Associate professor",
+      "institution": "University of Copenhagen",
+      "department": "Mathematics",
+      "country": "Denmark",
+      "field": "Mathematics",
+      "email": "h.dalgaard@example.edu",
+      "bio": "Causal inference for trials that do not go to plan, and what measurement error does to an estimate.",
+      "createdAt": "2026-08-01",
+      "verified": {
+        "method": "institution-email",
+        "domain": "example.edu",
+        "at": "2026-08-02"
+      },
+      "linkedin": "https://www.linkedin.com/in/humain-demo-hanne-dalgaard",
+      "scholar": "",
+      "orcid": "",
+      "publicId": "HLR-PCW5-FGNK-6O",
+      "userId": "demo:h.dalgaard@example.edu",
+      "discipline": "Mathematics",
+      "interests": [
+        [
+          "Applied mathematics",
+          "Network models"
+        ]
+      ],
+      "visibility": "public",
+      "publications": [
+        {
+          "title": "Participant retention in new parents: evidence from a 120-participant study",
+          "authorNames": [
+            "Mensah, K.",
+            "Dalgaard, H.",
+            "Whitfield, S."
+          ],
+          "authors": "Mensah, K., Dalgaard, H., Whitfield, S.",
+          "venue": "Royal Society Open Science",
+          "year": 2025,
+          "url": "",
+          "doi": "10.2431/chb.712696",
+          "citations": 56
+        },
+        {
+          "title": "A field experiment on participant retention and measurement error",
+          "authorNames": [
+            "Dalgaard, H.",
+            "Haddad, N.",
+            "Marín, S.",
+            "Cho, H."
+          ],
+          "authors": "Dalgaard, H., Haddad, N., Marín, S., Cho, H.",
+          "venue": "Scientific Reports",
+          "year": 2025,
+          "url": "",
+          "doi": "10.9084/chb.238512",
+          "citations": 0
+        },
+        {
+          "title": "Measuring participant retention at scale with field experiments",
+          "authorNames": [
+            "Dalgaard, H.",
+            "Haddad, N.",
+            "Ackerman, L.",
+            "Boateng, K."
+          ],
+          "authors": "Dalgaard, H., Haddad, N., Ackerman, L., Boateng, K.",
+          "venue": "PLOS ONE",
+          "year": 2024,
+          "url": "",
+          "doi": "10.4664/j.858366",
+          "citations": 45
+        },
+        {
+          "title": "Field experiments in remote teams: evidence from a 120-participant study",
+          "authorNames": [
+            "Mehta, R.",
+            "Dalgaard, H.",
+            "Tanaka, A.",
+            "Haddad, N."
+          ],
+          "authors": "Mehta, R., Dalgaard, H., Tanaka, A., Haddad, N.",
+          "venue": "Scientific Reports",
+          "year": 2024,
+          "url": "",
+          "doi": "10.9888/j.566378",
+          "citations": 66
+        },
+        {
+          "title": "Does measurement error change field experiments? A preregistered replication",
+          "authorNames": [
+            "Ferreira, T.",
+            "Dalgaard, H."
+          ],
+          "authors": "Ferreira, T., Dalgaard, H.",
+          "venue": "Royal Society Open Science",
+          "year": 2023,
+          "url": "",
+          "doi": "10.3635/j.982947",
+          "citations": 24
+        },
+        {
+          "title": "Longitudinal cohorts across three countries: a pooled analysis",
+          "authorNames": [
+            "Dalgaard, H.",
+            "Raman, P.",
+            "Haddad, N."
+          ],
+          "authors": "Dalgaard, H., Raman, P., Haddad, N.",
+          "venue": "Royal Society Open Science",
+          "year": 2022,
+          "url": "",
+          "doi": "10.2308/j.620563",
+          "citations": 15
+        }
+      ],
+      "academicRoles": [
+        {
+          "title": "Senior lecturer",
+          "org": "University of Copenhagen",
+          "from": 2023,
+          "to": null
+        },
+        {
+          "title": "Lecturer",
+          "org": "University of Otago",
+          "from": 2021,
+          "to": 2023
+        },
+        {
+          "title": "Research assistant",
+          "org": "University of Cape Town",
+          "from": 2017,
+          "to": 2021
+        }
+      ],
+      "researchRoles": [
+        {
+          "title": "Guest editor, special issue",
+          "org": "Nature Human Behaviour",
+          "from": 2022,
+          "to": null
+        }
+      ],
+      "memberships": [
+        {
+          "body": "Royal Society of Arts",
+          "grade": "Senior member",
+          "since": 2014
+        },
+        {
+          "body": "UK Reproducibility Network",
+          "grade": "Member",
+          "since": 2015
+        },
+        {
+          "body": "Academy of Social Sciences",
+          "grade": "Member",
+          "since": 2022
+        }
+      ],
+      "highlights": [
+        {
+          "title": "Invited keynote, Scientific Reports",
+          "detail": "On what open data practice means for practice.",
+          "year": 2025
+        },
+        {
+          "title": "Open data award",
+          "detail": "For releasing the full replication dataset and analysis code.",
+          "year": 2022
+        }
+      ],
+      "supervising": [
+        {
+          "researcherId": "r13",
+          "role": "MRes student"
+        }
+      ],
+      "endorsements": {
+        "2025": {
+          "r18": "2025-07-14",
+          "r11": "2025-01-17"
+        },
+        "2026": {
+          "r17": "2026-04-17"
+        }
+      }
+    },
+    {
+      "id": "r20",
+      "name": "Dr. Kwame Boateng",
+      "handle": "kwame-boateng",
+      "position": "Research fellow",
+      "institution": "University of Ghana",
+      "department": "Statistics",
+      "country": "Ghana",
+      "field": "Mathematics",
+      "email": "k.boateng@example.edu",
+      "bio": "Experimental design for field studies with small samples and high dropout.",
+      "createdAt": "2026-08-01",
+      "verified": {
+        "method": "institution-email",
+        "domain": "example.edu",
+        "at": "2026-08-02"
+      },
+      "linkedin": "https://www.linkedin.com/in/humain-demo-kwame-boateng",
+      "scholar": "",
+      "orcid": "",
+      "publicId": "HLR-RWQ3-CFT1-VF",
+      "userId": "demo:k.boateng@example.edu",
+      "discipline": "Mathematics",
+      "interests": [
+        [
+          "Applied mathematics",
+          "Stochastic processes"
+        ],
+        [
+          "Applied mathematics",
+          "Network models"
+        ]
+      ],
+      "visibility": "public",
+      "publications": [
+        {
+          "title": "Does longitudinal cohorts change replication? A preregistered replication",
+          "authorNames": [
+            "Ackerman, L.",
+            "Boateng, K.",
+            "Cho, H."
+          ],
+          "authors": "Ackerman, L., Boateng, K., Cho, H.",
+          "venue": "PLOS ONE",
+          "year": 2026,
+          "url": "",
+          "doi": "10.8488/s103399",
+          "citations": 6
+        },
+        {
+          "title": "A field experiment on replication and participant retention",
+          "authorNames": [
+            "Ferreira, T.",
+            "Boateng, K."
+          ],
+          "authors": "Ferreira, T., Boateng, K.",
+          "venue": "Scientific Reports",
+          "year": 2025,
+          "url": "",
+          "doi": "10.3723/j.215432",
+          "citations": 20
+        },
+        {
+          "title": "A field experiment on replication and open data practice",
+          "authorNames": [
+            "Boateng, K.",
+            "Price, J."
+          ],
+          "authors": "Boateng, K., Price, J.",
+          "venue": "Royal Society Open Science",
+          "year": 2025,
+          "url": "",
+          "doi": "10.6156/chb.547746",
+          "citations": 16
+        },
+        {
+          "title": "A field experiment on replication and open data practice",
+          "authorNames": [
+            "Boateng, K.",
+            "Dam, J. v.",
+            "Dalgaard, H."
+          ],
+          "authors": "Boateng, K., Dam, J. v., Dalgaard, H.",
+          "venue": "Scientific Reports",
+          "year": 2025,
+          "url": "",
+          "doi": "10.1368/s752406",
+          "citations": 32
+        },
+        {
+          "title": "Rethinking measurement error: what 1200 participants tell us",
+          "authorNames": [
+            "Rahimi, L.",
+            "Boateng, K."
+          ],
+          "authors": "Rahimi, L., Boateng, K.",
+          "venue": "Royal Society Open Science",
+          "year": 2024,
+          "url": "",
+          "doi": "10.7306/j.195218",
+          "citations": 30
+        },
+        {
+          "title": "Does replication change open data practice? A preregistered replication",
+          "authorNames": [
+            "Price, J.",
+            "Boateng, K."
+          ],
+          "authors": "Price, J., Boateng, K.",
+          "venue": "PLOS ONE",
+          "year": 2023,
+          "url": "",
+          "doi": "10.6282/j.853198",
+          "citations": 64
+        },
+        {
+          "title": "Rethinking participant retention: what 1200 participants tell us",
+          "authorNames": [
+            "Mehta, R.",
+            "Boateng, K.",
+            "Cho, H."
+          ],
+          "authors": "Mehta, R., Boateng, K., Cho, H.",
+          "venue": "Royal Society Open Science",
+          "year": 2023,
+          "url": "",
+          "doi": "10.8440/chb.546919",
+          "citations": 40
+        },
+        {
+          "title": "Rethinking replication: what 380 participants tell us",
+          "authorNames": [
+            "Ackerman, L.",
+            "Boateng, K.",
+            "Marín, S.",
+            "Eze, I."
+          ],
+          "authors": "Ackerman, L., Boateng, K., Marín, S., Eze, I.",
+          "venue": "Nature Human Behaviour",
+          "year": 2022,
+          "url": "",
+          "doi": "10.4054/chb.666175",
+          "citations": 55
+        },
+        {
+          "title": "Participant retention across three countries: a pooled analysis",
+          "authorNames": [
+            "Boateng, K.",
+            "Mehta, R."
+          ],
+          "authors": "Boateng, K., Mehta, R.",
+          "venue": "PLOS ONE",
+          "year": 2022,
+          "url": "",
+          "doi": "10.6327/chb.798733",
+          "citations": 55
+        }
+      ],
+      "academicRoles": [
+        {
+          "title": "Senior lecturer",
+          "org": "University of Ghana",
+          "from": 2022,
+          "to": null
+        },
+        {
+          "title": "Lecturer",
+          "org": "University of Leeds",
+          "from": 2018,
+          "to": 2022
+        },
+        {
+          "title": "Research assistant",
+          "org": "University of Leeds",
+          "from": 2014,
+          "to": 2018
+        }
+      ],
+      "researchRoles": [
+        {
+          "title": "Editorial board member",
+          "org": "Nature Human Behaviour",
+          "from": 2020,
+          "to": null
+        },
+        {
+          "title": "Editorial board member",
+          "org": "Royal Society Open Science",
+          "from": 2023,
+          "to": null
+        },
+        {
+          "title": "Editor-in-Chief",
+          "org": "Nature Human Behaviour",
+          "from": 2023,
+          "to": null
+        }
+      ],
+      "memberships": [
+        {
+          "body": "Royal Society of Arts",
+          "grade": "Chartered member",
+          "since": 2012
+        }
+      ],
+      "highlights": [],
+      "supervising": [
+        {
+          "researcherId": "r4",
+          "role": "PhD student"
+        },
+        {
+          "researcherId": "r7",
+          "role": "Postdoctoral researcher"
+        },
+        {
+          "researcherId": "r18",
+          "role": "MRes student"
+        }
+      ],
+      "endorsements": {
+        "2025": {
+          "r19": "2025-09-17",
+          "r8": "2025-04-11",
+          "r2": "2025-06-10",
+          "r7": "2025-07-18"
+        },
+        "2026": {
+          "r3": "2026-01-13",
+          "r18": "2026-06-18",
+          "r15": "2026-08-17"
         }
       }
     }
