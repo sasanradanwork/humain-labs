@@ -552,6 +552,9 @@ function azureBackend() {
       // A researcher's fuller list comes from refreshMe.
       publicGroups = d.groups || [];
       publicResearchers = d.researchers || [];
+      // Every verified researcher's totals, for the leaderboard. Private rows carry no
+      // more than a name, an institution and the scores.
+      S.ranked = d.ranked || [];
       if (!AUTH.researcher) {
         S.groups = publicGroups;
         S.researchers = publicResearchers;

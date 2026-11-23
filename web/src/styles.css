@@ -1173,3 +1173,16 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
 .past-toggle .chev{transition:transform .2s ease;color:var(--ink-soft)}
 .past-toggle .chev.up{transform:rotate(180deg)}
 @media (prefers-reduced-motion:reduce){ .past-toggle .chev{transition:none} }
+
+/* On your own profile, in place of the back link. */
+.own-tag{display:inline-flex;align-items:center;gap:8px;color:var(--ink-soft);font-size:.86rem}
+
+/* A researcher who keeps their profile private is still ranked, but there is no page
+   for a visitor to open, so the row is named rather than linked. */
+.rank-table.lb tbody tr.no-link{cursor:default}
+.rank-table.lb tbody tr.no-link:hover{background:none}
+.priv-name{display:inline-flex;align-items:center;gap:6px;color:var(--ink)}
+.priv-name svg{color:var(--ink-soft);flex:none}
+
+/* The flag sits with the institution line on a leaderboard row. */
+.lb-where{display:flex;align-items:center;gap:7px}

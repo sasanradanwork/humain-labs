@@ -307,7 +307,11 @@ export default function App() {
     }
   // After registering, the identity check is the next step. Until it's passed, only the public, sign-in and details pages open.
   const signedInAs = AUTH.researcher || AUTH.participant;
-  const idGated = !!AUTH.user && !!signedInAs && !signedInAs.idVerified && !["about", "terms", "privacy", "auth", "participant", "profile"].includes(route.page);
+  const idGated =
+    !!AUTH.user &&
+    !!signedInAs &&
+    !signedInAs.idVerified &&
+    !["about", "terms", "privacy", "auth", "participant", "profile", "researchers"].includes(route.page);
   if (backend && idGated) body = <IdGate returnTo={location.hash || "#/dashboard"} />;
 
   return (

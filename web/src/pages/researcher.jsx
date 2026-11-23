@@ -53,11 +53,9 @@ export function Researchers({ filters, setFilters }) {
           </p>
         </div>
         <div className="intro-btns">
-          {!guest && (
-            <a className="btn" href="#/researchers/leaderboard">
-              <Icon.trophy /> Leaderboard
-            </a>
-          )}
+          <a className="btn" href="#/researchers/leaderboard">
+            <Icon.trophy /> Leaderboard
+          </a>
           {guest && (
             <a className="btn btn-blue" href="#/profile/edit">
               <Icon.people /> Join as a researcher

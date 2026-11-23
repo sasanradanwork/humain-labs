@@ -310,9 +310,11 @@ export function ResearcherPage({ id, own: ownPage = false }) {
     <div className="wrap">
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
         {ownPage ? (
-          <a className="back" href="#/dashboard">
-            ← Researcher area
-          </a>
+          // Your own profile is a destination, not somewhere you stepped into, so there
+          // is nothing to go back to — it just says whose page this is.
+          <span className="own-tag">
+            <Icon.people /> Your profile — this is how others see you
+          </span>
         ) : (
           <a className="back" href="#/researchers">
             ← Back to researchers
@@ -600,15 +602,23 @@ export function ResearcherPage({ id, own: ownPage = false }) {
 
 /** Who scored highest in a given year. Opens from the Researchers page. */
 export function Leaderboard() {
-  if (role() !== "researcher") return <ResearcherGate title="Leaderboard" />;
   const now = thisYear();
   const [year, setYear] = useState(now);
   const [disc, setDisc] = useState("");
+  // Anyone can read the leaderboard, and it ranks every verified researcher whether or
+  // not their profile is listed publicly — a ranking that quietly left people out would
+  // flatter whoever happened to be listed. A visitor is served `ranked`, which carries
+  // each private researcher's totals and nothing else; their row is not a link, because
+  // there is no page for a visitor to open.
+  const guest = role() !== "researcher";
+  const everyone = guest && S.ranked.length ? S.ranked : S.researchers;
   // Ranking within a discipline means ranking against that discipline only, so the
   // percentile is read against the people filtered in, not against everyone.
-  const field = disc ? S.researchers.filter((r) => r.discipline === disc) : S.researchers;
+  const field = disc ? everyone.filter((r) => r.discipline === disc) : everyone;
   const rows = leaderboard(field, year, 25);
   const mine = AUTH.researcher ? standings(field, year).get(AUTH.researcher.id) : null;
+  // A signed-in researcher can open any profile; a visitor can open only the public ones.
+  const canOpen = (r) => !guest || r.visibility === "public";
 
   return (
     <div className="wrap">
@@ -623,6 +633,12 @@ export function Leaderboard() {
             {PUBLICATION_POINTS} a publication, {FIRST_AUTHOR_BONUS} more as first author, and {ENDORSEMENT_POINTS} an endorsement.
             {disc ? ` Ranked within ${disc} only.` : ""}
           </p>
+          {guest && (
+            <p className="soft small">
+              Everyone verified is ranked here. Researchers who keep their profile private are listed without a link — sign in as a
+              researcher to open their page.
+            </p>
+          )}
         </div>
         <div className="lb-filters">
           <label className="lb-year">
@@ -676,17 +692,27 @@ export function Leaderboard() {
             {rows.map((x) => (
               <tr
                 key={x.researcher.id}
-                className={AUTH.researcher?.id === x.researcher.id ? "me" : ""}
-                onClick={() => navigate(researcherHref(x.researcher))}
+                className={(AUTH.researcher?.id === x.researcher.id ? "me" : "") + (canOpen(x.researcher) ? "" : " no-link")}
+                onClick={() => canOpen(x.researcher) && navigate(researcherHref(x.researcher))}
               >
                 <th scope="row">{x.rank}</th>
                 <td>
-                  <a href={researcherHref(x.researcher)} onClick={(e) => e.stopPropagation()}>
-                    {x.researcher.name}
-                  </a>
-                  <div className="small soft">
-                    {x.researcher.discipline ? `${x.researcher.discipline} · ` : ""}
-                    {x.researcher.institution}
+                  {canOpen(x.researcher) ? (
+                    <a href={researcherHref(x.researcher)} onClick={(e) => e.stopPropagation()}>
+                      {x.researcher.name}
+                    </a>
+                  ) : (
+                    <span className="priv-name" title="This researcher keeps their profile private.">
+                      {x.researcher.name}
+                      <Icon.lock />
+                    </span>
+                  )}
+                  <div className="small soft lb-where">
+                    <Flag country={x.researcher.country} size={13} />
+                    <span>
+                      {x.researcher.discipline ? `${x.researcher.discipline} · ` : ""}
+                      {x.researcher.institution}
+                    </span>
                   </div>
                 </td>
                 <td>

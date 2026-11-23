@@ -57,6 +57,11 @@ export function surnameOf(s) {
  * First authorship is worth a little more, which is why it is counted separately.
  */
 export function scoreFor(r, year) {
+  // A row that already carries its totals is taken as it stands. The public leaderboard
+  // is served this way: a private researcher's scores travel without their publications,
+  // so they can be ranked without their work being handed out.
+  const pre = r && r.scores && r.scores[String(year)];
+  if (pre) return { year: Number(year), publications: 0, firstAuthor: 0, endorsements: 0, points: 0, ...pre };
   const pubs = (r && r.publications ? r.publications : []).filter((p) => Number(p.year) === Number(year));
   const mine = surnameOf((r && r.name) || "");
   const first = pubs.filter((p) => {
