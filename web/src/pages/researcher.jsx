@@ -58,13 +58,9 @@ export function Researchers({ filters, setFilters }) {
               <Icon.trophy /> Leaderboard
             </a>
           )}
-          {guest ? (
+          {guest && (
             <a className="btn btn-blue" href="#/profile/edit">
               <Icon.people /> Join as a researcher
-            </a>
-          ) : (
-            <a className="btn btn-blue" href="#/profile">
-              <Icon.pencil /> Your profile
             </a>
           )}
         </div>

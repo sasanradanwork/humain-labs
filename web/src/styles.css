@@ -1082,10 +1082,14 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
   .tier::before{animation:none;display:none}
 }
 
-/* A flag sits beside a country name wherever one is shown. Decorative: the name is
-   always written next to it, and Windows, which has no flag glyphs, shows the ISO
-   letters instead — still a country marker. */
-.flag{line-height:1;flex:none;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+/* A flag sits beside a country name wherever one is shown. Drawn as a small image
+   rather than the flag emoji, because Windows ships no flag glyphs and would show the
+   two-letter code instead. Decorative: the name is always written next to it. */
+.flag{flex:none;display:inline-block;vertical-align:-2px;border-radius:2px;
+  /* a hairline keeps a white or pale flag from vanishing into the card */
+  box-shadow:0 0 0 1px rgb(0 0 0 / .12);object-fit:cover}
+:root[data-theme="dark"] .flag{box-shadow:0 0 0 1px rgb(255 255 255 / .22)}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .flag{box-shadow:0 0 0 1px rgb(255 255 255 / .22)} }
 
 /* A section heading with a link opposite it. */
 .sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
@@ -1146,3 +1150,26 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
 .ipath input{min-width:130px;flex:1 1 130px}
 .ipath-step{display:inline-flex;align-items:center;gap:6px;flex:1 1 150px;min-width:0}
 .ipath-arrow{color:var(--ink-soft);flex:none}
+
+/* ---- public / private switch on your own profile ---- */
+.vis-switch{display:inline-flex;align-items:center;gap:9px;padding:6px 14px 6px 8px;border-radius:999px;
+  border:1px solid var(--line);background:var(--card);color:var(--ink-soft);font:inherit;font-size:.84rem;cursor:pointer}
+.vis-switch:hover{border-color:var(--ink-soft)}
+.vis-switch:disabled{opacity:.6;cursor:default}
+.vis-track{position:relative;width:34px;height:20px;border-radius:999px;background:var(--line);transition:background .18s ease;flex:none}
+.vis-knob{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--card);
+  box-shadow:0 1px 3px rgb(0 0 0 / .25);transition:transform .18s ease}
+.vis-switch.on{border-color:var(--green);color:var(--green)}
+.vis-switch.on .vis-track{background:var(--green)}
+.vis-switch.on .vis-knob{transform:translateX(14px)}
+.vis-switch:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){ .vis-track,.vis-knob{transition:none} }
+
+/* ---- your studies, open ones and the closed history ---- */
+.study-list li{border-left-color:var(--blue)}
+.study-list.past li{border-left-color:var(--line)}
+.past-toggle{border-top:1px solid var(--line);margin-top:14px;justify-content:space-between;padding:14px 0 4px}
+.past-toggle > span:first-child{display:inline-flex;align-items:center;gap:8px;color:var(--ink-soft);font-size:.9rem}
+.past-toggle .chev{transition:transform .2s ease;color:var(--ink-soft)}
+.past-toggle .chev.up{transform:rotate(180deg)}
+@media (prefers-reduced-motion:reduce){ .past-toggle .chev{transition:none} }

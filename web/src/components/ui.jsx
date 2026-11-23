@@ -316,11 +316,18 @@ export function Cover({ seed, label = "" }) {
 export function Flag({ country, size = 15 }) {
   const code = COUNTRY_CODES[country];
   if (!code) return null;
-  const emoji = String.fromCodePoint(...[...code].map((c) => 0x1f1e6 + c.charCodeAt(0) - 65));
   return (
-    <span className="flag" style={{ fontSize: size }} aria-hidden="true">
-      {emoji}
-    </span>
+    <img
+      className="flag"
+      src={`/img/flags/${code.toLowerCase()}.png`}
+      width={Math.round((size * 4) / 3)}
+      height={size}
+      alt=""
+      // Decorative: the country's name is always written next to it.
+      aria-hidden="true"
+      loading="lazy"
+      decoding="async"
+    />
   );
 }
 

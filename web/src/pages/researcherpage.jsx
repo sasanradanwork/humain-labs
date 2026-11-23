@@ -7,7 +7,7 @@ import { InterestTree } from "../components/interests.jsx";
 import { PointsBars, PubBars, ordinal } from "../components/charts.jsx";
 import { AUTH, S, byId, groupsOf, role } from "../lib/store.js";
 import { DISCIPLINES } from "../lib/lists.js";
-import { fmtDate, gidKey, plural } from "../lib/util.js";
+import { fmtDate, gidKey, isOpen, plural } from "../lib/util.js";
 import { navigate, useUI } from "../lib/ui.jsx";
 import { groupHref, researcherHref } from "../components/cards.jsx";
 import { ResearcherGate } from "./public.jsx";
@@ -140,6 +140,115 @@ function Standing({ r }) {
   );
 }
 
+/**
+ * Public or private, flipped from the profile itself rather than buried in the form.
+ *
+ * Public means the page is listed to visitors who are not signed in, the way a public
+ * group is. It saves straight away, and says what it did.
+ */
+function VisibilitySwitch({ r }) {
+  const { backend, toast } = useUI();
+  const [busy, setBusy] = useState(false);
+  const on = r.visibility === "public";
+
+  const flip = async () => {
+    setBusy(true);
+    try {
+      // Everything else goes back unchanged: only visibility moves. The base is the
+      // full own record, not the shaped copy the directory holds.
+      await backend.saveProfile({ ...AUTH.researcher, visibility: on ? "private" : "public" }, AUTH.researcher.id);
+      toast(on ? "Your profile is private again — only signed-in researchers can see it." : "Your profile is public. Anyone with the link can see it.");
+    } catch (e) {
+      toast(e.message || "That didn't save. Try again in a moment.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={on}
+      className={"vis-switch" + (on ? " on" : "")}
+      onClick={flip}
+      disabled={busy}
+      title={on ? "Anyone can see this page. Click to make it private." : "Only signed-in researchers can see this page. Click to make it public."}
+    >
+      <span className="vis-track" aria-hidden="true">
+        <span className="vis-knob" />
+      </span>
+      <span>{on ? "Public profile" : "Private profile"}</span>
+    </button>
+  );
+}
+
+/**
+ * The studies this researcher has run: the ones still open, then the ones that have
+ * closed. A closed study stays readable — the applicants, the money and the timeline
+ * are the record of what happened, and they do not stop mattering on the closing date.
+ */
+function MyStudies() {
+  const me = AUTH.researcher;
+  const mine = S.studies.filter((s) => s.researcherId === me?.id);
+  const open = mine.filter(isOpen).sort((a, b) => String(a.closesAt || "9999").localeCompare(String(b.closesAt || "9999")));
+  const past = mine.filter((s) => !isOpen(s)).sort((a, b) => String(b.closesAt || "").localeCompare(String(a.closesAt || "")));
+  const [showPast, setShowPast] = useState(false);
+
+  const Row = ({ s, closed }) => (
+    <li>
+      <a href={`#/studies/${encodeURIComponent(s.id)}`}>{s.title}</a>
+      <div className="small soft">
+        {s.field} · {s.format}
+        {s.closesAt ? ` · ${closed ? "closed" : "closes"} ${fmtDate(s.closesAt)}` : ""}
+        {typeof s.places === "number" ? ` · ${plural(s.places, "place", "places")}` : ""}
+      </div>
+    </li>
+  );
+
+  if (!mine.length) return null;
+  return (
+    <section className="sec">
+      <div className="sec-head">
+        <h2>Your studies</h2>
+        <a className="link small" href="#/studies">
+          All studies →
+        </a>
+      </div>
+
+      {open.length > 0 ? (
+        <ul className="role-list study-list">
+          {open.map((s) => (
+            <Row key={s.id} s={s} />
+          ))}
+        </ul>
+      ) : (
+        <p className="soft small">Nothing open at the moment.</p>
+      )}
+
+      {past.length > 0 && (
+        <>
+          <button type="button" className="sec-toggle past-toggle" aria-expanded={showPast} onClick={() => setShowPast(!showPast)}>
+            <span>
+              <Icon.clock /> {plural(past.length, "past study", "past studies")}
+            </span>
+            <span className={"chev" + (showPast ? " up" : "")} aria-hidden="true">
+              ▾
+            </span>
+          </button>
+          {showPast && (
+            <ul className="role-list study-list past">
+              {past.map((s) => (
+                <Row key={s.id} s={s} closed />
+              ))}
+            </ul>
+          )}
+        </>
+      )}
+    </section>
+  );
+}
+
 /* ================= the page ================= */
 
 export function ResearcherPage({ id, own: ownPage = false }) {
@@ -211,9 +320,7 @@ export function ResearcherPage({ id, own: ownPage = false }) {
         )}
         {own && (
           <div className="btns">
-            <span className={"vis-pill" + (r.visibility === "public" ? " on" : "")} title={r.visibility === "public" ? "Anyone can see this page." : "Only signed-in researchers can see this page."}>
-              <Icon.globe /> {r.visibility === "public" ? "Public profile" : "Private profile"}
-            </span>
+            <VisibilitySwitch r={r} />
             <a className="btn btn-blue" href="#/profile/edit">
               <Icon.pencil /> Edit your profile
             </a>
@@ -246,9 +353,11 @@ export function ResearcherPage({ id, own: ownPage = false }) {
           </div>
         </div>
         <div className="rhero-act">
-          <a className="btn btn-blue" href={`mailto:${r.email}?subject=${encodeURIComponent("Collaboration via HumAIn Labs")}`}>
-            <Icon.mail /> Contact
-          </a>
+          {!own && r.email && (
+            <a className="btn btn-blue" href={`mailto:${r.email}?subject=${encodeURIComponent("Collaboration via HumAIn Labs")}`}>
+              <Icon.mail /> Contact
+            </a>
+          )}
           <LinkedInLink url={r.linkedin} />
           <ScholarLink url={r.scholar} />
         </div>
@@ -346,6 +455,8 @@ export function ResearcherPage({ id, own: ownPage = false }) {
           )}
 
           <Standing r={r} />
+
+          {own && <MyStudies />}
 
           <section className="sec">
             <h2>Publications</h2>
