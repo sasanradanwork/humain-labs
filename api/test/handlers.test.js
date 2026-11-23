@@ -863,3 +863,38 @@ test("the discipline splits the leaderboard without changing how points are coun
   // Filtering changes the field, never the score.
   assert.equal(R.scoreFor(people[1], 2026).points, R.standings(maths, 2026).get("b").points);
 });
+
+test("the public leaderboard ranks everyone, and a private row carries only its totals", async () => {
+  const repo = fresh();
+  const R = require("../src/lib/ranking");
+  const pub = await H.publicData({ repo });
+  const ranked = pub.json.ranked;
+  const verified = seed.researchers.filter((r) => r.verified);
+
+  // Everyone verified is in the standings, not just the publicly listed ones.
+  assert.equal(ranked.length, verified.length);
+  assert.ok(ranked.length > pub.json.researchers.length, "more ranked than listed");
+  const priv = ranked.filter((r) => r.visibility === "private");
+  assert.ok(priv.length > 0, "the seed has a private profile to rank");
+
+  // A private row is a name, an institution, a discipline and the numbers. Nothing else
+  // travels: no publications, no email, no handle or id to look the person up by.
+  for (const r of priv) {
+    assert.deepEqual(Object.keys(r).sort(), ["country", "discipline", "id", "institution", "name", "scores", "visibility"]);
+    for (const s of Object.values(r.scores))
+      assert.deepEqual(Object.keys(s).sort(), ["endorsements", "firstAuthor", "points", "publications", "year"]);
+  }
+  // A listed row may be opened, so it carries what a link needs.
+  const open = ranked.find((r) => r.visibility === "public");
+  assert.ok(open.publicId && open.handle);
+
+  // Ranking from the compact rows gives exactly what ranking from the records gives.
+  const year = new Date().getFullYear();
+  const fromRows = R.standings(ranked, year);
+  const fromRecords = R.standings(verified, year);
+  for (const r of verified) {
+    assert.equal(fromRows.get(r.id).points, fromRecords.get(r.id).points, r.name + " points");
+    assert.equal(fromRows.get(r.id).rank, fromRecords.get(r.id).rank, r.name + " rank");
+    assert.equal(fromRows.get(r.id).percentile, fromRecords.get(r.id).percentile, r.name + " percentile");
+  }
+});

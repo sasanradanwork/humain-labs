@@ -6,6 +6,7 @@ const V = require("./validate");
 const { feeBreakdown, gbp } = require("./money");
 const { trendFor } = require("./trending");
 const { newGroupId, newResearcherId } = require("./ids");
+const { scoreFor, yearsBack } = require("./ranking");
 const { FIELDS, POSITIONS, COUNTRY_NAMES, DISCIPLINES } = require("./lists");
 const { harvardAuthors } = require("./harvard");
 const { HttpError, bad } = V;
@@ -113,6 +114,25 @@ async function publicData({ repo, now = Date.now() }) {
     researchers: researchers
       .filter((r) => r.visibility === "public" && r.verified)
       .map(({ email, supervising, ...r }) => publicResearcher(r)),
+    // The leaderboard ranks every verified researcher, so a private profile is not
+    // simply missing from the standings and nobody's rank is flattered by who happens
+    // to be listed. Only the totals travel: a private researcher's row carries their
+    // name, institution and scores, and nothing else — no publications, no email, no
+    // handle to look them up by, and the page does not link to their page.
+    ranked: researchers
+      .filter((r) => r.verified)
+      .map((r) => ({
+        id: r.id,
+        name: r.name,
+        institution: r.institution,
+        country: r.country,
+        discipline: r.discipline || "",
+        visibility: r.visibility === "public" ? "public" : "private",
+        ...(r.visibility === "public" ? { publicId: r.publicId, handle: r.handle } : {}),
+        scores: Object.fromEntries(
+          yearsBack(new Date(now).getFullYear()).map((y) => [y, scoreFor(r, y)])
+        ),
+      })),
     reach: {
       total: applications.length, byCountry,
       participants: participants.length, participantsByCountry: count(participants),
