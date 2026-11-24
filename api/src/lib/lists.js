@@ -15,8 +15,8 @@ const POSITIONS = [
 ];
 const COUNTRY_NAMES = [
   "Argentina", "Australia", "Bangladesh", "Belgium", "Brazil", "Canada", "Chile", "China", "Colombia", "Denmark",
-  "Egypt", "Ethiopia", "Finland", "France", "Germany", "Ghana", "Greece", "India", "Indonesia", "Ireland", "Italy",
-  "Japan", "Kenya", "Malaysia", "Mexico", "Morocco", "Netherlands", "New Zealand", "Nigeria", "Norway", "Pakistan",
+  "Egypt", "Ethiopia", "Finland", "France", "Germany", "Ghana", "Greece", "India", "Indonesia", "Iran", "Ireland",
+  "Italy", "Japan", "Kenya", "Malaysia", "Mexico", "Morocco", "Netherlands", "New Zealand", "Nigeria", "Norway", "Pakistan",
   "Peru", "Philippines", "Poland", "Portugal", "Saudi Arabia", "Singapore", "South Africa", "South Korea", "Spain",
   "Sweden", "Switzerland", "Tanzania", "Thailand", "Turkey", "Uganda", "Ukraine", "United Arab Emirates",
   "United Kingdom", "United States", "Vietnam",
@@ -29,7 +29,7 @@ const COUNTRY_CODES = {
   "Argentina": "AR", "Australia": "AU", "Bangladesh": "BD", "Belgium": "BE", "Brazil": "BR", "Canada": "CA",
   "Chile": "CL", "China": "CN", "Colombia": "CO", "Denmark": "DK", "Egypt": "EG", "Ethiopia": "ET",
   "Finland": "FI", "France": "FR", "Germany": "DE", "Ghana": "GH", "Greece": "GR", "India": "IN",
-  "Indonesia": "ID", "Ireland": "IE", "Italy": "IT", "Japan": "JP", "Kenya": "KE", "Malaysia": "MY",
+  "Indonesia": "ID", "Iran": "IR", "Ireland": "IE", "Italy": "IT", "Japan": "JP", "Kenya": "KE", "Malaysia": "MY",
   "Mexico": "MX", "Morocco": "MA", "Netherlands": "NL", "New Zealand": "NZ", "Nigeria": "NG", "Norway": "NO",
   "Pakistan": "PK", "Peru": "PE", "Philippines": "PH", "Poland": "PL", "Portugal": "PT", "Saudi Arabia": "SA",
   "Singapore": "SG", "South Africa": "ZA", "South Korea": "KR", "Spain": "ES", "Sweden": "SE",
