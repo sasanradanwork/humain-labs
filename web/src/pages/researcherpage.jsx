@@ -66,6 +66,35 @@ function Standing({ r }) {
     }
   };
 
+  // Nothing recorded in any of the years shown: a chart of five empty columns and a
+  // table of zeroes says less than one sentence does, and takes a screen to say it.
+  const blank = rows.every((x) => x.points === 0);
+  if (blank)
+    return (
+      <section className="sec">
+        <h2>Standing</h2>
+        <p className="soft">
+          {own
+            ? "Nothing recorded yet. Add your publications and your standing appears here, one year at a time."
+            : `Nothing recorded for ${r.name.split(" ").slice(-1)[0]} in the last ${YEARS_SHOWN} years.`}
+        </p>
+        {!own && me && me.verified && !mine && (
+          <div className="endorse-row">
+            <button className="btn btn-blue" onClick={endorse} disabled={busy}>
+              <Icon.check /> Endorse this work for {year}
+            </button>
+          </div>
+        )}
+        {own && (
+          <div className="endorse-row">
+            <a className="btn" href="#/profile/edit">
+              <Icon.pencil /> Add publications
+            </a>
+          </div>
+        )}
+      </section>
+    );
+
   return (
     <section className="sec">
       <h2>Standing</h2>
@@ -197,33 +226,41 @@ function MyStudies() {
 
   const Row = ({ s, closed }) => (
     <li>
-      <a href={`#/studies/${encodeURIComponent(s.id)}`}>{s.title}</a>
-      <div className="small soft">
-        {s.field} · {s.format}
-        {s.closesAt ? ` · ${closed ? "closed" : "closes"} ${fmtDate(s.closesAt)}` : ""}
-        {typeof s.places === "number" ? ` · ${plural(s.places, "place", "places")}` : ""}
+      <div className="own-main">
+        <a href={`#/studies/${encodeURIComponent(s.id)}`}>{s.title}</a>
+        <div className="small soft">
+          {s.field} · {s.format}
+          {s.closesAt ? ` · ${closed ? "closed" : "closes"} ${fmtDate(s.closesAt)}` : ""}
+          {typeof s.places === "number" ? ` · ${plural(s.places, "place", "places")}` : ""}
+        </div>
+      </div>
+      <div className="btns">
+        <a className="btn" href={`#/studies/${encodeURIComponent(s.id)}`}>
+          {closed ? "View" : "Manage"}
+        </a>
       </div>
     </li>
   );
 
-  if (!mine.length) return null;
   return (
     <section className="sec">
       <div className="sec-head">
         <h2>Your studies</h2>
-        <a className="link small" href="#/studies">
-          All studies →
+        <a className="btn btn-blue" href="#/studies">
+          <Icon.lab /> Post a study
         </a>
       </div>
 
       {open.length > 0 ? (
-        <ul className="role-list study-list">
+        <ul className="own-list study-list">
           {open.map((s) => (
             <Row key={s.id} s={s} />
           ))}
         </ul>
       ) : (
-        <p className="soft small">Nothing open at the moment.</p>
+        <p className="soft small">
+          {mine.length ? "Nothing open at the moment." : "You haven't posted a study yet. Studies are posted and managed on the Studies page."}
+        </p>
       )}
 
       {past.length > 0 && (
@@ -237,7 +274,7 @@ function MyStudies() {
             </span>
           </button>
           {showPast && (
-            <ul className="role-list study-list past">
+            <ul className="own-list study-list past">
               {past.map((s) => (
                 <Row key={s.id} s={s} closed />
               ))}
@@ -249,9 +286,52 @@ function MyStudies() {
   );
 }
 
+/** The groups you lead or belong to, with the actions that go with them. */
+function MyGroups() {
+  const me = AUTH.researcher;
+  const gs = groupsOf(me?.id);
+  return (
+    <section className="sec">
+      <div className="sec-head">
+        <h2>Your research groups</h2>
+        <a className="btn btn-blue" href="#/groups/new">
+          <Icon.people /> Create a group
+        </a>
+      </div>
+      {gs.length ? (
+        <ul className="own-list">
+          {gs.map((g) => {
+            const myRole = g.members?.find((m) => m.researcherId === me.id)?.role || "Member";
+            return (
+              <li key={g.id}>
+                <div className="own-main">
+                  <a href={groupHref(g)}>{g.name}</a>
+                  <div className="small soft">
+                    {myRole} · {plural((g.members || []).length, "member", "members")}
+                    {g.institution ? ` · ${g.institution}` : ""}
+                  </div>
+                </div>
+                <div className="btns">
+                  <a className="btn" href={groupHref(g)}>
+                    View
+                  </a>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      ) : (
+        <p className="soft small">
+          You're not in any groups yet. Create one, or ask a group lead to add you with @{me?.handle}.
+        </p>
+      )}
+    </section>
+  );
+}
+
 /* ================= the page ================= */
 
-export function ResearcherPage({ id, own: ownPage = false }) {
+export function ResearcherPage({ id, own: ownPage = false, onVerify, onScholar }) {
   const r = researcherByRef(id);
   const { toast } = useUI();
   // A profile set to public is readable by anyone, exactly as a public group is. A
@@ -296,6 +376,10 @@ export function ResearcherPage({ id, own: ownPage = false }) {
   // Stored as paths; a profile written before that holds plain strings, which read as
   // one-step paths.
   const interests = (r.interests || []).map((x) => (Array.isArray(x) ? x : [x])).filter((x) => x.length);
+  // A new profile fills none of the sidebar, and a 2fr/1fr grid with an empty right
+  // column reads as a broken page rather than a sparse one.
+  const hasAside =
+    !!r.metrics || academic.length > 0 || research.length > 0 || memberships.length > 0 || gs.length > 0 || supervising.length > 0 || supervisors.length > 0;
 
   const copyId = async () => {
     try {
@@ -382,6 +466,19 @@ export function ResearcherPage({ id, own: ownPage = false }) {
         </span>
       </div>
 
+      {own && !r.verified && (
+        <div className="setup" style={{ margin: "0 0 20px" }}>
+          <h2>Verify your institution email to post studies</h2>
+          <p className="soft">
+            Only verified researchers can post studies, and participants only see studies from verified researchers. It takes a minute, in the
+            researcher area.
+          </p>
+          <button className="btn btn-solid" onClick={onVerify}>
+            Verify now
+          </button>
+        </div>
+      )}
+
       <div className="metrics">
         <div>
           <b>{pubs.length}</b>
@@ -392,6 +489,15 @@ export function ResearcherPage({ id, own: ownPage = false }) {
             <>
               <b title={`From ${r.metrics.source || "OpenAlex"}`}>{(r.metrics.citations || 0).toLocaleString()}</b>
               <span>Citations</span>
+            </>
+          ) : own ? (
+            <>
+              <b className="muted">—</b>
+              <span>
+                <button className="link" onClick={onScholar}>
+                  Add via ORCID
+                </button>
+              </span>
             </>
           ) : (
             <>
@@ -425,7 +531,14 @@ export function ResearcherPage({ id, own: ownPage = false }) {
         </div>
       </div>
 
-      <div className="two">
+      {own && (
+        <div className="own-band">
+          <MyStudies />
+          <MyGroups />
+        </div>
+      )}
+
+      <div className={"two" + (hasAside ? "" : " one")}>
         <div>
           <section className="sec">
             <h2>About</h2>
@@ -457,8 +570,6 @@ export function ResearcherPage({ id, own: ownPage = false }) {
           )}
 
           <Standing r={r} />
-
-          {own && <MyStudies />}
 
           <section className="sec">
             <h2>Publications</h2>
@@ -498,6 +609,11 @@ export function ResearcherPage({ id, own: ownPage = false }) {
                 From {r.metrics.source || "OpenAlex"}, updated {fmtDate(r.metrics.updatedAt)}. Each axis is scaled against the
                 highest figure among researchers here.
               </p>
+              {own && (
+                <button className="btn" onClick={onScholar} style={{ marginTop: 10 }}>
+                  Refresh stats
+                </button>
+              )}
             </section>
           )}
 
@@ -579,7 +695,7 @@ export function ResearcherPage({ id, own: ownPage = false }) {
             </section>
           )}
 
-          {gs.length > 0 && (
+          {!own && gs.length > 0 && (
             <section className="sec">
               <h2>Research groups</h2>
               <ul className="role-list">

@@ -20,7 +20,7 @@ import { IdGate } from "./components/idcheck.jsx";
 const NAV = {
   guest: [["home", "Home"], ["studies", "Studies"], ["researchers", "Researchers"], ["groups", "Groups"], ["reach", "Reach"], ["about", "About"]],
   participant: [["home", "Home"], ["studies", "Studies"], ["researchers", "Researchers"], ["groups", "Groups"], ["reach", "Reach"], ["mine", "My applications"], ["participant", "Your details"]],
-  researcher: [["home", "Home"], ["studies", "Studies"], ["researchers", "Researchers"], ["groups", "Groups"], ["reach", "Reach"], ["dashboard", "Profile"]],
+  researcher: [["home", "Home"], ["studies", "Studies"], ["researchers", "Researchers"], ["groups", "Groups"], ["reach", "Reach"], ["profile", "Profile"]],
 };
 const TITLES = {
   about: "About", auth: "Sign in or register", home: "Research needs people", studies: "Open studies", researchers: "Researchers",
@@ -265,7 +265,12 @@ export default function App() {
         break;
       case "profile":
         body = AUTH.researcher && route.id !== "edit" ? (
-          <ResearcherPage id={AUTH.researcher.id} own />
+          <ResearcherPage
+            id={AUTH.researcher.id}
+            own
+            onVerify={() => setModal({ kind: "verify" })}
+            onScholar={() => setModal({ kind: "scholar" })}
+          />
         ) : (
           <ProfileEditor
             onDelete={() =>

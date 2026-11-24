@@ -139,6 +139,12 @@ export const Icon = {
       <path d="M20 6 9 17l-5-5" />
     </svg>
   ),
+  lab: () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" {...s({ strokeLinejoin: "round" })} aria-hidden="true">
+      <path d="M10 3v7L4.6 18.4A2 2 0 0 0 6.3 21.5h11.4a2 2 0 0 0 1.7-3.1L14 10V3" />
+      <path d="M8.5 3h7M7.6 15h8.8" />
+    </svg>
+  ),
   lock: () => (
     <svg width="11" height="11" viewBox="0 0 24 24" {...s({ strokeLinejoin: "round" })} aria-hidden="true">
       <rect x="4" y="10.5" width="16" height="10" rx="2.5" />

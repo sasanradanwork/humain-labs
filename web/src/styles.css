@@ -199,7 +199,7 @@ tr:last-child td{border-bottom:0}
 /* ---- v2 additions ---- */
 .handle{font-size:.8rem;color:var(--ink-soft)}
 .icon-btn{width:38px;height:38px;padding:0;flex:none;display:inline-flex;align-items:center;justify-content:center}
-.foot .btns{display:flex;gap:8px;width:100%}
+.foot .btns{display:flex;gap:10px;align-items:center;width:100%}
 .foot .btns .btn:first-child{flex:1}
 .li-link{display:inline-flex;align-items:center;gap:4px;font-size:.8rem}
 
@@ -253,7 +253,7 @@ tr:last-child td{border-bottom:0}
 .list .item:first-child{border-top:0}
 .list .item.sel{background:var(--blue-tint)}
 .list .item h3{font-size:1rem}
-.list .item .btns{display:flex;gap:8px;flex-wrap:wrap}
+.list .item .btns{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .setup{border:1px solid var(--blue);background:var(--blue-tint);border-radius:16px;padding:26px;display:grid;gap:10px;justify-items:start}
 .provider{width:100%;justify-content:flex-start;gap:12px;padding:.7rem 1rem;margin-top:10px}
 .demo-hint{font-size:.78rem;color:var(--ink-soft);background:var(--paper-2);border-radius:10px;padding:10px 12px;margin-top:12px}
@@ -324,7 +324,7 @@ body.on-home main{padding-top:0}
 .audience{display:flex;flex-direction:column;align-items:center;gap:10px;padding-top:22px;border-top:1px solid rgba(147,165,255,.28)}
 .audience h2{margin:0;font-size:clamp(16px,1.4vw,19px);font-weight:400;letter-spacing:.01em;color:#93A5FF}
 .audience p{margin:0;max-width:46ch;font-size:clamp(15px,1.2vw,17px);line-height:1.6;font-weight:300;color:#B4BCE0}
-.hctas{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+.hctas{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;margin-top:10px}
 .hbtn{font:inherit;font-family:'Outfit',system-ui,sans-serif;font-size:15px;padding:.6rem 1.15rem;border-radius:999px;border:1px solid rgba(147,165,255,.55);color:#E7EAF3;background:transparent;text-decoration:none;cursor:pointer;transition:background .15s,border-color .15s}
 .hbtn:hover{border-color:#93A5FF;background:rgba(147,165,255,.12)}
 .hbtn.solid{background:#93A5FF;border-color:#93A5FF;color:var(--navy);font-weight:500}
@@ -580,7 +580,7 @@ body.on-home .site-footer{background:var(--paper-2)}
 .field-stack > span:first-child{display:block;font-size:.9rem;font-weight:600;margin-bottom:6px}
 .setup-banner{background:var(--blue-tint);border-bottom:1px solid var(--line)}
 .setup-banner-inner{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding-top:12px;padding-bottom:12px}
-.setup-banner-actions{display:flex;gap:8px;flex-wrap:wrap}
+.setup-banner-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 
 /* ---- added: icon colours, menu underline, coin spin, team and sponsors ---- */
 .tnum.ok{background:var(--green-tint);color:var(--green)}
@@ -988,7 +988,7 @@ a.plain{color:inherit;text-decoration:none}
 .rhero{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;margin:14px 0 18px}
 .rhero h1{margin:0 0 4px}
 .rhero > div:nth-child(2){flex:1 1 320px}
-.rhero-act{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.rhero-act{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 @media (max-width:640px){ .rhero{gap:14px} .rhero-act{width:100%} }
 
 h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
@@ -1047,7 +1047,7 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
   .rank-table th,.rank-table td{padding:8px 6px}
 }
 
-.endorse-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:16px}
+.endorse-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px}
 .lb-year{display:flex;gap:8px;align-items:center}
 .lb-year select{padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit}
 .lb-you{border:1px solid var(--blue);background:var(--blue-tint);color:var(--ink);border-radius:12px;padding:12px 14px;margin-bottom:18px}
@@ -1186,3 +1186,33 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
 
 /* The flag sits with the institution line on a leaderboard row. */
 .lb-where{display:flex;align-items:center;gap:7px}
+
+/* A profile with nothing in the sidebar runs full width rather than leaving a third of
+   the page empty. */
+.two.one{grid-template-columns:1fr}
+.two.one aside{display:none}
+/* The past-studies toggle sits inside a section rather than between them, so it needs
+   less room beneath it than a section break would take. */
+.own-band .past-toggle{padding-bottom:0}
+
+/* ---- your own studies and groups, side by side above the profile body ---- */
+.own-band{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start;margin-bottom:8px}
+@media (max-width:860px){ .own-band{grid-template-columns:1fr;gap:4px} }
+.own-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.own-list li{display:flex;gap:12px;align-items:center;justify-content:space-between;
+  border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--card)}
+.own-main{min-width:0}
+.own-main > a{font-weight:600}
+.own-list .btns{flex:none}
+
+/* A row of buttons. There was no base rule, so wherever .btns wasn't given one by a
+   more specific selector the buttons sat flush against each other. */
+.btns{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+/* On a phone the action row wraps, and the wrap put Delete beside Save with Cancel
+   orphaned below. Stack them instead, with the destructive one last and set apart. */
+@media (max-width:560px){
+  .actions{flex-direction:column;align-items:stretch;gap:10px}
+  .actions .spacer{display:none}
+  .actions .btn-danger{order:9;margin-top:6px}
+}
