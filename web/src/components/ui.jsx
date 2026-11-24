@@ -139,6 +139,19 @@ export const Icon = {
       <path d="M20 6 9 17l-5-5" />
     </svg>
   ),
+  eye: () => (
+    <svg width="15" height="15" viewBox="0 0 24 24" {...s({ strokeLinejoin: "round" })} aria-hidden="true">
+      <path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z" />
+      <circle cx="12" cy="12" r="3.1" />
+    </svg>
+  ),
+  eyeOff: () => (
+    <svg width="15" height="15" viewBox="0 0 24 24" {...s({ strokeLinejoin: "round" })} aria-hidden="true">
+      <path d="M10.6 6.1A9.9 9.9 0 0 1 12 5.5c6.2 0 10 6.5 10 6.5a18 18 0 0 1-3.3 4.1M6.5 7.9A17.6 17.6 0 0 0 2 12s3.8 6.5 10 6.5a9.8 9.8 0 0 0 3.3-.55" />
+      <path d="M9.9 9.9a3.1 3.1 0 0 0 4.3 4.3" />
+      <path d="M3 3l18 18" />
+    </svg>
+  ),
   lab: () => (
     <svg width="14" height="14" viewBox="0 0 24 24" {...s({ strokeLinejoin: "round" })} aria-hidden="true">
       <path d="M10 3v7L4.6 18.4A2 2 0 0 0 6.3 21.5h11.4a2 2 0 0 0 1.7-3.1L14 10V3" />

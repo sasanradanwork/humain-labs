@@ -1016,6 +1016,10 @@ export function ManageStudy({ route, onEditStudy, onDeleteStudy, onRate }) {
  * Crossref does not have every paper, and a book chapter or a preprint may not be there
  * at all.
  */
+// The server caps the short bio at this many words; the form says so as you type.
+const BIO_MAX = 300;
+const countWords = (t) => String(t || "").split(/\s+/).filter(Boolean).length;
+
 function DoiAdd({ onAdd, known }) {
   const { backend } = useUI();
   const [doi, setDoi] = useState("");
@@ -1084,6 +1088,7 @@ export function ProfileEditor({ onVerify, onScholar, onRor, onDelete }) {
     (r0?.interests || []).map((x) => (Array.isArray(x) ? [...x] : [x])).filter((x) => x.length)
   );
   const [discipline, setDiscipline] = useState(r0?.discipline || "");
+  const [bioWords, setBioWords] = useState(() => countWords(r0?.bio || ""));
   const [visibility, setVisibility] = useState(r0?.visibility || "private");
   const [pubs, setPubs] = useState(() => (r0?.publications || []).map((x) => ({ ...x, authorNames: x.authorNames?.length ? [...x.authorNames] : namesFromHarvard(x.authors) })));
   const [highlights, setHighlights] = useState(() => (r0?.highlights || []).map((x) => ({ ...x })));
@@ -1184,8 +1189,23 @@ export function ProfileEditor({ onVerify, onScholar, onRor, onDelete }) {
                 </Field>
               </div>
               <ChoiceField label="Position" name="position" options={POSITIONS} required defaultValue={p.position} />
-              <Field label="Short bio" required>
-                <textarea name="bio" rows="3" required maxLength="600" defaultValue={p.bio || ""} placeholder="What are you working on right now?" />
+              <Field
+                label="Short bio"
+                required
+                hint={
+                  <div className={"counter" + (bioWords > BIO_MAX ? " over" : "")}>
+                    {bioWords} / {BIO_MAX} words
+                  </div>
+                }
+              >
+                <textarea
+                  name="bio"
+                  rows="6"
+                  required
+                  defaultValue={p.bio || ""}
+                  onChange={(e) => setBioWords(countWords(e.target.value))}
+                  placeholder="What are you working on right now? A couple of paragraphs is plenty."
+                />
               </Field>
             </div>
           </div>

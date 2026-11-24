@@ -1309,3 +1309,76 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
 .mv-same{color:var(--ink-soft);opacity:.55}
 .mv-new{font-size:.62rem;letter-spacing:.04em;color:var(--blue);background:var(--blue-tint);
   border-radius:4px;padding:2px 4px}
+
+/* ---- the passport: a researcher's record, and what you can do with it ---- */
+.ppt-row{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:20px;align-items:start;margin:10px 0 24px}
+@media (max-width:860px){ .ppt-row{grid-template-columns:1fr} }
+
+.ppt{border:1px solid var(--line);border-radius:18px;background:var(--card);overflow:hidden}
+.ppt-top{display:flex;gap:22px;padding:22px 24px}
+@media (max-width:560px){ .ppt-top{flex-direction:column;gap:16px;padding:18px} }
+
+.ppt-photo{flex:none;display:grid;gap:8px;justify-items:center;align-content:start}
+/* The portrait sits in a ruled frame, as it would on a document. */
+.ppt-photo > :first-child{border-radius:12px;box-shadow:0 0 0 1px var(--line)}
+.ppt-caption{font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);text-align:center}
+
+.ppt-fields{min-width:0;flex:1}
+.ppt-fields h1{margin:0 0 14px;font-size:1.75rem;line-height:1.15}
+/* Label above value, in two columns — the data-page look. */
+.ppt-fields dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px 26px;margin:0}
+.ppt-fields dt{font-size:.66rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:2px}
+.ppt-fields dd{margin:0;font-size:.94rem}
+.ppt-country{display:flex;align-items:center;gap:7px}
+.ppt-stamps{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+
+/* The document number, along the foot, with the links beside it. */
+.ppt-foot{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  border-top:1px solid var(--line);background:var(--paper-2);padding:12px 24px}
+.ppt-id{display:flex;align-items:center;gap:10px;min-width:0;flex-wrap:wrap}
+.ppt-id code{font-size:.84rem;letter-spacing:.06em}
+.ppt-handle{color:var(--ink-soft);font-size:.84rem}
+.ppt-social{display:flex;gap:8px;align-items:center}
+.ppt-social a{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;
+  border:1px solid var(--line);border-radius:10px;color:var(--ink-soft);background:var(--card)}
+.ppt-social a:hover{border-color:var(--blue);color:var(--blue)}
+
+/* The actions rail beside the record. */
+.ppt-menu{display:grid;gap:8px;align-content:start}
+.pm{display:flex;align-items:center;gap:9px;padding:10px 13px;border-radius:11px;border:1px solid var(--line);
+  background:var(--card);color:var(--ink);font:inherit;font-size:.88rem;text-align:left;cursor:pointer;width:100%}
+.pm:hover{border-color:var(--blue);color:var(--blue)}
+.pm > svg{flex:none}
+.pm-go{background:var(--blue);border-color:var(--blue);color:var(--on-blue)}
+.pm-go:hover{color:var(--on-blue);opacity:.92}
+.pm-eye.is-on{border-color:var(--green);color:var(--green)}
+.pm-eye:disabled{opacity:.6;cursor:default}
+@media (max-width:860px){ .ppt-menu{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))} }
+
+/* ---- interest graph: one colour per branch ---- */
+/* Six steps, run through scripts/validate_palette.js from the dataviz guidance: inside
+   the lightness band, above the chroma floor, every adjacent pair separable under
+   deuteranopia, protanopia and tritanopia, and all at 3:1 against the card. The dark
+   steps are chosen for the dark surface rather than flipped from the light ones.
+   Colour is never the only signal — every node is also labelled. */
+.igraph{--h0:#4d39d0;--h1:#d8730e;--h2:#a73bba;--h3:#1e804f;--h4:#0f83bd;--h5:#db243c}
+:root[data-theme="dark"] .igraph{--h0:#7361e5;--h1:#cf7317;--h2:#bd59cf;--h3:#30a66b;--h4:#1d93cd;--h5:#e1475b}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .igraph{--h0:#7361e5;--h1:#cf7317;--h2:#bd59cf;--h3:#30a66b;--h4:#1d93cd;--h5:#e1475b}
+}
+.ig-branch rect{stroke:var(--c, var(--line))}
+.ig-branch text{fill:var(--c, var(--ink))}
+.ig-branch.is-open rect{fill:color-mix(in oklab, var(--c) 15%, var(--card));stroke:var(--c);stroke-width:2}
+.ig-branch.is-open text{fill:var(--ink);font-weight:600}
+.ig-branch .ig-count circle{fill:color-mix(in oklab, var(--c) 22%, var(--card))}
+.ig-branch .ig-count text{fill:var(--c)}
+.ig-branch.is-open .ig-count circle{fill:var(--c)}
+.ig-branch.is-open .ig-count text{fill:#fff}
+.ig-leaf rect{stroke:color-mix(in oklab, var(--c) 55%, var(--line));stroke-dasharray:none;
+  fill:color-mix(in oklab, var(--c) 8%, var(--card))}
+.ig-leaf text{fill:var(--ink)}
+.ig-links path.is-open{stroke:var(--c, var(--blue));stroke-width:2}
+.ig-node.is-btn:hover rect{stroke:var(--c, var(--blue))}
+
+/* Over the word limit: say so before the save does. */
+.counter.over{color:var(--danger,#B42318);font-weight:600}

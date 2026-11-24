@@ -25,6 +25,8 @@ export function interestTree(paths) {
 
 // Text is measured rather than wrapped: an SVG has no line breaking, so each label is a
 // pill sized to its own width and long ones are clipped with the full text on hover.
+const HUES = [0, 1, 2, 3, 4, 5];
+
 const CHAR = 6.15;
 const PAD = 26;
 const BADGE = 20; // the room a count badge needs on the right
@@ -34,13 +36,14 @@ const clip = (label, count = 0, max = 196) => {
   return label.length > fits ? label.slice(0, Math.max(1, fits - 1)) + "…" : label;
 };
 
-function Pill({ x, y, label, kind, onClick, open, count }) {
+function Pill({ x, y, label, kind, onClick, open, count, hue }) {
   const w = pillWidth(label, count);
   const h = 28;
   const Tag = onClick ? "g" : "g";
   return (
     <Tag
       className={`ig-node ig-${kind}${open ? " is-open" : ""}${onClick ? " is-btn" : ""}`}
+      style={hue != null ? { "--c": `var(--h${hue})` } : undefined}
       transform={`translate(${x - w / 2} ${y - h / 2})`}
       onClick={onClick}
       role={onClick ? "button" : undefined}
@@ -127,10 +130,15 @@ export function InterestGraph({ interests, root }) {
       <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Research interests: ${spoken}`}>
         <g className="ig-links">
           {nodes.map((n, i) => (
-            <path key={n.label} d={curve(hub, n)} className={i === openIdx ? "is-open" : ""} />
+            <path
+              key={n.label}
+              d={curve(hub, n)}
+              className={i === openIdx ? "is-open" : ""}
+              style={{ "--c": `var(--h${HUES[i % HUES.length]})` }}
+            />
           ))}
           {leaves.map((l) => (
-            <path key={l.label} d={curve(nodes[openIdx], l)} className="is-open" />
+            <path key={l.label} d={curve(nodes[openIdx], l)} className="is-open" style={{ "--c": `var(--h${HUES[openIdx % HUES.length]})` }} />
           ))}
         </g>
         {root && <Pill x={hub.x} y={hub.y} label={root} kind="hub" />}
@@ -141,13 +149,14 @@ export function InterestGraph({ interests, root }) {
             y={n.y}
             label={n.label}
             kind="branch"
+            hue={HUES[i % HUES.length]}
             count={n.children.length}
             open={i === openIdx}
             onClick={n.children.length ? () => setOpenIdx(i === openIdx ? -1 : i) : undefined}
           />
         ))}
         {leaves.map((l) => (
-          <Pill key={l.label} x={l.x} y={l.y} label={l.label} kind="leaf" />
+          <Pill key={l.label} x={l.x} y={l.y} label={l.label} kind="leaf" hue={HUES[openIdx % HUES.length]} />
         ))}
       </svg>
       <p className="small soft igraph-hint">

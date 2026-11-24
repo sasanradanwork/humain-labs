@@ -170,12 +170,13 @@ function Standing({ r }) {
 }
 
 /**
- * Public or private, flipped from the profile itself rather than buried in the form.
+ * Public or private, as an eye you can click.
  *
  * Public means the page is listed to visitors who are not signed in, the way a public
- * group is. It saves straight away, and says what it did.
+ * group is. One word says which it is; the rest is in the tooltip, so the rail stays
+ * quiet.
  */
-function VisibilitySwitch({ r }) {
+function VisibilityEye({ r }) {
   const { backend, toast } = useUI();
   const [busy, setBusy] = useState(false);
   const on = r.visibility === "public";
@@ -186,7 +187,7 @@ function VisibilitySwitch({ r }) {
       // Everything else goes back unchanged: only visibility moves. The base is the
       // full own record, not the shaped copy the directory holds.
       await backend.saveProfile({ ...AUTH.researcher, visibility: on ? "private" : "public" }, AUTH.researcher.id);
-      toast(on ? "Your profile is private again — only signed-in researchers can see it." : "Your profile is public. Anyone with the link can see it.");
+      toast(on ? "Your profile is private — only signed-in researchers can see it." : "Your profile is public.");
     } catch (e) {
       toast(e.message || "That didn't save. Try again in a moment.");
     } finally {
@@ -199,15 +200,13 @@ function VisibilitySwitch({ r }) {
       type="button"
       role="switch"
       aria-checked={on}
-      className={"vis-switch" + (on ? " on" : "")}
+      className={"pm pm-eye" + (on ? " is-on" : "")}
       onClick={flip}
       disabled={busy}
       title={on ? "Anyone can see this page. Click to make it private." : "Only signed-in researchers can see this page. Click to make it public."}
     >
-      <span className="vis-track" aria-hidden="true">
-        <span className="vis-knob" />
-      </span>
-      <span>{on ? "Public profile" : "Private profile"}</span>
+      {on ? <Icon.eye /> : <Icon.eyeOff />}
+      {on ? "Public" : "Private"}
     </button>
   );
 }
@@ -388,143 +387,123 @@ export function ResearcherPage({ id, own: ownPage = false, onVerify, onScholar }
 
   return (
     <div className="wrap">
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-        {ownPage ? (
-          // Your own profile is a destination, not somewhere you stepped into, so there
-          // is nothing to go back to — it just says whose page this is.
-          <span className="own-tag">
-            <Icon.people /> Your profile — this is how others see you
-          </span>
-        ) : (
-          <a className="back" href="#/researchers">
-            ← Back to researchers
-          </a>
-        )}
-        {own && (
-          <div className="btns">
-            <VisibilitySwitch r={r} />
-            <a className="btn btn-blue" href="#/profile/edit">
-              <Icon.pencil /> Edit your profile
-            </a>
+      <div className="ppt-row">
+        {/* The identity, laid out like the data page of a passport: the portrait, then
+            labelled fields, then the document number along the bottom. */}
+        <section className="ppt" aria-label={`${r.name}, researcher record`}>
+          <div className="ppt-top">
+            <div className="ppt-photo">
+              <Avatar name={r.name} size={96} />
+              <span className="ppt-caption">{r.discipline || "Researcher"}</span>
+            </div>
+            <div className="ppt-fields">
+              <h1>{r.name}</h1>
+              <dl>
+                <div>
+                  <dt>Position</dt>
+                  <dd>{r.position || "\u2014"}</dd>
+                </div>
+                <div>
+                  <dt>Institution</dt>
+                  <dd>
+                    {r.institution}
+                    {r.department ? `, ${r.department}` : ""}
+                  </dd>
+                </div>
+                <div>
+                  <dt>Country</dt>
+                  <dd className="ppt-country">
+                    <Flag country={r.country} /> {r.country}
+                  </dd>
+                </div>
+                <div>
+                  <dt>Field</dt>
+                  <dd>{r.field}</dd>
+                </div>
+              </dl>
+              <div className="ppt-stamps">
+                {r.verified ? <VerifiedBadge v={r.verified} /> : <UnverifiedBadge />}
+                {r.idVerified && (
+                  <span className="badge badge-pill" title="Identity checked">
+                    <Icon.check /> ID checked
+                  </span>
+                )}
+              </div>
+            </div>
           </div>
-        )}
-      </div>
 
-      <div className="rhero">
-        <Avatar name={r.name} size={84} />
-        <div style={{ minWidth: 0 }}>
-          <h1>{r.name}</h1>
-          <div className="small soft">
-            {r.position}
-            {r.position && r.institution ? " · " : ""}
-            {r.institution}
-            {r.department ? `, ${r.department}` : ""}
-          </div>
-          <div className="small soft" style={{ display: "flex", gap: 6, alignItems: "center", marginTop: 2 }}>
-            <Flag country={r.country} /> {r.country}
-          </div>
-          <div className="badges" style={{ marginTop: 10 }}>
-            {r.discipline && <span className="badge badge-disc">{r.discipline}</span>}
-            <span className="badge">{r.field}</span>
-            {r.verified ? <VerifiedBadge v={r.verified} /> : <UnverifiedBadge />}
-            {r.idVerified && (
-              <span className="badge badge-pill" title="Identity checked">
-                <Icon.check /> ID checked
-              </span>
-            )}
-          </div>
-        </div>
-        <div className="rhero-act">
-          {!own && r.email && (
-            <a className="btn btn-blue" href={`mailto:${r.email}?subject=${encodeURIComponent("Collaboration via HumAIn Labs")}`}>
-              <Icon.mail /> Contact
-            </a>
-          )}
-          <LinkedInLink url={r.linkedin} />
-          <ScholarLink url={r.scholar} />
-        </div>
-      </div>
-
-      <div className="idbar">
-        {r.publicId && (
-          <span className="idchip" title="This researcher's permanent HumAIn Labs identifier. Quote it on papers, adverts and applications.">
-            <HlgBadge size={16} />
-            <span className="idlabel">Researcher ID</span>
-            <code>{r.publicId}</code>
-            <button className="link small" onClick={copyId}>
-              Copy
-            </button>
-          </span>
-        )}
-        <span className="idchip">
-          <span className="idlabel">Handle</span>
-          <code>@{r.handle}</code>
-        </span>
-      </div>
-
-      {own && !r.verified && (
-        <div className="setup" style={{ margin: "0 0 20px" }}>
-          <h2>Verify your institution email to post studies</h2>
-          <p className="soft">
-            Only verified researchers can post studies, and participants only see studies from verified researchers. It takes a minute, in the
-            researcher area.
-          </p>
-          <button className="btn btn-solid" onClick={onVerify}>
-            Verify now
-          </button>
-        </div>
-      )}
-
-      <div className="metrics">
-        <div>
-          <b>{pubs.length}</b>
-          <span>Publications listed</span>
-        </div>
-        <div>
-          {r.metrics ? (
-            <>
-              <b title={`From ${r.metrics.source || "OpenAlex"}`}>{(r.metrics.citations || 0).toLocaleString()}</b>
-              <span>Citations</span>
-            </>
-          ) : own ? (
-            <>
-              <b className="muted">—</b>
-              <span>
-                <button className="link" onClick={onScholar}>
-                  Add via ORCID
+          <div className="ppt-foot">
+            <div className="ppt-id">
+              <HlgBadge size={15} />
+              <code>{r.publicId || "\u2014"}</code>
+              <span className="ppt-handle">@{r.handle}</span>
+              {r.publicId && (
+                <button className="link small" onClick={copyId}>
+                  Copy
                 </button>
-              </span>
+              )}
+            </div>
+            <div className="ppt-social">
+              {r.linkedin && (
+                <a href={r.linkedin} target="_blank" rel="noopener" title="LinkedIn" aria-label="LinkedIn">
+                  <Icon.linkedin />
+                </a>
+              )}
+              {r.scholar && (
+                <a href={r.scholar} target="_blank" rel="noopener" title="Google Scholar" aria-label="Google Scholar">
+                  <Icon.scholar />
+                </a>
+              )}
+              {!own && r.email && (
+                <a
+                  href={`mailto:${r.email}?subject=${encodeURIComponent("Collaboration via HumAIn Labs")}`}
+                  title={`Email ${r.name}`}
+                  aria-label={`Email ${r.name}`}
+                >
+                  <Icon.mail />
+                </a>
+              )}
+              {!r.linkedin && !r.scholar && !(!own && r.email) && <span className="small soft">No links added</span>}
+            </div>
+          </div>
+        </section>
+
+        {/* Everything you can do from here, beside the record rather than on top of it. */}
+        <nav className="ppt-menu" aria-label="Profile actions">
+          {own ? (
+            <>
+              <VisibilityEye r={r} />
+              <a className="pm" href="#/profile/edit">
+                <Icon.pencil /> Edit profile
+              </a>
+              <a className="pm" href="#/studies">
+                <Icon.lab /> Your studies
+              </a>
+              <a className="pm" href="#/groups/new">
+                <Icon.people /> Create a group
+              </a>
+              {!r.metrics && (
+                <button type="button" className="pm" onClick={onScholar}>
+                  <Icon.scholar /> Add ORCID stats
+                </button>
+              )}
             </>
           ) : (
             <>
-              <b className="muted" title="Citations come from OpenAlex, which needs a linked ORCID.">
-                —
-              </b>
-              <span>Citations</span>
+              {r.email && (
+                <a className="pm pm-go" href={`mailto:${r.email}?subject=${encodeURIComponent("Collaboration via HumAIn Labs")}`}>
+                  <Icon.mail /> Contact
+                </a>
+              )}
+              <a className="pm" href="#/researchers">
+                <Icon.people /> All researchers
+              </a>
+              <a className="pm" href="#/researchers/leaderboard">
+                <Icon.trophy /> Leaderboard
+              </a>
             </>
           )}
-        </div>
-        <div>
-          {r.metrics ? (
-            <>
-              <b>{r.metrics.hIndex}</b>
-              <span>h-index</span>
-            </>
-          ) : (
-            <>
-              <b className="muted">—</b>
-              <span>h-index</span>
-            </>
-          )}
-        </div>
-        <div>
-          <b>{gs.length}</b>
-          <span>Research groups</span>
-        </div>
-        <div>
-          <b>{supervising.length}</b>
-          <span>Supervising</span>
-        </div>
+        </nav>
       </div>
 
       {own && (
@@ -537,16 +516,15 @@ export function ResearcherPage({ id, own: ownPage = false, onVerify, onScholar }
       {/* ---- what they work on ---- */}
       <section className="pcard">
         <h2>About</h2>
-        <div className="pcard-split">
-          <p style={{ lineHeight: 1.7, whiteSpace: "pre-line", margin: 0 }}>{r.bio}</p>
-          {interests.length > 0 && (
-            <div className="pcard-graph">
-              <h3 className="sub" style={{ marginTop: 0 }}>Research interests</h3>
-              <InterestGraph interests={interests} root={r.discipline} />
-            </div>
-          )}
-        </div>
+        <p style={{ lineHeight: 1.7, whiteSpace: "pre-line", margin: 0, maxWidth: "68ch" }}>{r.bio}</p>
       </section>
+
+      {interests.length > 0 && (
+        <section className="pcard">
+          <h2>Research interests</h2>
+          <InterestGraph interests={interests} root={r.discipline} />
+        </section>
+      )}
 
       <Standing r={r} />
 
