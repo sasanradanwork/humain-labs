@@ -9,6 +9,8 @@ const { newGroupId, newResearcherId } = require("./ids");
 const { scoreFor, yearsBack } = require("./ranking");
 const { lookup: lookupDoi } = require("./crossref");
 const { FIELDS, POSITIONS, COUNTRY_NAMES, DISCIPLINES } = require("./lists");
+// A short bio is a paragraph or two, not a CV.
+const BIO_WORDS = 300;
 const { harvardAuthors } = require("./harvard");
 const { HttpError, bad } = V;
 
@@ -332,7 +334,7 @@ async function putProfile({ repo, principal, body, screen, crossref = lookupDoi 
     linkedin: V.linkedin(b.linkedin),
     scholar: V.scholar(b.scholar),
     orcid: V.orcid(b.orcid),
-    bio: V.str(b.bio, "Bio", { required: true, max: 600 }),
+    bio: V.words(b.bio, "Short bio", { required: true, max: BIO_WORDS }),
     // Which of the four broad disciplines they file themselves under: it roots their
     // interest tree and groups them on the leaderboard.
     discipline: V.oneOf(b.discipline, "Discipline", DISCIPLINES, ""),

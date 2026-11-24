@@ -56,6 +56,16 @@ function doi(v, name = "DOI") {
   if (!/^10\.\d{4,9}\/\S+$/.test(t)) throw bad(`${name} looks like 10.1038/s41586-020-2649-2.`);
   return t.toLowerCase();
 }
+// A word count, for text measured in words rather than characters. The character cap
+// still applies underneath, so a single enormous "word" can't get through.
+function words(v, name, { min = 0, max = 300, required = false } = {}) {
+  const t = str(v, name, { required, max: max * 24 });
+  if (!t) return t;
+  const n = t.split(/\s+/).filter(Boolean).length;
+  if (n < min) throw bad(`${name} needs at least ${min} words. You've written ${n}.`);
+  if (n > max) throw bad(`${name} can be at most ${max} words. You've written ${n}.`);
+  return t;
+}
 function scholar(v) {
   const s = url(v, "Google Scholar profile");
   if (s && !/^https?:\/\/scholar\.google\.[a-z.]+\/citations\?user=[\w-]+/i.test(s)) throw bad("Google Scholar link should look like https://scholar.google.com/citations?user=…");
@@ -100,4 +110,4 @@ function list(v, name, max) {
   return v;
 }
 
-module.exports = { HttpError, bad, str, int, money, email, url, linkedin, orcid, doi, scholar, ror, date, handle, oneOf, choice, list, FORMATS, OPENING_TYPES };
+module.exports = { HttpError, bad, str, int, money, email, url, linkedin, orcid, doi, words, scholar, ror, date, handle, oneOf, choice, list, FORMATS, OPENING_TYPES };

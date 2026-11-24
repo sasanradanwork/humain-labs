@@ -950,3 +950,16 @@ test("the public leaderboard ranks everyone, and a private row carries only its 
     assert.equal(fromRows.get(r.id).percentile, fromRecords.get(r.id).percentile, r.name + " percentile");
   }
 });
+
+test("the short bio is capped in words, not characters", async () => {
+  const repo = fresh();
+  const w = (n) => Array.from({ length: n }, (_, i) => "word" + i).join(" ");
+  const ok250 = await H.putProfile({ repo, principal: user("u-bio"), crossref, body: profile({ handle: "bio-ok", bio: w(250) }) });
+  assert.equal(ok250.status, 201);
+  // Long words are fine; it is the count that matters.
+  const long = await H.putProfile({ repo, principal: user("u-bio2"), crossref, body: profile({ handle: "bio-long", bio: "supercalifragilisticexpialidocious ".repeat(40).trim() }) });
+  assert.equal(long.status, 201);
+  const over = await run(H.putProfile, { repo, principal: user("u-bio3"), crossref, body: profile({ handle: "bio-over", bio: w(301) }) });
+  assert.equal(over.status, 400);
+  assert.match(over.json.error, /301/);
+});
