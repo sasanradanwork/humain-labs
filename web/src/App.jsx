@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Avatar, Icon, Logo } from "./components/ui.jsx";
 import { ApplyModal, ConfirmModal, RateModal, RorModal, ScholarModal, VerifyModal } from "./components/modals.jsx";
 import { About, Auth, Home, MyApplications, Reach, Studies } from "./pages/public.jsx";
-import { Dashboard, GroupEditor, GroupPage, Groups, ManageStudy, ProfileEditor, Researchers, StudyEditor, groupByRef } from "./pages/researcher.jsx";
+import { GroupEditor, GroupPage, Groups, ManageStudy, ProfileEditor, Researchers, StudyEditor, groupByRef } from "./pages/researcher.jsx";
 import { Leaderboard, ResearcherPage, researcherByRef } from "./pages/researcherpage.jsx";
 import { AUTH, S, byId, role, useStore } from "./lib/store.js";
 import { fallbackBackend, pickBackend, setToaster } from "./lib/backends.js";
@@ -24,7 +24,7 @@ const NAV = {
 };
 const TITLES = {
   about: "About", auth: "Sign in or register", home: "Research needs people", studies: "Open studies", researchers: "Researchers",
-  groups: "Research groups", reach: "Global reach", mine: "My applications", dashboard: "Researcher area", profile: "Your profile",
+  groups: "Research groups", reach: "Global reach", mine: "My applications", profile: "Your profile",
   terms: "Terms and conditions", privacy: "Privacy policy", participant: "Your details", status: "Status",
 };
 const PAGES = new Set(Object.keys(TITLES));
@@ -175,7 +175,7 @@ export default function App() {
     !!backend && !!AUTH.user && !AUTH.researcher && !AUTH.participant && !bannerGone && ["home", "studies", "reach", "mine"].includes(route.page);
 
   const ui = useMemo(() => ({ backend, toast, closeModal }), [backend, toast, closeModal]);
-  const navPage = route.page === "profile" ? "dashboard" : route.page;
+  const navPage = route.page;
 
   let body = null;
   if (!backend) body = <div className="loading" style={{ padding: "80px 0" }}>Loading…</div>;
@@ -225,7 +225,7 @@ export default function App() {
                   onConfirm: async () => {
                     await backend.deleteGroup(g.id);
                     toast("Group deleted.");
-                    navigate("#/dashboard");
+                    navigate("#/profile");
                   },
                 })
               }
@@ -260,9 +260,8 @@ export default function App() {
           />
         );
         break;
+      // The Researcher area was folded into the profile; old links still land somewhere.
       case "dashboard":
-        body = <Dashboard onVerify={() => setModal({ kind: "verify" })} onScholar={() => setModal({ kind: "scholar" })} />;
-        break;
       case "profile":
         body = AUTH.researcher && route.id !== "edit" ? (
           <ResearcherPage
@@ -317,7 +316,7 @@ export default function App() {
     !!signedInAs &&
     !signedInAs.idVerified &&
     !["about", "terms", "privacy", "auth", "participant", "profile", "researchers"].includes(route.page);
-  if (backend && idGated) body = <IdGate returnTo={location.hash || "#/dashboard"} />;
+  if (backend && idGated) body = <IdGate returnTo={location.hash || "#/profile"} />;
 
   return (
     <UIProvider value={ui}>

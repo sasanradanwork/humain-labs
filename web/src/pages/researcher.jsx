@@ -8,7 +8,7 @@ import { Field, Form, SubmitButton, navigate, replaceRoute, useUI } from "../lib
 import { AuthorNames, ChoiceField, InstitutionField } from "../components/fields.jsx";
 import { HlgBadge } from "../components/hlg.jsx";
 import { Repeater, YearSpan } from "../components/repeater.jsx";
-import { cleanDoi, lookupDoi } from "../lib/doi.js";
+import { cleanDoi } from "../lib/doi.js";
 import { IdCheckPanel } from "../components/idcheck.jsx";
 import { COUNTRY_NAMES, DISCIPLINES, FIELDS, POSITIONS } from "../lib/lists.js";
 import { namesFromHarvard } from "../lib/harvard.js";
@@ -425,157 +425,6 @@ const SetupPrompt = () => (
   </div>
 );
 
-export function Dashboard({ onVerify, onScholar }) {
-  const me = AUTH.researcher;
-  if (!AUTH.user)
-    return (
-      <div className="wrap">
-        <SignInPrompt title="Researcher area" text="Researchers sign in here to set up a profile, create research groups and post studies." />
-      </div>
-    );
-  if (!me)
-    return (
-      <div className="wrap">
-        <div className="intro">
-          <div>
-            <h1>Researcher area</h1>
-            <p className="soft">Signed in as {AUTH.user.name}.</p>
-          </div>
-        </div>
-        <SetupPrompt />
-      </div>
-    );
-
-  const myGroups = groupsOf(me.id);
-
-  return (
-    <div className="wrap">
-      <div className="intro">
-        <div>
-          <h1>Researcher area</h1>
-        </div>
-      </div>
-      {!me.verified && (
-        <div className="setup" style={{ marginBottom: 28 }}>
-          <h2>Verify your institution email to post studies</h2>
-          <p className="soft">
-            Only verified researchers can post studies, and participants only see studies from verified researchers. It takes a minute: we send a code
-            to your institution address.
-          </p>
-          <button className="btn btn-solid" onClick={onVerify}>
-            Verify now
-          </button>
-        </div>
-      )}
-      <div className="profile-card">
-        <Avatar name={me.name} size={64} />
-        <div className="grow">
-          <h2>{me.name}</h2>
-          <div className="handle">@{me.handle}</div>
-          <div className="badges" style={{ marginTop: 6 }}>
-            {me.verified ? <VerifiedBadge v={me.verified} /> : <UnverifiedBadge />}
-          </div>
-          <p className="small" style={{ marginTop: 6 }}>
-            {[me.position, me.department, me.institution].filter(Boolean).join(", ")}
-          </p>
-          <p className="small soft">
-            {me.field}, {me.country}
-          </p>
-        </div>
-        <div className="btns" style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
-          <LinkedInLink url={me.linkedin} className="btn icon-btn" />
-          <ScholarLink url={me.scholar} className="btn icon-btn" />
-          <a className="btn btn-blue" href="#/profile/edit">
-            Edit profile
-          </a>
-        </div>
-        {me.metrics ? (
-          <div className="stats-box">
-            <Radar m={me.metrics} size={190} labels />
-            <div>
-              <div className="small" style={{ fontWeight: 600 }}>
-                Publication stats
-              </div>
-              <p className="small soft">From OpenAlex, updated {fmtDate(me.metrics.updatedAt)}.</p>
-              <button className="btn" onClick={onScholar}>
-                Refresh
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="stats-box empty-box">
-            <div>
-              <div className="small" style={{ fontWeight: 600 }}>
-                Publication stats
-              </div>
-              <p className="small soft">
-                Add your ORCID iD and we'll pull your publication and citation figures from OpenAlex, shown as a small chart on your profile card.
-              </p>
-              <button className="btn btn-blue" onClick={onScholar}>
-                Add publication stats
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-
-      <section className="dash-sec">
-        <div className="intro">
-          <div>
-            <h2>Your research groups</h2>
-            <p className="soft small">Groups you lead or have been added to.</p>
-          </div>
-          <a className="btn btn-blue" href="#/groups/new">
-            Create a research group
-          </a>
-        </div>
-        {myGroups.length ? (
-          <div className="list">
-            {myGroups.map((g) => {
-              const myRole = g.members.find((m) => m.researcherId === me.id)?.role || "Member";
-              return (
-                <div className="item" key={g.id}>
-                  <div>
-                    <h3>{g.name}</h3>
-                    <div className="small soft">
-                      {myRole}, {plural(memberResearchers(g).length, "member", "members")}
-                    </div>
-                  </div>
-                  <div className="btns">
-                    <a className="btn" href={groupHref(g)}>
-                      View page
-                    </a>
-                    {canEditGroup(g) && (
-                      <a className="btn btn-blue" href={`${groupHref(g)}/edit`}>
-                        Edit
-                      </a>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="empty" style={{ padding: 30 }}>
-            <div>You're not in any groups yet. Create one, or ask a group lead to add you with @{me.handle}.</div>
-          </div>
-        )}
-      </section>
-
-      <section className="dash-sec">
-        <div className="intro">
-          <div>
-            <h2>Your studies</h2>
-            <p className="soft small">Studies are posted and managed on the Studies page, where you can also see who has applied.</p>
-          </div>
-          <a className="btn btn-solid" href="#/studies">
-            Go to studies
-          </a>
-        </div>
-      </section>
-    </div>
-  );
-}
 
 // A date that is fixed once the study is posted, shown as plain text in its place.
 function LockedDate({ label, value }) {
@@ -672,7 +521,7 @@ export function StudyEditor({ route, onDelete }) {
         </a>
         <div className="empty" style={{ marginTop: 16 }}>
           <div>View-only mode. Verify your institution email and identity to post or change a study.</div>
-          <a className="btn btn-blue" href="#/dashboard">
+          <a className="btn btn-blue" href="#/profile">
             Go to your researcher area
           </a>
         </div>
@@ -1168,6 +1017,7 @@ export function ManageStudy({ route, onEditStudy, onDeleteStudy, onRate }) {
  * at all.
  */
 function DoiAdd({ onAdd, known }) {
+  const { backend } = useUI();
   const [doi, setDoi] = useState("");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
@@ -1178,7 +1028,7 @@ function DoiAdd({ onAdd, known }) {
     if (already) return setErr("That DOI is already in your list.");
     setBusy(true);
     try {
-      const row = await lookupDoi(doi);
+      const row = await backend.lookupDoi(doi);
       onAdd(row);
       setDoi("");
     } catch (e) {
@@ -1254,7 +1104,7 @@ export function ProfileEditor({ onVerify, onScholar, onRor, onDelete }) {
   return (
     <div className="wrap">
       <div className="editor">
-        <a className="back" href="#/dashboard">
+        <a className="back" href="#/profile">
           ← Researcher area
         </a>
         <h1 style={{ marginTop: 14 }}>{isNew ? "Set up your researcher profile" : "Edit your profile"}</h1>
@@ -1280,15 +1130,9 @@ export function ProfileEditor({ onVerify, onScholar, onRor, onDelete }) {
               discipline,
               visibility,
               interests: interests.map((path) => path.map((x) => x.trim()).filter(Boolean)).filter((path) => path.length),
-              publications: pubs.map((x) => ({
-                title: x.title,
-                authorNames: (x.authorNames || []).map((n) => n.trim()).filter(Boolean),
-                venue: x.venue,
-                year: Number(x.year) || 0,
-                url: x.url || "",
-                doi: x.doi || "",
-                citations: x.citations == null ? null : Number(x.citations),
-              })),
+              // Only the DOI: the server fetches the paper from Crossref, so nothing the
+              // browser believes about a publication can reach the record.
+              publications: pubs.map((x) => ({ doi: x.doi })).filter((x) => x.doi),
               highlights: highlights.map((x) => ({ title: x.title, detail: x.detail || "", year: x.year ? Number(x.year) : null })),
               academicRoles: academic.map((x) => ({ title: x.title, org: x.org || "", from: x.from ? Number(x.from) : null, to: x.to ? Number(x.to) : null })),
               researchRoles: research.map((x) => ({ title: x.title, org: x.org || "", from: x.from ? Number(x.from) : null, to: x.to ? Number(x.to) : null })),
@@ -1299,7 +1143,7 @@ export function ProfileEditor({ onVerify, onScholar, onRor, onDelete }) {
             await backend.refreshMe?.();
             const next = sessionStorage.getItem("after-profile");
             sessionStorage.removeItem("after-profile");
-            navigate(next || "#/dashboard");
+            navigate(next || "#/profile");
           }}
         >
           <div className="fsec">
@@ -1479,43 +1323,35 @@ export function ProfileEditor({ onVerify, onScholar, onRor, onDelete }) {
           <div className="fsec">
             <h2>Publications</h2>
             <p className="hint">
-              Paste a DOI and the rest fills itself in from Crossref. These earn your yearly points, so the year on each one matters.
-              Listed newest first on your profile.
+              Added by DOI only. The record comes from Crossref, so the authors are the paper's own — that is what keeps the
+              leaderboard honest, since first authorship is worth points.
             </p>
-            <DoiAdd
-              onAdd={(row) => setPubs([row, ...pubs])}
-              known={pubs.map((x) => x.doi).filter(Boolean)}
-            />
-            <Repeater rows={pubs} setRows={setPubs} max={300} blank={{ title: "", authorNames: [""], venue: "", year: "", url: "", doi: "", citations: null }} noun={["Publication", "No publications added."]}>
-              {(x, set) => (
-                <>
-                  {x.doi && (
-                    <p className="small soft doi-note">
-                      <Icon.check /> From DOI <code>{x.doi}</code>
-                      {typeof x.citations === "number" ? ` · ${plural(x.citations, "citation", "citations")} at the time of lookup` : ""}
-                    </p>
-                  )}
-                  <Field label="Title" required>
-                    <input required maxLength="300" value={x.title || ""} onChange={(e) => set("title", e.target.value)} />
-                  </Field>
-                  <div className="f field-stack">
-                    <span className="req">Authors</span>
-                    <AuthorNames names={x.authorNames?.length ? x.authorNames : [""]} onChange={(names) => set("authorNames", names)} />
-                  </div>
-                  <div className="row2">
-                    <Field label="Journal or venue" required>
-                      <input required maxLength="200" value={x.venue || ""} onChange={(e) => set("venue", e.target.value)} />
-                    </Field>
-                    <Field label="Year" required>
-                      <input type="number" required min="1900" max={yr + 1} value={x.year || ""} onChange={(e) => set("year", e.target.value)} />
-                    </Field>
-                  </div>
-                  <Field label="Link">
-                    <input type="url" value={x.url || ""} onChange={(e) => set("url", e.target.value)} placeholder="https://doi.org/…" />
-                  </Field>
-                </>
-              )}
-            </Repeater>
+            <DoiAdd onAdd={(row) => setPubs([row, ...pubs])} known={pubs.map((x) => x.doi).filter(Boolean)} />
+            {pubs.length ? (
+              <ol className="pub-rows">
+                {pubs.map((x, i) => (
+                  <li key={x.doi || i}>
+                    <div className="own-main">
+                      <strong>{x.title}</strong>
+                      <div className="small soft">{x.authors}</div>
+                      <div className="small soft">
+                        {x.venue}
+                        {x.year ? ` · ${x.year}` : ""}
+                        {typeof x.citations === "number" ? ` · ${plural(x.citations, "citation", "citations")}` : ""}
+                      </div>
+                      <div className="small soft">
+                        <code>{x.doi}</code>
+                      </div>
+                    </div>
+                    <button type="button" className="link small" onClick={() => setPubs(pubs.filter((_, j) => j !== i))}>
+                      Remove
+                    </button>
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <p className="rep-empty">No publications added.</p>
+            )}
           </div>
 
           <div className="fsec">
@@ -1688,7 +1524,7 @@ export function ProfileEditor({ onVerify, onScholar, onRor, onDelete }) {
                 </button>
               </>
             )}
-            <a className="btn" href="#/dashboard">
+            <a className="btn" href="#/profile">
               Cancel
             </a>
           </div>
@@ -1772,12 +1608,12 @@ export function GroupEditor({ route, onRor, onDelete }) {
   if (me && !(me.verified && me.idVerified))
     return (
       <div className="wrap">
-        <a className="back" href={editing ? groupHref(g) : "#/dashboard"}>
+        <a className="back" href={editing ? groupHref(g) : "#/profile"}>
           ← {editing ? g.name : "Researcher area"}
         </a>
         <div className="empty" style={{ marginTop: 16 }}>
           <div>View-only mode. Verify your institution email and identity to create or edit research groups.</div>
-          <a className="btn btn-blue" href="#/dashboard">
+          <a className="btn btn-blue" href="#/profile">
             Go to your researcher area
           </a>
         </div>
@@ -1811,7 +1647,7 @@ export function GroupEditor({ route, onRor, onDelete }) {
   return (
     <div className="wrap">
       <div className="editor">
-        <a className="back" href={editing ? groupHref(g) : "#/dashboard"}>
+        <a className="back" href={editing ? groupHref(g) : "#/profile"}>
           ← {editing ? g.name : "Researcher area"}
         </a>
         <h1 style={{ marginTop: 14 }}>{editing ? "Edit group page" : "Create a research group"}</h1>
@@ -2148,7 +1984,7 @@ export function GroupEditor({ route, onRor, onDelete }) {
             </div>
             <div className="actions">
               <SubmitButton className="btn btn-solid">{editing ? "Save changes" : "Publish group page"}</SubmitButton>
-              <a className="btn" href={editing ? groupHref(g) : "#/dashboard"}>
+              <a className="btn" href={editing ? groupHref(g) : "#/profile"}>
                 Cancel
               </a>
               <span className="spacer" />

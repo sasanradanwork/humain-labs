@@ -132,7 +132,7 @@ export function VerifyModal({ onClose }) {
       <Modal onClose={onClose}>
         <h2>Verify your identity</h2>
         <p className="small soft">Your institution email is confirmed. One more step: a photo ID and selfie check, so participants know who they're dealing with.</p>
-        <IdCheckPanel returnTo="#/dashboard" />
+        <IdCheckPanel returnTo="#/profile" />
       </Modal>
     );
   const suggested = FREE_MAIL.has((me.email || "").split("@")[1]) ? "" : me.email;

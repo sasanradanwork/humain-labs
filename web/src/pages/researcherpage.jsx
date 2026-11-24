@@ -1,9 +1,9 @@
 // A researcher's own page: who they are, what they've published, the roles they hold,
 // and where their work stood each year. Reached by opening a card in the directory.
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Avatar, Flag, Icon, LinkedInLink, Radar, ScholarLink, VerifiedBadge, UnverifiedBadge } from "../components/ui.jsx";
 import { HlgBadge } from "../components/hlg.jsx";
-import { InterestTree } from "../components/interests.jsx";
+import { InterestGraph } from "../components/interests.jsx";
 import { PointsBars, PubBars, ordinal } from "../components/charts.jsx";
 import { AUTH, S, byId, groupsOf, role } from "../lib/store.js";
 import { DISCIPLINES } from "../lib/lists.js";
@@ -71,7 +71,7 @@ function Standing({ r }) {
   const blank = rows.every((x) => x.points === 0);
   if (blank)
     return (
-      <section className="sec">
+      <section className="pcard">
         <h2>Standing</h2>
         <p className="soft">
           {own
@@ -96,7 +96,7 @@ function Standing({ r }) {
     );
 
   return (
-    <section className="sec">
+    <section className="pcard">
       <h2>Standing</h2>
       <div className="standing">
         <div className="pct">
@@ -243,7 +243,7 @@ function MyStudies() {
   );
 
   return (
-    <section className="sec">
+    <section className="pcard">
       <div className="sec-head">
         <h2>Your studies</h2>
         <a className="btn btn-blue" href="#/studies">
@@ -291,7 +291,7 @@ function MyGroups() {
   const me = AUTH.researcher;
   const gs = groupsOf(me?.id);
   return (
-    <section className="sec">
+    <section className="pcard">
       <div className="sec-head">
         <h2>Your research groups</h2>
         <a className="btn btn-blue" href="#/groups/new">
@@ -376,10 +376,6 @@ export function ResearcherPage({ id, own: ownPage = false, onVerify, onScholar }
   // Stored as paths; a profile written before that holds plain strings, which read as
   // one-step paths.
   const interests = (r.interests || []).map((x) => (Array.isArray(x) ? x : [x])).filter((x) => x.length);
-  // A new profile fills none of the sidebar, and a 2fr/1fr grid with an empty right
-  // column reads as a broken page rather than a sparse one.
-  const hasAside =
-    !!r.metrics || academic.length > 0 || research.length > 0 || memberships.length > 0 || gs.length > 0 || supervising.length > 0 || supervisors.length > 0;
 
   const copyId = async () => {
     try {
@@ -538,183 +534,236 @@ export function ResearcherPage({ id, own: ownPage = false, onVerify, onScholar }
         </div>
       )}
 
-      <div className={"two" + (hasAside ? "" : " one")}>
-        <div>
-          <section className="sec">
-            <h2>About</h2>
-            <p style={{ lineHeight: 1.7, whiteSpace: "pre-line" }}>{r.bio}</p>
-            {interests.length > 0 && (
-              <>
-                <h3 className="sub">Research interests</h3>
-                <InterestTree interests={interests} root={r.discipline} />
-              </>
-            )}
-          </section>
+      {/* ---- what they work on ---- */}
+      <section className="pcard">
+        <h2>About</h2>
+        <div className="pcard-split">
+          <p style={{ lineHeight: 1.7, whiteSpace: "pre-line", margin: 0 }}>{r.bio}</p>
+          {interests.length > 0 && (
+            <div className="pcard-graph">
+              <h3 className="sub" style={{ marginTop: 0 }}>Research interests</h3>
+              <InterestGraph interests={interests} root={r.discipline} />
+            </div>
+          )}
+        </div>
+      </section>
 
-          {highlights.length > 0 && (
-            <section className="sec">
-              <h2>Highlights</h2>
-              <ul className="hl-list">
-                {highlights.map((h, i) => (
-                  <li key={i}>
-                    <Icon.star />
+      <Standing r={r} />
+
+      {/* ---- the published record ---- */}
+      <section className="pcard">
+        <div className="sec-head">
+          <h2>Publications</h2>
+          {own && (
+            <a className="link small" href="#/profile/edit">
+              Add by DOI →
+            </a>
+          )}
+        </div>
+        {!pubs.length ? (
+          <p className="soft small">No publications listed yet.</p>
+        ) : (
+          <div className="pcard-split">
+            <div>
+              <PubBars years={years} />
+              <ol className="pub-list">
+                {pubs.map((p, i) => (
+                  <li key={p.doi || i}>
+                    <div className="pub-year">{p.year}</div>
                     <div>
-                      <strong>{h.title}</strong>
-                      {h.year ? <span className="small soft"> · {h.year}</span> : null}
-                      {h.detail && <div className="small soft">{h.detail}</div>}
+                      {p.url ? (
+                        <a href={p.url} target="_blank" rel="noopener">
+                          {p.title}
+                        </a>
+                      ) : (
+                        <strong>{p.title}</strong>
+                      )}
+                      <div className="small soft">{p.authors}</div>
+                      <div className="small soft">
+                        {p.venue}
+                        {typeof p.citations === "number" ? ` · ${plural(p.citations, "citation", "citations")}` : ""}
+                      </div>
                     </div>
                   </li>
                 ))}
-              </ul>
-            </section>
-          )}
+              </ol>
+            </div>
+            <div className="pcard-side">
+              {r.metrics ? (
+                <>
+                  <h3 className="sub" style={{ marginTop: 0 }}>Publication stats</h3>
+                  <Radar m={r.metrics} size={168} labels />
+                  <p className="small soft" style={{ marginTop: 8 }}>
+                    From {r.metrics.source || "OpenAlex"}, updated {fmtDate(r.metrics.updatedAt)}. Each axis is scaled against the
+                    highest figure among researchers here.
+                  </p>
+                  {own && (
+                    <button className="btn" onClick={onScholar}>
+                      Refresh stats
+                    </button>
+                  )}
+                </>
+              ) : own ? (
+                <>
+                  <h3 className="sub" style={{ marginTop: 0 }}>Publication stats</h3>
+                  <p className="small soft">Link your ORCID and OpenAlex fills in citations, h-index and i10.</p>
+                  <button className="btn" onClick={onScholar}>
+                    Add via ORCID
+                  </button>
+                </>
+              ) : null}
+            </div>
+          </div>
+        )}
+      </section>
 
-          <Standing r={r} />
-
-          <section className="sec">
-            <h2>Publications</h2>
-            {!pubs.length && <p className="soft small">No publications listed yet.</p>}
-            {pubs.length > 0 && (
-              <>
-                <PubBars years={years} />
-                <ol className="pub-list">
-                  {pubs.map((p, i) => (
+      {/* ---- roles and memberships, in one place rather than four ---- */}
+      {(academic.length > 0 || research.length > 0 || memberships.length > 0 || highlights.length > 0) && (
+        <section className="pcard">
+          <h2>Experience</h2>
+          <div className="pcols">
+            {academic.length > 0 && (
+              <div>
+                <h3 className="sub" style={{ marginTop: 0 }}>Academic roles</h3>
+                <ul className="role-list">
+                  {academic.map((a, i) => (
                     <li key={i}>
-                      <div className="pub-year">{p.year}</div>
+                      <strong>{a.title}</strong>
+                      {a.org && <div className="small soft">{a.org}</div>}
+                      <div className="small soft">{span(a)}</div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {research.length > 0 && (
+              <div>
+                <h3 className="sub" style={{ marginTop: 0 }}>Research roles</h3>
+                <ul className="role-list">
+                  {research.map((a, i) => (
+                    <li key={i}>
+                      <strong>{a.title}</strong>
+                      {a.org && <div className="small soft">{a.org}</div>}
+                      <div className="small soft">{span(a)}</div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {memberships.length > 0 && (
+              <div>
+                <h3 className="sub" style={{ marginTop: 0 }}>Memberships</h3>
+                <ul className="role-list">
+                  {memberships.map((m, i) => (
+                    <li key={i}>
+                      <strong>{m.body}</strong>
+                      <div className="small soft">{[m.grade, m.since ? `since ${m.since}` : ""].filter(Boolean).join(" · ")}</div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {highlights.length > 0 && (
+              <div>
+                <h3 className="sub" style={{ marginTop: 0 }}>Highlights</h3>
+                <ul className="hl-list">
+                  {highlights.map((h, i) => (
+                    <li key={i}>
+                      <Icon.star />
                       <div>
-                        {p.url ? (
-                          <a href={p.url} target="_blank" rel="noopener">
-                            {p.title}
-                          </a>
-                        ) : (
-                          <strong>{p.title}</strong>
-                        )}
-                        <div className="small soft">{p.authors}</div>
-                        <div className="small soft">{p.venue}</div>
+                        <strong>{h.title}</strong>
+                        {h.year ? <span className="small soft"> · {h.year}</span> : null}
+                        {h.detail && <div className="small soft">{h.detail}</div>}
                       </div>
                     </li>
                   ))}
-                </ol>
-              </>
+                </ul>
+              </div>
             )}
-          </section>
-        </div>
+          </div>
+        </section>
+      )}
 
-        <aside>
-          {r.metrics && (
-            <section className="sec">
-              <h2>Publication stats</h2>
-              <Radar m={r.metrics} size={168} labels />
-              <p className="small soft" style={{ marginTop: 8 }}>
-                From {r.metrics.source || "OpenAlex"}, updated {fmtDate(r.metrics.updatedAt)}. Each axis is scaled against the
-                highest figure among researchers here.
-              </p>
-              {own && (
-                <button className="btn" onClick={onScholar} style={{ marginTop: 10 }}>
-                  Refresh stats
-                </button>
-              )}
-            </section>
-          )}
-
-          {academic.length > 0 && (
-            <section className="sec">
-              <h2>Academic roles</h2>
-              <ul className="role-list">
-                {academic.map((a, i) => (
-                  <li key={i}>
-                    <strong>{a.title}</strong>
-                    {a.org && <div className="small soft">{a.org}</div>}
-                    <div className="small soft">{span(a)}</div>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-
-          {research.length > 0 && (
-            <section className="sec">
-              <h2>Research roles</h2>
-              <ul className="role-list">
-                {research.map((a, i) => (
-                  <li key={i}>
-                    <strong>{a.title}</strong>
-                    {a.org && <div className="small soft">{a.org}</div>}
-                    <div className="small soft">{span(a)}</div>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-
-          {(supervising.length > 0 || supervisors.length > 0) && (
-            <section className="sec">
-              <h2>Supervision</h2>
-              {supervising.length > 0 && (
-                <>
-                  <h3 className="sub">Supervising</h3>
-                  <ul className="role-list">
-                    {supervising.map((s) => (
-                      <li key={s.researcherId}>
-                        <a href={researcherHref(s.r)}>{s.r.name}</a>
-                        <div className="small soft">{s.role}</div>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
-              {supervisors.length > 0 && (
-                <>
-                  <h3 className="sub">Supervised by</h3>
-                  <ul className="role-list">
-                    {supervisors.map((o) => (
-                      <li key={o.id}>
-                        <a href={researcherHref(o)}>{o.name}</a>
-                        <div className="small soft">{(o.supervising.find((s) => s.researcherId === r.id) || {}).role}</div>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
-            </section>
-          )}
-
-          {memberships.length > 0 && (
-            <section className="sec">
-              <h2>Professional memberships</h2>
-              <ul className="role-list">
-                {memberships.map((m, i) => (
-                  <li key={i}>
-                    <strong>{m.body}</strong>
-                    <div className="small soft">
-                      {[m.grade, m.since ? `since ${m.since}` : ""].filter(Boolean).join(" · ")}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-
-          {!own && gs.length > 0 && (
-            <section className="sec">
-              <h2>Research groups</h2>
-              <ul className="role-list">
-                {gs.map((g) => (
-                  <li key={g.id}>
-                    <a href={groupHref(g)}>{g.name}</a>
-                    <div className="small soft">{g.institution}</div>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-        </aside>
-      </div>
+      {/* ---- the people around them ---- */}
+      {(supervising.length > 0 || supervisors.length > 0 || (!own && gs.length > 0)) && (
+        <section className="pcard">
+          <h2>People and groups</h2>
+          <div className="pcols">
+            {supervising.length > 0 && (
+              <div>
+                <h3 className="sub" style={{ marginTop: 0 }}>Supervising</h3>
+                <ul className="role-list">
+                  {supervising.map((s) => (
+                    <li key={s.researcherId}>
+                      <a href={researcherHref(s.r)}>{s.r.name}</a>
+                      <div className="small soft">{s.role}</div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {supervisors.length > 0 && (
+              <div>
+                <h3 className="sub" style={{ marginTop: 0 }}>Supervised by</h3>
+                <ul className="role-list">
+                  {supervisors.map((o) => (
+                    <li key={o.id}>
+                      <a href={researcherHref(o)}>{o.name}</a>
+                      <div className="small soft">{(o.supervising.find((s) => s.researcherId === r.id) || {}).role}</div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {!own && gs.length > 0 && (
+              <div>
+                <h3 className="sub" style={{ marginTop: 0 }}>Research groups</h3>
+                <ul className="role-list">
+                  {gs.map((g) => (
+                    <li key={g.id}>
+                      <a href={groupHref(g)}>{g.name}</a>
+                      <div className="small soft">{g.institution}</div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
     </div>
   );
 }
 
 /* ================= leaderboard ================= */
+
+/** "2026-10" -> "October". Used for the line saying when the board was last marked. */
+const fmtMonth = (ym) => {
+  const [y, m] = String(ym || "").split("-").map(Number);
+  if (!y || !m) return "last month";
+  return new Date(Date.UTC(y, m - 1, 1)).toLocaleDateString(undefined, { month: "long", year: "numeric" });
+};
+
+/** How far someone has moved since the monthly baseline. */
+function Move({ m }) {
+  if (!m) return null;
+  if (m.kind === "same") return <span className="mv mv-same" title="No change since last month">–</span>;
+  if (m.kind === "new")
+    return (
+      <span className="mv mv-new" title="New to the board this month">
+        NEW
+      </span>
+    );
+  const up = m.kind === "up";
+  return (
+    <span className={"mv " + (up ? "mv-up" : "mv-down")} title={`${up ? "Up" : "Down"} ${m.by} since last month`}>
+      <svg width="9" height="9" viewBox="0 0 10 10" aria-hidden="true">
+        <path d={up ? "M5 1 L9 8 L1 8 Z" : "M5 9 L1 2 L9 2 Z"} fill="currentColor" />
+      </svg>
+      {m.by}
+    </span>
+  );
+}
 
 /** Who scored highest in a given year. Opens from the Researchers page. */
 export function Leaderboard() {
@@ -733,6 +782,32 @@ export function Leaderboard() {
   const field = disc ? everyone.filter((r) => r.discipline === disc) : everyone;
   const rows = leaderboard(field, year, 25);
   const mine = AUTH.researcher ? standings(field, year).get(AUTH.researcher.id) : null;
+
+  // Movement since the monthly baseline. Last month's points are ranked over the same
+  // people who are on screen now, so the arrows stay right when a discipline is chosen.
+  // Only the current year has a baseline; earlier years are settled and show none.
+  const base = year === now ? S.baseline : null;
+  const lastRank = useMemo(() => {
+    if (!base) return null;
+    const scored = field
+      .filter((r) => (base.points[r.id] || 0) > 0)
+      .map((r) => ({ id: r.id, points: base.points[r.id] || 0 }))
+      .sort((a, b) => b.points - a.points);
+    const out = new Map();
+    scored.forEach((x, i) => {
+      const tie = scored.findIndex((y) => y.points === x.points);
+      out.set(x.id, tie + 1);
+    });
+    return out;
+  }, [base, field, year]);
+  const moveOf = (id, rank) => {
+    if (!lastRank) return null;
+    const was = lastRank.get(id);
+    // Someone with no points last month is new to the board, not "up".
+    if (!was) return { kind: "new" };
+    const d = was - rank;
+    return d === 0 ? { kind: "same" } : { kind: d > 0 ? "up" : "down", by: Math.abs(d) };
+  };
   // A signed-in researcher can open any profile; a visitor can open only the public ones.
   const canOpen = (r) => !guest || r.visibility === "public";
 
@@ -745,16 +820,10 @@ export function Leaderboard() {
         <div>
           <h1>Leaderboard</h1>
           <p className="soft">
-            Researchers ranked by what they published and the endorsements their peers gave them, one year at a time. Points are{" "}
-            {PUBLICATION_POINTS} a publication, {FIRST_AUTHOR_BONUS} more as first author, and {ENDORSEMENT_POINTS} an endorsement.
-            {disc ? ` Ranked within ${disc} only.` : ""}
+            Every verified researcher, ranked on the year's work.
+            {disc ? ` Showing ${disc} only.` : ""}
+            {guest ? " Private profiles are listed without a link." : ""}
           </p>
-          {guest && (
-            <p className="soft small">
-              Everyone verified is ranked here. Researchers who keep their profile private are listed without a link — sign in as a
-              researcher to open their page.
-            </p>
-          )}
         </div>
         <div className="lb-filters">
           <label className="lb-year">
@@ -779,6 +848,26 @@ export function Leaderboard() {
             </select>
           </label>
         </div>
+      </div>
+
+      <div className="score-key">
+        <div className="sk-items">
+          <span className="sk">
+            <b>+{PUBLICATION_POINTS}</b> each publication
+          </span>
+          <span className="sk">
+            <b>+{FIRST_AUTHOR_BONUS}</b> if you're first author
+          </span>
+          <span className="sk">
+            <b>+{ENDORSEMENT_POINTS}</b> each peer endorsement
+          </span>
+        </div>
+        <p className="small soft sk-note">
+          Publications count in the year they were published; endorsements in the year they were given.{" "}
+          {base
+            ? `Arrows show movement since ${fmtMonth(base.since)}, when the board was last marked.`
+            : "Movement arrows appear once there's a previous month to compare with."}
+        </p>
       </div>
 
       {mine && mine.points > 0 && (
@@ -811,7 +900,12 @@ export function Leaderboard() {
                 className={(AUTH.researcher?.id === x.researcher.id ? "me" : "") + (canOpen(x.researcher) ? "" : " no-link")}
                 onClick={() => canOpen(x.researcher) && navigate(researcherHref(x.researcher))}
               >
-                <th scope="row">{x.rank}</th>
+                <th scope="row">
+                  <span className="lb-rank">
+                    {x.rank}
+                    <Move m={moveOf(x.researcher.id, x.rank)} />
+                  </span>
+                </th>
                 <td>
                   {canOpen(x.researcher) ? (
                     <a href={researcherHref(x.researcher)} onClick={(e) => e.stopPropagation()}>

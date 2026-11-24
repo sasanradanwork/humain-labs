@@ -66,7 +66,7 @@ export function ParticipantProfile({ onDelete }) {
             <p className="soft">Researcher accounts don't apply to studies, so there are no participant details to set up.</p>
           </div>
         </div>
-        <a className="btn" href="#/dashboard">
+        <a className="btn" href="#/profile">
           Go to your researcher area
         </a>
       </div>

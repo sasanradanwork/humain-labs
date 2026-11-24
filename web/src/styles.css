@@ -1216,3 +1216,96 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
   .actions .spacer{display:none}
   .actions .btn-danger{order:9;margin-top:6px}
 }
+
+/* The publications already added, shown as records rather than editable fields: they
+   came from Crossref and are not the researcher's to rewrite. */
+.pub-rows{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:10px}
+.pub-rows li{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;
+  border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--card)}
+.pub-rows code{font-size:.78rem}
+
+/* ---- home trust cards: the grid and glow come up on hover ---- */
+/* These cards sit on dark photographs in both themes, so the hover accent is the
+   brand's light periwinkle rather than the ink-dark --blue, which would disappear. */
+.trust-card{--tc:#93A5FF}
+/* A faint ruled grid and a glow in the accent colour fade in from the top-left, and the
+   icon lights up with them. Nothing moves, so the text stays readable throughout. */
+.trust-card::after{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:0;
+  transition:opacity .35s ease;
+  background:
+    radial-gradient(120% 90% at 8% 0%, color-mix(in oklab, var(--tc) 26%, transparent) 0%, transparent 62%),
+    repeating-linear-gradient(to right, rgb(255 255 255 / .07) 0 1px, transparent 1px 86px),
+    repeating-linear-gradient(to bottom, rgb(255 255 255 / .07) 0 1px, transparent 1px 86px);
+  /* the ruling fades out towards the bottom, so it reads as light catching the card */
+  -webkit-mask-image:linear-gradient(to bottom, #000 0%, #000 42%, transparent 88%);
+  mask-image:linear-gradient(to bottom, #000 0%, #000 42%, transparent 88%);
+}
+.trust-card{transition:box-shadow .35s ease, border-color .35s ease;border:1px solid transparent}
+.trust-card:hover,.trust-card:focus-within{
+  box-shadow:0 14px 40px rgba(16,24,40,.26);
+  border-color:color-mix(in oklab, var(--tc) 38%, transparent);
+}
+.trust-card:hover::after,.trust-card:focus-within::after{opacity:1}
+.trust-card .tnum{transition:background .35s ease, color .35s ease, box-shadow .35s ease}
+.trust-card:hover .tnum,.trust-card:focus-within .tnum{
+  background:color-mix(in oklab, var(--tc) 18%, transparent);
+  color:var(--tc);
+  box-shadow:0 0 0 1px color-mix(in oklab, var(--tc) 55%, transparent), 0 0 18px color-mix(in oklab, var(--tc) 28%, transparent);
+}
+@media (prefers-reduced-motion:reduce){
+  .trust-card,.trust-card::after,.trust-card .tnum{transition:none}
+}
+
+/* ---- research interests as a graph ---- */
+.igraph svg{width:100%;height:auto;display:block;overflow:visible}
+.igraph-hint{margin:2px 0 0}
+.ig-links path{fill:none;stroke:var(--line);stroke-width:1.5}
+.ig-links path.is-open{stroke:color-mix(in oklab, var(--blue) 45%, transparent)}
+.ig-node rect{fill:var(--card);stroke:var(--line);stroke-width:1.5}
+.ig-node text{fill:var(--ink-soft);font-size:11.5px;font-family:inherit}
+.ig-node.is-btn{cursor:pointer}
+.ig-hub rect{fill:var(--blue-tint);stroke:var(--blue)}
+.ig-hub text{fill:var(--blue);font-weight:600}
+.ig-branch text{fill:var(--ink);font-weight:500}
+.ig-branch.is-open rect{stroke:var(--blue);fill:var(--blue-tint)}
+.ig-branch.is-open text{fill:var(--blue)}
+.ig-leaf rect{stroke-dasharray:3 3}
+.ig-count circle{fill:var(--line)}
+.ig-count text{fill:var(--ink-soft);font-size:9.5px;font-weight:600}
+.ig-branch.is-open .ig-count circle{fill:var(--blue)}
+.ig-branch.is-open .ig-count text{fill:var(--on-blue)}
+.ig-node.is-btn:hover rect{stroke:var(--blue)}
+.ig-node.is-btn:focus-visible rect{stroke:var(--blue);stroke-width:2.5}
+.ig-node.is-btn:focus{outline:none}
+
+/* ---- the profile, as a stack of grouped cards ---- */
+.pcard{border:1px solid var(--line);border-radius:18px;padding:24px 26px;background:var(--card);margin-bottom:22px}
+.pcard > h2,.pcard > .sec-head > h2{margin:0 0 16px;font-size:1.15rem}
+.pcard .sec-head{margin-bottom:16px}
+/* Body text on one side, the thing worth looking at on the other. */
+.pcard-split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:30px;align-items:start}
+.pcard-side{display:grid;gap:10px;justify-items:start}
+@media (max-width:900px){ .pcard-split{grid-template-columns:1fr;gap:22px} }
+@media (max-width:560px){ .pcard{padding:20px 18px} }
+/* Roles, memberships and people: as many columns as fit, never a tall thin list. */
+.pcols{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:28px;align-items:start}
+.pcard .role-list li,.pcard .hl-list li{break-inside:avoid}
+
+/* ---- leaderboard: the scoring key and movement arrows ---- */
+.score-key{border:1px solid var(--line);border-radius:14px;padding:14px 16px;background:var(--paper-2);margin-bottom:18px}
+.sk-items{display:flex;gap:10px;flex-wrap:wrap}
+.sk{display:inline-flex;align-items:baseline;gap:7px;padding:7px 13px;border-radius:999px;
+  background:var(--card);border:1px solid var(--line);font-size:.86rem;color:var(--ink-soft)}
+.sk b{font-family:'Outfit',sans-serif;font-size:1rem;color:var(--blue)}
+.sk-note{margin:10px 0 0}
+
+.lb-rank{display:inline-flex;align-items:center;gap:7px;font-variant-numeric:tabular-nums}
+.mv{display:inline-flex;align-items:center;gap:2px;font-size:.72rem;font-weight:600;line-height:1}
+.mv-up{color:var(--green)}
+.mv-down{color:#B42318}
+:root[data-theme="dark"] .mv-down{color:#F97066}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .mv-down{color:#F97066} }
+.mv-same{color:var(--ink-soft);opacity:.55}
+.mv-new{font-size:.62rem;letter-spacing:.04em;color:var(--blue);background:var(--blue-tint);
+  border-radius:4px;padding:2px 4px}

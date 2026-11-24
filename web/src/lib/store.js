@@ -4,7 +4,7 @@ import { useSyncExternalStore } from "react";
 import { normCountry } from "./util.js";
 
 // appsVersion moves whenever applications change, so the applicants table reloads.
-export const S = { researchers: [], ranked: [], participants: [], groups: [], studies: [], applications: [], myApps: [], appsVersion: 0, stats: { total: 0, byCountry: {}, byStudy: {} } };
+export const S = { researchers: [], ranked: [], baseline: null, participants: [], groups: [], studies: [], applications: [], myApps: [], appsVersion: 0, stats: { total: 0, byCountry: {}, byStudy: {} } };
 export const AUTH = { user: null, researcher: null, participant: null, stats: null };
 
 // A participant's own record, worked out from their applications. Mirrors participantStats on the server:

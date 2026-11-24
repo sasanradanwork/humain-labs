@@ -5,6 +5,7 @@
 // The Azure API enforces the rules on the server; the other two check them here.
 import { AUTH, COLS, S, computeStats, notify, participantStats } from "./store.js";
 import { FREE_MAIL, UserError, newGroupId, newResearcherId, today, uid } from "./util.js";
+import { cleanDoi, lookupDoi as clientLookupDoi } from "./doi.js";
 import { harvardAuthors } from "./harvard.js";
 import { feeBreakdown, gbp } from "./money.js";
 import DEMO from "../data/seed.json";
@@ -113,6 +114,10 @@ function docBackend(store, kind) {
     },
     // Mirrors endorseResearcher on the server: verified researchers only, never yourself,
     // one endorsement per pair per year, and endorsing again takes it back.
+    // No API in the demo build, so the browser asks Crossref itself.
+    async lookupDoi(doi) {
+      return clientLookupDoi(doi);
+    },
     async endorse(researcherId, year) {
       const me = needResearcher();
       if (!me.verified) throw new UserError("Verify your institution email before endorsing another researcher.");
@@ -555,6 +560,8 @@ function azureBackend() {
       // Every verified researcher's totals, for the leaderboard. Private rows carry no
       // more than a name, an institution and the scores.
       S.ranked = d.ranked || [];
+      // Last month's points, so the leaderboard can show which way people have moved.
+      S.baseline = d.baseline || null;
       if (!AUTH.researcher) {
         S.groups = publicGroups;
         S.researchers = publicResearchers;
@@ -572,6 +579,7 @@ function azureBackend() {
       if (AUTH.researcher) {
         const n = await api("GET", "network");
         S.researchers = n.researchers;
+      if (n.baseline) S.baseline = n.baseline;
         S.groups = n.groups;
         S.stats = n.stats;
         S.myApps = [];
@@ -603,6 +611,10 @@ function azureBackend() {
       const r = await api("PUT", "profile", p);
       await self.after();
       return r;
+    },
+    // Through the API, so the preview in the editor is the record the server will store.
+    async lookupDoi(doi) {
+      return api("GET", "doi?q=" + encodeURIComponent(cleanDoi(doi)));
     },
     async endorse(researcherId, year) {
       const r = await api("POST", "researchers/" + encodeURIComponent(researcherId) + "/endorse", { year });
