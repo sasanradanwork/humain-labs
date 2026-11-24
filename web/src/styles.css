@@ -1371,24 +1371,41 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
 .ppt-row.solo{grid-template-columns:minmax(0,1fr)}
 @media (max-width:1000px){ .ppt-row{grid-template-columns:1fr} }
 
-.ppt{position:relative;isolation:isolate;border:1px solid var(--line);border-radius:18px;
+/* A container, so the rosette can be placed against the width of the card rather than
+   the width of the window: the same card is narrow beside a column and wide on its own. */
+.ppt{container-type:inline-size;
+  position:relative;isolation:isolate;border:1px solid var(--line);border-radius:18px;
   background:var(--card);overflow:hidden;
   box-shadow:0 1px 2px rgba(16,24,40,.04), 0 10px 28px -18px rgba(16,24,40,.5)}
 :root[data-theme="dark"] .ppt{box-shadow:0 1px 2px rgba(0,0,0,.3), 0 14px 32px -20px rgba(0,0,0,.9)}
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]) .ppt{box-shadow:0 1px 2px rgba(0,0,0,.3), 0 14px 32px -20px rgba(0,0,0,.9)}
 }
-/* The engine-turned guilloche a security document is printed on: two fine rulings
-   crossing, faded away from the corner so it never fights the text over it. */
-.ppt::before{
-  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
-  background:
-    repeating-linear-gradient(24deg, color-mix(in oklab, var(--blue) 24%, transparent) 0 1px, transparent 1px 7px),
-    repeating-linear-gradient(-24deg, color-mix(in oklab, var(--blue) 24%, transparent) 0 1px, transparent 1px 7px);
-  -webkit-mask-image:radial-gradient(115% 105% at 92% -12%, #000 0%, transparent 52%);
-  mask-image:radial-gradient(115% 105% at 92% -12%, #000 0%, transparent 52%);
-  opacity:.42;
+/* The watermark: clusters of contour rings, fine line work in the brand blue. It sits at
+   the right of the card and fades out well before the fields, so it stays texture and
+   never competes with the text. */
+.ppt > .ppt-pattern{
+  position:absolute;z-index:0;pointer-events:none;
+  width:330px;height:auto;max-width:none;right:-96px;top:50%;transform:translateY(-50%);
+  color:var(--blue);opacity:.19;
+  /* Faded on every side — left so it clears the fields, top and bottom so it dissolves
+     into the card instead of being cut off at the header and the code band. */
+  -webkit-mask-image:
+    linear-gradient(90deg, transparent 0%, #000 58%),
+    linear-gradient(180deg, transparent 0%, #000 26%, #000 72%, transparent 98%);
+  -webkit-mask-composite:source-in;
+  mask-image:
+    linear-gradient(90deg, transparent 0%, #000 58%),
+    linear-gradient(180deg, transparent 0%, #000 26%, #000 72%, transparent 98%);
+  mask-composite:intersect;
 }
+/* A wide card has room for more of the rings to show. */
+@container (min-width:720px){
+  .ppt > .ppt-pattern{width:420px;right:-74px}
+}
+.cp-nested rect{stroke-width:.8}
+:root[data-theme="dark"] .ppt-pattern{opacity:.26}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .ppt-pattern{opacity:.26} }
 .ppt > *{position:relative;z-index:1}
 
 /* The ruled header: what the document is, and the two things you can do to it. */
@@ -1430,13 +1447,19 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
 .ppt-country{display:flex;align-items:center;gap:7px}
 .ppt-stamps{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}
 
-/* The cancellation stamp, struck across the corner the way a checked document carries one. */
-.ppt-stamp{position:absolute;top:52px;right:14px;z-index:0;display:grid;justify-items:center;gap:1px;
-  padding:7px 13px;border:2px solid var(--green);border-radius:7px;color:var(--green);
-  transform:rotate(-11deg);opacity:.34;pointer-events:none;user-select:none}
-.ppt-stamp span{font-size:.78rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;line-height:1}
-.ppt-stamp b{font-size:.5rem;font-weight:600;letter-spacing:.13em;text-transform:uppercase;line-height:1}
-@media (max-width:620px){ .ppt-stamp{display:none} }
+/* How far the checks have got, as one marking: a level cap and what it stands for. */
+.vlvl{display:inline-flex;align-items:stretch;border-radius:8px;overflow:hidden;
+  border:1px solid var(--line);background:var(--card);font-size:.74rem;line-height:1.35;white-space:nowrap}
+.vlvl b{display:flex;align-items:center;padding:.26rem .5rem;font-weight:700;letter-spacing:.06em;
+  font-family:ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace;
+  background:var(--ink-soft);color:var(--card)}
+.vlvl > span{display:flex;align-items:center;padding:.26rem .6rem;color:var(--ink-soft)}
+.vlvl-1{border-color:color-mix(in oklab, var(--blue) 45%, var(--line))}
+.vlvl-1 b{background:var(--blue);color:var(--on-blue)}
+.vlvl-1 > span{color:var(--blue)}
+.vlvl-2{border-color:color-mix(in oklab, var(--green) 50%, var(--line))}
+.vlvl-2 b{background:var(--green);color:var(--card)}
+.vlvl-2 > span{color:var(--green)}
 
 /* The machine-readable zone: the same identifier, set the way a passport sets it. */
 .ppt-mrz{display:grid;gap:1px;padding:8px 22px 7px;border-top:1px dashed var(--line);
@@ -1489,3 +1512,4 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
 
 /* Over the word limit: say so before the save does. */
 .counter.over{color:var(--danger,#B42318);font-weight:600}
+

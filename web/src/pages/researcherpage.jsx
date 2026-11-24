@@ -1,8 +1,9 @@
 // A researcher's own page: who they are, what they've published, the roles they hold,
 // and where their work stood each year. Reached by opening a card in the directory.
 import { useMemo, useState } from "react";
-import { Avatar, Flag, Icon, LinkedInLink, Radar, ScholarLink, VerifiedBadge, UnverifiedBadge } from "../components/ui.jsx";
+import { Avatar, Flag, Icon, LinkedInLink, Radar, ScholarLink } from "../components/ui.jsx";
 import { HlgBadge } from "../components/hlg.jsx";
+import { CardPattern } from "../components/guilloche.jsx";
 import { InterestGraph } from "../components/interests.jsx";
 import { PointsBars, PubBars, ordinal } from "../components/charts.jsx";
 import { AUTH, S, byId, groupsOf, role } from "../lib/store.js";
@@ -213,6 +214,32 @@ function VisibilityEye({ r }) {
 }
 
 /**
+ * How far a researcher has got through checking: L1 is an institution email confirmed by
+ * code, L2 adds a documentary identity check. One marking replaces the two separate
+ * pills, so the record carries a level the way a document carries a class.
+ */
+const LEVELS = ["Not verified", "Email verified", "Identity verified"];
+
+function VerificationLevel({ r }) {
+  const level = r.idVerified ? 2 : r.verified ? 1 : 0;
+  const at = r.verified && r.verified.domain ? ` (@${r.verified.domain})` : "";
+  const why = [
+    "No institution email has been verified yet.",
+    `Institution email verified${at}. No identity check has been completed.`,
+    `Institution email verified${at}, and identity documents checked.`,
+  ][level];
+  return (
+    <span className={`vlvl vlvl-${level}`} title={why}>
+      <b aria-hidden="true">L{level}</b>
+      <span>
+        <span className="sr-only">Verification level {level}: </span>
+        {LEVELS[level]}
+      </span>
+    </span>
+  );
+}
+
+/**
  * The band along the foot of the record. It is the researcher's own identifier set in the
  * layout a passport uses for its machine-readable zone — same characters, same filler —
  * so the card reads as a document rather than a panel. Decorative: the same identifier is
@@ -415,6 +442,8 @@ export function ResearcherPage({ id, own: ownPage = false, onVerify, onScholar }
         {/* The identity, laid out like the data page of a passport: a ruled header, the
             portrait, labelled fields, then the document number along the bottom. */}
         <section className="ppt" aria-label={`${r.name}, researcher record`}>
+          <CardPattern className="ppt-pattern" />
+
           {/* A div, not a <header>: the site's own header palette is scoped to that tag. */}
           <div className="ppt-head">
             <span className="ppt-doc">
@@ -468,28 +497,15 @@ export function ResearcherPage({ id, own: ownPage = false, onVerify, onScholar }
                 </div>
               </dl>
               <div className="ppt-stamps">
-                {r.verified ? <VerifiedBadge v={r.verified} /> : <UnverifiedBadge />}
+                <VerificationLevel r={r} />
                 {own && !r.verified && (
                   <button type="button" className="link small" onClick={onVerify}>
                     Verify your institution email
                   </button>
                 )}
-                {r.idVerified && (
-                  <span className="badge badge-pill" title="Identity checked">
-                    <Icon.check /> ID checked
-                  </span>
-                )}
               </div>
             </div>
           </div>
-
-          {/* The cancellation stamp a checked document carries, struck across the corner. */}
-          {r.verified && (
-            <span className="ppt-stamp" aria-hidden="true">
-              <span>Verified</span>
-              <b>HumAIn Labs</b>
-            </span>
-          )}
 
           <div className="ppt-mrz" aria-hidden="true">
             {mrzLines(r).map((line, i) => (
@@ -928,7 +944,6 @@ export function Leaderboard() {
                   <div className="small soft lb-where">
                     <Flag country={x.researcher.country} size={13} />
                     <span>
-                      {x.researcher.discipline ? `${x.researcher.discipline} · ` : ""}
                       {x.researcher.institution}
                     </span>
                   </div>
