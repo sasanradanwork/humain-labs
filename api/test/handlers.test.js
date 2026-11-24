@@ -19,6 +19,19 @@ async function verifiedProfile(repo, id, over = {}) {
   await repo.upsert("researchers", { ...(await repo.get("researchers", r.json.id)), verified: { method: "institution-email", domain: "uni.ac.uk", at: "2026-09-01" }, idVerified: { at: "2026-09-02" } });
   return r.json;
 }
+
+// Crossref, without the network. Returns the paper the DOI names, so a test can prove
+// the record comes from here and not from whatever the client sent.
+const WORKS = {
+  "10.1145/3313831.3376234": { title: "Technostress and the always-on worker", authorNames: ["Nwosu, A.", "Park, J."], venue: "CHI", year: 2024, citations: 137 },
+  "10.1038/s41586-020-2649-2": { title: "Array programming with NumPy", authorNames: ["Harris, C. R.", "Millman, K. J."], venue: "Nature", year: 2020, citations: 9001 },
+};
+const { HttpError } = require("../src/lib/validate");
+const crossref = async (doi) => {
+  const w = WORKS[doi];
+  if (!w) throw new HttpError(400, `Crossref has no record of ${doi}.`);
+  return { doi, ...w, authors: w.authorNames.join(", "), url: "https://doi.org/" + doi, fetchedAt: "2026-11-24" };
+};
 const MONEY = { budget: 500, participantsWanted: 20, rewardEach: 20 };
 const TL = () => ({ ...MONEY, eligibilityStart: soon(12), eligibilityEnd: soon(14), experimentStart: soon(15), experimentEnd: soon(20), validationEnd: soon(22), endDate: soon(23) });
 const soon = (days = 10) => new Date(Date.now() + days * 86400000).toISOString().slice(0, 10);
@@ -686,11 +699,11 @@ test("the fuller profile is validated and saved", async () => {
   const repo = fresh();
   const other = await verifiedProfile(repo, "u-sup-target");
   const r = await H.putProfile({
-    repo, principal: user("u-detail"),
+    repo, principal: user("u-detail"), crossref,
     body: profile({
       handle: "detailed",
       interests: [["Attention"], [" Human–computer interaction ", "Technostress"], [""], "Memory"],
-      publications: [{ title: "A study", authorNames: ["Kaur, A."], venue: "Nature", year: 2025 }],
+      publications: [{ doi: "10.1145/3313831.3376234" }],
       highlights: [{ title: "Best paper", year: 2025, detail: "For the study." }],
       academicRoles: [{ title: "Lecturer", org: "HumAIn", from: 2020 }],
       researchRoles: [{ title: "Associate Editor", org: "Nature", from: 2024 }],
@@ -702,16 +715,17 @@ test("the fuller profile is validated and saved", async () => {
   // An interest is a path; blanks drop out, steps are trimmed, and a plain string from
   // an older profile reads as a one-step path.
   assert.deepEqual(r.json.interests, [["Attention"], ["Human–computer interaction", "Technostress"], ["Memory"]]);
-  assert.equal(r.json.publications[0].authors, "Kaur, A.", "authors are stored Harvard style");
+  assert.equal(r.json.publications[0].authors, "Nwosu, A., Park, J.", "the authors come from Crossref");
+  assert.equal(r.json.publications[0].year, 2024);
   assert.equal(r.json.researchRoles[0].title, "Associate Editor");
   assert.equal(r.json.supervising[0].researcherId, other.id);
   assert.equal(r.json.academicRoles[0].to, null, "an open-ended role has no end year");
 });
 
-test("a profile can't list a publication with no author, or supervise a stranger", async () => {
+test("a profile can't list a publication Crossref doesn't have, or supervise a stranger", async () => {
   const repo = fresh();
-  const noAuthor = await run(H.putProfile, { repo, principal: user("u-bad1"), body: profile({ handle: "bad-one", publications: [{ title: "T", authorNames: [], venue: "V", year: 2025 }] }) });
-  assert.equal(noAuthor.status, 400);
+  const unknown = await run(H.putProfile, { repo, principal: user("u-bad1"), crossref, body: profile({ handle: "bad-one", publications: [{ doi: "10.9999/nope" }] }) });
+  assert.equal(unknown.status, 400);
   const stranger = await run(H.putProfile, { repo, principal: user("u-bad2"), body: profile({ handle: "bad-two", supervising: [{ researcherId: "nobody" }] }) });
   assert.equal(stranger.status, 400);
 });
@@ -838,16 +852,54 @@ test("an unverified profile is never listed publicly, however it is set", async 
 
 test("publication DOIs are normalised however they are pasted, and junk is refused", async () => {
   const repo = fresh();
-  const pub = (doi) => profile({ handle: "doi-" + Math.random().toString(36).slice(2, 8), publications: [{ title: "T", authorNames: ["Kaur, A."], venue: "V", year: 2025, doi }] });
-  for (const [given, want] of [
-    ["10.1038/s41586-020-2649-2", "10.1038/s41586-020-2649-2"],
-    ["https://doi.org/10.1145/3313831.3376234", "10.1145/3313831.3376234"],
-    ["doi: 10.1016/J.CHB.2021.106763", "10.1016/j.chb.2021.106763"],
+  const pub = (doi, h) => profile({ handle: h, publications: [{ doi }] });
+  for (const [given, want, h] of [
+    ["10.1038/s41586-020-2649-2", "10.1038/s41586-020-2649-2", "doi-a"],
+    ["https://doi.org/10.1145/3313831.3376234", "10.1145/3313831.3376234", "doi-b"],
+    ["DOI: 10.1038/S41586-020-2649-2", "10.1038/s41586-020-2649-2", "doi-c"],
   ]) {
-    const r = await H.putProfile({ repo, principal: user("u-doi-" + want.length), body: pub(given) });
+    const r = await H.putProfile({ repo, principal: user("u-" + h), crossref, body: pub(given, h) });
     assert.equal(r.json.publications[0].doi, want);
   }
-  assert.equal((await run(H.putProfile, { repo, principal: user("u-doi-bad"), body: pub("not a doi") })).status, 400);
+  assert.equal((await run(H.putProfile, { repo, principal: user("u-doi-bad"), crossref, body: pub("not a doi", "doi-bad") })).status, 400);
+});
+
+test("what the client says about a publication is discarded; Crossref decides", async () => {
+  const repo = fresh();
+  // A researcher claiming a paper is theirs, first-authored, to win the first-author bonus.
+  const r = await H.putProfile({
+    repo, principal: user("u-liar"), crossref,
+    body: profile({
+      name: "Dr. Mallory Quick", handle: "mallory",
+      publications: [{ doi: "10.1145/3313831.3376234", title: "My own important paper", authorNames: ["Quick, M."], venue: "Nature", year: 2026, citations: 99999 }],
+    }),
+  });
+  const got = r.json.publications[0];
+  assert.deepEqual(got.authorNames, ["Nwosu, A.", "Park, J."], "the claimed author list is thrown away");
+  assert.equal(got.title, "Technostress and the always-on worker");
+  assert.equal(got.year, 2024, "and the claimed year with it");
+  assert.equal(got.citations, 137);
+  // So the first-author bonus cannot be awarded to someone who is not the first author.
+  const R = require("../src/lib/ranking");
+  assert.equal(R.scoreFor(r.json, 2024).firstAuthor, 0);
+  assert.equal(R.scoreFor(r.json, 2026).publications, 0, "and it is not scored in the year they claimed");
+});
+
+test("a DOI already on the profile is not fetched again, so an outage can't wipe the list", async () => {
+  const repo = fresh();
+  let calls = 0;
+  const counting = async (doi) => { calls++; return crossref(doi); };
+  const body = profile({ handle: "steady", publications: [{ doi: "10.1145/3313831.3376234" }] });
+  await H.putProfile({ repo, principal: user("u-steady"), crossref: counting, body });
+  assert.equal(calls, 1);
+  // Saving again with the same DOI makes no further call...
+  const again = await H.putProfile({ repo, principal: user("u-steady"), crossref: counting, body });
+  assert.equal(calls, 1);
+  assert.equal(again.json.publications.length, 1);
+  // ...even when Crossref is down.
+  const down = async () => { throw new HttpError(502, "Crossref is unreachable."); };
+  const offline = await H.putProfile({ repo, principal: user("u-steady"), crossref: down, body });
+  assert.equal(offline.json.publications[0].title, "Technostress and the always-on worker");
 });
 
 test("the discipline splits the leaderboard without changing how points are counted", async () => {

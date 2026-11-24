@@ -16,6 +16,30 @@ const { getPrincipal } = require("../src/lib/auth");
 
 const PORT = Number(process.env.PORT || 4280);
 process.env.DEV_SHOW_CODES = "1"; // no email service locally: verification codes are shown on screen
+
+// Crossref is reached over the internet, which a development machine may not have.
+// DEV_CROSSREF_STUB=1 answers any well-formed DOI with a made-up paper, so the editor
+// can be worked on offline. It is never used in deployment: the real lookup is the
+// default, and this file is not part of the deployed API.
+const devCrossref = process.env.DEV_CROSSREF_STUB === "1"
+  ? async (doi) => {
+      const n = [...doi].reduce((a, c) => a + c.charCodeAt(0), 0);
+      const year = 2022 + (n % 5);
+      const names = [["Nwosu, A."], ["Radan, S.", "Park, J."], ["Okafor, N.", "Radan, S."], ["Tanaka, A.", "Silva, M.", "Radan, S."]][n % 4];
+      return {
+        doi,
+        title: ["Technostress and the always-on worker", "Reading IDE warnings under load", "Notification timing and focus", "Measuring attention at scale"][n % 4],
+        authorNames: names,
+        authors: names.join(", "),
+        venue: ["CHI", "Behaviour & Information Technology", "TOCHI", "Scientific Reports"][n % 4],
+        year,
+        url: "https://doi.org/" + doi,
+        citations: n % 240,
+        fetchedAt: new Date().toISOString().slice(0, 10),
+      };
+    }
+  : null;
+if (devCrossref) console.log("  (DEV_CROSSREF_STUB on: DOIs resolve to made-up papers)");
 // Serves the built React app. Run `npm run build` in ../web first (or use Vite's
 // own dev server on :5173, which proxies /api here).
 const ROOT = path.join(__dirname, "..", "..", "web", "dist");
@@ -36,6 +60,7 @@ const routes = [
   ["POST", /^participant\/email\/start$/, H.participantEmailStart], ["POST", /^participant\/email\/confirm$/, H.participantEmailConfirm],
   ["DELETE", /^profile$/, H.deleteResearcherProfile],
   ["POST", /^researchers\/([^/]+)\/endorse$/, H.endorseResearcher],
+  ["GET", /^doi$/, H.resolveDoi],
   ["POST", /^applications\/([^/]+)\/withdraw$/, H.withdrawApplication],
   ["PUT", /^applications\/([^/]+)\/rating$/, H.rateApplication],
   ["POST", /^applications\/([^/]+)\/advance$/, H.advanceApplication],
@@ -57,7 +82,7 @@ http.createServer(async (req, res) => {
       if (!hit) continue;
       let body = null;
       if (m === "POST" || m === "PUT") { let raw = ""; for await (const ch of req) raw += ch; try { body = JSON.parse(raw || "null"); } catch { return send(res, 400, { error: "The request body must be JSON." }); } }
-      try { const r = await fn({ repo, principal: principal(req), params: { id: hit[1] && decodeURIComponent(hit[1]) }, query: url.searchParams.get("q"), body }); return send(res, r.status, r.json); }
+      try { const r = await fn({ repo, principal: principal(req), params: { id: hit[1] && decodeURIComponent(hit[1]) }, query: url.searchParams.get("q"), body, ...(devCrossref ? { crossref: devCrossref } : {}) }); return send(res, r.status, r.json); }
       catch (e) { if (e instanceof HttpError) return send(res, e.status, { error: e.message }); console.error(e); return send(res, 500, { error: "Server error" }); }
     }
     return send(res, 404, { error: "Not found" });

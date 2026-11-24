@@ -7,6 +7,7 @@ const { feeBreakdown, gbp } = require("./money");
 const { trendFor } = require("./trending");
 const { newGroupId, newResearcherId } = require("./ids");
 const { scoreFor, yearsBack } = require("./ranking");
+const { lookup: lookupDoi } = require("./crossref");
 const { FIELDS, POSITIONS, COUNTRY_NAMES, DISCIPLINES } = require("./lists");
 const { harvardAuthors } = require("./harvard");
 const { HttpError, bad } = V;
@@ -119,6 +120,7 @@ async function publicData({ repo, now = Date.now() }) {
     // to be listed. Only the totals travel: a private researcher's row carries their
     // name, institution and scores, and nothing else — no publications, no email, no
     // handle to look them up by, and the page does not link to their page.
+    baseline: await monthlyBaseline(repo, researchers.filter((r) => r.verified), now),
     ranked: researchers
       .filter((r) => r.verified)
       .map((r) => ({
@@ -151,7 +153,7 @@ async function publicData({ repo, now = Date.now() }) {
 }
 
 // Researcher-only data: the directory, group pages and recruitment counts.
-async function network({ repo, principal }) {
+async function network({ repo, principal, now = Date.now() }) {
   const me = await needResearcher(repo, principal);
   const [researchers, groups, everyApplication, participants, allStudies] = await Promise.all([repo.all("researchers"), repo.all("groups"), repo.all("applications"), repo.all("participants"), repo.all("studies")]);
   const applications = everyApplication.filter((a) => a.status !== "withdrawn");
@@ -169,6 +171,7 @@ async function network({ repo, principal }) {
   const openStudies = allStudies.filter((s) => rIds.get(s.researcherId)?.verified && isOpen(s)).length;
   return ok({
     researchers: researchers.map((r) => researcherFor(r, me.id)), groups, myStudies,
+    baseline: await monthlyBaseline(repo, researchers.filter((r) => r.verified), now),
     stats: {
       total: applications.length, byCountry, byStudy,
       participants: participants.length, participantsByCountry: countBy(participants),
@@ -231,25 +234,12 @@ function profileDetail(b) {
         year: V.int(h.year, `Highlight ${i + 1} year`, { min: 1900, max: year + 1 }),
       };
     }),
-    publications: V.list(b.publications, "Publications", 300).map((raw, i) => {
-      const p = raw || {};
-      const authorNames = V.list(p.authorNames, `Publication ${i + 1} authors`, 30)
-        .map((n, j) => V.str(n, `Publication ${i + 1}, author ${j + 1}`, { max: 120 }))
-        .filter(Boolean);
-      if (!authorNames.length) throw bad(`Publication ${i + 1} needs at least one author.`);
-      return {
-        title: V.str(p.title, `Publication ${i + 1} title`, { required: true, max: 300 }),
-        authorNames,
-        authors: harvardAuthors(authorNames),
-        venue: V.str(p.venue, `Publication ${i + 1} journal or venue`, { required: true, max: 200 }),
-        year: V.int(p.year, `Publication ${i + 1} year`, { min: 1900, max: year + 1, required: true }),
-        url: V.url(p.url, `Publication ${i + 1} link`),
-        // Recorded when the entry came from a DOI lookup, so the page can link straight to
-        // the paper and a repeated DOI can be spotted.
-        doi: V.doi(p.doi, `Publication ${i + 1} DOI`),
-        citations: V.int(p.citations, `Publication ${i + 1} citation count`, { min: 0, max: 10000000 }),
-      };
-    }),
+    // Only the DOIs travel. Everything about a publication is fetched from Crossref in
+    // putProfile, so what the client claims about a paper never reaches the record.
+    publications: V.list(b.publications, "Publications", 300)
+      .map((raw, i) => V.doi((raw || {}).doi ?? raw, `Publication ${i + 1} DOI`))
+      .filter(Boolean)
+      .map((doi) => ({ doi })),
     academicRoles: V.list(b.academicRoles, "Academic roles", 20).map((raw, i) => {
       const a = raw || {};
       return {
@@ -295,7 +285,37 @@ async function supervisionList(repo, b, selfId) {
   return out;
 }
 
-async function putProfile({ repo, principal, body, screen }) {
+/**
+ * Turn the DOIs a profile submitted into publication records.
+ *
+ * A DOI already on the profile keeps the record it has, so an ordinary save makes no
+ * network calls and an outage can't wipe someone's list. Only a DOI that is new to this
+ * profile is fetched, and what Crossref says is what gets stored.
+ */
+async function resolvePublications(dois, existing, crossref) {
+  const known = new Map(((existing && existing.publications) || []).filter((p) => p.doi).map((p) => [p.doi, p]));
+  const out = [], seen = new Set();
+  for (const { doi } of dois) {
+    if (seen.has(doi)) continue;
+    seen.add(doi);
+    out.push(known.has(doi) ? known.get(doi) : await crossref(doi));
+  }
+  return out.sort((a, b) => b.year - a.year);
+}
+
+/**
+ * Resolve one DOI for the editor, so what a researcher is shown before saving is the
+ * same record the server will store. Researchers only, to keep it from being a free
+ * Crossref proxy.
+ */
+async function resolveDoi({ repo, principal, query, crossref = lookupDoi }) {
+  await needResearcher(repo, principal);
+  const doi = V.doi(query, "DOI");
+  if (!doi) throw bad("Give a DOI, like 10.1038/s41586-020-2649-2.");
+  return ok(await crossref(doi));
+}
+
+async function putProfile({ repo, principal, body, screen, crossref = lookupDoi }) {
   needUser(principal);
   const existing = await myResearcher(repo, principal);
   const b = body || {};
@@ -325,6 +345,7 @@ async function putProfile({ repo, principal, body, screen }) {
   const sameHandle = await repo.where("researchers", "handle", p.handle);
   if (sameHandle.some((r) => !existing || r.id !== existing.id)) throw new HttpError(409, `@${p.handle} is already taken. Choose another handle.`);
   p.supervising = await supervisionList(repo, b, existing?.id);
+  p.publications = await resolvePublications(p.publications, existing, crossref);
   // Every researcher gets a permanent HLR identifier, issued once and kept for good.
   let publicId = existing?.publicId;
   if (!publicId) {
@@ -894,6 +915,44 @@ async function recordCheck(repo, now) {
   await repo.upsert("uptime", doc);
 }
 
+/**
+ * The monthly baseline the leaderboard measures movement against.
+ *
+ * On the first request of a calendar month, every researcher's points for the year are
+ * written down. The board itself stays live — it always shows where people stand now —
+ * and the arrows say how that compares with the start of the month. Points are stored
+ * rather than ranks, so movement is still right when the board is filtered to one
+ * discipline: the client ranks the same subset on both sides of the comparison.
+ */
+const monthKey = (t) => new Date(t).toISOString().slice(0, 7);
+const prevMonthKey = (t) => {
+  const d = new Date(t);
+  d.setUTCDate(1);
+  d.setUTCMonth(d.getUTCMonth() - 1);
+  return d.toISOString().slice(0, 7);
+};
+
+async function monthlyBaseline(repo, researchers, now) {
+  const year = new Date(now).getFullYear();
+  const id = `${monthKey(now)}-${year}`;
+  try {
+    if (!(await repo.get("standings", id))) {
+      await repo.upsert("standings", {
+        id,
+        month: monthKey(now),
+        year,
+        at: new Date(now).toISOString(),
+        points: Object.fromEntries(researchers.map((r) => [r.id, scoreFor(r, year).points])),
+      });
+    }
+    const last = await repo.get("standings", `${prevMonthKey(now)}-${year}`);
+    return last ? { since: last.month, points: last.points || {} } : null;
+  } catch (e) {
+    // No baseline is a reason to show no arrows, never a reason to fail the page.
+    return null;
+  }
+}
+
 async function statusData({ repo, now = Date.now() }) {
   let recorded = true;
   try {
@@ -1030,6 +1089,6 @@ module.exports = {
   idStart, identityEvent,
   publicData, network, me, verifyStart, verifyConfirm, fetchScholar, rorSearch, putProfile, createGroup, updateGroup, deleteGroup,
   createStudy, updateStudy, deleteStudy, studyApplicants, apply, myApplications, canEditGroup,
-  statusData, roadmap, roadmapVote, endorseResearcher, putParticipant, withdrawApplication, rateApplication, advanceApplication, rejectApplication,
+  statusData, roadmap, roadmapVote, endorseResearcher, resolveDoi, putParticipant, withdrawApplication, rateApplication, advanceApplication, rejectApplication,
   participantEmailStart, participantEmailConfirm, deleteParticipant, deleteResearcherProfile,
 };
