@@ -508,6 +508,15 @@ header .who-name .avatar{border-color:rgba(231,234,243,.35)}
 a.idchip:hover{border-color:var(--blue)}
 .idlabel{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft)}
 .idchip code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.82rem;letter-spacing:.02em;color:var(--blue)}
+/* A native <option> can't carry an image, so the chosen country's flag sits beside the
+   list instead. The box keeps its width whether or not there's a flag in it, so the
+   control doesn't jump as you change country. */
+.withflag{display:flex;align-items:stretch;gap:8px}
+.withflag select{flex:1;min-width:0}
+.flagbox{flex:none;width:42px;display:grid;place-items:center;border:1px solid var(--line);
+  border-radius:10px;background:var(--paper-2)}
+.flagbox .flag{border-radius:2px;box-shadow:0 0 0 1px color-mix(in oklab, var(--ink) 12%, transparent)}
+
 .withbtn{display:flex;gap:8px}
 .withbtn input{flex:1;min-width:0}
 .withbtn .btn{flex:none}
@@ -1195,15 +1204,44 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
    less room beneath it than a section break would take. */
 .own-band .past-toggle{padding-bottom:0}
 
-/* ---- your own studies and groups, side by side above the profile body ---- */
-.own-band{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start;margin-bottom:8px}
-@media (max-width:860px){ .own-band{grid-template-columns:1fr;gap:4px} }
-.own-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
-.own-list li{display:flex;gap:12px;align-items:center;justify-content:space-between;
-  border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--card)}
-.own-main{min-width:0}
-.own-main > a{font-weight:600}
-.own-list .btns{flex:none}
+/* ---- your own studies and groups, stacked in the column beside the record ---- */
+.own-band{display:grid;gap:18px;align-content:start}
+.own-band > .pcard{margin-bottom:0}
+.own-card .sec-head{align-items:center}
+/* How many there are, on the heading rather than in a sentence underneath it. */
+.own-n{display:inline-block;min-width:21px;padding:1px 6px;border-radius:999px;background:var(--blue-tint);
+  color:var(--blue);font-family:var(--sans);font-size:.72rem;font-weight:600;text-align:center;
+  vertical-align:.18em;letter-spacing:0}
+/* The one action the section offers: quieter than a button, still obviously a control. */
+.own-add{display:inline-flex;align-items:center;gap:7px;flex:none;font-size:.82rem;font-weight:600;
+  color:var(--blue);text-decoration:none;padding:6px 11px;border-radius:9px;border:1px solid transparent;
+  background:var(--blue-tint);transition:border-color .15s,background .15s}
+.own-add:hover{border-color:var(--blue)}
+.own-add svg{flex:none;width:15px;height:15px}
+
+.own-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.own-list li{display:flex;gap:11px;align-items:center;position:relative;
+  border:1px solid var(--line);border-radius:12px;padding:11px 13px;background:var(--paper-2);
+  transition:border-color .15s, background .15s}
+.own-list li:hover{border-color:color-mix(in oklab, var(--blue) 45%, var(--line));background:var(--card)}
+/* Open and closed, or lead and member, told apart without a word for it. */
+.own-dot{flex:none;width:7px;height:7px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 0 3px color-mix(in oklab, var(--green) 18%, transparent)}
+.own-list li.is-closed .own-dot{background:var(--ink-soft);box-shadow:none;opacity:.55}
+.own-main{min-width:0;flex:1}
+.own-main > a{font-weight:600;text-decoration:none;color:var(--ink)}
+.own-main > a:hover{color:var(--blue);text-decoration:underline}
+/* The separator belongs to the item before it, never the one after: a wrapped line that
+   began with a divider read as though something were missing from it. */
+.own-meta{display:flex;flex-wrap:wrap;gap:1px 7px;margin-top:3px;font-size:.78rem;color:var(--ink-soft)}
+.own-meta > span{display:inline-flex;align-items:center;gap:7px}
+.own-meta > span:not(:last-child)::after{content:"·";opacity:.55}
+.own-go{flex:none;font-size:.8rem;font-weight:600;color:var(--ink-soft);text-decoration:none;
+  padding:5px 10px;border-radius:8px;border:1px solid var(--line);background:var(--card)}
+.own-go:hover{color:var(--blue);border-color:var(--blue)}
+.own-empty{font-size:.85rem;color:var(--ink-soft);margin:0;padding:14px;border-radius:12px;
+  border:1px dashed var(--line);background:var(--paper-2)}
+@media (prefers-reduced-motion:reduce){ .own-list li,.own-add{transition:none} }
 
 /* A row of buttons. There was no base rule, so wherever .btns wasn't given one by a
    more specific selector the buttons sat flush against each other. */
@@ -1257,13 +1295,27 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
   .trust-card,.trust-card::after,.trust-card .tnum{transition:none}
 }
 
-/* ---- research interests as a graph ---- */
-.igraph svg{width:100%;height:auto;display:block;overflow:visible}
-.igraph-hint{margin:2px 0 0}
-.ig-links path{fill:none;stroke:var(--line);stroke-width:1.5}
-.ig-links path.is-open{stroke:color-mix(in oklab, var(--blue) 45%, transparent)}
-.ig-node rect{fill:var(--card);stroke:var(--line);stroke-width:1.5}
-.ig-node text{fill:var(--ink-soft);font-size:11.5px;font-family:inherit}
+/* ---- research interests as a graph you move around ---- */
+/* The frame is a fixed size whatever is in it: adding an interest makes the drawing
+   bigger inside the frame, not the page longer. */
+.ig-frame{position:relative;height:300px;border:1px solid var(--line);border-radius:14px;
+  background:var(--paper-2);overflow:hidden;cursor:grab;touch-action:none;
+  background-image:radial-gradient(color-mix(in oklab, var(--ink-soft) 20%, transparent) 1px, transparent 1px);
+  background-size:18px 18px}
+.ig-frame:active{cursor:grabbing}
+.ig-frame:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.ig-frame svg{display:block}
+/* Zoom sits over the drawing, out of the way of the nodes. */
+.ig-zoom{position:absolute;right:9px;bottom:9px;display:grid;gap:4px}
+.ig-zoom button{width:28px;height:28px;display:grid;place-items:center;padding:0;cursor:pointer;
+  border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink-soft);
+  font:inherit;font-size:1rem;line-height:1}
+.ig-zoom button:hover{border-color:var(--blue);color:var(--blue)}
+.ig-zoom .ig-fit{font-size:.82rem}
+.igraph-hint{margin:8px 0 0;font-size:.78rem}
+.ig-links path{fill:none;stroke-width:1.4;stroke:color-mix(in oklab, var(--c, var(--line)) 38%, var(--line))}
+.ig-node rect{fill:var(--card);stroke:var(--line);stroke-width:1.4}
+.ig-node text{fill:var(--ink-soft);font-size:10.5px;font-family:inherit}
 .ig-node.is-btn{cursor:pointer}
 .ig-hub rect{fill:var(--blue-tint);stroke:var(--blue)}
 .ig-hub text{fill:var(--blue);font-weight:600}
@@ -1272,7 +1324,7 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
 .ig-branch.is-open text{fill:var(--blue)}
 .ig-leaf rect{stroke-dasharray:3 3}
 .ig-count circle{fill:var(--line)}
-.ig-count text{fill:var(--ink-soft);font-size:9.5px;font-weight:600}
+.ig-count text{fill:var(--ink-soft);font-size:8.5px;font-weight:600}
 .ig-branch.is-open .ig-count circle{fill:var(--blue)}
 .ig-branch.is-open .ig-count text{fill:var(--on-blue)}
 .ig-node.is-btn:hover rect{stroke:var(--blue)}
@@ -1310,50 +1362,105 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
 .mv-new{font-size:.62rem;letter-spacing:.04em;color:var(--blue);background:var(--blue-tint);
   border-radius:4px;padding:2px 4px}
 
-/* ---- the passport: a researcher's record, and what you can do with it ---- */
-.ppt-row{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:20px;align-items:start;margin:10px 0 24px}
-@media (max-width:860px){ .ppt-row{grid-template-columns:1fr} }
+/* ---- the passport: a researcher's record, drawn as the document it stands for ---- */
+/* The record and what you run with it, side by side. The record stretches to the height
+   of the column beside it so the pair reads as one block rather than two loose cards. */
+.ppt-row{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:20px;align-items:stretch;margin:10px 0 22px}
+.ppt-row > .ppt{display:flex;flex-direction:column}
+.ppt-row > .ppt > .ppt-top{flex:1 1 auto}
+.ppt-row.solo{grid-template-columns:minmax(0,1fr)}
+@media (max-width:1000px){ .ppt-row{grid-template-columns:1fr} }
 
-.ppt{border:1px solid var(--line);border-radius:18px;background:var(--card);overflow:hidden}
-.ppt-top{display:flex;gap:22px;padding:22px 24px}
+.ppt{position:relative;isolation:isolate;border:1px solid var(--line);border-radius:18px;
+  background:var(--card);overflow:hidden;
+  box-shadow:0 1px 2px rgba(16,24,40,.04), 0 10px 28px -18px rgba(16,24,40,.5)}
+:root[data-theme="dark"] .ppt{box-shadow:0 1px 2px rgba(0,0,0,.3), 0 14px 32px -20px rgba(0,0,0,.9)}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .ppt{box-shadow:0 1px 2px rgba(0,0,0,.3), 0 14px 32px -20px rgba(0,0,0,.9)}
+}
+/* The engine-turned guilloche a security document is printed on: two fine rulings
+   crossing, faded away from the corner so it never fights the text over it. */
+.ppt::before{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:
+    repeating-linear-gradient(24deg, color-mix(in oklab, var(--blue) 24%, transparent) 0 1px, transparent 1px 7px),
+    repeating-linear-gradient(-24deg, color-mix(in oklab, var(--blue) 24%, transparent) 0 1px, transparent 1px 7px);
+  -webkit-mask-image:radial-gradient(115% 105% at 92% -12%, #000 0%, transparent 52%);
+  mask-image:radial-gradient(115% 105% at 92% -12%, #000 0%, transparent 52%);
+  opacity:.42;
+}
+.ppt > *{position:relative;z-index:1}
+
+/* The ruled header: what the document is, and the two things you can do to it. */
+.ppt-head{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:9px 14px 9px 18px;border-bottom:1px solid var(--line);
+  background:linear-gradient(90deg, var(--blue-tint), transparent 62%)}
+.ppt-doc{display:inline-flex;align-items:center;gap:8px;min-width:0;font-size:.66rem;font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--blue);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ppt-acts{display:flex;align-items:center;gap:6px;flex:none}
+.pa{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 9px;border-radius:9px;
+  border:1px solid var(--line);background:var(--card);color:var(--ink-soft);
+  font:inherit;font-size:.76rem;font-weight:600;cursor:pointer;text-decoration:none}
+.pa:hover{border-color:var(--blue);color:var(--blue)}
+.pa > svg{flex:none;width:16px;height:16px}
+.pa-eye.is-on{border-color:color-mix(in oklab, var(--green) 55%, var(--line));color:var(--green)}
+.pa-eye:disabled{opacity:.6;cursor:default}
+/* On a narrow card the eyebrow sheds the organisation, then the toggle sheds its word,
+   rather than either of them being cut off mid-letter. */
+@media (max-width:560px){ .ppt-org{display:none} }
+@media (max-width:420px){ .pa-word{display:none} }
+
+.ppt-top{display:flex;gap:22px;padding:20px 22px 18px}
 @media (max-width:560px){ .ppt-top{flex-direction:column;gap:16px;padding:18px} }
 
 .ppt-photo{flex:none;display:grid;gap:8px;justify-items:center;align-content:start}
-/* The portrait sits in a ruled frame, as it would on a document. */
-.ppt-photo > :first-child{border-radius:12px;box-shadow:0 0 0 1px var(--line)}
-.ppt-caption{font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);text-align:center}
+/* The portrait sits in a double-ruled frame, as it would on a document. */
+.ppt-photo > :first-child{border-radius:12px;
+  box-shadow:0 0 0 1px var(--line), 0 0 0 4px var(--card), 0 0 0 5px color-mix(in oklab, var(--blue) 28%, var(--line))}
+.ppt-caption{margin-top:4px;font-size:.64rem;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--ink-soft);text-align:center}
 
 .ppt-fields{min-width:0;flex:1}
-.ppt-fields h1{margin:0 0 14px;font-size:1.75rem;line-height:1.15}
+.ppt-fields h1{margin:0 0 13px;padding-bottom:11px;font-size:1.6rem;line-height:1.15;
+  border-bottom:1px solid color-mix(in oklab, var(--line) 75%, transparent)}
 /* Label above value, in two columns — the data-page look. */
-.ppt-fields dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px 26px;margin:0}
-.ppt-fields dt{font-size:.66rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:2px}
-.ppt-fields dd{margin:0;font-size:.94rem}
+.ppt-fields dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:11px 24px;margin:0}
+.ppt-fields dt{font-size:.62rem;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:2px}
+.ppt-fields dd{margin:0;font-size:.92rem}
 .ppt-country{display:flex;align-items:center;gap:7px}
-.ppt-stamps{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.ppt-stamps{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}
+
+/* The cancellation stamp, struck across the corner the way a checked document carries one. */
+.ppt-stamp{position:absolute;top:52px;right:14px;z-index:0;display:grid;justify-items:center;gap:1px;
+  padding:7px 13px;border:2px solid var(--green);border-radius:7px;color:var(--green);
+  transform:rotate(-11deg);opacity:.34;pointer-events:none;user-select:none}
+.ppt-stamp span{font-size:.78rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;line-height:1}
+.ppt-stamp b{font-size:.5rem;font-weight:600;letter-spacing:.13em;text-transform:uppercase;line-height:1}
+@media (max-width:620px){ .ppt-stamp{display:none} }
+
+/* The machine-readable zone: the same identifier, set the way a passport sets it. */
+.ppt-mrz{display:grid;gap:1px;padding:8px 22px 7px;border-top:1px dashed var(--line);
+  background:var(--paper-2);overflow:hidden}
+.ppt-mrz span{font-family:ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace;font-size:.6rem;
+  letter-spacing:.14em;color:var(--ink-soft);opacity:.65;white-space:nowrap}
+@media (max-width:560px){ .ppt-mrz{display:none} }
 
 /* The document number, along the foot, with the links beside it. */
 .ppt-foot{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
-  border-top:1px solid var(--line);background:var(--paper-2);padding:12px 24px}
+  border-top:1px solid var(--line);background:var(--paper-2);padding:10px 22px}
 .ppt-id{display:flex;align-items:center;gap:10px;min-width:0;flex-wrap:wrap}
-.ppt-id code{font-size:.84rem;letter-spacing:.06em}
-.ppt-handle{color:var(--ink-soft);font-size:.84rem}
-.ppt-social{display:flex;gap:8px;align-items:center}
-.ppt-social a{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;
-  border:1px solid var(--line);border-radius:10px;color:var(--ink-soft);background:var(--card)}
+.ppt-id code{font-size:.82rem;letter-spacing:.06em;font-weight:600}
+.ppt-handle{color:var(--ink-soft);font-size:.82rem}
+.ppt-social{display:flex;gap:7px;align-items:center}
+.ppt-social a{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;
+  border:1px solid var(--line);border-radius:9px;color:var(--ink-soft);background:var(--card)}
 .ppt-social a:hover{border-color:var(--blue);color:var(--blue)}
 
-/* The actions rail beside the record. */
-.ppt-menu{display:grid;gap:8px;align-content:start}
-.pm{display:flex;align-items:center;gap:9px;padding:10px 13px;border-radius:11px;border:1px solid var(--line);
-  background:var(--card);color:var(--ink);font:inherit;font-size:.88rem;text-align:left;cursor:pointer;width:100%}
-.pm:hover{border-color:var(--blue);color:var(--blue)}
-.pm > svg{flex:none}
-.pm-go{background:var(--blue);border-color:var(--blue);color:var(--on-blue)}
-.pm-go:hover{color:var(--on-blue);opacity:.92}
-.pm-eye.is-on{border-color:var(--green);color:var(--green)}
-.pm-eye:disabled{opacity:.6;cursor:default}
-@media (max-width:860px){ .ppt-menu{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))} }
+/* ---- the body: what they say about their work, and the shape of it ---- */
+.pduo{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:20px;align-items:start;margin-bottom:22px}
+.pduo.one{grid-template-columns:minmax(0,1fr)}
+.pduo > .pcard{margin-bottom:0;height:100%}
+@media (max-width:1000px){ .pduo{grid-template-columns:1fr} }
 
 /* ---- interest graph: one colour per branch ---- */
 /* Six steps, run through scripts/validate_palette.js from the dataviz guidance: inside

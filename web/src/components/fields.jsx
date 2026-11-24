@@ -1,8 +1,10 @@
 // Form controls for values that must come from a standard list, so the filters on the
 // researchers, groups and studies pages stay consistent.
+import { useState } from "react";
 import { Field } from "../lib/ui.jsx";
 import { harvardAuthors } from "../lib/harvard.js";
-import { Icon } from "./ui.jsx";
+import { COUNTRY_NAMES } from "../lib/lists.js";
+import { Flag, Icon } from "./ui.jsx";
 
 export function ChoiceField({ label, name, options, required = false, defaultValue = "", hint, placeholder = "Choose from the list" }) {
   return (
@@ -15,6 +17,32 @@ export function ChoiceField({ label, name, options, required = false, defaultVal
           </option>
         ))}
       </select>
+    </Field>
+  );
+}
+
+/**
+ * The country, with its flag beside the list. A native <option> cannot carry an image,
+ * so the flag of whatever is chosen is shown next to the control instead — which is also
+ * how you can tell at a glance that a country you picked has a flag to draw.
+ */
+export function CountryField({ name = "country", label = "Country", required = false, defaultValue = "", hint }) {
+  const [country, setCountry] = useState(defaultValue || "");
+  return (
+    <Field label={label} required={required} hint={hint}>
+      <div className="withflag">
+        <span className="flagbox" aria-hidden="true">
+          {country ? <Flag country={country} size={16} /> : null}
+        </span>
+        <select name={name} required={required} value={country} onChange={(e) => setCountry(e.target.value)}>
+          <option value="">Choose from the list</option>
+          {COUNTRY_NAMES.map((o) => (
+            <option key={o} value={o}>
+              {o}
+            </option>
+          ))}
+        </select>
+      </div>
     </Field>
   );
 }

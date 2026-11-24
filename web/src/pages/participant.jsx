@@ -1,8 +1,7 @@
 // Participant details: set up once after registering, then used for every application.
 import { useState } from "react";
-import { ChoiceField } from "../components/fields.jsx";
+import { ChoiceField, CountryField } from "../components/fields.jsx";
 import { AUTH } from "../lib/store.js";
-import { COUNTRY_NAMES } from "../lib/lists.js";
 import { plural } from "../lib/util.js";
 import { Field, Form, SubmitButton, navigate, useUI } from "../lib/ui.jsx";
 import { IdCheckPanel } from "../components/idcheck.jsx";
@@ -119,7 +118,7 @@ export function ParticipantProfile({ onDelete }) {
                   <input name="age" type="number" min="16" max="120" required defaultValue={p?.age || ""} />
                 </Field>
               </div>
-              <ChoiceField label="Country" name="country" options={COUNTRY_NAMES} required defaultValue={p?.country} />
+              <CountryField required defaultValue={p?.country} />
             </div>
           </div>
           <div className="actions">

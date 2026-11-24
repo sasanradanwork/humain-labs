@@ -5,12 +5,12 @@ import { GroupCard, ResearcherCard, Toolbar, groupHref, researcherHref, lookingF
 import { AUTH, S, appCount, byId, canEditGroup, groupStudies, groupsOf, memberResearchers, role } from "../lib/store.js";
 import { DAY_MS, fmtDate, FORMATS, gidKey, isOpen, makeHandle, matches, normCountry, OPENING_TYPES, plural, ROLE_SUGGESTIONS, sortName, today, uniq } from "../lib/util.js";
 import { Field, Form, SubmitButton, navigate, replaceRoute, useUI } from "../lib/ui.jsx";
-import { AuthorNames, ChoiceField, InstitutionField } from "../components/fields.jsx";
+import { AuthorNames, ChoiceField, CountryField, InstitutionField } from "../components/fields.jsx";
 import { HlgBadge } from "../components/hlg.jsx";
 import { Repeater, YearSpan } from "../components/repeater.jsx";
 import { cleanDoi } from "../lib/doi.js";
 import { IdCheckPanel } from "../components/idcheck.jsx";
-import { COUNTRY_NAMES, DISCIPLINES, FIELDS, POSITIONS } from "../lib/lists.js";
+import { DISCIPLINES, FIELDS, POSITIONS } from "../lib/lists.js";
 import { namesFromHarvard } from "../lib/harvard.js";
 import { ResearcherGate, isVisible } from "./public.jsx";
 import { FEE_PERCENT, feeBreakdown, gbp } from "../lib/money.js";
@@ -564,7 +564,7 @@ export function StudyEditor({ route, onDelete }) {
             </Field>
             <div className="row2">
               <ChoiceField label="Field" name="field" options={FIELDS} required defaultValue={s.field} />
-              <ChoiceField label="Country" name="country" options={COUNTRY_NAMES} required defaultValue={s.country} />
+              <CountryField required defaultValue={s.country} />
             </div>
             <Field label="Research group">
               <select name="groupId" defaultValue={s.groupId || ""}>
@@ -1219,7 +1219,7 @@ export function ProfileEditor({ onVerify, onScholar, onRor, onDelete }) {
                 </Field>
               </div>
               <div className="row2">
-                <ChoiceField label="Country" name="country" options={COUNTRY_NAMES} required defaultValue={p.country} />
+                <CountryField required defaultValue={p.country} />
                 <ChoiceField label="Field of research" name="field" options={FIELDS} required defaultValue={p.field} />
               </div>
               <div className="row2">
@@ -1715,7 +1715,7 @@ export function GroupEditor({ route, onRor, onDelete }) {
                 </Field>
                 <InstitutionField value={inst} onFind={() => onRor(inst.name, (hit) => setInst({ name: hit.name, ror: hit.ror, rorName: hit.name }))} />
                 <div className="row2">
-                  <ChoiceField label="Country" name="country" options={COUNTRY_NAMES} required defaultValue={v.country} />
+                  <CountryField required defaultValue={v.country} />
                   <ChoiceField label="Field" name="field" options={FIELDS} required defaultValue={v.field} />
                 </div>
                 <div className="row2">

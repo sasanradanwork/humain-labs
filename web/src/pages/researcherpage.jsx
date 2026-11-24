@@ -6,7 +6,7 @@ import { HlgBadge } from "../components/hlg.jsx";
 import { InterestGraph } from "../components/interests.jsx";
 import { PointsBars, PubBars, ordinal } from "../components/charts.jsx";
 import { AUTH, S, byId, groupsOf, role } from "../lib/store.js";
-import { DISCIPLINES } from "../lib/lists.js";
+import { COUNTRY_CODES, DISCIPLINES } from "../lib/lists.js";
 import { fmtDate, gidKey, isOpen, plural } from "../lib/util.js";
 import { navigate, useUI } from "../lib/ui.jsx";
 import { groupHref, researcherHref } from "../components/cards.jsx";
@@ -200,15 +200,34 @@ function VisibilityEye({ r }) {
       type="button"
       role="switch"
       aria-checked={on}
-      className={"pm pm-eye" + (on ? " is-on" : "")}
+      className={"pa pa-eye" + (on ? " is-on" : "")}
       onClick={flip}
       disabled={busy}
+      aria-label={on ? "Profile is public. Make it private." : "Profile is private. Make it public."}
       title={on ? "Anyone can see this page. Click to make it private." : "Only signed-in researchers can see this page. Click to make it public."}
     >
       {on ? <Icon.eye /> : <Icon.eyeOff />}
-      {on ? "Public" : "Private"}
+      <span className="pa-word">{on ? "Public" : "Private"}</span>
     </button>
   );
+}
+
+/**
+ * The band along the foot of the record. It is the researcher's own identifier set in the
+ * layout a passport uses for its machine-readable zone — same characters, same filler —
+ * so the card reads as a document rather than a panel. Decorative: the same identifier is
+ * printed in full, and selectable, on the line below it.
+ */
+function mrzLines(r) {
+  const pad = (s, n) => s.slice(0, n).padEnd(n, "<");
+  const az = (s) => String(s || "").toUpperCase().replace(/[^A-Z0-9]+/g, "<");
+  const code = COUNTRY_CODES[r.country] || "<<";
+  const surname = az((r.name || "").split(/\s+/).slice(-1)[0]);
+  const given = az((r.name || "").split(/\s+/).slice(0, -1).join(" "));
+  return [
+    pad(`HR${code}${surname}<<${given}`, 40),
+    pad(`${az(r.publicId)}${code}${az(r.discipline)}`, 40),
+  ];
 }
 
 /**
@@ -224,28 +243,30 @@ function MyStudies() {
   const [showPast, setShowPast] = useState(false);
 
   const Row = ({ s, closed }) => (
-    <li>
+    <li className={closed ? "is-closed" : ""}>
+      <span className="own-dot" aria-hidden="true" />
       <div className="own-main">
         <a href={`#/studies/${encodeURIComponent(s.id)}`}>{s.title}</a>
-        <div className="small soft">
-          {s.field} · {s.format}
-          {s.closesAt ? ` · ${closed ? "closed" : "closes"} ${fmtDate(s.closesAt)}` : ""}
-          {typeof s.places === "number" ? ` · ${plural(s.places, "place", "places")}` : ""}
+        <div className="own-meta">
+          <span>{s.field}</span>
+          <span>{s.format}</span>
+          {s.closesAt && <span>{`${closed ? "closed" : "closes"} ${fmtDate(s.closesAt)}`}</span>}
+          {typeof s.places === "number" && <span>{plural(s.places, "place", "places")}</span>}
         </div>
       </div>
-      <div className="btns">
-        <a className="btn" href={`#/studies/${encodeURIComponent(s.id)}`}>
-          {closed ? "View" : "Manage"}
-        </a>
-      </div>
+      <a className="own-go" href={`#/studies/${encodeURIComponent(s.id)}`} aria-label={`${closed ? "View" : "Manage"} ${s.title}`}>
+        {closed ? "View" : "Manage"}
+      </a>
     </li>
   );
 
   return (
-    <section className="pcard">
+    <section className="pcard own-card">
       <div className="sec-head">
-        <h2>Your studies</h2>
-        <a className="btn btn-blue" href="#/studies">
+        <h2>
+          Your studies {mine.length > 0 && <span className="own-n">{mine.length}</span>}
+        </h2>
+        <a className="own-add" href="#/studies">
           <Icon.lab /> Post a study
         </a>
       </div>
@@ -257,7 +278,7 @@ function MyStudies() {
           ))}
         </ul>
       ) : (
-        <p className="soft small">
+        <p className="own-empty">
           {mine.length ? "Nothing open at the moment." : "You haven't posted a study yet. Studies are posted and managed on the Studies page."}
         </p>
       )}
@@ -290,10 +311,12 @@ function MyGroups() {
   const me = AUTH.researcher;
   const gs = groupsOf(me?.id);
   return (
-    <section className="pcard">
+    <section className="pcard own-card">
       <div className="sec-head">
-        <h2>Your research groups</h2>
-        <a className="btn btn-blue" href="#/groups/new">
+        <h2>
+          Your research groups {gs.length > 0 && <span className="own-n">{gs.length}</span>}
+        </h2>
+        <a className="own-add" href="#/groups/new">
           <Icon.people /> Create a group
         </a>
       </div>
@@ -301,26 +324,27 @@ function MyGroups() {
         <ul className="own-list">
           {gs.map((g) => {
             const myRole = g.members?.find((m) => m.researcherId === me.id)?.role || "Member";
+            const lead = /lead/i.test(myRole);
             return (
-              <li key={g.id}>
+              <li key={g.id} className={lead ? "" : "is-closed"}>
+                <span className="own-dot" aria-hidden="true" />
                 <div className="own-main">
                   <a href={groupHref(g)}>{g.name}</a>
-                  <div className="small soft">
-                    {myRole} · {plural((g.members || []).length, "member", "members")}
-                    {g.institution ? ` · ${g.institution}` : ""}
+                  <div className="own-meta">
+                    <span>{myRole}</span>
+                    <span>{plural((g.members || []).length, "member", "members")}</span>
+                    {g.institution && <span>{g.institution}</span>}
                   </div>
                 </div>
-                <div className="btns">
-                  <a className="btn" href={groupHref(g)}>
-                    View
-                  </a>
-                </div>
+                <a className="own-go" href={groupHref(g)} aria-label={`View ${g.name}`}>
+                  View
+                </a>
               </li>
             );
           })}
         </ul>
       ) : (
-        <p className="soft small">
+        <p className="own-empty">
           You're not in any groups yet. Create one, or ask a group lead to add you with @{me?.handle}.
         </p>
       )}
@@ -387,10 +411,32 @@ export function ResearcherPage({ id, own: ownPage = false, onVerify, onScholar }
 
   return (
     <div className="wrap">
-      <div className="ppt-row">
-        {/* The identity, laid out like the data page of a passport: the portrait, then
-            labelled fields, then the document number along the bottom. */}
+      <div className={"ppt-row" + (own ? "" : " solo")}>
+        {/* The identity, laid out like the data page of a passport: a ruled header, the
+            portrait, labelled fields, then the document number along the bottom. */}
         <section className="ppt" aria-label={`${r.name}, researcher record`}>
+          {/* A div, not a <header>: the site's own header palette is scoped to that tag. */}
+          <div className="ppt-head">
+            <span className="ppt-doc">
+              <HlgBadge size={13} />
+              <span className="ppt-org">HumAIn Labs ·</span> Researcher record
+            </span>
+            <div className="ppt-acts">
+              {own ? (
+                <>
+                  <VisibilityEye r={r} />
+                  <a className="pa" href="#/profile/edit" title="Edit profile" aria-label="Edit profile">
+                    <Icon.pencil />
+                  </a>
+                </>
+              ) : (
+                <a className="pa" href="#/researchers/leaderboard" title="Leaderboard" aria-label="Leaderboard">
+                  <Icon.trophy />
+                </a>
+              )}
+            </div>
+          </div>
+
           <div className="ppt-top">
             <div className="ppt-photo">
               <Avatar name={r.name} size={96} />
@@ -423,6 +469,11 @@ export function ResearcherPage({ id, own: ownPage = false, onVerify, onScholar }
               </dl>
               <div className="ppt-stamps">
                 {r.verified ? <VerifiedBadge v={r.verified} /> : <UnverifiedBadge />}
+                {own && !r.verified && (
+                  <button type="button" className="link small" onClick={onVerify}>
+                    Verify your institution email
+                  </button>
+                )}
                 {r.idVerified && (
                   <span className="badge badge-pill" title="Identity checked">
                     <Icon.check /> ID checked
@@ -432,9 +483,22 @@ export function ResearcherPage({ id, own: ownPage = false, onVerify, onScholar }
             </div>
           </div>
 
+          {/* The cancellation stamp a checked document carries, struck across the corner. */}
+          {r.verified && (
+            <span className="ppt-stamp" aria-hidden="true">
+              <span>Verified</span>
+              <b>HumAIn Labs</b>
+            </span>
+          )}
+
+          <div className="ppt-mrz" aria-hidden="true">
+            {mrzLines(r).map((line, i) => (
+              <span key={i}>{line}</span>
+            ))}
+          </div>
+
           <div className="ppt-foot">
             <div className="ppt-id">
-              <HlgBadge size={15} />
               <code>{r.publicId || "\u2014"}</code>
               <span className="ppt-handle">@{r.handle}</span>
               {r.publicId && (
@@ -468,63 +532,29 @@ export function ResearcherPage({ id, own: ownPage = false, onVerify, onScholar }
           </div>
         </section>
 
-        {/* Everything you can do from here, beside the record rather than on top of it. */}
-        <nav className="ppt-menu" aria-label="Profile actions">
-          {own ? (
-            <>
-              <VisibilityEye r={r} />
-              <a className="pm" href="#/profile/edit">
-                <Icon.pencil /> Edit profile
-              </a>
-              <a className="pm" href="#/studies">
-                <Icon.lab /> Your studies
-              </a>
-              <a className="pm" href="#/groups/new">
-                <Icon.people /> Create a group
-              </a>
-              {!r.metrics && (
-                <button type="button" className="pm" onClick={onScholar}>
-                  <Icon.scholar /> Add ORCID stats
-                </button>
-              )}
-            </>
-          ) : (
-            <>
-              {r.email && (
-                <a className="pm pm-go" href={`mailto:${r.email}?subject=${encodeURIComponent("Collaboration via HumAIn Labs")}`}>
-                  <Icon.mail /> Contact
-                </a>
-              )}
-              <a className="pm" href="#/researchers">
-                <Icon.people /> All researchers
-              </a>
-              <a className="pm" href="#/researchers/leaderboard">
-                <Icon.trophy /> Leaderboard
-              </a>
-            </>
-          )}
-        </nav>
+        {/* What you run, beside the record rather than under it. */}
+        {own && (
+          <div className="own-band">
+            <MyStudies />
+            <MyGroups />
+          </div>
+        )}
       </div>
 
-      {own && (
-        <div className="own-band">
-          <MyStudies />
-          <MyGroups />
-        </div>
-      )}
-
-      {/* ---- what they work on ---- */}
-      <section className="pcard">
-        <h2>About</h2>
-        <p style={{ lineHeight: 1.7, whiteSpace: "pre-line", margin: 0, maxWidth: "68ch" }}>{r.bio}</p>
-      </section>
-
-      {interests.length > 0 && (
+      {/* ---- what they work on: the words on the left, the map of it on the right ---- */}
+      <div className={"pduo" + (interests.length ? "" : " one")}>
         <section className="pcard">
-          <h2>Research interests</h2>
-          <InterestGraph interests={interests} root={r.discipline} />
+          <h2>About</h2>
+          <p style={{ lineHeight: 1.7, whiteSpace: "pre-line", margin: 0 }}>{r.bio}</p>
         </section>
-      )}
+
+        {interests.length > 0 && (
+          <section className="pcard">
+            <h2>Research interests</h2>
+            <InterestGraph interests={interests} root={r.discipline} />
+          </section>
+        )}
+      </div>
 
       <Standing r={r} />
 

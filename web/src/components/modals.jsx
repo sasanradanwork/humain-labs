@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Field, Form, Modal, SubmitButton, navigate, useUI } from "../lib/ui.jsx";
 import { AUTH, S, groupsOf, role } from "../lib/store.js";
 import { DAY_MS, FORMATS, FREE_MAIL, plural, today, UserError } from "../lib/util.js";
-import { COUNTRY_NAMES, FIELDS } from "../lib/lists.js";
+import { FIELDS } from "../lib/lists.js";
 import { ChoiceField } from "./fields.jsx";
 import { IdCheckPanel } from "./idcheck.jsx";
 
