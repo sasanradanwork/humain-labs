@@ -1194,7 +1194,10 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
 .priv-name svg{color:var(--ink-soft);flex:none}
 
 /* The flag sits with the institution line on a leaderboard row. */
-.lb-where{display:flex;align-items:center;gap:7px}
+/* The flag leads the name, so a row is placed before it is read. */
+.lb-who{display:flex;align-items:center;gap:8px;min-width:0}
+.lb-who .flag{flex:none}
+.lb-where{margin-top:2px}
 
 /* A profile with nothing in the sidebar runs full width rather than leaving a third of
    the page empty. */
@@ -1202,26 +1205,30 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
 .two.one aside{display:none}
 /* The past-studies toggle sits inside a section rather than between them, so it needs
    less room beneath it than a section break would take. */
-.own-band .past-toggle{padding-bottom:0}
+.own-band .past-toggle{margin-top:10px;padding:10px 0 0;font-size:.85rem}
+.own-band .past-toggle > span:first-child{font-size:.82rem}
 
 /* ---- your own studies and groups, stacked in the column beside the record ---- */
-.own-band{display:grid;gap:18px;align-content:start}
-.own-band > .pcard{margin-bottom:0}
-.own-card .sec-head{align-items:center}
+/* Compact: these two sit beside the record, not on their own, so they are set tighter
+   than a full-width card — smaller padding, smaller headings, closer rows. */
+.own-band{display:grid;gap:12px;align-content:start}
+.own-band > .pcard{margin-bottom:0;padding:16px 18px;border-radius:14px}
+.own-card .sec-head{align-items:center;margin-bottom:11px}
+.own-card > .sec-head > h2{font-size:1rem}
 /* How many there are, on the heading rather than in a sentence underneath it. */
-.own-n{display:inline-block;min-width:21px;padding:1px 6px;border-radius:999px;background:var(--blue-tint);
+.own-n{display:inline-block;min-width:19px;padding:1px 5px;border-radius:999px;background:var(--blue-tint);
   color:var(--blue);font-family:var(--sans);font-size:.72rem;font-weight:600;text-align:center;
   vertical-align:.18em;letter-spacing:0}
 /* The one action the section offers: quieter than a button, still obviously a control. */
-.own-add{display:inline-flex;align-items:center;gap:7px;flex:none;font-size:.82rem;font-weight:600;
-  color:var(--blue);text-decoration:none;padding:6px 11px;border-radius:9px;border:1px solid transparent;
+.own-add{display:inline-flex;align-items:center;gap:6px;flex:none;font-size:.78rem;font-weight:600;
+  color:var(--blue);text-decoration:none;padding:5px 9px;border-radius:8px;border:1px solid transparent;
   background:var(--blue-tint);transition:border-color .15s,background .15s}
 .own-add:hover{border-color:var(--blue)}
-.own-add svg{flex:none;width:15px;height:15px}
+.own-add svg{flex:none;width:14px;height:14px}
 
-.own-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
-.own-list li{display:flex;gap:11px;align-items:center;position:relative;
-  border:1px solid var(--line);border-radius:12px;padding:11px 13px;background:var(--paper-2);
+.own-list{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.own-list li{display:flex;gap:10px;align-items:center;position:relative;
+  border:1px solid var(--line);border-radius:10px;padding:8px 11px;background:var(--paper-2);
   transition:border-color .15s, background .15s}
 .own-list li:hover{border-color:color-mix(in oklab, var(--blue) 45%, var(--line));background:var(--card)}
 /* Open and closed, or lead and member, told apart without a word for it. */
@@ -1229,17 +1236,17 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
   box-shadow:0 0 0 3px color-mix(in oklab, var(--green) 18%, transparent)}
 .own-list li.is-closed .own-dot{background:var(--ink-soft);box-shadow:none;opacity:.55}
 .own-main{min-width:0;flex:1}
-.own-main > a{font-weight:600;text-decoration:none;color:var(--ink)}
+.own-main > a{font-weight:600;font-size:.92rem;text-decoration:none;color:var(--ink)}
 .own-main > a:hover{color:var(--blue);text-decoration:underline}
 /* The separator belongs to the item before it, never the one after: a wrapped line that
    began with a divider read as though something were missing from it. */
-.own-meta{display:flex;flex-wrap:wrap;gap:1px 7px;margin-top:3px;font-size:.78rem;color:var(--ink-soft)}
+.own-meta{display:flex;flex-wrap:wrap;gap:0 6px;margin-top:1px;font-size:.74rem;color:var(--ink-soft)}
 .own-meta > span{display:inline-flex;align-items:center;gap:7px}
 .own-meta > span:not(:last-child)::after{content:"·";opacity:.55}
-.own-go{flex:none;font-size:.8rem;font-weight:600;color:var(--ink-soft);text-decoration:none;
-  padding:5px 10px;border-radius:8px;border:1px solid var(--line);background:var(--card)}
+.own-go{flex:none;font-size:.76rem;font-weight:600;color:var(--ink-soft);text-decoration:none;
+  padding:4px 9px;border-radius:7px;border:1px solid var(--line);background:var(--card)}
 .own-go:hover{color:var(--blue);border-color:var(--blue)}
-.own-empty{font-size:.85rem;color:var(--ink-soft);margin:0;padding:14px;border-radius:12px;
+.own-empty{font-size:.82rem;color:var(--ink-soft);margin:0;padding:11px 12px;border-radius:10px;
   border:1px dashed var(--line);background:var(--paper-2)}
 @media (prefers-reduced-motion:reduce){ .own-list li,.own-add{transition:none} }
 
@@ -1365,9 +1372,9 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
 /* ---- the passport: a researcher's record, drawn as the document it stands for ---- */
 /* The record and what you run with it, side by side. The record stretches to the height
    of the column beside it so the pair reads as one block rather than two loose cards. */
-.ppt-row{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:20px;align-items:stretch;margin:10px 0 22px}
-.ppt-row > .ppt{display:flex;flex-direction:column}
-.ppt-row > .ppt > .ppt-top{flex:1 1 auto}
+/* The record takes its own height rather than stretching to the column beside it:
+   stretching it put all the slack in one gap between the fields and the band below. */
+.ppt-row{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:20px;align-items:start;margin:10px 0 22px}
 .ppt-row.solo{grid-template-columns:minmax(0,1fr)}
 @media (max-width:1000px){ .ppt-row{grid-template-columns:1fr} }
 
@@ -1381,37 +1388,29 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]) .ppt{box-shadow:0 1px 2px rgba(0,0,0,.3), 0 14px 32px -20px rgba(0,0,0,.9)}
 }
-/* The watermark: clusters of contour rings, fine line work in the brand blue. It sits at
-   the right of the card and fades out well before the fields, so it stays texture and
-   never competes with the text. */
+/* The watermark: nested rounded rectangles, centred on the portrait so the rings read as
+   radiating from it. It fades away in every direction from that centre, which keeps it
+   faint texture everywhere the eye actually reads. The offsets are the card's own left
+   padding plus half the 96px portrait, and the header band plus the top padding plus
+   half the portrait — that is, the middle of the picture. */
 .ppt > .ppt-pattern{
   position:absolute;z-index:0;pointer-events:none;
-  width:330px;height:auto;max-width:none;right:-96px;top:50%;transform:translateY(-50%);
-  color:var(--blue);opacity:.19;
-  /* Faded on every side — left so it clears the fields, top and bottom so it dissolves
-     into the card instead of being cut off at the header and the code band. */
-  -webkit-mask-image:
-    linear-gradient(90deg, transparent 0%, #000 58%),
-    linear-gradient(180deg, transparent 0%, #000 26%, #000 72%, transparent 98%);
-  -webkit-mask-composite:source-in;
-  mask-image:
-    linear-gradient(90deg, transparent 0%, #000 58%),
-    linear-gradient(180deg, transparent 0%, #000 26%, #000 72%, transparent 98%);
-  mask-composite:intersect;
-}
-/* A wide card has room for more of the rings to show. */
-@container (min-width:720px){
-  .ppt > .ppt-pattern{width:420px;right:-74px}
+  width:620px;height:auto;max-width:none;left:70px;top:116px;transform:translate(-50%,-50%);
+  color:var(--blue);opacity:.085;
+  -webkit-mask-image:radial-gradient(circle at 50% 50%, rgb(0 0 0 / .9) 6%, rgb(0 0 0 / .35) 34%, transparent 62%);
+  mask-image:radial-gradient(circle at 50% 50%, rgb(0 0 0 / .9) 6%, rgb(0 0 0 / .35) 34%, transparent 62%);
 }
 .cp-nested rect{stroke-width:.8}
-:root[data-theme="dark"] .ppt-pattern{opacity:.26}
-@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .ppt-pattern{opacity:.26} }
+:root[data-theme="dark"] .ppt-pattern{opacity:.13}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .ppt-pattern{opacity:.13} }
+@media (max-width:560px){ .ppt > .ppt-pattern{left:50%;top:150px;width:480px} }
 .ppt > *{position:relative;z-index:1}
 
 /* The ruled header: what the document is, and the two things you can do to it. */
 .ppt-head{display:flex;align-items:center;justify-content:space-between;gap:12px;
   padding:9px 14px 9px 18px;border-bottom:1px solid var(--line);
-  background:linear-gradient(90deg, var(--blue-tint), transparent 62%)}
+  /* Opaque, so the watermark behind the card never shows through the header. */
+  background:linear-gradient(90deg, var(--blue-tint), var(--card) 62%)}
 .ppt-doc{display:inline-flex;align-items:center;gap:8px;min-width:0;font-size:.66rem;font-weight:600;
   letter-spacing:.14em;text-transform:uppercase;color:var(--blue);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ppt-acts{display:flex;align-items:center;gap:6px;flex:none}
@@ -1427,7 +1426,7 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
 @media (max-width:560px){ .ppt-org{display:none} }
 @media (max-width:420px){ .pa-word{display:none} }
 
-.ppt-top{display:flex;gap:22px;padding:20px 22px 18px}
+.ppt-top{display:flex;gap:22px;padding:20px 22px 16px}
 @media (max-width:560px){ .ppt-top{flex-direction:column;gap:16px;padding:18px} }
 
 .ppt-photo{flex:none;display:grid;gap:8px;justify-items:center;align-content:start}
@@ -1442,7 +1441,9 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
   border-bottom:1px solid color-mix(in oklab, var(--line) 75%, transparent)}
 /* Label above value, in two columns — the data-page look. */
 .ppt-fields dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:11px 24px;margin:0}
-.ppt-fields dt{font-size:.62rem;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:2px}
+.ppt-fields dt{display:flex;align-items:center;gap:6px;font-size:.62rem;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--ink-soft);margin-bottom:3px}
+.ppt-fields dt svg{flex:none;width:13px;height:13px;opacity:.8}
 .ppt-fields dd{margin:0;font-size:.92rem}
 .ppt-country{display:flex;align-items:center;gap:7px}
 .ppt-stamps{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}
@@ -1461,12 +1462,12 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
 .vlvl-2 b{background:var(--green);color:var(--card)}
 .vlvl-2 > span{color:var(--green)}
 
-/* The machine-readable zone: the same identifier, set the way a passport sets it. */
-.ppt-mrz{display:grid;gap:1px;padding:8px 22px 7px;border-top:1px dashed var(--line);
-  background:var(--paper-2);overflow:hidden}
-.ppt-mrz span{font-family:ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace;font-size:.6rem;
-  letter-spacing:.14em;color:var(--ink-soft);opacity:.65;white-space:nowrap}
-@media (max-width:560px){ .ppt-mrz{display:none} }
+/* What the record amounts to: a quiet line of facts, not a row of big numbers. */
+/* The base zone below the data page: what the record amounts to, in one quiet line. */
+.ppt-facts{display:flex;flex-wrap:wrap;gap:4px 16px;padding:10px 22px;
+  border-top:1px dashed var(--line);background:var(--paper-2);font-size:.78rem;color:var(--ink-soft)}
+.ppt-facts > span{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.ppt-facts svg{flex:none;width:14px;height:14px;opacity:.75}
 
 /* The document number, along the foot, with the links beside it. */
 .ppt-foot{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
@@ -1480,10 +1481,24 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
 .ppt-social a:hover{border-color:var(--blue);color:var(--blue)}
 
 /* ---- the body: what they say about their work, and the shape of it ---- */
-.pduo{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:20px;align-items:start;margin-bottom:22px}
+.pduo{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:20px;align-items:stretch;margin-bottom:22px}
 .pduo.one{grid-template-columns:minmax(0,1fr)}
-.pduo > .pcard{margin-bottom:0;height:100%}
-@media (max-width:1000px){ .pduo{grid-template-columns:1fr} }
+/* Both cards are columns of the same height, so whichever is taller sets the pair and
+   the graph stretches to fill its own rather than leaving a gap under it. */
+.pduo > .pcard{margin-bottom:0;height:100%;display:flex;flex-direction:column}
+.pduo .igraph{flex:1;display:flex;flex-direction:column;min-height:0}
+.pduo .ig-frame{flex:1;min-height:210px}
+@media (max-width:1000px){ .pduo{grid-template-columns:1fr} .pduo .ig-frame{height:300px} }
+
+/* About: a short piece of writing, set to be read, with the rest folded away. */
+.about-text{margin:0;white-space:pre-line;font-size:1rem;line-height:1.75;max-width:62ch;
+  color:color-mix(in oklab, var(--ink) 92%, var(--ink-soft))}
+.about-more{margin-top:14px;align-self:flex-start;display:inline-flex;align-items:center;gap:6px;
+  padding:0;border:0;background:none;cursor:pointer;font:inherit;font-size:.86rem;font-weight:600;color:var(--blue)}
+.about-more:hover{text-decoration:underline}
+.about-more svg{width:16px;height:16px;transition:transform .18s ease}
+.about-more[aria-expanded="true"] svg{transform:rotate(180deg)}
+@media (prefers-reduced-motion:reduce){ .about-more svg{transition:none} }
 
 /* ---- interest graph: one colour per branch ---- */
 /* Six steps, run through scripts/validate_palette.js from the dataviz guidance: inside

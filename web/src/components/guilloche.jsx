@@ -8,16 +8,18 @@
 // assistive software and never intercepts a click.
 
 const W = 300;
-const H = 260;
+const H = 300;
 
-/** Nested rounded rectangles: lathe work on the shape the rest of the site is drawn with. */
-function nested({ rings = 26, inset = 5.2, turn = 0.5 }) {
+/**
+ * Nested rounded squares: lathe work on the shape the rest of the site is drawn with.
+ * Square rather than oblong, so the nest reads the same whichever way you look at it.
+ */
+function nested({ rings = 28, inset = 5.2, turn = 0.5 }) {
   const out = [];
   for (let i = 0; i < rings; i++) {
-    const w = W - i * inset * 2;
-    const h = H - i * inset * 1.9;
-    if (w < 14 || h < 14) break;
-    out.push({ x: -w / 2, y: -h / 2, w, h, r: Math.max(3, 34 - i * 1.1), t: i * turn });
+    const side = W - i * inset * 2;
+    if (side < 14) break;
+    out.push({ x: -side / 2, y: -side / 2, w: side, h: side, r: Math.max(3, 36 - i * 1.15), t: i * turn });
   }
   return out;
 }

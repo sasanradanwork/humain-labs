@@ -164,6 +164,13 @@ export const Icon = {
       <path d="M8 10.5V7a4 4 0 0 1 8 0v3.5" />
     </svg>
   ),
+  // An academic's post: a mortarboard, for the position they hold.
+  post: () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" {...s({ strokeLinejoin: "round" })} aria-hidden="true">
+      <path d="M12 4 2 9l10 5 10-5-10-5Z" />
+      <path d="M6 11.2V16c0 1.6 2.7 3 6 3s6-1.4 6-3v-4.8" />
+    </svg>
+  ),
   pencil: () => (
     <svg width="14" height="14" viewBox="0 0 24 24" {...s({ strokeLinejoin: "round" })} aria-hidden="true">
       <path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z" />

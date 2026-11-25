@@ -7,7 +7,7 @@ import { CardPattern } from "../components/guilloche.jsx";
 import { InterestGraph } from "../components/interests.jsx";
 import { PointsBars, PubBars, ordinal } from "../components/charts.jsx";
 import { AUTH, S, byId, groupsOf, role } from "../lib/store.js";
-import { COUNTRY_CODES, DISCIPLINES } from "../lib/lists.js";
+import { DISCIPLINES } from "../lib/lists.js";
 import { fmtDate, gidKey, isOpen, plural } from "../lib/util.js";
 import { navigate, useUI } from "../lib/ui.jsx";
 import { groupHref, researcherHref } from "../components/cards.jsx";
@@ -240,22 +240,35 @@ function VerificationLevel({ r }) {
 }
 
 /**
- * The band along the foot of the record. It is the researcher's own identifier set in the
- * layout a passport uses for its machine-readable zone — same characters, same filler —
- * so the card reads as a document rather than a panel. Decorative: the same identifier is
- * printed in full, and selectable, on the line below it.
+ * The bio, set as a short piece of writing rather than a block of form data: the opening
+ * is shown and the rest unfolds, so a long bio doesn't set the height of everything
+ * beside it. The cut falls on a word boundary, and never mid-sentence by more than a
+ * word, so the preview reads as a sentence rather than a truncation.
  */
-function mrzLines(r) {
-  const pad = (s, n) => s.slice(0, n).padEnd(n, "<");
-  const az = (s) => String(s || "").toUpperCase().replace(/[^A-Z0-9]+/g, "<");
-  const code = COUNTRY_CODES[r.country] || "<<";
-  const surname = az((r.name || "").split(/\s+/).slice(-1)[0]);
-  const given = az((r.name || "").split(/\s+/).slice(0, -1).join(" "));
-  return [
-    pad(`HR${code}${surname}<<${given}`, 40),
-    pad(`${az(r.publicId)}${code}${az(r.discipline)}`, 40),
-  ];
+const ABOUT_PREVIEW = 200; // characters shown before "Read more"
+
+function About({ bio }) {
+  const [open, setOpen] = useState(false);
+  const text = String(bio || "").trim();
+  const long = text.length > ABOUT_PREVIEW + 40; // not worth a toggle for a few more words
+  const cut = long ? text.slice(0, text.lastIndexOf(" ", ABOUT_PREVIEW) + 1 || ABOUT_PREVIEW).trimEnd() : text;
+
+  return (
+    <section className="pcard about">
+      <h2>About</h2>
+      <p className="about-text">
+        {long && !open ? `${cut}…` : text}
+      </p>
+      {long && (
+        <button type="button" className="about-more" onClick={() => setOpen((v) => !v)} aria-expanded={open}>
+          {open ? "Read less" : "Read more"}
+          <Icon.chev />
+        </button>
+      )}
+    </section>
+  );
 }
+
 
 /**
  * The studies this researcher has run: the ones still open, then the ones that have
@@ -416,6 +429,7 @@ export function ResearcherPage({ id, own: ownPage = false, onVerify, onScholar }
     ? Array.from({ length: last - first + 1 }, (_, i) => ({ year: first + i, count: counts[first + i] || 0 }))
     : [];
   const gs = groupsOf(r.id);
+  const theirStudies = S.studies.filter((s) => s.researcherId === r.id);
   const supervising = (r.supervising || []).map((s) => ({ ...s, r: byId("researchers", s.researcherId) })).filter((s) => s.r);
   // The other side of the same relationship: who lists this person as their student.
   const supervisors = S.researchers.filter((o) => (o.supervising || []).some((s) => s.researcherId === r.id));
@@ -450,20 +464,14 @@ export function ResearcherPage({ id, own: ownPage = false, onVerify, onScholar }
               <HlgBadge size={13} />
               <span className="ppt-org">HumAIn Labs ·</span> Researcher record
             </span>
-            <div className="ppt-acts">
-              {own ? (
-                <>
-                  <VisibilityEye r={r} />
-                  <a className="pa" href="#/profile/edit" title="Edit profile" aria-label="Edit profile">
-                    <Icon.pencil />
-                  </a>
-                </>
-              ) : (
-                <a className="pa" href="#/researchers/leaderboard" title="Leaderboard" aria-label="Leaderboard">
-                  <Icon.trophy />
+            {own && (
+              <div className="ppt-acts">
+                <VisibilityEye r={r} />
+                <a className="pa" href="#/profile/edit" title="Edit profile" aria-label="Edit profile">
+                  <Icon.pencil />
                 </a>
-              )}
-            </div>
+              </div>
+            )}
           </div>
 
           <div className="ppt-top">
@@ -475,24 +483,32 @@ export function ResearcherPage({ id, own: ownPage = false, onVerify, onScholar }
               <h1>{r.name}</h1>
               <dl>
                 <div>
-                  <dt>Position</dt>
+                  <dt>
+                    <Icon.post /> Position
+                  </dt>
                   <dd>{r.position || "\u2014"}</dd>
                 </div>
                 <div>
-                  <dt>Institution</dt>
+                  <dt>
+                    <Icon.inst /> Institution
+                  </dt>
                   <dd>
                     {r.institution}
                     {r.department ? `, ${r.department}` : ""}
                   </dd>
                 </div>
                 <div>
-                  <dt>Country</dt>
+                  <dt>
+                    <Icon.globe /> Country
+                  </dt>
                   <dd className="ppt-country">
                     <Flag country={r.country} /> {r.country}
                   </dd>
                 </div>
                 <div>
-                  <dt>Field</dt>
+                  <dt>
+                    <Icon.book /> Specialised field
+                  </dt>
                   <dd>{r.field}</dd>
                 </div>
               </dl>
@@ -507,10 +523,19 @@ export function ResearcherPage({ id, own: ownPage = false, onVerify, onScholar }
             </div>
           </div>
 
-          <div className="ppt-mrz" aria-hidden="true">
-            {mrzLines(r).map((line, i) => (
-              <span key={i}>{line}</span>
-            ))}
+          {/* What the record amounts to, in one line: what they run and when they joined. */}
+          <div className="ppt-facts">
+            <span>
+              <Icon.people /> {plural(gs.length, "research group", "research groups")}
+            </span>
+            <span>
+              <Icon.lab /> {plural(theirStudies.length, "study", "studies")}
+            </span>
+            {r.createdAt && (
+              <span>
+                <Icon.clock /> Registered {fmtDate(r.createdAt)}
+              </span>
+            )}
           </div>
 
           <div className="ppt-foot">
@@ -559,10 +584,7 @@ export function ResearcherPage({ id, own: ownPage = false, onVerify, onScholar }
 
       {/* ---- what they work on: the words on the left, the map of it on the right ---- */}
       <div className={"pduo" + (interests.length ? "" : " one")}>
-        <section className="pcard">
-          <h2>About</h2>
-          <p style={{ lineHeight: 1.7, whiteSpace: "pre-line", margin: 0 }}>{r.bio}</p>
-        </section>
+        <About bio={r.bio} />
 
         {interests.length > 0 && (
           <section className="pcard">
@@ -931,22 +953,20 @@ export function Leaderboard() {
                   </span>
                 </th>
                 <td>
-                  {canOpen(x.researcher) ? (
-                    <a href={researcherHref(x.researcher)} onClick={(e) => e.stopPropagation()}>
-                      {x.researcher.name}
-                    </a>
-                  ) : (
-                    <span className="priv-name" title="This researcher keeps their profile private.">
-                      {x.researcher.name}
-                      <Icon.lock />
-                    </span>
-                  )}
-                  <div className="small soft lb-where">
-                    <Flag country={x.researcher.country} size={13} />
-                    <span>
-                      {x.researcher.institution}
-                    </span>
-                  </div>
+                  <span className="lb-who">
+                    <Flag country={x.researcher.country} size={14} />
+                    {canOpen(x.researcher) ? (
+                      <a href={researcherHref(x.researcher)} onClick={(e) => e.stopPropagation()}>
+                        {x.researcher.name}
+                      </a>
+                    ) : (
+                      <span className="priv-name" title="This researcher keeps their profile private.">
+                        {x.researcher.name}
+                        <Icon.lock />
+                      </span>
+                    )}
+                  </span>
+                  <div className="small soft lb-where">{x.researcher.institution}</div>
                 </td>
                 <td>
                   {x.publications}
