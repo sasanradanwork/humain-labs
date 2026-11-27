@@ -25,6 +25,19 @@ function harvard(a) {
   return initials ? `${family}, ${initials}` : family;
 }
 
+/**
+ * Crossref's own type, narrowed to the handful a reader cares to tell apart. Anything
+ * unrecognised is "Other" rather than guessed at.
+ */
+function kindOf(type) {
+  const t = String(type || "").toLowerCase();
+  if (t === "journal-article") return "Journal article";
+  if (t === "proceedings-article" || t === "proceedings") return "Conference paper";
+  if (t === "posted-content") return "Preprint";
+  if (t.startsWith("book") || t === "monograph" || t === "reference-book") return "Book chapter";
+  return "Other";
+}
+
 /** Shape one Crossref `message` into the record stored on a profile. */
 function fromMessage(doi, m) {
   const title = ((m.title || [])[0] || "").trim();
@@ -40,6 +53,7 @@ function fromMessage(doi, m) {
     authorNames: authorNames.slice(0, 30).map((n) => n.slice(0, 120)),
     authors: authorNames.slice(0, 30).join(", "),
     venue: String((m["container-title"] || [])[0] || m.publisher || "").slice(0, 200),
+    kind: kindOf(m.type),
     year,
     url: String(m.URL || `https://doi.org/${doi}`).slice(0, 500),
     citations: typeof m["is-referenced-by-count"] === "number" ? m["is-referenced-by-count"] : null,

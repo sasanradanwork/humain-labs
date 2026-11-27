@@ -25,6 +25,9 @@ const COUNTRY_NAMES = [
 // researchers page filter on these exact values.
 const DISCIPLINES = ["Science", "Technology", "Engineering", "Mathematics"];
 // What a diary entry on a researcher profile can be.
+/** What a publication is, as Crossref reports it. */
+const PUB_KINDS = ["Journal article", "Conference paper", "Preprint", "Book chapter", "Other"];
+
 const EVENT_TYPES = ["Conference", "Talk", "Workshop", "Seminar", "Panel", "Poster", "Summer school", "Other"];
 // ISO 3166-1 alpha-2 for each country above, so a flag can be drawn beside the name.
 const COUNTRY_CODES = {
@@ -38,4 +41,4 @@ const COUNTRY_CODES = {
   "Switzerland": "CH", "Tanzania": "TZ", "Thailand": "TH", "Turkey": "TR", "Uganda": "UG", "Ukraine": "UA",
   "United Arab Emirates": "AE", "United Kingdom": "GB", "United States": "US", "Vietnam": "VN",
 };
-module.exports = { FIELDS, POSITIONS, COUNTRY_NAMES, DISCIPLINES, EVENT_TYPES, COUNTRY_CODES };
+module.exports = { FIELDS, POSITIONS, COUNTRY_NAMES, DISCIPLINES, EVENT_TYPES, PUB_KINDS, COUNTRY_CODES };

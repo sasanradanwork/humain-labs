@@ -1077,3 +1077,29 @@ test("the short bio is capped in words, not characters", async () => {
   assert.equal(over.status, 400);
   assert.match(over.json.error, /301/);
 });
+
+test("a publication records what kind of thing it is, from Crossref's own type", async () => {
+  const { lookup } = require("../src/lib/crossref");
+  const base = {
+    title: ["A paper"],
+    author: [{ family: "Nwosu", given: "Amara" }],
+    issued: { "date-parts": [[2026]] },
+    "container-title": ["Some Venue"],
+  };
+  const fetchOf = (type) => async () => ({ ok: true, status: 200, json: async () => ({ message: { ...base, type } }) });
+
+  const kinds = {
+    "journal-article": "Journal article",
+    "proceedings-article": "Conference paper",
+    "posted-content": "Preprint",
+    "book-chapter": "Book chapter",
+    "dataset": "Other",
+  };
+  for (const [type, kind] of Object.entries(kinds)) {
+    const rec = await lookup("10.1234/x", fetchOf(type));
+    assert.equal(rec.kind, kind, `${type} should store as ${kind}`);
+  }
+  // A record with no type at all is "Other" rather than a guess.
+  const none = await lookup("10.1234/x", fetchOf(undefined));
+  assert.equal(none.kind, "Other");
+});
