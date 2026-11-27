@@ -8,7 +8,7 @@ const { trendFor } = require("./trending");
 const { newGroupId, newResearcherId } = require("./ids");
 const { scoreFor, yearsBack } = require("./ranking");
 const { lookup: lookupDoi } = require("./crossref");
-const { FIELDS, POSITIONS, COUNTRY_NAMES, DISCIPLINES } = require("./lists");
+const { FIELDS, POSITIONS, COUNTRY_NAMES, DISCIPLINES, EVENT_TYPES } = require("./lists");
 // A short bio is a paragraph or two, not a CV.
 const BIO_WORDS = 300;
 const { harvardAuthors } = require("./harvard");
@@ -88,7 +88,7 @@ const researcherFor = (r, meId) => ({
     .map(([y]) => Number(y)),
 });
 // Public group pages, as seen by anyone: no member list, owner id or review notes. Members are counted only.
-const publicGroup = ({ members, ownerId, review, citations, ...g }) => ({ ...g, memberCount: (members || []).length });
+const publicGroup = ({ members, ownerId, deputyId, review, citations, ...g }) => ({ ...g, memberCount: (members || []).length });
 function canEditGroup(g, researcherId) {
   return !!researcherId && (g.ownerId === researcherId || (g.members || []).some((m) => m.researcherId === researcherId && m.canEdit));
 }
@@ -236,6 +236,27 @@ function profileDetail(b) {
         year: V.int(h.year, `Highlight ${i + 1} year`, { min: 1900, max: year + 1 }),
       };
     }),
+    /**
+     * Talks and conferences, kept in date order so the page never has to work out what
+     * is coming next. An entry without a date could never be scheduled, so the date is
+     * the one thing besides the title that is required.
+     */
+    schedule: V.list(b.schedule, "Schedule", 40).map((raw, i) => {
+      const e = raw || {};
+      const starts = V.date(e.date, `Event ${i + 1} date`);
+      if (!starts) throw bad(`Event ${i + 1} needs a date.`);
+      const ends = V.date(e.endDate, `Event ${i + 1} end date`);
+      if (ends && ends < starts) throw bad(`Event ${i + 1} ends before it starts.`);
+      return {
+        title: V.str(e.title, `Event ${i + 1}`, { required: true, max: 160 }),
+        type: V.choice(e.type, `Event ${i + 1} type`, EVENT_TYPES, { required: true }),
+        date: starts,
+        endDate: ends,
+        place: V.str(e.place, `Event ${i + 1} place`, { max: 160 }),
+        url: V.url(e.url, `Event ${i + 1} link`),
+        detail: V.str(e.detail, `Event ${i + 1} detail`, { max: 400 }),
+      };
+    }).sort((a, z) => a.date.localeCompare(z.date)),
     // Only the DOIs travel. Everything about a publication is fetched from Crossref in
     // putProfile, so what the client claims about a paper never reaches the record.
     publications: V.list(b.publications, "Publications", 300)
@@ -307,11 +328,12 @@ async function resolvePublications(dois, existing, crossref) {
 
 /**
  * Resolve one DOI for the editor, so what a researcher is shown before saving is the
- * same record the server will store. Researchers only, to keep it from being a free
- * Crossref proxy.
+ * same record the server will store. A signed-in account is gate enough to keep it from
+ * being an open Crossref proxy: asking for a saved profile would stop anyone adding
+ * publications while first filling the form in.
  */
 async function resolveDoi({ repo, principal, query, crossref = lookupDoi }) {
-  await needResearcher(repo, principal);
+  needUser(principal);
   const doi = V.doi(query, "DOI");
   if (!doi) throw bad("Give a DOI, like 10.1038/s41586-020-2649-2.");
   return ok(await crossref(doi));
@@ -419,13 +441,54 @@ async function normalizeGroup(repo, b) {
     members.push({ researcherId: id, role: V.str(m.role, "Member role", { max: 80 }) || "Member", canEdit: !!m.canEdit });
   }
   g.members = members;
+  // Who takes the group on if the lead leaves. Nominated from the membership, so there
+  // is always a named person rather than a group with nobody able to change it.
+  g.deputyId = V.str(b.deputyId, "Second lead", { max: 64 }) || null;
   return g;
 }
+
+/**
+ * The lead always sits in the membership with edit rights, and so does the second lead:
+ * a deputy who couldn't edit the page would be no use the day they had to take over.
+ * A second lead who isn't a member, or who is the lead, is not a succession at all.
+ */
 function ensureOwner(g, ownerId) {
   const i = g.members.findIndex((m) => m.researcherId === ownerId);
   if (i === -1) g.members.unshift({ researcherId: ownerId, role: "Group lead", canEdit: true });
   else g.members[i].canEdit = true;
+
+  if (g.deputyId === ownerId) throw bad("The second lead has to be someone other than the lead.");
+  if (g.deputyId) {
+    const d = g.members.findIndex((m) => m.researcherId === g.deputyId);
+    if (d === -1) throw bad("The second lead has to be a member of the group. Add them to the members first.");
+    g.members[d].canEdit = true;
+  }
   return g;
+}
+
+/**
+ * Work out what becomes of the groups a researcher leads when they go. Returns the
+ * handovers to apply, or the groups that can't be handed over because no second lead was
+ * ever named. Nothing is written here, so the refusal happens before any change does.
+ */
+async function succession(repo, ownerId) {
+  const handovers = [], stuck = [];
+  for (const g of await repo.where("groups", "ownerId", ownerId)) {
+    const heir = g.deputyId && g.deputyId !== ownerId && (g.members || []).some((m) => m.researcherId === g.deputyId)
+      ? await repo.get("researchers", g.deputyId)
+      : null;
+    if (heir) handovers.push({ group: g, heirId: heir.id });
+    else stuck.push(g);
+  }
+  return { handovers, stuck };
+}
+
+/** Hand one group to its second lead, who becomes the lead and names their own in turn. */
+function handOver(g, heirId, leavingId) {
+  const members = (g.members || [])
+    .filter((m) => m.researcherId !== leavingId)
+    .map((m) => (m.researcherId === heirId ? { ...m, canEdit: true, role: /second lead|member/i.test(m.role || "") ? "Group lead" : m.role } : m));
+  return { ...g, ownerId: heirId, deputyId: null, members, updatedAt: today() };
 }
 async function createGroup({ repo, principal, body, screen }) {
   const me = await needResearcher(repo, principal);
@@ -448,7 +511,10 @@ async function updateGroup({ repo, principal, body, params, screen }) {
   const existing = await repo.get("groups", params.id);
   if (!existing) throw new HttpError(404, "That group doesn't exist.");
   if (!canEditGroup(existing, me.id)) throw new HttpError(403, "Only the group's owner and members with edit access can change this page.");
-  const g = ensureOwner(await normalizeGroup(repo, body), existing.ownerId);
+  const raw = await normalizeGroup(repo, body);
+  // Naming a successor is the lead's decision, not something any editor can change.
+  if (existing.ownerId !== me.id) raw.deputyId = existing.deputyId || null;
+  const g = ensureOwner(raw, existing.ownerId);
   const isLead = existing.ownerId === me.id || (existing.members || []).some((m) => m.researcherId === me.id && /lead/i.test(m.role || ""));
   if (!isLead) g.visibility = existing.visibility || "private";
   const review = await screenFields({ "Group name": g.name, "One-line summary": g.summary, "About the group": g.about }, { screen });
@@ -592,8 +658,12 @@ async function studyApplicants({ repo, principal, params }) {
 
 /* ---------- institution lookup ---------- */
 /** Searches the Research Organization Registry so a group can attach its institution's ROR ID. */
+// Looking a university up in the public registry is part of filling the form in, so it
+// only needs a signed-in account. Asking for a saved profile first made setting one up
+// impossible: the institution is a required field, and you cannot pick one until the
+// profile exists, which it cannot until the field is filled.
 async function rorSearch({ repo, principal, params, query, http = defaultHttp }) {
-  await needResearcher(repo, principal);
+  needUser(principal);
   const q = V.str(query ?? params?.q, "Search", { required: true, max: 120 });
   let data;
   try { data = await http(`https://api.ror.org/v2/organizations?query=${encodeURIComponent(q)}`); }
@@ -804,18 +874,46 @@ async function participantEmailConfirm({ repo, principal, body, now = Date.now()
 }
 
 // Participant: removes their applications and their details.
+/**
+ * Everything this account left behind as a participant: the details, every application,
+ * and the roadmap votes, which are keyed to the user and would otherwise outlive the
+ * account that cast them.
+ */
 async function deleteParticipant({ repo, principal }) {
   needUser(principal);
   for (const a of await repo.where("applications", "userId", principal.userId)) await repo.remove("applications", a.id, a.studyId);
   await repo.remove("participants", participantId(principal.userId));
+  await forgetVotes(repo, principal);
   return ok({ deleted: true });
+}
+
+/** Take this account's roadmap votes out of every item they voted on. */
+async function forgetVotes(repo, principal) {
+  const voter = voterKey(principal);
+  if (!voter) return;
+  for (const id of VOTE_IDS) {
+    const doc = await repo.get("votes", id);
+    if (!doc || !doc.voters || !(voter in doc.voters)) continue;
+    const voters = { ...doc.voters };
+    delete voters[voter];
+    await repo.upsert("votes", { ...doc, voters });
+  }
 }
 
 // Researcher: groups they created must be deleted first, since other people are members of them.
 // Their studies go too, with the applications to those studies.
 async function deleteResearcherProfile({ repo, principal }) {
   const me = await needResearcher(repo, principal);
-  if ((await repo.where("groups", "ownerId", me.id)).length) throw new HttpError(409, "Delete the research groups you created first. Other people are members of them, so they can't be removed automatically.");
+  // Groups with a second lead pass to them; the rest have nobody to take them on, so
+  // they have to be dealt with first. Worked out before anything is written.
+  const { handovers, stuck } = await succession(repo, me.id);
+  if (stuck.length)
+    throw new HttpError(
+      409,
+      `Name a second lead for ${stuck.map((g) => `"${g.name}"`).join(", ")} so the group passes to them, or delete it first. ` +
+        "Other people are members, so a group can't be left without anyone able to run it.",
+    );
+  for (const { group, heirId } of handovers) await repo.upsert("groups", handOver(group, heirId, me.id));
   for (const s of await repo.where("studies", "researcherId", me.id)) {
     for (const a of await repo.where("applications", "studyId", s.id)) await repo.remove("applications", a.id, a.studyId);
     await repo.remove("studies", s.id);
@@ -823,7 +921,32 @@ async function deleteResearcherProfile({ repo, principal }) {
   for (const g of await repo.all("groups")) {
     if ((g.members || []).some((m) => m.researcherId === me.id)) await repo.upsert("groups", { ...g, members: g.members.filter((m) => m.researcherId !== me.id) });
   }
+  // What this profile said about other people goes with it. An endorsement left behind
+  // would keep scoring points on the leaderboard for a researcher nobody can trace back
+  // to an account — and deleting and re-registering would let one person endorse the
+  // same researcher again and again. Supervision entries would likewise name a profile
+  // that no longer exists.
+  for (const other of await repo.all("researchers")) {
+    if (other.id === me.id) continue;
+    const patch = {};
+    const years = Object.entries(other.endorsements || {}).filter(([, v]) => v && me.id in v);
+    if (years.length) {
+      patch.endorsements = { ...other.endorsements };
+      for (const [year, v] of years) {
+        const left = { ...v };
+        delete left[me.id];
+        patch.endorsements[year] = left;
+      }
+    }
+    if ((other.supervising || []).some((s) => s.researcherId === me.id)) {
+      patch.supervising = other.supervising.filter((s) => s.researcherId !== me.id);
+    }
+    if (Object.keys(patch).length) await repo.upsert("researchers", { ...other, ...patch });
+  }
   await repo.remove("researchers", me.id);
+  // Deleting the profile ends the session, so the roadmap votes go with it rather than
+  // sitting against an account the person has walked away from.
+  await forgetVotes(repo, principal);
   return ok({ deleted: true });
 }
 

@@ -24,6 +24,8 @@ const COUNTRY_NAMES = [
 // The four disciplines a researcher files themselves under. The leaderboard and the
 // researchers page filter on these exact values.
 const DISCIPLINES = ["Science", "Technology", "Engineering", "Mathematics"];
+// What a diary entry on a researcher profile can be.
+const EVENT_TYPES = ["Conference", "Talk", "Workshop", "Seminar", "Panel", "Poster", "Summer school", "Other"];
 // ISO 3166-1 alpha-2 for each country above, so a flag can be drawn beside the name.
 const COUNTRY_CODES = {
   "Argentina": "AR", "Australia": "AU", "Bangladesh": "BD", "Belgium": "BE", "Brazil": "BR", "Canada": "CA",
@@ -36,4 +38,4 @@ const COUNTRY_CODES = {
   "Switzerland": "CH", "Tanzania": "TZ", "Thailand": "TH", "Turkey": "TR", "Uganda": "UG", "Ukraine": "UA",
   "United Arab Emirates": "AE", "United Kingdom": "GB", "United States": "US", "Vietnam": "VN",
 };
-module.exports = { FIELDS, POSITIONS, COUNTRY_NAMES, DISCIPLINES, COUNTRY_CODES };
+module.exports = { FIELDS, POSITIONS, COUNTRY_NAMES, DISCIPLINES, EVENT_TYPES, COUNTRY_CODES };

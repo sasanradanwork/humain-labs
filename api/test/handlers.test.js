@@ -304,16 +304,25 @@ test("groups get a permanent, checkable public ID and can carry a ROR ID", async
   assert.equal(u.json.publicId, g.json.publicId);
 });
 
-test("ROR search needs a researcher profile and maps the registry's fields", async () => {
+test("the lookups a profile is built from work before that profile exists", async () => {
   const repo = fresh();
   const http = async () => ({ items: [{ id: "https://ror.org/027m9bs27", names: [{ value: "Manchester Uni", types: ["alias"] }, { value: "University of Manchester", types: ["ror_display"] }],
     locations: [{ geonames_details: { name: "Manchester", country_name: "United Kingdom" } }] }] });
-  assert.equal((await run(H.rorSearch, { repo, principal: user("p1"), query: "manchester", http })).status, 403);
-  await verifiedProfile(repo, "u1");
-  const r = await run(H.rorSearch, { repo, principal: user("u1"), query: "manchester", http });
+  // Signed out, neither is anyone's to use.
+  assert.equal((await run(H.rorSearch, { repo, principal: null, query: "manchester", http })).status, 401);
+  assert.equal((await run(H.resolveDoi, { repo, principal: null, query: "10.1038/s41586-020-2649-2", crossref })).status, 401);
+
+  // Signed in with nothing saved yet: both have to work, or the form can never be
+  // filled in — the institution is required, and publications are DOIs only.
+  const newcomer = user("newcomer");
+  assert.equal((await H.me({ repo, principal: newcomer })).json.researcher, null);
+  const r = await run(H.rorSearch, { repo, principal: newcomer, query: "manchester", http });
   assert.deepEqual(r.json.results[0], { ror: "027m9bs27", name: "University of Manchester", country: "United Kingdom", city: "Manchester" });
+  const d = await run(H.resolveDoi, { repo, principal: newcomer, query: "10.1038/s41586-020-2649-2", crossref });
+  assert.equal(d.json.title, "Array programming with NumPy");
+
   const down = async () => { throw new Error("offline"); };
-  assert.equal((await run(H.rorSearch, { repo, principal: user("u1"), query: "x", http: down })).status, 502);
+  assert.equal((await run(H.rorSearch, { repo, principal: newcomer, query: "x", http: down })).status, 502);
 });
 
 test("standard lists: choices must come from the list, but capitalisation doesn't matter", async () => {
@@ -558,15 +567,96 @@ test("participants must confirm their email before applying, and a changed addre
   assert.equal((await run(H.apply, { repo, principal: user("p1"), body: applyBody(other.json.id) })).status, 403);
 });
 
-test("participants can delete their details, which removes their applications", async () => {
+test("deleting a participant takes everything of theirs with it, votes included", async () => {
   const repo = fresh();
   await verifiedProfile(repo, "u1");
   await participant(repo, "p1");
   const s = await H.createStudy({ repo, principal: user("u1"), body: { title: "Survey", description: "15 min", criteria: "18+", closesAt: soon(10), ...TL() } });
   await run(H.apply, { repo, principal: user("p1"), body: applyBody(s.json.id) });
+  await H.roadmapVote({ repo, principal: user("p1"), params: { id: "payments" }, body: { vote: "up" } });
+  await H.roadmapVote({ repo, principal: user("p2"), params: { id: "payments" }, body: { vote: "up" } });
+
   assert.equal((await H.deleteParticipant({ repo, principal: user("p1") })).json.deleted, true);
   assert.equal((await H.me({ repo, principal: user("p1") })).json.participant, null);
   assert.equal((await H.myApplications({ repo, principal: user("p1") })).json.length, 0);
+  // A vote is keyed to the account, so it would otherwise outlive the account itself.
+  const payments = async (who) => (await H.roadmap({ repo, principal: user(who) })).json.items.find((x) => x.id === "payments");
+  assert.equal((await payments("p1")).mine, null);
+  assert.equal((await payments("p1")).up, 1);
+  // Everyone else's votes are untouched.
+  assert.equal((await payments("p2")).mine, "up");
+});
+
+test("a deleted profile stops scoring: its endorsements and supervision entries go too", async () => {
+  const repo = fresh();
+  const gone = await verifiedProfile(repo, "leaver", { handle: "leaver" });
+  const stays = await verifiedProfile(repo, "stays", { handle: "stays" });
+  const year = new Date().getFullYear();
+
+  await H.endorseResearcher({ repo, principal: user("leaver"), params: { id: stays.id }, body: { year } });
+  await H.roadmapVote({ repo, principal: user("leaver"), params: { id: "payments" }, body: { vote: "up" } });
+  // Someone else lists the leaver as a student of theirs.
+  await repo.upsert("researchers", { ...(await repo.get("researchers", stays.id)), supervising: [{ researcherId: gone.id, role: "PhD student" }] });
+  assert.equal(Object.keys((await repo.get("researchers", stays.id)).endorsements[String(year)]).length, 1);
+
+  assert.equal((await H.deleteResearcherProfile({ repo, principal: user("leaver") })).json.deleted, true);
+
+  const after = await repo.get("researchers", stays.id);
+  // The endorsement went with the account that cast it, so it can't keep paying points
+  // to someone nobody can trace, and deleting and re-registering can't stack them.
+  assert.deepEqual(after.endorsements[String(year)], {});
+  assert.deepEqual(after.supervising, []);
+  // Deleting the profile ends the session, so the account's votes go with it.
+  const payments = async (who) => (await H.roadmap({ repo, principal: user(who) })).json.items.find((x) => x.id === "payments");
+  assert.equal((await payments("leaver")).mine, null);
+});
+
+test("a group names a second lead, who takes it on if the lead leaves", async () => {
+  const repo = fresh();
+  const lead = await verifiedProfile(repo, "lead1", { handle: "lead1" });
+  const second = await verifiedProfile(repo, "second1", { handle: "second1" });
+  const base = { name: "Lab", institution: "HumAIn", country: "United Kingdom", field: "Computer science", email: "lab@example.com", summary: "s", about: "a" };
+
+  // The second lead has to be in the group, and can't be the lead.
+  const notMember = await run(H.createGroup, { repo, principal: user("lead1"), body: { ...base, deputyId: second.id } });
+  assert.equal(notMember.status, 400);
+  assert.match(notMember.json.error, /member of the group/i);
+  const self = await run(H.createGroup, { repo, principal: user("lead1"), body: { ...base, deputyId: lead.id, members: [{ researcherId: lead.id, role: "Group lead" }] } });
+  assert.equal(self.status, 400);
+
+  const g = await run(H.createGroup, { repo, principal: user("lead1"), body: { ...base, deputyId: second.id, members: [{ researcherId: second.id, role: "Member" }] } });
+  assert.equal(g.status, 201);
+  // Naming someone second lead gives them edit rights: they'd be no use without them.
+  assert.equal(g.json.members.find((m) => m.researcherId === second.id).canEdit, true);
+
+  // Anyone else with edit access can save the page, but can't change who stands second.
+  const third = await verifiedProfile(repo, "third1", { handle: "third1" });
+  await repo.upsert("groups", { ...(await repo.get("groups", g.json.id)), members: [...g.json.members, { researcherId: third.id, role: "Member", canEdit: true }] });
+  const meddle = await run(H.updateGroup, { repo, principal: user("third1"), params: { id: g.json.id },
+    body: { ...base, deputyId: third.id, members: [{ researcherId: second.id, role: "Member" }, { researcherId: third.id, role: "Member", canEdit: true }] } });
+  assert.equal(meddle.json.deputyId, second.id);
+
+  // The lead leaves: the group goes with the second lead rather than blocking them.
+  assert.equal((await H.deleteResearcherProfile({ repo, principal: user("lead1") })).json.deleted, true);
+  const after = await repo.get("groups", g.json.id);
+  assert.equal(after.ownerId, second.id);
+  assert.equal(after.deputyId, null);
+  assert.ok(!after.members.some((m) => m.researcherId === lead.id));
+  assert.equal(after.members.find((m) => m.researcherId === second.id).role, "Group lead");
+});
+
+test("without a second lead, the group still has to be dealt with first", async () => {
+  const repo = fresh();
+  await verifiedProfile(repo, "solo1", { handle: "solo1" });
+  const g = await run(H.createGroup, { repo, principal: user("solo1"),
+    body: { name: "Solo Lab", institution: "HumAIn", country: "United Kingdom", field: "Computer science", email: "s@example.com", summary: "s", about: "a" } });
+  const refused = await run(H.deleteResearcherProfile, { repo, principal: user("solo1") });
+  assert.equal(refused.status, 409);
+  assert.match(refused.json.error, /second lead/i);
+  assert.match(refused.json.error, /Solo Lab/);
+  // Refused before anything was written, so the profile and the group are both intact.
+  assert.ok(await repo.get("groups", g.json.id));
+  assert.ok((await H.me({ repo, principal: user("solo1") })).json.researcher);
 });
 
 test("researchers can delete their profile once their groups are gone; their studies go with it", async () => {
@@ -693,6 +783,30 @@ test("every researcher gets a permanent HLR identifier, kept across edits", asyn
   // A mistyped character is rejected rather than pointing at someone else.
   const bad = a.json.publicId.slice(0, -1) + (a.json.publicId.endsWith("A") ? "B" : "A");
   assert.equal(isResearcherId(bad), false);
+});
+
+test("the schedule takes talks and conferences, in date order, and checks the dates", async () => {
+  const repo = fresh();
+  const ev = (over = {}) => ({ title: "Keynote", type: "Talk", date: "2027-03-04", ...over });
+  const save = (schedule) => run(H.putProfile, { repo, principal: user("u1"), body: profile({ schedule }) });
+
+  assert.equal((await save([ev({ date: "" })])).status, 400);
+  assert.equal((await save([ev({ type: "Rave" })])).status, 400);
+  assert.equal((await save([ev({ date: "04/03/2027" })])).status, 400);
+  const backwards = await save([ev({ date: "2027-03-04", endDate: "2027-03-01" })]);
+  assert.equal(backwards.status, 400);
+  assert.match(backwards.json.error, /ends before it starts/i);
+  assert.equal((await save([ev({ url: "notalink.com" })])).status, 400);
+
+  const ok2 = await save([
+    ev({ title: "CHI 2027", type: "Conference", date: "2027-05-10", endDate: "2027-05-14", place: "Berlin", url: "https://chi2027.acm.org" }),
+    ev({ title: "Lab seminar", type: "Seminar", date: "2026-12-01" }),
+  ]);
+  assert.equal(ok2.status, 201);
+  // Kept in date order, whatever order they arrived in.
+  assert.deepEqual(ok2.json.schedule.map((x) => x.date), ["2026-12-01", "2027-05-10"]);
+  assert.equal(ok2.json.schedule[1].place, "Berlin");
+  assert.equal(ok2.json.schedule[1].type, "Conference");
 });
 
 test("the fuller profile is validated and saved", async () => {

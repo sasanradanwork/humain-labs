@@ -40,6 +40,27 @@ const devCrossref = process.env.DEV_CROSSREF_STUB === "1"
     }
   : null;
 if (devCrossref) console.log("  (DEV_CROSSREF_STUB on: DOIs resolve to made-up papers)");
+
+// The same idea for the ROR registry, so the institution picker can be worked on without
+// the internet. Never used in deployment: this file is not part of the deployed API.
+const devRor = process.env.DEV_ROR_STUB === "1"
+  ? async (url) => {
+      const q = decodeURIComponent((url.split("query=")[1] || "").split("&")[0]);
+      const make = (name, city, country, ror) => ({
+        id: `https://ror.org/${ror}`,
+        names: [{ value: name, types: ["ror_display"] }],
+        locations: [{ geonames_details: { name: city, country_name: country } }],
+      });
+      return {
+        items: [
+          make(`University of ${q}`, q, "United Kingdom", "027m9bs27"),
+          make(`${q} Institute of Technology`, q, "United States", "05gq02987"),
+          make(`${q} Business School`, q, "Nigeria", "01hcx6992"),
+        ],
+      };
+    }
+  : null;
+if (devRor) console.log("  (DEV_ROR_STUB on: institution search returns made-up universities)");
 // Serves the built React app. Run `npm run build` in ../web first (or use Vite's
 // own dev server on :5173, which proxies /api here).
 const ROOT = path.join(__dirname, "..", "..", "web", "dist");
@@ -82,7 +103,7 @@ http.createServer(async (req, res) => {
       if (!hit) continue;
       let body = null;
       if (m === "POST" || m === "PUT") { let raw = ""; for await (const ch of req) raw += ch; try { body = JSON.parse(raw || "null"); } catch { return send(res, 400, { error: "The request body must be JSON." }); } }
-      try { const r = await fn({ repo, principal: principal(req), params: { id: hit[1] && decodeURIComponent(hit[1]) }, query: url.searchParams.get("q"), body, ...(devCrossref ? { crossref: devCrossref } : {}) }); return send(res, r.status, r.json); }
+      try { const r = await fn({ repo, principal: principal(req), params: { id: hit[1] && decodeURIComponent(hit[1]) }, query: url.searchParams.get("q"), body, ...(devCrossref ? { crossref: devCrossref } : {}), ...(devRor ? { http: devRor } : {}) }); return send(res, r.status, r.json); }
       catch (e) { if (e instanceof HttpError) return send(res, e.status, { error: e.message }); console.error(e); return send(res, 500, { error: "Server error" }); }
     }
     return send(res, 404, { error: "Not found" });
