@@ -1,7 +1,6 @@
 // A researcher's own page: who they are, what they've published, the roles they hold,
 // and where their work stood each year. Reached by opening a card in the directory.
-import { useEffect, useMemo, useState } from "react";
-import { flushSync } from "react-dom";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { Avatar, Flag, Icon, LinkedInLink, Radar, ScholarLink, Stem, VerificationLevel } from "../components/ui.jsx";
 import { HlgBadge } from "../components/hlg.jsx";
 import { CardPattern } from "../components/guilloche.jsx";
@@ -244,30 +243,48 @@ const calmly = () => typeof window !== "undefined" && window.matchMedia?.("(pref
  * open and counted down to; what's been is folded away as a record, newest first.
  */
 const HORIZON = 120; // days out at which the proximity ring is empty
+const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
 
 function Schedule({ events, own }) {
-  const [openId, setOpenId] = useState(null);
-  const [showPast, setShowPast] = useState(false);
-  const all = (events || []).filter((e) => e && e.date);
+  const all = (events || []).filter((e) => e && e.date).slice().sort((x, y) => x.date.localeCompare(y.date));
   const now = useNow(all.length > 0);
-  // A visitor sees nothing where there is nothing. On your own page the section stays,
-  // so an empty diary looks like something you haven't filled in rather than a feature
-  // that isn't there.
+  const trackRef = useRef(null);
+  const today = new Date(now).toISOString().slice(0, 10);
+  const over = (e) => (e.endDate || e.date) < today;
+  // The one to land on: the next thing coming, or the most recent if nothing is.
+  const next = all.findIndex((e) => !over(e));
+  const start = next === -1 ? all.length - 1 : next;
+  const [sel, setSel] = useState(start);
+  const picked = all[clamp(sel, 0, all.length - 1)];
+
+  // Bring the chosen event into the middle of the rail, however it was chosen. If the
+  // rail already had focus, focus follows the selection: that is the tablist pattern,
+  // and without it the arrow keys keep acting on the stop you have left behind.
+  // Keep the chosen stop in the middle of the rail — on selection, and again when the
+  // window changes size, since a narrower track would otherwise leave it off-screen.
+  useEffect(() => {
+    const centre = (smooth) => {
+      const track = trackRef.current;
+      const el = track?.querySelector(`[data-i="${sel}"]`);
+      if (!el) return;
+      el.scrollIntoView({ inline: "center", block: "nearest", behavior: smooth && !calmly() ? "smooth" : "auto" });
+      if (track.contains(document.activeElement) && document.activeElement !== el) el.focus({ preventScroll: true });
+    };
+    centre(true);
+    const settle = () => centre(false);
+    window.addEventListener("resize", settle);
+    return () => window.removeEventListener("resize", settle);
+  }, [sel]);
+
   if (!all.length)
     return own ? (
       <section className="pcard">
         <h2>Schedule</h2>
         <p className="own-empty">
-          Nothing in the diary yet. Add talks and conferences in <a href="#/profile/edit">Edit profile</a> and they'll appear here, soonest first.
+          Nothing in the diary yet. Add talks and conferences in <a href="#/profile/edit">Edit profile</a> and they'll appear here along a timeline.
         </p>
       </section>
     ) : null;
-
-  const today = new Date(now).toISOString().slice(0, 10);
-  // An event that runs for days is still on until the last of them.
-  const over = (e) => (e.endDate || e.date) < today;
-  const upcoming = all.filter((e) => !over(e));
-  const past = all.filter(over).reverse();
 
   const daysTo = (d) => Math.round((new Date(d + "T00:00:00Z") - new Date(today + "T00:00:00Z")) / 86400000);
   const when = (e) => {
@@ -275,7 +292,6 @@ function Schedule({ events, own }) {
     if (n > 1) return `in ${n} days`;
     if (n === 1) return "tomorrow";
     if (n === 0) {
-      // Close enough to count the hours rather than the days.
       const h = Math.round((new Date(e.date + "T09:00:00Z") - now) / 3600000);
       return h > 0 ? `in ${plural(h, "hour", "hours")}` : "today";
     }
@@ -283,112 +299,107 @@ function Schedule({ events, own }) {
   };
   const utc = (d) => new Date(d + "T00:00:00Z");
   const mon = (d) => utc(d).toLocaleString("en-GB", { month: "short", timeZone: "UTC" });
+  const yr = (d) => utc(d).getUTCFullYear();
   /** Compact enough to sit on one line: "10–14 Dec 2026", "28 Nov – 2 Dec 2026", "10 Dec 2026". */
   const dates = (e) => {
     const a = utc(e.date);
-    if (!e.endDate || e.endDate === e.date) return `${a.getUTCDate()} ${mon(e.date)} ${a.getUTCFullYear()}`;
+    if (!e.endDate || e.endDate === e.date) return `${a.getUTCDate()} ${mon(e.date)} ${yr(e.date)}`;
     const b = utc(e.endDate);
-    const sameYear = a.getUTCFullYear() === b.getUTCFullYear();
-    if (sameYear && e.date.slice(0, 7) === e.endDate.slice(0, 7))
-      return `${a.getUTCDate()}–${b.getUTCDate()} ${mon(e.date)} ${a.getUTCFullYear()}`;
-    const left = `${a.getUTCDate()} ${mon(e.date)}${sameYear ? "" : ` ${a.getUTCFullYear()}`}`;
-    return `${left} – ${b.getUTCDate()} ${mon(e.endDate)} ${b.getUTCFullYear()}`;
+    const sameYear = yr(e.date) === yr(e.endDate);
+    if (sameYear && e.date.slice(0, 7) === e.endDate.slice(0, 7)) return `${a.getUTCDate()}–${b.getUTCDate()} ${mon(e.date)} ${yr(e.date)}`;
+    return `${a.getUTCDate()} ${mon(e.date)}${sameYear ? "" : ` ${yr(e.date)}`} – ${b.getUTCDate()} ${mon(e.endDate)} ${yr(e.endDate)}`;
   };
 
-  /* Opening one event re-flows the grid, so hand the change to the browser's view
-     transition where there is one: it tweens the rows instead of snapping them. */
-  const toggle = (id) => {
-    const run = () => setOpenId((v) => (v === id ? null : id));
-    if (!calmly() && typeof document !== "undefined" && document.startViewTransition) document.startViewTransition(() => flushSync(run));
-    else run();
-  };
-
-  const Row = ({ e, i, done }) => {
-    const id = `${e.date}-${i}`;
-    const open = openId === id;
-    const more = !!(e.detail || e.url);
-    const left = daysTo(e.date);
-    // How near it is, 0 at the horizon and 1 on the day: the ring around the date fills
-    // as the event approaches, so a glance down the list reads as a sense of timing.
-    const near = done ? 0 : Math.min(1, Math.max(0, 1 - left / HORIZON));
-    return (
-      <li
-        className={"ev" + (done ? " is-done" : "") + (open ? " is-open" : "") + (!done && left <= 0 ? " is-now" : "")}
-        style={{ viewTransitionName: `ev-${i}${done ? "p" : "u"}` }}
-      >
-        {/* A tear-off leaf with a ring that fills as the date nears. */}
-        <div className="ev-when" style={{ "--p": near.toFixed(3) }} aria-hidden="true">
-          <span className="ev-mon">{mon(e.date)}</span>
-          <b>{utc(e.date).getUTCDate()}</b>
-        </div>
-        <div className="ev-main">
-          <div className="ev-top">
-            <span className="ev-type">{e.type}</span>
-            {!done && <span className="ev-soon">{when(e)}</span>}
-          </div>
-          {more ? (
-            <button type="button" className="ev-title" onClick={() => toggle(id)} aria-expanded={open}>
-              <span>{e.title}</span>
-              <Icon.chev />
-            </button>
-          ) : (
-            <span className="ev-title as-text">
-              <span>{e.title}</span>
-            </span>
-          )}
-          <div className="ev-meta">
-            <span>{dates(e)}</span>
-            {e.place && <span>{e.place}</span>}
-          </div>
-          {open && (
-            <div className="ev-more">
-              {e.detail && <p>{e.detail}</p>}
-              {e.url && (
-                <a className="link small" href={e.url} target="_blank" rel="noreferrer noopener">
-                  Event page →
-                </a>
-              )}
-            </div>
-          )}
-        </div>
-      </li>
-    );
+  const step = (d) => setSel((v) => clamp(v + d, 0, all.length - 1));
+  const onKey = (ev) => {
+    const go = { ArrowRight: 1, ArrowLeft: -1, Home: -all.length, End: all.length }[ev.key];
+    if (go === undefined) return;
+    ev.preventDefault();
+    step(go);
   };
 
   return (
     <section className="pcard">
       <div className="sec-head">
         <h2>Schedule</h2>
-        {upcoming.length > 0 && <span className="own-n">{upcoming.length}</span>}
+        <div className="tl-nav">
+          <button type="button" className="tl-arrow" onClick={() => step(-1)} disabled={sel === 0} aria-label="Earlier">
+            <Icon.chev />
+          </button>
+          <button type="button" className="tl-arrow next" onClick={() => step(1)} disabled={sel >= all.length - 1} aria-label="Later">
+            <Icon.chev />
+          </button>
+        </div>
       </div>
 
-      {upcoming.length ? (
-        <ul className="ev-list">
-          {upcoming.map((e, i) => (
-            <Row key={`u${i}`} e={e} i={i} />
-          ))}
-        </ul>
-      ) : (
-        <p className="own-empty">Nothing coming up at the moment.</p>
-      )}
+      {/* The rail. Stops sit in date order; the one you pick is shown in full below. */}
+      <div className="tl-wrap">
+        <div className="tl-track" ref={trackRef} role="tablist" aria-label="Events in date order" aria-orientation="horizontal" onKeyDown={onKey}>
+          {/* Written out here rather than as a nested component: a component declared
+              inside this one is a new type on every render, so React would throw the
+              stops away and rebuild them, losing focus mid-keypress. */}
+          {all.map((e, i) => {
+            const done = over(e);
+            const left = daysTo(e.date);
+            const onNow = !done && left <= 0;
+            // The ring fills as the date nears, so the rail reads as a sense of timing.
+            const near = done ? 0 : clamp(1 - left / HORIZON, 0, 1);
+            return (
+              <Fragment key={i}>
+                {i === next && next > 0 && (
+                  <span className="tl-today" aria-hidden="true">
+                    <span className="tl-today-word">Today</span>
+                    <span className="tl-today-tick" />
+                    <span className="tl-today-dot" />
+                  </span>
+                )}
+                <button
+                  type="button"
+                  role="tab"
+                  data-i={i}
+                  id={`tl-tab-${i}`}
+                  aria-selected={i === sel}
+                  aria-controls="tl-panel"
+                  tabIndex={i === sel ? 0 : -1}
+                  className={"tl-stop" + (done ? " is-done" : "") + (onNow ? " is-now" : "") + (i === sel ? " is-sel" : "")}
+                  style={{ "--p": near.toFixed(3) }}
+                  onClick={() => setSel(i)}
+                >
+                  <span className="tl-date">
+                    <b>{utc(e.date).getUTCDate()}</b>
+                    <span>{mon(e.date)}</span>
+                  </span>
+                  <span className="tl-node" aria-hidden="true" />
+                  <span className="tl-label">
+                    <span className="tl-type">{e.type}</span>
+                    <span className="tl-name">{e.title}</span>
+                  </span>
+                </button>
+              </Fragment>
+            );
+          })}
+        </div>
+      </div>
 
-      {past.length > 0 && (
-        <>
-          <button type="button" className="btn-row past-toggle" onClick={() => setShowPast(!showPast)} aria-expanded={showPast}>
-            <span>
-              <Icon.history /> {plural(past.length, "past event", "past events")}
-            </span>
-            <Icon.chev className={showPast ? "chev up" : "chev"} />
-          </button>
-          {showPast && (
-            <ul className="ev-list is-past">
-              {past.map((e, i) => (
-                <Row key={`p${i}`} e={e} i={i} done />
-              ))}
-            </ul>
-          )}
-        </>
-      )}
+      {/* What you picked, in full. */}
+      <div className="tl-panel" id="tl-panel" role="tabpanel" aria-labelledby={`tl-tab-${sel}`} tabIndex={-1}>
+        <div className="tl-panel-top">
+          <span className="ev-type">{picked.type}</span>
+          {!over(picked) && <span className="ev-soon">{when(picked)}</span>}
+          {over(picked) && <span className="tl-past-tag">Past</span>}
+        </div>
+        <h3>{picked.title}</h3>
+        <div className="ev-meta">
+          <span>{dates(picked)}</span>
+          {picked.place && <span>{picked.place}</span>}
+        </div>
+        {picked.detail && <p className="tl-detail">{picked.detail}</p>}
+        {picked.url && (
+          <a className="link small" href={picked.url} target="_blank" rel="noreferrer noopener">
+            Event page →
+          </a>
+        )}
+      </div>
     </section>
   );
 }

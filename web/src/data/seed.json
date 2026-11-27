@@ -225,7 +225,47 @@
         }
       },
       "discipline": "Science",
-      "visibility": "private"
+      "visibility": "private",
+      "schedule": [
+        {
+          "title": "Savings defaults: first wave",
+          "type": "Seminar",
+          "date": "2026-06-30",
+          "place": "Lagos Business School",
+          "detail": "Department seminar on the first wave of results."
+        },
+        {
+          "title": "BIT Conference 2026",
+          "type": "Conference",
+          "date": "2026-10-28",
+          "endDate": "2026-10-30",
+          "place": "London",
+          "url": "https://example.org/bit-2026"
+        },
+        {
+          "title": "Fintech nudges panel",
+          "type": "Panel",
+          "date": "2026-12-11",
+          "place": "Online",
+          "detail": "Panel on trust and messaging with three other groups.",
+          "url": "https://example.org/fintech-panel"
+        },
+        {
+          "title": "Nudge workshop",
+          "type": "Workshop",
+          "date": "2027-01-06",
+          "endDate": "2027-01-07",
+          "place": "Accra"
+        },
+        {
+          "title": "Summer school on field experiments",
+          "type": "Summer school",
+          "date": "2027-03-02",
+          "endDate": "2027-03-06",
+          "place": "Cape Town",
+          "url": "https://example.org/field-school"
+        }
+      ]
     },
     {
       "id": "r2",
@@ -467,7 +507,24 @@
         }
       },
       "discipline": "Science",
-      "visibility": "public"
+      "visibility": "public",
+      "schedule": [
+        {
+          "title": "Replication in the behavioural sciences",
+          "type": "Talk",
+          "date": "2026-11-30",
+          "place": "Humboldt-Universität zu Berlin",
+          "detail": "Guest lecture to the methods seminar."
+        },
+        {
+          "title": "Open Science Days",
+          "type": "Conference",
+          "date": "2027-02-18",
+          "endDate": "2027-02-19",
+          "place": "Berlin",
+          "url": "https://example.org/open-science-days"
+        }
+      ]
     },
     {
       "id": "r3",
@@ -1193,7 +1250,22 @@
         }
       },
       "discipline": "Technology",
-      "visibility": "public"
+      "visibility": "public",
+      "schedule": [
+        {
+          "title": "Measurement error in survey panels",
+          "type": "Poster",
+          "date": "2026-09-14",
+          "place": "Delhi"
+        },
+        {
+          "title": "Pre-registration workshop",
+          "type": "Workshop",
+          "date": "2027-01-21",
+          "place": "Online",
+          "detail": "Half-day, open to anyone running a study on the platform."
+        }
+      ]
     },
     {
       "id": "r6",
@@ -1657,7 +1729,22 @@
         }
       },
       "discipline": "Science",
-      "visibility": "public"
+      "visibility": "public",
+      "schedule": [
+        {
+          "title": "Trust and uptake in public health messaging",
+          "type": "Talk",
+          "date": "2026-12-03",
+          "place": "University of Ghana"
+        },
+        {
+          "title": "Field experiments in West Africa",
+          "type": "Panel",
+          "date": "2027-04-15",
+          "place": "Accra",
+          "url": "https://example.org/west-africa-panel"
+        }
+      ]
     },
     {
       "id": "r8",
