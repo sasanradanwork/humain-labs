@@ -58,11 +58,12 @@
             "Mensah, K."
           ],
           "authors": "Nwosu, A., Adeyemi, T., Cho, H., Mensah, K.",
-          "venue": "Journal of Economic Behavior & Organization",
+          "venue": "Nature Human Behaviour",
           "year": 2025,
           "url": "",
           "doi": "10.5197/pnas.197924",
-          "citations": 10
+          "citations": 10,
+          "kind": "Journal article"
         },
         {
           "title": "Risk preferences in older adults: evidence from a 120-participant study",
@@ -72,11 +73,12 @@
             "Mehta, R."
           ],
           "authors": "Nwosu, A., Adeyemi, T., Mehta, R.",
-          "venue": "Journal of Economic Behavior & Organization",
+          "venue": "Proceedings of CSCW",
           "year": 2025,
           "url": "",
           "doi": "10.5258/chb.273073",
-          "citations": 16
+          "citations": 16,
+          "kind": "Conference paper"
         },
         {
           "title": "Savings defaults in remote teams: evidence from a 804-participant study",
@@ -86,11 +88,12 @@
             "Ackerman, L."
           ],
           "authors": "Lim, W. J., Nwosu, A., Ackerman, L.",
-          "venue": "Journal of Development Economics",
+          "venue": "Royal Society Open Science",
           "year": 2025,
           "url": "",
           "doi": "10.7844/s886868",
-          "citations": 28
+          "citations": 28,
+          "kind": "Journal article"
         },
         {
           "title": "A field experiment on mobile-money adoption and informal credit",
@@ -100,11 +103,12 @@
             "Dalgaard, H."
           ],
           "authors": "Boateng, K., Nwosu, A., Dalgaard, H.",
-          "venue": "Journal of Development Economics",
+          "venue": "arXiv",
           "year": 2024,
           "url": "",
           "doi": "10.3386/pnas.640926",
-          "citations": 27
+          "citations": 27,
+          "kind": "Preprint"
         },
         {
           "title": "Does nudge durability change risk preferences? A preregistered replication",
@@ -115,11 +119,12 @@
             "Dam, J. v."
           ],
           "authors": "Nwosu, A., Dalgaard, H., Rahimi, L., Dam, J. v.",
-          "venue": "Experimental Economics",
+          "venue": "Nature Human Behaviour",
           "year": 2024,
           "url": "",
           "doi": "10.1719/pnas.646238",
-          "citations": 6
+          "citations": 6,
+          "kind": "Journal article"
         },
         {
           "title": "Risk preferences in new parents: evidence from a 512-participant study",
@@ -130,11 +135,12 @@
             "Dam, J. v."
           ],
           "authors": "Nwosu, A., Rahimi, L., Mehta, R., Dam, J. v.",
-          "venue": "Journal of Economic Behavior & Organization",
+          "venue": "Cambridge Handbook of Field Methods",
           "year": 2024,
           "url": "",
           "doi": "10.3184/pnas.679726",
-          "citations": 51
+          "citations": 51,
+          "kind": "Book chapter"
         },
         {
           "title": "Present bias in shift workers: evidence from a 804-participant study",
@@ -144,11 +150,12 @@
             "Mensah, K."
           ],
           "authors": "Dalgaard, H., Nwosu, A., Mensah, K.",
-          "venue": "Experimental Economics",
+          "venue": "Royal Society Open Science",
           "year": 2022,
           "url": "",
           "doi": "10.3639/j.605854",
-          "citations": 5
+          "citations": 5,
+          "kind": "Journal article"
         },
         {
           "title": "A field experiment on risk preferences and nudge durability",
@@ -157,11 +164,12 @@
             "Nwosu, A."
           ],
           "authors": "Cho, H., Nwosu, A.",
-          "venue": "Journal of Development Economics",
+          "venue": "Proceedings of CSCW",
           "year": 2022,
           "url": "",
           "doi": "10.8729/chb.323425",
-          "citations": 42
+          "citations": 42,
+          "kind": "Conference paper"
         }
       ],
       "academicRoles": [
@@ -328,7 +336,8 @@
           "year": 2025,
           "url": "",
           "doi": "10.9196/chb.578147",
-          "citations": 20
+          "citations": 20,
+          "kind": "Journal article"
         },
         {
           "title": "Does measurement error change field experiments? A preregistered replication",
@@ -338,11 +347,12 @@
             "Eze, I."
           ],
           "authors": "Nwosu, A., Ackerman, L., Eze, I.",
-          "venue": "Royal Society Open Science",
+          "venue": "Proceedings of CSCW",
           "year": 2025,
           "url": "",
           "doi": "10.9157/pnas.392860",
-          "citations": 15
+          "citations": 15,
+          "kind": "Conference paper"
         },
         {
           "title": "Does longitudinal cohorts change measurement error? A preregistered replication",
@@ -353,11 +363,12 @@
             "Dam, J. v."
           ],
           "authors": "Ackerman, L., Ferreira, T., Eze, I., Dam, J. v.",
-          "venue": "Scientific Reports",
+          "venue": "Royal Society Open Science",
           "year": 2024,
           "url": "",
           "doi": "10.8680/pnas.358301",
-          "citations": 48
+          "citations": 48,
+          "kind": "Journal article"
         },
         {
           "title": "Field experiments in first-year undergraduates: evidence from a 1200-participant study",
@@ -366,11 +377,12 @@
             "Marín, S."
           ],
           "authors": "Ackerman, L., Marín, S.",
-          "venue": "Nature Human Behaviour",
+          "venue": "arXiv",
           "year": 2024,
           "url": "",
           "doi": "10.9789/pnas.656930",
-          "citations": 12
+          "citations": 12,
+          "kind": "Preprint"
         },
         {
           "title": "A field experiment on replication and measurement error",
@@ -381,11 +393,12 @@
             "Adeyemi, T."
           ],
           "authors": "Ackerman, L., Boateng, K., Price, J., Adeyemi, T.",
-          "venue": "Scientific Reports",
+          "venue": "Nature Human Behaviour",
           "year": 2023,
           "url": "",
           "doi": "10.9932/chb.987586",
-          "citations": 8
+          "citations": 8,
+          "kind": "Journal article"
         },
         {
           "title": "Longitudinal cohorts in new parents: evidence from a 240-participant study",
@@ -394,11 +407,12 @@
             "Ackerman, L."
           ],
           "authors": "Eze, I., Ackerman, L.",
-          "venue": "Royal Society Open Science",
+          "venue": "Cambridge Handbook of Field Methods",
           "year": 2023,
           "url": "",
           "doi": "10.9053/s602874",
-          "citations": 64
+          "citations": 64,
+          "kind": "Book chapter"
         },
         {
           "title": "Measuring measurement error at scale with open data practice",
@@ -408,11 +422,12 @@
             "Nwosu, A."
           ],
           "authors": "Ackerman, L., Eze, I., Nwosu, A.",
-          "venue": "Nature Human Behaviour",
+          "venue": "Royal Society Open Science",
           "year": 2023,
           "url": "",
           "doi": "10.8326/pnas.389962",
-          "citations": 12
+          "citations": 12,
+          "kind": "Journal article"
         },
         {
           "title": "Measuring open data practice at scale with field experiments",
@@ -423,11 +438,12 @@
             "Raman, P."
           ],
           "authors": "Adeyemi, T., Ackerman, L., Lim, W. J., Raman, P.",
-          "venue": "PLOS ONE",
+          "venue": "Proceedings of CSCW",
           "year": 2022,
           "url": "",
           "doi": "10.2830/chb.657537",
-          "citations": 5
+          "citations": 5,
+          "kind": "Conference paper"
         }
       ],
       "academicRoles": [
@@ -587,11 +603,12 @@
             "Whitfield, S."
           ],
           "authors": "Cho, H., Adeyemi, T., Whitfield, S.",
-          "venue": "Royal Society Open Science",
+          "venue": "Nature Human Behaviour",
           "year": 2026,
           "url": "",
           "doi": "10.5445/pnas.723157",
-          "citations": 26
+          "citations": 26,
+          "kind": "Journal article"
         },
         {
           "title": "A field experiment on measurement error and open data practice",
@@ -602,11 +619,12 @@
             "Raman, P."
           ],
           "authors": "Cho, H., Price, J., Ferreira, T., Raman, P.",
-          "venue": "Royal Society Open Science",
+          "venue": "Proceedings of CSCW",
           "year": 2026,
           "url": "",
           "doi": "10.2398/chb.112202",
-          "citations": 8
+          "citations": 8,
+          "kind": "Conference paper"
         },
         {
           "title": "Participant retention in first-year undergraduates: evidence from a 120-participant study",
@@ -615,11 +633,12 @@
             "Cho, H."
           ],
           "authors": "Adeyemi, T., Cho, H.",
-          "venue": "Nature Human Behaviour",
+          "venue": "Royal Society Open Science",
           "year": 2026,
           "url": "",
           "doi": "10.3420/pnas.503350",
-          "citations": 17
+          "citations": 17,
+          "kind": "Journal article"
         },
         {
           "title": "Open data practice in first-year undergraduates: evidence from a 380-participant study",
@@ -630,11 +649,12 @@
             "Mensah, K."
           ],
           "authors": "Cho, H., Dalgaard, H., Okafor, E., Mensah, K.",
-          "venue": "Royal Society Open Science",
+          "venue": "arXiv",
           "year": 2025,
           "url": "",
           "doi": "10.7106/s515363",
-          "citations": 3
+          "citations": 3,
+          "kind": "Preprint"
         },
         {
           "title": "A field experiment on participant retention and field experiments",
@@ -644,11 +664,12 @@
             "Whitfield, S."
           ],
           "authors": "Mehta, R., Cho, H., Whitfield, S.",
-          "venue": "PLOS ONE",
+          "venue": "Nature Human Behaviour",
           "year": 2025,
           "url": "",
           "doi": "10.7628/j.212734",
-          "citations": 4
+          "citations": 4,
+          "kind": "Journal article"
         },
         {
           "title": "Does longitudinal cohorts change open data practice? A preregistered replication",
@@ -659,11 +680,12 @@
             "Ackerman, L."
           ],
           "authors": "Cho, H., Price, J., Eze, I., Ackerman, L.",
-          "venue": "Scientific Reports",
+          "venue": "Cambridge Handbook of Field Methods",
           "year": 2024,
           "url": "",
           "doi": "10.6824/j.512250",
-          "citations": 84
+          "citations": 84,
+          "kind": "Book chapter"
         },
         {
           "title": "Does participant retention change field experiments? A preregistered replication",
@@ -674,11 +696,12 @@
             "Tanaka, A."
           ],
           "authors": "Cho, H., Dalgaard, H., Marín, S., Tanaka, A.",
-          "venue": "Nature Human Behaviour",
+          "venue": "Royal Society Open Science",
           "year": 2023,
           "url": "",
           "doi": "10.1053/pnas.882375",
-          "citations": 60
+          "citations": 60,
+          "kind": "Journal article"
         },
         {
           "title": "Does longitudinal cohorts change measurement error? A preregistered replication",
@@ -687,11 +710,12 @@
             "Boateng, K."
           ],
           "authors": "Cho, H., Boateng, K.",
-          "venue": "Scientific Reports",
+          "venue": "Proceedings of CSCW",
           "year": 2023,
           "url": "",
           "doi": "10.2890/chb.460505",
-          "citations": 24
+          "citations": 24,
+          "kind": "Conference paper"
         }
       ],
       "academicRoles": [
@@ -801,11 +825,12 @@
             "Lim, W. J."
           ],
           "authors": "Marín, S., Okafor, E., Lim, W. J.",
-          "venue": "The Lancet Public Health",
+          "venue": "Nature Human Behaviour",
           "year": 2026,
           "url": "",
           "doi": "10.9260/chb.424728",
-          "citations": 26
+          "citations": 26,
+          "kind": "Journal article"
         },
         {
           "title": "Screening adherence in shift workers: evidence from a 804-participant study",
@@ -814,11 +839,12 @@
             "Dalgaard, H."
           ],
           "authors": "Marín, S., Dalgaard, H.",
-          "venue": "International Journal of Epidemiology",
+          "venue": "Proceedings of CSCW",
           "year": 2025,
           "url": "",
           "doi": "10.5112/s854431",
-          "citations": 30
+          "citations": 30,
+          "kind": "Conference paper"
         },
         {
           "title": "Health literacy across three countries: a pooled analysis",
@@ -828,11 +854,12 @@
             "Okafor, E."
           ],
           "authors": "Marín, S., Lim, W. J., Okafor, E.",
-          "venue": "BMJ Open",
+          "venue": "Royal Society Open Science",
           "year": 2025,
           "url": "",
           "doi": "10.5168/s703341",
-          "citations": 20
+          "citations": 20,
+          "kind": "Journal article"
         },
         {
           "title": "Vaccine uptake across three countries: a pooled analysis",
@@ -841,11 +868,12 @@
             "Marín, S."
           ],
           "authors": "Mensah, K., Marín, S.",
-          "venue": "Journal of Medical Internet Research",
+          "venue": "arXiv",
           "year": 2024,
           "url": "",
           "doi": "10.3125/s468821",
-          "citations": 12
+          "citations": 12,
+          "kind": "Preprint"
         },
         {
           "title": "A field experiment on digital triage and air quality and asthma",
@@ -854,11 +882,12 @@
             "Marín, S."
           ],
           "authors": "Ackerman, L., Marín, S.",
-          "venue": "The Lancet Public Health",
+          "venue": "Nature Human Behaviour",
           "year": 2023,
           "url": "",
           "doi": "10.5468/chb.505079",
-          "citations": 88
+          "citations": 88,
+          "kind": "Journal article"
         },
         {
           "title": "Rethinking health literacy: what 240 participants tell us",
@@ -867,11 +896,12 @@
             "Marín, S."
           ],
           "authors": "Dam, J. v., Marín, S.",
-          "venue": "International Journal of Epidemiology",
+          "venue": "Cambridge Handbook of Field Methods",
           "year": 2023,
           "url": "",
           "doi": "10.8944/j.285839",
-          "citations": 60
+          "citations": 60,
+          "kind": "Book chapter"
         },
         {
           "title": "Rethinking community health workers: what 512 participants tell us",
@@ -881,11 +911,12 @@
             "Rahimi, L."
           ],
           "authors": "Price, J., Marín, S., Rahimi, L.",
-          "venue": "International Journal of Epidemiology",
+          "venue": "Royal Society Open Science",
           "year": 2023,
           "url": "",
           "doi": "10.3407/j.867180",
-          "citations": 56
+          "citations": 56,
+          "kind": "Journal article"
         },
         {
           "title": "A field experiment on digital triage and vaccine uptake",
@@ -895,11 +926,12 @@
             "Dam, J. v."
           ],
           "authors": "Ackerman, L., Marín, S., Dam, J. v.",
-          "venue": "The Lancet Public Health",
+          "venue": "Proceedings of CSCW",
           "year": 2022,
           "url": "",
           "doi": "10.5557/s694000",
-          "citations": 20
+          "citations": 20,
+          "kind": "Conference paper"
         },
         {
           "title": "Measuring vaccine uptake at scale with community health workers",
@@ -909,11 +941,12 @@
             "Haddad, N."
           ],
           "authors": "Marín, S., Nwosu, A., Haddad, N.",
-          "venue": "BMJ Open",
+          "venue": "Nature Human Behaviour",
           "year": 2022,
           "url": "",
           "doi": "10.4452/s317250",
-          "citations": 160
+          "citations": 160,
+          "kind": "Journal article"
         }
       ],
       "academicRoles": [
@@ -1049,11 +1082,12 @@
             "Cho, H."
           ],
           "authors": "Mehta, R., Nwosu, A., Tanaka, A., Cho, H.",
-          "venue": "Scientific Reports",
+          "venue": "Nature Human Behaviour",
           "year": 2026,
           "url": "",
           "doi": "10.8445/chb.854929",
-          "citations": 18
+          "citations": 18,
+          "kind": "Journal article"
         },
         {
           "title": "Replication in remote teams: evidence from a 120-participant study",
@@ -1063,11 +1097,12 @@
             "Okafor, E."
           ],
           "authors": "Dalgaard, H., Mehta, R., Okafor, E.",
-          "venue": "Nature Human Behaviour",
+          "venue": "Proceedings of CSCW",
           "year": 2026,
           "url": "",
           "doi": "10.4951/j.127384",
-          "citations": 16
+          "citations": 16,
+          "kind": "Conference paper"
         },
         {
           "title": "Does measurement error change replication? A preregistered replication",
@@ -1076,11 +1111,12 @@
             "Boateng, K."
           ],
           "authors": "Mehta, R., Boateng, K.",
-          "venue": "Scientific Reports",
+          "venue": "Royal Society Open Science",
           "year": 2025,
           "url": "",
           "doi": "10.1983/j.782403",
-          "citations": 12
+          "citations": 12,
+          "kind": "Journal article"
         },
         {
           "title": "Field experiments in first-year undergraduates: evidence from a 380-participant study",
@@ -1091,11 +1127,12 @@
             "Nwosu, A."
           ],
           "authors": "Mehta, R., Price, J., Rahimi, L., Nwosu, A.",
-          "venue": "PLOS ONE",
+          "venue": "arXiv",
           "year": 2024,
           "url": "",
           "doi": "10.3593/s875314",
-          "citations": 27
+          "citations": 27,
+          "kind": "Preprint"
         },
         {
           "title": "A field experiment on participant retention and measurement error",
@@ -1105,11 +1142,12 @@
             "Adeyemi, T."
           ],
           "authors": "Rahimi, L., Mehta, R., Adeyemi, T.",
-          "venue": "Scientific Reports",
+          "venue": "Nature Human Behaviour",
           "year": 2023,
           "url": "",
           "doi": "10.5479/pnas.152564",
-          "citations": 0
+          "citations": 0,
+          "kind": "Journal article"
         },
         {
           "title": "Field experiments in remote teams: evidence from a 380-participant study",
@@ -1120,11 +1158,12 @@
             "Dalgaard, H."
           ],
           "authors": "Adeyemi, T., Mehta, R., Okafor, E., Dalgaard, H.",
-          "venue": "Nature Human Behaviour",
+          "venue": "Cambridge Handbook of Field Methods",
           "year": 2023,
           "url": "",
           "doi": "10.4903/pnas.573830",
-          "citations": 20
+          "citations": 20,
+          "kind": "Book chapter"
         },
         {
           "title": "Does participant retention change field experiments? A preregistered replication",
@@ -1139,7 +1178,8 @@
           "year": 2022,
           "url": "",
           "doi": "10.1261/pnas.131049",
-          "citations": 30
+          "citations": 30,
+          "kind": "Journal article"
         },
         {
           "title": "Rethinking open data practice: what 1200 participants tell us",
@@ -1150,11 +1190,12 @@
             "Boateng, K."
           ],
           "authors": "Mehta, R., Ackerman, L., Lim, W. J., Boateng, K.",
-          "venue": "Nature Human Behaviour",
+          "venue": "Proceedings of CSCW",
           "year": 2022,
           "url": "",
           "doi": "10.1542/chb.976107",
-          "citations": 15
+          "citations": 15,
+          "kind": "Conference paper"
         },
         {
           "title": "Measurement error across three countries: a pooled analysis",
@@ -1163,11 +1204,12 @@
             "Boateng, K."
           ],
           "authors": "Mehta, R., Boateng, K.",
-          "venue": "PLOS ONE",
+          "venue": "Nature Human Behaviour",
           "year": 2022,
           "url": "",
           "doi": "10.2526/j.421365",
-          "citations": 10
+          "citations": 10,
+          "kind": "Journal article"
         }
       ],
       "academicRoles": [
@@ -1314,11 +1356,12 @@
             "Tanaka, A."
           ],
           "authors": "Adeyemi, T., Tanaka, A.",
-          "venue": "Linguistic Inquiry",
+          "venue": "Nature Human Behaviour",
           "year": 2026,
           "url": "",
           "doi": "10.2398/j.355342",
-          "citations": 3
+          "citations": 3,
+          "kind": "Journal article"
         },
         {
           "title": "Does prosody and meaning change corpus annotation? A preregistered replication",
@@ -1329,11 +1372,12 @@
             "Haddad, N."
           ],
           "authors": "Lim, W. J., Tanaka, A., Dam, J. v., Haddad, N.",
-          "venue": "Journal of Memory and Language",
+          "venue": "Proceedings of CSCW",
           "year": 2026,
           "url": "",
           "doi": "10.5293/j.239276",
-          "citations": 3
+          "citations": 3,
+          "kind": "Conference paper"
         },
         {
           "title": "Code-switching in first-year undergraduates: evidence from a 120-participant study",
@@ -1342,11 +1386,12 @@
             "Tanaka, A."
           ],
           "authors": "Raman, P., Tanaka, A.",
-          "venue": "Journal of Memory and Language",
+          "venue": "Royal Society Open Science",
           "year": 2025,
           "url": "",
           "doi": "10.4541/s686895",
-          "citations": 40
+          "citations": 40,
+          "kind": "Journal article"
         },
         {
           "title": "Measuring code-switching at scale with dialect contact",
@@ -1357,11 +1402,12 @@
             "Nwosu, A."
           ],
           "authors": "Tanaka, A., Haddad, N., Eze, I., Nwosu, A.",
-          "venue": "Journal of Memory and Language",
+          "venue": "arXiv",
           "year": 2025,
           "url": "",
           "doi": "10.4469/s526550",
-          "citations": 28
+          "citations": 28,
+          "kind": "Preprint"
         },
         {
           "title": "Second-language acquisition across three countries: a pooled analysis",
@@ -1372,11 +1418,12 @@
             "Okafor, E."
           ],
           "authors": "Tanaka, A., Nwosu, A., Dalgaard, H., Okafor, E.",
-          "venue": "Applied Linguistics",
+          "venue": "Nature Human Behaviour",
           "year": 2024,
           "url": "",
           "doi": "10.2351/s465281",
-          "citations": 19
+          "citations": 19,
+          "kind": "Journal article"
         },
         {
           "title": "Corpus annotation across three countries: a pooled analysis",
@@ -1386,11 +1433,12 @@
             "Raman, P."
           ],
           "authors": "Adeyemi, T., Tanaka, A., Raman, P.",
-          "venue": "Linguistic Inquiry",
+          "venue": "Cambridge Handbook of Field Methods",
           "year": 2024,
           "url": "",
           "doi": "10.8475/j.804039",
-          "citations": 72
+          "citations": 72,
+          "kind": "Book chapter"
         },
         {
           "title": "Measuring corpus annotation at scale with prosody and meaning",
@@ -1401,11 +1449,12 @@
             "Ferreira, T."
           ],
           "authors": "Tanaka, A., Mensah, K., Rahimi, L., Ferreira, T.",
-          "venue": "Language",
+          "venue": "Royal Society Open Science",
           "year": 2023,
           "url": "",
           "doi": "10.8741/chb.112202",
-          "citations": 112
+          "citations": 112,
+          "kind": "Journal article"
         },
         {
           "title": "Does prosody and meaning change code-switching? A preregistered replication",
@@ -1415,11 +1464,12 @@
             "Dalgaard, H."
           ],
           "authors": "Tanaka, A., Adeyemi, T., Dalgaard, H.",
-          "venue": "Linguistic Inquiry",
+          "venue": "Proceedings of CSCW",
           "year": 2023,
           "url": "",
           "doi": "10.2037/j.727434",
-          "citations": 48
+          "citations": 48,
+          "kind": "Conference paper"
         },
         {
           "title": "Does sign language syntax change corpus annotation? A preregistered replication",
@@ -1428,11 +1478,12 @@
             "Tanaka, A."
           ],
           "authors": "Whitfield, S., Tanaka, A.",
-          "venue": "Language",
+          "venue": "Nature Human Behaviour",
           "year": 2023,
           "url": "",
           "doi": "10.8977/j.968524",
-          "citations": 32
+          "citations": 32,
+          "kind": "Journal article"
         },
         {
           "title": "Dialect contact across three countries: a pooled analysis",
@@ -1443,11 +1494,12 @@
             "Ferreira, T."
           ],
           "authors": "Mensah, K., Tanaka, A., Whitfield, S., Ferreira, T.",
-          "venue": "Applied Linguistics",
+          "venue": "Proceedings of CHI",
           "year": 2022,
           "url": "",
           "doi": "10.5760/pnas.953988",
-          "citations": 20
+          "citations": 20,
+          "kind": "Conference paper"
         }
       ],
       "academicRoles": [
@@ -1577,11 +1629,12 @@
             "Adeyemi, T."
           ],
           "authors": "Mensah, K., Boateng, K., Adeyemi, T.",
-          "venue": "Experimental Economics",
+          "venue": "Nature Human Behaviour",
           "year": 2026,
           "url": "",
           "doi": "10.9313/s544645",
-          "citations": 8
+          "citations": 8,
+          "kind": "Journal article"
         },
         {
           "title": "Rethinking nudge durability: what 1200 participants tell us",
@@ -1590,11 +1643,12 @@
             "Ackerman, L."
           ],
           "authors": "Mensah, K., Ackerman, L.",
-          "venue": "Journal of Development Economics",
+          "venue": "Proceedings of CSCW",
           "year": 2026,
           "url": "",
           "doi": "10.2832/pnas.688644",
-          "citations": 14
+          "citations": 14,
+          "kind": "Conference paper"
         },
         {
           "title": "Present bias in new parents: evidence from a 240-participant study",
@@ -1603,11 +1657,12 @@
             "Tanaka, A."
           ],
           "authors": "Mensah, K., Tanaka, A.",
-          "venue": "Behavioural Public Policy",
+          "venue": "Royal Society Open Science",
           "year": 2026,
           "url": "",
           "doi": "10.1849/chb.293344",
-          "citations": 1
+          "citations": 1,
+          "kind": "Journal article"
         },
         {
           "title": "Nudge durability across three countries: a pooled analysis",
@@ -1616,11 +1671,12 @@
             "Mensah, K."
           ],
           "authors": "Tanaka, A., Mensah, K.",
-          "venue": "Experimental Economics",
+          "venue": "arXiv",
           "year": 2025,
           "url": "",
           "doi": "10.3707/chb.714932",
-          "citations": 16
+          "citations": 16,
+          "kind": "Preprint"
         },
         {
           "title": "Savings defaults in shift workers: evidence from a 120-participant study",
@@ -1629,11 +1685,12 @@
             "Cho, H."
           ],
           "authors": "Mensah, K., Cho, H.",
-          "venue": "Behavioural Public Policy",
+          "venue": "Nature Human Behaviour",
           "year": 2023,
           "url": "",
           "doi": "10.2327/chb.347961",
-          "citations": 52
+          "citations": 52,
+          "kind": "Journal article"
         },
         {
           "title": "Rethinking present bias: what 120 participants tell us",
@@ -1643,11 +1700,12 @@
             "Cho, H."
           ],
           "authors": "Dalgaard, H., Mensah, K., Cho, H.",
-          "venue": "Experimental Economics",
+          "venue": "Cambridge Handbook of Field Methods",
           "year": 2023,
           "url": "",
           "doi": "10.3904/pnas.782591",
-          "citations": 20
+          "citations": 20,
+          "kind": "Book chapter"
         },
         {
           "title": "A field experiment on savings defaults and present bias",
@@ -1656,11 +1714,12 @@
             "Mensah, K."
           ],
           "authors": "Tanaka, A., Mensah, K.",
-          "venue": "Behavioural Public Policy",
+          "venue": "Royal Society Open Science",
           "year": 2022,
           "url": "",
           "doi": "10.7320/chb.673162",
-          "citations": 10
+          "citations": 10,
+          "kind": "Journal article"
         }
       ],
       "academicRoles": [
@@ -1789,11 +1848,12 @@
             "Tanaka, A."
           ],
           "authors": "Eze, I., Tanaka, A.",
-          "venue": "Behavioural Public Policy",
+          "venue": "Nature Human Behaviour",
           "year": 2026,
           "url": "",
           "doi": "10.6474/j.723407",
-          "citations": 9
+          "citations": 9,
+          "kind": "Journal article"
         },
         {
           "title": "A field experiment on risk preferences and mobile-money adoption",
@@ -1803,11 +1863,12 @@
             "Okafor, E."
           ],
           "authors": "Eze, I., Nwosu, A., Okafor, E.",
-          "venue": "Experimental Economics",
+          "venue": "Proceedings of CSCW",
           "year": 2026,
           "url": "",
           "doi": "10.6613/pnas.653977",
-          "citations": 2
+          "citations": 2,
+          "kind": "Conference paper"
         },
         {
           "title": "Rethinking mobile-money adoption: what 120 participants tell us",
@@ -1818,11 +1879,12 @@
             "Tanaka, A."
           ],
           "authors": "Lim, W. J., Eze, I., Adeyemi, T., Tanaka, A.",
-          "venue": "Experimental Economics",
+          "venue": "Royal Society Open Science",
           "year": 2025,
           "url": "",
           "doi": "10.1435/chb.493981",
-          "citations": 24
+          "citations": 24,
+          "kind": "Journal article"
         },
         {
           "title": "Does nudge durability change informal credit? A preregistered replication",
@@ -1831,11 +1893,12 @@
             "Dalgaard, H."
           ],
           "authors": "Eze, I., Dalgaard, H.",
-          "venue": "Journal of Development Economics",
+          "venue": "arXiv",
           "year": 2024,
           "url": "",
           "doi": "10.7186/j.389306",
-          "citations": 12
+          "citations": 12,
+          "kind": "Preprint"
         },
         {
           "title": "Nudge durability across three countries: a pooled analysis",
@@ -1846,11 +1909,12 @@
             "Haddad, N."
           ],
           "authors": "Eze, I., Tanaka, A., Marín, S., Haddad, N.",
-          "venue": "Behavioural Public Policy",
+          "venue": "Nature Human Behaviour",
           "year": 2024,
           "url": "",
           "doi": "10.2828/s652034",
-          "citations": 39
+          "citations": 39,
+          "kind": "Journal article"
         },
         {
           "title": "Rethinking savings defaults: what 240 participants tell us",
@@ -1860,11 +1924,12 @@
             "Mehta, R."
           ],
           "authors": "Marín, S., Eze, I., Mehta, R.",
-          "venue": "Experimental Economics",
+          "venue": "Cambridge Handbook of Field Methods",
           "year": 2024,
           "url": "",
           "doi": "10.4576/chb.270053",
-          "citations": 24
+          "citations": 24,
+          "kind": "Book chapter"
         },
         {
           "title": "A field experiment on present bias and nudge durability",
@@ -1875,11 +1940,12 @@
             "Lim, W. J."
           ],
           "authors": "Haddad, N., Eze, I., Mehta, R., Lim, W. J.",
-          "venue": "Experimental Economics",
+          "venue": "Royal Society Open Science",
           "year": 2023,
           "url": "",
           "doi": "10.1429/s500103",
-          "citations": 34
+          "citations": 34,
+          "kind": "Journal article"
         },
         {
           "title": "Does risk preferences change nudge durability? A preregistered replication",
@@ -1889,11 +1955,12 @@
             "Adeyemi, T."
           ],
           "authors": "Eze, I., Marín, S., Adeyemi, T.",
-          "venue": "Journal of Development Economics",
+          "venue": "Proceedings of CSCW",
           "year": 2022,
           "url": "",
           "doi": "10.4789/chb.502992",
-          "citations": 70
+          "citations": 70,
+          "kind": "Conference paper"
         },
         {
           "title": "Does informal credit change nudge durability? A preregistered replication",
@@ -1904,11 +1971,12 @@
             "Nwosu, A."
           ],
           "authors": "Eze, I., Dalgaard, H., Marín, S., Nwosu, A.",
-          "venue": "Experimental Economics",
+          "venue": "Nature Human Behaviour",
           "year": 2022,
           "url": "",
           "doi": "10.5874/s311157",
-          "citations": 80
+          "citations": 80,
+          "kind": "Journal article"
         }
       ],
       "academicRoles": [
@@ -2041,11 +2109,12 @@
             "Raman, P."
           ],
           "authors": "Adeyemi, T., Raman, P.",
-          "venue": "Journal of Economic Behavior & Organization",
+          "venue": "Nature Human Behaviour",
           "year": 2026,
           "url": "",
           "doi": "10.1761/pnas.698736",
-          "citations": 34
+          "citations": 34,
+          "kind": "Journal article"
         },
         {
           "title": "Present bias in new parents: evidence from a 804-participant study",
@@ -2055,11 +2124,12 @@
             "Raman, P."
           ],
           "authors": "Adeyemi, T., Mensah, K., Raman, P.",
-          "venue": "Journal of Development Economics",
+          "venue": "Proceedings of CSCW",
           "year": 2025,
           "url": "",
           "doi": "10.1666/pnas.885650",
-          "citations": 10
+          "citations": 10,
+          "kind": "Conference paper"
         },
         {
           "title": "Nudge durability in shift workers: evidence from a 380-participant study",
@@ -2069,11 +2139,12 @@
             "Boateng, K."
           ],
           "authors": "Rahimi, L., Adeyemi, T., Boateng, K.",
-          "venue": "Experimental Economics",
+          "venue": "Royal Society Open Science",
           "year": 2024,
           "url": "",
           "doi": "10.8668/s118235",
-          "citations": 42
+          "citations": 42,
+          "kind": "Journal article"
         },
         {
           "title": "Risk preferences in new parents: evidence from a 240-participant study",
@@ -2083,11 +2154,12 @@
             "Mehta, R."
           ],
           "authors": "Ackerman, L., Adeyemi, T., Mehta, R.",
-          "venue": "Behavioural Public Policy",
+          "venue": "arXiv",
           "year": 2024,
           "url": "",
           "doi": "10.7888/chb.936205",
-          "citations": 21
+          "citations": 21,
+          "kind": "Preprint"
         },
         {
           "title": "A field experiment on informal credit and mobile-money adoption",
@@ -2097,11 +2169,12 @@
             "Mensah, K."
           ],
           "authors": "Adeyemi, T., Ferreira, T., Mensah, K.",
-          "venue": "Behavioural Public Policy",
+          "venue": "Nature Human Behaviour",
           "year": 2023,
           "url": "",
           "doi": "10.4591/chb.816323",
-          "citations": 16
+          "citations": 16,
+          "kind": "Journal article"
         },
         {
           "title": "A field experiment on mobile-money adoption and nudge durability",
@@ -2111,11 +2184,12 @@
             "Okafor, E."
           ],
           "authors": "Adeyemi, T., Nwosu, A., Okafor, E.",
-          "venue": "Behavioural Public Policy",
+          "venue": "Cambridge Handbook of Field Methods",
           "year": 2023,
           "url": "",
           "doi": "10.3328/j.550833",
-          "citations": 80
+          "citations": 80,
+          "kind": "Book chapter"
         },
         {
           "title": "Does risk preferences change mobile-money adoption? A preregistered replication",
@@ -2126,11 +2200,12 @@
             "Mehta, R."
           ],
           "authors": "Adeyemi, T., Raman, P., Ackerman, L., Mehta, R.",
-          "venue": "Behavioural Public Policy",
+          "venue": "Royal Society Open Science",
           "year": 2023,
           "url": "",
           "doi": "10.7526/pnas.250060",
-          "citations": 64
+          "citations": 64,
+          "kind": "Journal article"
         },
         {
           "title": "Does mobile-money adoption change nudge durability? A preregistered replication",
@@ -2140,11 +2215,12 @@
             "Eze, I."
           ],
           "authors": "Dam, J. v., Adeyemi, T., Eze, I.",
-          "venue": "Journal of Development Economics",
+          "venue": "Proceedings of CSCW",
           "year": 2022,
           "url": "",
           "doi": "10.7674/pnas.873721",
-          "citations": 130
+          "citations": 130,
+          "kind": "Conference paper"
         },
         {
           "title": "Rethinking mobile-money adoption: what 512 participants tell us",
@@ -2154,11 +2230,12 @@
             "Mensah, K."
           ],
           "authors": "Haddad, N., Adeyemi, T., Mensah, K.",
-          "venue": "Experimental Economics",
+          "venue": "Nature Human Behaviour",
           "year": 2022,
           "url": "",
           "doi": "10.8395/pnas.661107",
-          "citations": 10
+          "citations": 10,
+          "kind": "Journal article"
         }
       ],
       "academicRoles": [
@@ -2281,11 +2358,12 @@
             "Mehta, R."
           ],
           "authors": "Dam, J. v., Lim, W. J., Mehta, R.",
-          "venue": "Royal Society Open Science",
+          "venue": "Nature Human Behaviour",
           "year": 2026,
           "url": "",
           "doi": "10.6088/pnas.587633",
-          "citations": 5
+          "citations": 5,
+          "kind": "Journal article"
         },
         {
           "title": "Measurement error across three countries: a pooled analysis",
@@ -2294,11 +2372,12 @@
             "Mehta, R."
           ],
           "authors": "Dam, J. v., Mehta, R.",
-          "venue": "Nature Human Behaviour",
+          "venue": "Proceedings of CSCW",
           "year": 2026,
           "url": "",
           "doi": "10.1734/pnas.775539",
-          "citations": 6
+          "citations": 6,
+          "kind": "Conference paper"
         },
         {
           "title": "Measuring open data practice at scale with field experiments",
@@ -2307,11 +2386,12 @@
             "Boateng, K."
           ],
           "authors": "Dam, J. v., Boateng, K.",
-          "venue": "Nature Human Behaviour",
+          "venue": "Royal Society Open Science",
           "year": 2026,
           "url": "",
           "doi": "10.4637/j.118804",
-          "citations": 18
+          "citations": 18,
+          "kind": "Journal article"
         },
         {
           "title": "Measuring replication at scale with open data practice",
@@ -2322,11 +2402,12 @@
             "Tanaka, A."
           ],
           "authors": "Dam, J. v., Eze, I., Mehta, R., Tanaka, A.",
-          "venue": "Scientific Reports",
+          "venue": "arXiv",
           "year": 2025,
           "url": "",
           "doi": "10.1425/pnas.914536",
-          "citations": 18
+          "citations": 18,
+          "kind": "Preprint"
         },
         {
           "title": "Measuring field experiments at scale with measurement error",
@@ -2337,11 +2418,12 @@
             "Whitfield, S."
           ],
           "authors": "Dam, J. v., Mehta, R., Lim, W. J., Whitfield, S.",
-          "venue": "Scientific Reports",
+          "venue": "Nature Human Behaviour",
           "year": 2025,
           "url": "",
           "doi": "10.4682/pnas.297115",
-          "citations": 6
+          "citations": 6,
+          "kind": "Journal article"
         },
         {
           "title": "Measurement error in shift workers: evidence from a 804-participant study",
@@ -2350,11 +2432,12 @@
             "Eze, I."
           ],
           "authors": "Dam, J. v., Eze, I.",
-          "venue": "Nature Human Behaviour",
+          "venue": "Cambridge Handbook of Field Methods",
           "year": 2025,
           "url": "",
           "doi": "10.3734/chb.851911",
-          "citations": 30
+          "citations": 30,
+          "kind": "Book chapter"
         },
         {
           "title": "Measuring longitudinal cohorts at scale with open data practice",
@@ -2365,11 +2448,12 @@
             "Dalgaard, H."
           ],
           "authors": "Dam, J. v., Tanaka, A., Rahimi, L., Dalgaard, H.",
-          "venue": "Scientific Reports",
+          "venue": "Royal Society Open Science",
           "year": 2024,
           "url": "",
           "doi": "10.6970/j.988609",
-          "citations": 18
+          "citations": 18,
+          "kind": "Journal article"
         },
         {
           "title": "Measurement error across three countries: a pooled analysis",
@@ -2378,11 +2462,12 @@
             "Dam, J. v."
           ],
           "authors": "Adeyemi, T., Dam, J. v.",
-          "venue": "Royal Society Open Science",
+          "venue": "Proceedings of CSCW",
           "year": 2024,
           "url": "",
           "doi": "10.5177/pnas.371020",
-          "citations": 27
+          "citations": 27,
+          "kind": "Conference paper"
         },
         {
           "title": "Participant retention across three countries: a pooled analysis",
@@ -2395,7 +2480,8 @@
           "year": 2024,
           "url": "",
           "doi": "10.7768/pnas.820096",
-          "citations": 18
+          "citations": 18,
+          "kind": "Journal article"
         },
         {
           "title": "Field experiments across three countries: a pooled analysis",
@@ -2406,11 +2492,12 @@
             "Lim, W. J."
           ],
           "authors": "Dam, J. v., Boateng, K., Price, J., Lim, W. J.",
-          "venue": "Scientific Reports",
+          "venue": "Proceedings of CHI",
           "year": 2023,
           "url": "",
           "doi": "10.6560/j.255456",
-          "citations": 48
+          "citations": 48,
+          "kind": "Conference paper"
         },
         {
           "title": "Rethinking replication: what 804 participants tell us",
@@ -2420,11 +2507,12 @@
             "Haddad, N."
           ],
           "authors": "Adeyemi, T., Dam, J. v., Haddad, N.",
-          "venue": "Nature Human Behaviour",
+          "venue": "Royal Society Open Science",
           "year": 2022,
           "url": "",
           "doi": "10.1632/chb.254525",
-          "citations": 75
+          "citations": 75,
+          "kind": "Journal article"
         },
         {
           "title": "Does longitudinal cohorts change replication? A preregistered replication",
@@ -2433,11 +2521,12 @@
             "Boateng, K."
           ],
           "authors": "Dam, J. v., Boateng, K.",
-          "venue": "PLOS ONE",
+          "venue": "bioRxiv",
           "year": 2022,
           "url": "",
           "doi": "10.6586/s333416",
-          "citations": 140
+          "citations": 140,
+          "kind": "Preprint"
         }
       ],
       "academicRoles": [
@@ -2578,11 +2667,12 @@
             "Whitfield, S."
           ],
           "authors": "Haddad, N., Whitfield, S.",
-          "venue": "Scientific Reports",
+          "venue": "Nature Human Behaviour",
           "year": 2026,
           "url": "",
           "doi": "10.4746/chb.837223",
-          "citations": 1
+          "citations": 1,
+          "kind": "Journal article"
         },
         {
           "title": "Measuring longitudinal cohorts at scale with open data practice",
@@ -2591,11 +2681,12 @@
             "Cho, H."
           ],
           "authors": "Haddad, N., Cho, H.",
-          "venue": "Scientific Reports",
+          "venue": "Proceedings of CSCW",
           "year": 2026,
           "url": "",
           "doi": "10.1476/pnas.502462",
-          "citations": 2
+          "citations": 2,
+          "kind": "Conference paper"
         },
         {
           "title": "Measuring field experiments at scale with participant retention",
@@ -2605,11 +2696,12 @@
             "Okafor, E."
           ],
           "authors": "Haddad, N., Dam, J. v., Okafor, E.",
-          "venue": "Nature Human Behaviour",
+          "venue": "Royal Society Open Science",
           "year": 2025,
           "url": "",
           "doi": "10.2272/s263601",
-          "citations": 32
+          "citations": 32,
+          "kind": "Journal article"
         },
         {
           "title": "Participant retention across three countries: a pooled analysis",
@@ -2619,11 +2711,12 @@
             "Cho, H."
           ],
           "authors": "Haddad, N., Boateng, K., Cho, H.",
-          "venue": "Nature Human Behaviour",
+          "venue": "arXiv",
           "year": 2025,
           "url": "",
           "doi": "10.9881/chb.669143",
-          "citations": 20
+          "citations": 20,
+          "kind": "Preprint"
         },
         {
           "title": "Does participant retention change longitudinal cohorts? A preregistered replication",
@@ -2632,11 +2725,12 @@
             "Raman, P."
           ],
           "authors": "Haddad, N., Raman, P.",
-          "venue": "Scientific Reports",
+          "venue": "Nature Human Behaviour",
           "year": 2025,
           "url": "",
           "doi": "10.7157/j.856607",
-          "citations": 2
+          "citations": 2,
+          "kind": "Journal article"
         },
         {
           "title": "Participant retention in remote teams: evidence from a 240-participant study",
@@ -2647,11 +2741,12 @@
             "Lim, W. J."
           ],
           "authors": "Haddad, N., Mensah, K., Whitfield, S., Lim, W. J.",
-          "venue": "Scientific Reports",
+          "venue": "Cambridge Handbook of Field Methods",
           "year": 2024,
           "url": "",
           "doi": "10.7381/j.512091",
-          "citations": 21
+          "citations": 21,
+          "kind": "Book chapter"
         },
         {
           "title": "Participant retention across three countries: a pooled analysis",
@@ -2664,7 +2759,8 @@
           "year": 2022,
           "url": "",
           "doi": "10.5328/j.958641",
-          "citations": 70
+          "citations": 70,
+          "kind": "Journal article"
         },
         {
           "title": "Participant retention in secondary school pupils: evidence from a 1200-participant study",
@@ -2674,11 +2770,12 @@
             "Okafor, E."
           ],
           "authors": "Haddad, N., Whitfield, S., Okafor, E.",
-          "venue": "PLOS ONE",
+          "venue": "Proceedings of CSCW",
           "year": 2022,
           "url": "",
           "doi": "10.6272/chb.131553",
-          "citations": 170
+          "citations": 170,
+          "kind": "Conference paper"
         }
       ],
       "academicRoles": [
@@ -2787,11 +2884,12 @@
             "Raman, P."
           ],
           "authors": "Lim, W. J., Raman, P.",
-          "venue": "Royal Society Open Science",
+          "venue": "Nature Human Behaviour",
           "year": 2025,
           "url": "",
           "doi": "10.8542/j.535475",
-          "citations": 2
+          "citations": 2,
+          "kind": "Journal article"
         },
         {
           "title": "Participant retention across three countries: a pooled analysis",
@@ -2801,11 +2899,12 @@
             "Price, J."
           ],
           "authors": "Rahimi, L., Lim, W. J., Price, J.",
-          "venue": "Royal Society Open Science",
+          "venue": "Proceedings of CSCW",
           "year": 2024,
           "url": "",
           "doi": "10.6412/s795242",
-          "citations": 18
+          "citations": 18,
+          "kind": "Conference paper"
         },
         {
           "title": "Longitudinal cohorts across three countries: a pooled analysis",
@@ -2815,11 +2914,12 @@
             "Marín, S."
           ],
           "authors": "Lim, W. J., Cho, H., Marín, S.",
-          "venue": "Scientific Reports",
+          "venue": "Royal Society Open Science",
           "year": 2023,
           "url": "",
           "doi": "10.5144/chb.208359",
-          "citations": 14
+          "citations": 14,
+          "kind": "Journal article"
         },
         {
           "title": "Does measurement error change replication? A preregistered replication",
@@ -2828,11 +2928,12 @@
             "Lim, W. J."
           ],
           "authors": "Cho, H., Lim, W. J.",
-          "venue": "Scientific Reports",
+          "venue": "arXiv",
           "year": 2022,
           "url": "",
           "doi": "10.3009/s842915",
-          "citations": 30
+          "citations": 30,
+          "kind": "Preprint"
         }
       ],
       "academicRoles": [
@@ -2936,11 +3037,12 @@
             "Cho, H."
           ],
           "authors": "Okafor, E., Rahimi, L., Cho, H.",
-          "venue": "Royal Society Open Science",
+          "venue": "Nature Human Behaviour",
           "year": 2025,
           "url": "",
           "doi": "10.4082/chb.928482",
-          "citations": 17
+          "citations": 17,
+          "kind": "Journal article"
         },
         {
           "title": "Field experiments in rural households: evidence from a 1200-participant study",
@@ -2950,11 +3052,12 @@
             "Dam, J. v."
           ],
           "authors": "Okafor, E., Tanaka, A., Dam, J. v.",
-          "venue": "Royal Society Open Science",
+          "venue": "Proceedings of CSCW",
           "year": 2025,
           "url": "",
           "doi": "10.1525/j.266741",
-          "citations": 15
+          "citations": 15,
+          "kind": "Conference paper"
         },
         {
           "title": "Measurement error across three countries: a pooled analysis",
@@ -2963,11 +3066,12 @@
             "Rahimi, L."
           ],
           "authors": "Okafor, E., Rahimi, L.",
-          "venue": "Nature Human Behaviour",
+          "venue": "Royal Society Open Science",
           "year": 2025,
           "url": "",
           "doi": "10.7552/j.140452",
-          "citations": 4
+          "citations": 4,
+          "kind": "Journal article"
         },
         {
           "title": "Measuring field experiments at scale with open data practice",
@@ -2976,11 +3080,12 @@
             "Mehta, R."
           ],
           "authors": "Okafor, E., Mehta, R.",
-          "venue": "Royal Society Open Science",
+          "venue": "arXiv",
           "year": 2024,
           "url": "",
           "doi": "10.8127/pnas.532544",
-          "citations": 7
+          "citations": 7,
+          "kind": "Preprint"
         },
         {
           "title": "Open data practice across three countries: a pooled analysis",
@@ -2989,11 +3094,12 @@
             "Dam, J. v."
           ],
           "authors": "Okafor, E., Dam, J. v.",
-          "venue": "PLOS ONE",
+          "venue": "Nature Human Behaviour",
           "year": 2024,
           "url": "",
           "doi": "10.8561/s273423",
-          "citations": 12
+          "citations": 12,
+          "kind": "Journal article"
         },
         {
           "title": "Measuring replication at scale with measurement error",
@@ -3002,11 +3108,12 @@
             "Okafor, E."
           ],
           "authors": "Cho, H., Okafor, E.",
-          "venue": "Nature Human Behaviour",
+          "venue": "Cambridge Handbook of Field Methods",
           "year": 2022,
           "url": "",
           "doi": "10.4373/chb.431581",
-          "citations": 110
+          "citations": 110,
+          "kind": "Book chapter"
         },
         {
           "title": "A field experiment on participant retention and measurement error",
@@ -3016,11 +3123,12 @@
             "Nwosu, A."
           ],
           "authors": "Dam, J. v., Okafor, E., Nwosu, A.",
-          "venue": "Nature Human Behaviour",
+          "venue": "Royal Society Open Science",
           "year": 2022,
           "url": "",
           "doi": "10.4824/pnas.812092",
-          "citations": 160
+          "citations": 160,
+          "kind": "Journal article"
         },
         {
           "title": "Measuring participant retention at scale with longitudinal cohorts",
@@ -3030,11 +3138,12 @@
             "Marín, S."
           ],
           "authors": "Okafor, E., Lim, W. J., Marín, S.",
-          "venue": "PLOS ONE",
+          "venue": "Proceedings of CSCW",
           "year": 2022,
           "url": "",
           "doi": "10.3763/j.891820",
-          "citations": 140
+          "citations": 140,
+          "kind": "Conference paper"
         }
       ],
       "academicRoles": [
@@ -3146,11 +3255,12 @@
             "Rahimi, L."
           ],
           "authors": "Mensah, K., Whitfield, S., Rahimi, L.",
-          "venue": "Scientific Reports",
+          "venue": "Nature Human Behaviour",
           "year": 2026,
           "url": "",
           "doi": "10.9731/j.941399",
-          "citations": 4
+          "citations": 4,
+          "kind": "Journal article"
         },
         {
           "title": "Measuring replication at scale with longitudinal cohorts",
@@ -3161,11 +3271,12 @@
             "Haddad, N."
           ],
           "authors": "Boateng, K., Whitfield, S., Ferreira, T., Haddad, N.",
-          "venue": "Royal Society Open Science",
+          "venue": "Proceedings of CSCW",
           "year": 2026,
           "url": "",
           "doi": "10.7828/j.205359",
-          "citations": 8
+          "citations": 8,
+          "kind": "Conference paper"
         },
         {
           "title": "Replication in secondary school pupils: evidence from a 240-participant study",
@@ -3178,7 +3289,8 @@
           "year": 2025,
           "url": "",
           "doi": "10.7738/chb.116447",
-          "citations": 0
+          "citations": 0,
+          "kind": "Journal article"
         },
         {
           "title": "Open data practice in remote teams: evidence from a 240-participant study",
@@ -3187,11 +3299,12 @@
             "Whitfield, S."
           ],
           "authors": "Haddad, N., Whitfield, S.",
-          "venue": "Nature Human Behaviour",
+          "venue": "arXiv",
           "year": 2025,
           "url": "",
           "doi": "10.6612/chb.635065",
-          "citations": 34
+          "citations": 34,
+          "kind": "Preprint"
         },
         {
           "title": "A field experiment on longitudinal cohorts and replication",
@@ -3206,7 +3319,8 @@
           "year": 2025,
           "url": "",
           "doi": "10.4629/chb.384533",
-          "citations": 48
+          "citations": 48,
+          "kind": "Journal article"
         },
         {
           "title": "Measuring participant retention at scale with open data practice",
@@ -3215,11 +3329,12 @@
             "Eze, I."
           ],
           "authors": "Whitfield, S., Eze, I.",
-          "venue": "PLOS ONE",
+          "venue": "Cambridge Handbook of Field Methods",
           "year": 2024,
           "url": "",
           "doi": "10.4663/chb.849324",
-          "citations": 48
+          "citations": 48,
+          "kind": "Book chapter"
         },
         {
           "title": "Rethinking replication: what 512 participants tell us",
@@ -3229,11 +3344,12 @@
             "Mehta, R."
           ],
           "authors": "Dalgaard, H., Whitfield, S., Mehta, R.",
-          "venue": "PLOS ONE",
+          "venue": "Royal Society Open Science",
           "year": 2023,
           "url": "",
           "doi": "10.6475/s869635",
-          "citations": 48
+          "citations": 48,
+          "kind": "Journal article"
         },
         {
           "title": "Longitudinal cohorts in first-year undergraduates: evidence from a 240-participant study",
@@ -3243,11 +3359,12 @@
             "Raman, P."
           ],
           "authors": "Whitfield, S., Cho, H., Raman, P.",
-          "venue": "Scientific Reports",
+          "venue": "Proceedings of CSCW",
           "year": 2023,
           "url": "",
           "doi": "10.5663/s435792",
-          "citations": 20
+          "citations": 20,
+          "kind": "Conference paper"
         },
         {
           "title": "A field experiment on measurement error and participant retention",
@@ -3260,7 +3377,8 @@
           "year": 2023,
           "url": "",
           "doi": "10.4851/s148130",
-          "citations": 8
+          "citations": 8,
+          "kind": "Journal article"
         },
         {
           "title": "Measurement error across three countries: a pooled analysis",
@@ -3271,11 +3389,12 @@
             "Ferreira, T."
           ],
           "authors": "Tanaka, A., Whitfield, S., Mehta, R., Ferreira, T.",
-          "venue": "Royal Society Open Science",
+          "venue": "Proceedings of CHI",
           "year": 2022,
           "url": "",
           "doi": "10.9840/chb.367853",
-          "citations": 10
+          "citations": 10,
+          "kind": "Conference paper"
         },
         {
           "title": "Measuring open data practice at scale with field experiments",
@@ -3285,11 +3404,12 @@
             "Adeyemi, T."
           ],
           "authors": "Whitfield, S., Eze, I., Adeyemi, T.",
-          "venue": "Nature Human Behaviour",
+          "venue": "Royal Society Open Science",
           "year": 2022,
           "url": "",
           "doi": "10.6475/pnas.466738",
-          "citations": 20
+          "citations": 20,
+          "kind": "Journal article"
         }
       ],
       "academicRoles": [
@@ -3403,7 +3523,8 @@
           "year": 2026,
           "url": "",
           "doi": "10.4476/chb.848152",
-          "citations": 15
+          "citations": 15,
+          "kind": "Journal article"
         },
         {
           "title": "Field experiments across three countries: a pooled analysis",
@@ -3412,11 +3533,12 @@
             "Mensah, K."
           ],
           "authors": "Rahimi, L., Mensah, K.",
-          "venue": "Scientific Reports",
+          "venue": "Proceedings of CSCW",
           "year": 2026,
           "url": "",
           "doi": "10.5349/s586608",
-          "citations": 10
+          "citations": 10,
+          "kind": "Conference paper"
         },
         {
           "title": "A field experiment on measurement error and longitudinal cohorts",
@@ -3427,11 +3549,12 @@
             "Whitfield, S."
           ],
           "authors": "Raman, P., Rahimi, L., Tanaka, A., Whitfield, S.",
-          "venue": "Nature Human Behaviour",
+          "venue": "Royal Society Open Science",
           "year": 2024,
           "url": "",
           "doi": "10.3573/pnas.130348",
-          "citations": 42
+          "citations": 42,
+          "kind": "Journal article"
         },
         {
           "title": "Field experiments in rural households: evidence from a 512-participant study",
@@ -3441,11 +3564,12 @@
             "Lim, W. J."
           ],
           "authors": "Rahimi, L., Price, J., Lim, W. J.",
-          "venue": "Nature Human Behaviour",
+          "venue": "arXiv",
           "year": 2023,
           "url": "",
           "doi": "10.5606/pnas.243261",
-          "citations": 40
+          "citations": 40,
+          "kind": "Preprint"
         },
         {
           "title": "A field experiment on measurement error and participant retention",
@@ -3456,11 +3580,12 @@
             "Dam, J. v."
           ],
           "authors": "Raman, P., Rahimi, L., Whitfield, S., Dam, J. v.",
-          "venue": "Scientific Reports",
+          "venue": "Nature Human Behaviour",
           "year": 2022,
           "url": "",
           "doi": "10.4035/j.130869",
-          "citations": 55
+          "citations": 55,
+          "kind": "Journal article"
         },
         {
           "title": "A field experiment on open data practice and field experiments",
@@ -3470,11 +3595,12 @@
             "Boateng, K."
           ],
           "authors": "Nwosu, A., Rahimi, L., Boateng, K.",
-          "venue": "Nature Human Behaviour",
+          "venue": "Cambridge Handbook of Field Methods",
           "year": 2022,
           "url": "",
           "doi": "10.9847/s294827",
-          "citations": 40
+          "citations": 40,
+          "kind": "Book chapter"
         }
       ],
       "academicRoles": [
@@ -3615,7 +3741,8 @@
           "year": 2026,
           "url": "",
           "doi": "10.8930/j.143292",
-          "citations": 0
+          "citations": 0,
+          "kind": "Journal article"
         },
         {
           "title": "A field experiment on measurement error and field experiments",
@@ -3626,11 +3753,12 @@
             "Ferreira, T."
           ],
           "authors": "Price, J., Marín, S., Mehta, R., Ferreira, T.",
-          "venue": "Nature Human Behaviour",
+          "venue": "Proceedings of CSCW",
           "year": 2026,
           "url": "",
           "doi": "10.2746/s888895",
-          "citations": 2
+          "citations": 2,
+          "kind": "Conference paper"
         },
         {
           "title": "Does measurement error change replication? A preregistered replication",
@@ -3639,11 +3767,12 @@
             "Price, J."
           ],
           "authors": "Mensah, K., Price, J.",
-          "venue": "Scientific Reports",
+          "venue": "Royal Society Open Science",
           "year": 2025,
           "url": "",
           "doi": "10.7155/chb.609278",
-          "citations": 4
+          "citations": 4,
+          "kind": "Journal article"
         },
         {
           "title": "Measuring participant retention at scale with field experiments",
@@ -3653,11 +3782,12 @@
             "Rahimi, L."
           ],
           "authors": "Price, J., Haddad, N., Rahimi, L.",
-          "venue": "Nature Human Behaviour",
+          "venue": "arXiv",
           "year": 2025,
           "url": "",
           "doi": "10.2082/chb.880580",
-          "citations": 36
+          "citations": 36,
+          "kind": "Preprint"
         },
         {
           "title": "Measuring measurement error at scale with open data practice",
@@ -3668,11 +3798,12 @@
             "Dam, J. v."
           ],
           "authors": "Price, J., Boateng, K., Dalgaard, H., Dam, J. v.",
-          "venue": "Scientific Reports",
+          "venue": "Nature Human Behaviour",
           "year": 2024,
           "url": "",
           "doi": "10.8612/s596429",
-          "citations": 48
+          "citations": 48,
+          "kind": "Journal article"
         },
         {
           "title": "Measuring participant retention at scale with replication",
@@ -3682,11 +3813,12 @@
             "Boateng, K."
           ],
           "authors": "Marín, S., Price, J., Boateng, K.",
-          "venue": "PLOS ONE",
+          "venue": "Cambridge Handbook of Field Methods",
           "year": 2024,
           "url": "",
           "doi": "10.3736/j.713327",
-          "citations": 21
+          "citations": 21,
+          "kind": "Book chapter"
         },
         {
           "title": "A field experiment on replication and open data practice",
@@ -3695,11 +3827,12 @@
             "Whitfield, S."
           ],
           "authors": "Price, J., Whitfield, S.",
-          "venue": "PLOS ONE",
+          "venue": "Royal Society Open Science",
           "year": 2023,
           "url": "",
           "doi": "10.1541/chb.968020",
-          "citations": 18
+          "citations": 18,
+          "kind": "Journal article"
         },
         {
           "title": "Rethinking field experiments: what 120 participants tell us",
@@ -3709,11 +3842,12 @@
             "Okafor, E."
           ],
           "authors": "Ackerman, L., Price, J., Okafor, E.",
-          "venue": "Royal Society Open Science",
+          "venue": "Proceedings of CSCW",
           "year": 2023,
           "url": "",
           "doi": "10.5521/j.126140",
-          "citations": 34
+          "citations": 34,
+          "kind": "Conference paper"
         },
         {
           "title": "Rethinking longitudinal cohorts: what 240 participants tell us",
@@ -3724,11 +3858,12 @@
             "Haddad, N."
           ],
           "authors": "Price, J., Cho, H., Whitfield, S., Haddad, N.",
-          "venue": "Scientific Reports",
+          "venue": "Nature Human Behaviour",
           "year": 2023,
           "url": "",
           "doi": "10.1997/pnas.155318",
-          "citations": 60
+          "citations": 60,
+          "kind": "Journal article"
         },
         {
           "title": "Replication in older adults: evidence from a 512-participant study",
@@ -3738,11 +3873,12 @@
             "Mensah, K."
           ],
           "authors": "Price, J., Marín, S., Mensah, K.",
-          "venue": "Nature Human Behaviour",
+          "venue": "Proceedings of CHI",
           "year": 2022,
           "url": "",
           "doi": "10.6031/pnas.688760",
-          "citations": 55
+          "citations": 55,
+          "kind": "Conference paper"
         },
         {
           "title": "Measuring open data practice at scale with field experiments",
@@ -3752,11 +3888,12 @@
             "Dam, J. v."
           ],
           "authors": "Adeyemi, T., Price, J., Dam, J. v.",
-          "venue": "PLOS ONE",
+          "venue": "Royal Society Open Science",
           "year": 2022,
           "url": "",
           "doi": "10.6212/j.839612",
-          "citations": 160
+          "citations": 160,
+          "kind": "Journal article"
         },
         {
           "title": "A field experiment on field experiments and measurement error",
@@ -3766,11 +3903,12 @@
             "Ackerman, L."
           ],
           "authors": "Price, J., Raman, P., Ackerman, L.",
-          "venue": "Scientific Reports",
+          "venue": "bioRxiv",
           "year": 2022,
           "url": "",
           "doi": "10.9342/j.507760",
-          "citations": 10
+          "citations": 10,
+          "kind": "Preprint"
         }
       ],
       "academicRoles": [
@@ -3876,11 +4014,12 @@
             "Raman, P."
           ],
           "authors": "Dam, J. v., Raman, P.",
-          "venue": "PLOS ONE",
+          "venue": "Nature Human Behaviour",
           "year": 2026,
           "url": "",
           "doi": "10.5786/pnas.133557",
-          "citations": 7
+          "citations": 7,
+          "kind": "Journal article"
         },
         {
           "title": "Measuring replication at scale with participant retention",
@@ -3889,11 +4028,12 @@
             "Tanaka, A."
           ],
           "authors": "Raman, P., Tanaka, A.",
-          "venue": "PLOS ONE",
+          "venue": "Proceedings of CSCW",
           "year": 2026,
           "url": "",
           "doi": "10.6831/pnas.835658",
-          "citations": 15
+          "citations": 15,
+          "kind": "Conference paper"
         },
         {
           "title": "Rethinking open data practice: what 512 participants tell us",
@@ -3904,11 +4044,12 @@
             "Dam, J. v."
           ],
           "authors": "Raman, P., Tanaka, A., Marín, S., Dam, J. v.",
-          "venue": "Scientific Reports",
+          "venue": "Royal Society Open Science",
           "year": 2024,
           "url": "",
           "doi": "10.1075/j.355034",
-          "citations": 39
+          "citations": 39,
+          "kind": "Journal article"
         },
         {
           "title": "Longitudinal cohorts across three countries: a pooled analysis",
@@ -3917,11 +4058,12 @@
             "Raman, P."
           ],
           "authors": "Adeyemi, T., Raman, P.",
-          "venue": "Royal Society Open Science",
+          "venue": "arXiv",
           "year": 2024,
           "url": "",
           "doi": "10.1385/pnas.652875",
-          "citations": 24
+          "citations": 24,
+          "kind": "Preprint"
         },
         {
           "title": "Rethinking measurement error: what 380 participants tell us",
@@ -3934,7 +4076,8 @@
           "year": 2023,
           "url": "",
           "doi": "10.2869/pnas.158253",
-          "citations": 26
+          "citations": 26,
+          "kind": "Journal article"
         },
         {
           "title": "Does open data practice change replication? A preregistered replication",
@@ -3943,11 +4086,12 @@
             "Raman, P."
           ],
           "authors": "Boateng, K., Raman, P.",
-          "venue": "PLOS ONE",
+          "venue": "Cambridge Handbook of Field Methods",
           "year": 2022,
           "url": "",
           "doi": "10.6451/j.163407",
-          "citations": 10
+          "citations": 10,
+          "kind": "Book chapter"
         }
       ],
       "academicRoles": [
@@ -4074,11 +4218,12 @@
             "Nwosu, A."
           ],
           "authors": "Ferreira, T., Nwosu, A.",
-          "venue": "Scientific Reports",
+          "venue": "Nature Human Behaviour",
           "year": 2026,
           "url": "",
           "doi": "10.5069/s227304",
-          "citations": 7
+          "citations": 7,
+          "kind": "Journal article"
         },
         {
           "title": "Rethinking participant retention: what 240 participants tell us",
@@ -4088,11 +4233,12 @@
             "Tanaka, A."
           ],
           "authors": "Ferreira, T., Eze, I., Tanaka, A.",
-          "venue": "PLOS ONE",
+          "venue": "Proceedings of CSCW",
           "year": 2026,
           "url": "",
           "doi": "10.4133/pnas.660706",
-          "citations": 12
+          "citations": 12,
+          "kind": "Conference paper"
         },
         {
           "title": "Participant retention across three countries: a pooled analysis",
@@ -4106,7 +4252,8 @@
           "year": 2025,
           "url": "",
           "doi": "10.2214/pnas.618813",
-          "citations": 4
+          "citations": 4,
+          "kind": "Journal article"
         },
         {
           "title": "Field experiments across three countries: a pooled analysis",
@@ -4116,11 +4263,12 @@
             "Boateng, K."
           ],
           "authors": "Mensah, K., Ferreira, T., Boateng, K.",
-          "venue": "Scientific Reports",
+          "venue": "arXiv",
           "year": 2025,
           "url": "",
           "doi": "10.9097/j.756194",
-          "citations": 16
+          "citations": 16,
+          "kind": "Preprint"
         },
         {
           "title": "Measurement error across three countries: a pooled analysis",
@@ -4131,11 +4279,12 @@
             "Whitfield, S."
           ],
           "authors": "Tanaka, A., Ferreira, T., Boateng, K., Whitfield, S.",
-          "venue": "PLOS ONE",
+          "venue": "Nature Human Behaviour",
           "year": 2025,
           "url": "",
           "doi": "10.7369/pnas.512569",
-          "citations": 32
+          "citations": 32,
+          "kind": "Journal article"
         },
         {
           "title": "Open data practice in new parents: evidence from a 240-participant study",
@@ -4144,11 +4293,12 @@
             "Ackerman, L."
           ],
           "authors": "Ferreira, T., Ackerman, L.",
-          "venue": "PLOS ONE",
+          "venue": "Cambridge Handbook of Field Methods",
           "year": 2024,
           "url": "",
           "doi": "10.7079/j.458667",
-          "citations": 10
+          "citations": 10,
+          "kind": "Book chapter"
         },
         {
           "title": "Longitudinal cohorts in shift workers: evidence from a 240-participant study",
@@ -4158,11 +4308,12 @@
             "Dalgaard, H."
           ],
           "authors": "Ferreira, T., Nwosu, A., Dalgaard, H.",
-          "venue": "PLOS ONE",
+          "venue": "Royal Society Open Science",
           "year": 2024,
           "url": "",
           "doi": "10.9483/s814831",
-          "citations": 45
+          "citations": 45,
+          "kind": "Journal article"
         },
         {
           "title": "Measuring replication at scale with longitudinal cohorts",
@@ -4172,11 +4323,12 @@
             "Tanaka, A."
           ],
           "authors": "Ferreira, T., Adeyemi, T., Tanaka, A.",
-          "venue": "Scientific Reports",
+          "venue": "Proceedings of CSCW",
           "year": 2023,
           "url": "",
           "doi": "10.6227/s220883",
-          "citations": 40
+          "citations": 40,
+          "kind": "Conference paper"
         },
         {
           "title": "A field experiment on measurement error and field experiments",
@@ -4185,11 +4337,12 @@
             "Ferreira, T."
           ],
           "authors": "Eze, I., Ferreira, T.",
-          "venue": "Royal Society Open Science",
+          "venue": "Nature Human Behaviour",
           "year": 2022,
           "url": "",
           "doi": "10.6882/j.662801",
-          "citations": 170
+          "citations": 170,
+          "kind": "Journal article"
         }
       ],
       "academicRoles": [
@@ -4302,11 +4455,12 @@
             "Whitfield, S."
           ],
           "authors": "Mensah, K., Dalgaard, H., Whitfield, S.",
-          "venue": "Royal Society Open Science",
+          "venue": "Nature Human Behaviour",
           "year": 2025,
           "url": "",
           "doi": "10.2431/chb.712696",
-          "citations": 56
+          "citations": 56,
+          "kind": "Journal article"
         },
         {
           "title": "A field experiment on participant retention and measurement error",
@@ -4317,11 +4471,12 @@
             "Cho, H."
           ],
           "authors": "Dalgaard, H., Haddad, N., Marín, S., Cho, H.",
-          "venue": "Scientific Reports",
+          "venue": "Proceedings of CSCW",
           "year": 2025,
           "url": "",
           "doi": "10.9084/chb.238512",
-          "citations": 0
+          "citations": 0,
+          "kind": "Conference paper"
         },
         {
           "title": "Measuring participant retention at scale with field experiments",
@@ -4332,11 +4487,12 @@
             "Boateng, K."
           ],
           "authors": "Dalgaard, H., Haddad, N., Ackerman, L., Boateng, K.",
-          "venue": "PLOS ONE",
+          "venue": "Royal Society Open Science",
           "year": 2024,
           "url": "",
           "doi": "10.4664/j.858366",
-          "citations": 45
+          "citations": 45,
+          "kind": "Journal article"
         },
         {
           "title": "Field experiments in remote teams: evidence from a 120-participant study",
@@ -4347,11 +4503,12 @@
             "Haddad, N."
           ],
           "authors": "Mehta, R., Dalgaard, H., Tanaka, A., Haddad, N.",
-          "venue": "Scientific Reports",
+          "venue": "arXiv",
           "year": 2024,
           "url": "",
           "doi": "10.9888/j.566378",
-          "citations": 66
+          "citations": 66,
+          "kind": "Preprint"
         },
         {
           "title": "Does measurement error change field experiments? A preregistered replication",
@@ -4360,11 +4517,12 @@
             "Dalgaard, H."
           ],
           "authors": "Ferreira, T., Dalgaard, H.",
-          "venue": "Royal Society Open Science",
+          "venue": "Nature Human Behaviour",
           "year": 2023,
           "url": "",
           "doi": "10.3635/j.982947",
-          "citations": 24
+          "citations": 24,
+          "kind": "Journal article"
         },
         {
           "title": "Longitudinal cohorts across three countries: a pooled analysis",
@@ -4374,11 +4532,12 @@
             "Haddad, N."
           ],
           "authors": "Dalgaard, H., Raman, P., Haddad, N.",
-          "venue": "Royal Society Open Science",
+          "venue": "Cambridge Handbook of Field Methods",
           "year": 2022,
           "url": "",
           "doi": "10.2308/j.620563",
-          "citations": 15
+          "citations": 15,
+          "kind": "Book chapter"
         }
       ],
       "academicRoles": [
@@ -4497,11 +4656,12 @@
             "Cho, H."
           ],
           "authors": "Ackerman, L., Boateng, K., Cho, H.",
-          "venue": "PLOS ONE",
+          "venue": "Nature Human Behaviour",
           "year": 2026,
           "url": "",
           "doi": "10.8488/s103399",
-          "citations": 6
+          "citations": 6,
+          "kind": "Journal article"
         },
         {
           "title": "A field experiment on replication and participant retention",
@@ -4510,11 +4670,12 @@
             "Boateng, K."
           ],
           "authors": "Ferreira, T., Boateng, K.",
-          "venue": "Scientific Reports",
+          "venue": "Proceedings of CSCW",
           "year": 2025,
           "url": "",
           "doi": "10.3723/j.215432",
-          "citations": 20
+          "citations": 20,
+          "kind": "Conference paper"
         },
         {
           "title": "A field experiment on replication and open data practice",
@@ -4527,7 +4688,8 @@
           "year": 2025,
           "url": "",
           "doi": "10.6156/chb.547746",
-          "citations": 16
+          "citations": 16,
+          "kind": "Journal article"
         },
         {
           "title": "A field experiment on replication and open data practice",
@@ -4537,11 +4699,12 @@
             "Dalgaard, H."
           ],
           "authors": "Boateng, K., Dam, J. v., Dalgaard, H.",
-          "venue": "Scientific Reports",
+          "venue": "arXiv",
           "year": 2025,
           "url": "",
           "doi": "10.1368/s752406",
-          "citations": 32
+          "citations": 32,
+          "kind": "Preprint"
         },
         {
           "title": "Rethinking measurement error: what 1200 participants tell us",
@@ -4550,11 +4713,12 @@
             "Boateng, K."
           ],
           "authors": "Rahimi, L., Boateng, K.",
-          "venue": "Royal Society Open Science",
+          "venue": "Nature Human Behaviour",
           "year": 2024,
           "url": "",
           "doi": "10.7306/j.195218",
-          "citations": 30
+          "citations": 30,
+          "kind": "Journal article"
         },
         {
           "title": "Does replication change open data practice? A preregistered replication",
@@ -4563,11 +4727,12 @@
             "Boateng, K."
           ],
           "authors": "Price, J., Boateng, K.",
-          "venue": "PLOS ONE",
+          "venue": "Cambridge Handbook of Field Methods",
           "year": 2023,
           "url": "",
           "doi": "10.6282/j.853198",
-          "citations": 64
+          "citations": 64,
+          "kind": "Book chapter"
         },
         {
           "title": "Rethinking participant retention: what 1200 participants tell us",
@@ -4581,7 +4746,8 @@
           "year": 2023,
           "url": "",
           "doi": "10.8440/chb.546919",
-          "citations": 40
+          "citations": 40,
+          "kind": "Journal article"
         },
         {
           "title": "Rethinking replication: what 380 participants tell us",
@@ -4592,11 +4758,12 @@
             "Eze, I."
           ],
           "authors": "Ackerman, L., Boateng, K., Marín, S., Eze, I.",
-          "venue": "Nature Human Behaviour",
+          "venue": "Proceedings of CSCW",
           "year": 2022,
           "url": "",
           "doi": "10.4054/chb.666175",
-          "citations": 55
+          "citations": 55,
+          "kind": "Conference paper"
         },
         {
           "title": "Participant retention across three countries: a pooled analysis",
@@ -4605,11 +4772,12 @@
             "Mehta, R."
           ],
           "authors": "Boateng, K., Mehta, R.",
-          "venue": "PLOS ONE",
+          "venue": "Nature Human Behaviour",
           "year": 2022,
           "url": "",
           "doi": "10.6327/chb.798733",
-          "citations": 55
+          "citations": 55,
+          "kind": "Journal article"
         }
       ],
       "academicRoles": [

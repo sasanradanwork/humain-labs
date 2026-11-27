@@ -137,15 +137,30 @@ export function trendFor(study, applications, now = Date.now()) {
   return { score, weekly: weekly.map((n) => n / max), isNew, rising: recent > 0 && recent > before };
 }
 
-/* ---------- publication figures: the radar's axes and scaling ---------- */
-export const RADAR_AXES = [
+/**
+ * What kind of thing a paper is. Records added since Crossref started telling us carry
+ * their own kind; for older ones the venue is the only evidence there is, so it is read
+ * rather than left blank — a preprint server and a proceedings volume both name themselves.
+ */
+export function pubKind(p) {
+  if (p && p.kind) return p.kind;
+  const v = String((p && p.venue) || "").toLowerCase();
+  if (/arxiv|biorxiv|medrxiv|ssrn|psyarxiv|research square|preprint/.test(v)) return "Preprint";
+  if (/proceedings|conference|symposium|workshop|congress/.test(v)) return "Conference paper";
+  if (/handbook|chapter|\bpress\b|encyclopedia/.test(v)) return "Book chapter";
+  return v ? "Journal article" : "Other";
+}
+
+/* ---------- the published-record figures, and the field they are read against ---------- */
+export const PUB_METRICS = [
   ["Publications", "works", 60],
   ["Citations", "citations", 1200],
   ["h-index", "hIndex", 15],
   ["i10-index", "i10", 40],
   ["Last 3 years", "recentWorks", 10],
 ];
-export const radarScale = (v, top) => Math.max(0, Math.min(1, Math.sqrt(Math.max(0, v || 0) / Math.max(1, top))));
+/** A figure as a share of the highest here, for the bar under it. */
+export const metricShare = (v, top) => Math.max(0, Math.min(1, Math.max(0, v || 0) / Math.max(1, top)));
 
 export const OPENING_TYPES = ["PhD position", "Postdoc", "Research assistant", "Collaborator", "Other"];
 export const ROLE_SUGGESTIONS = [

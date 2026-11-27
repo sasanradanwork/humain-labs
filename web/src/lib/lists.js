@@ -24,6 +24,9 @@ export const COUNTRY_NAMES = [
 // researchers page filter on these exact values.
 export const DISCIPLINES = ["Science", "Technology", "Engineering", "Mathematics"];
 // What a diary entry on a researcher profile can be.
+/** What a publication is, as Crossref reports it. */
+export const PUB_KINDS = ["Journal article", "Conference paper", "Preprint", "Book chapter", "Other"];
+
 export const EVENT_TYPES = ["Conference", "Talk", "Workshop", "Seminar", "Panel", "Poster", "Summer school", "Other"];
 // ISO 3166-1 alpha-2 for each country above, so a flag can be drawn beside the name.
 export const COUNTRY_CODES = {

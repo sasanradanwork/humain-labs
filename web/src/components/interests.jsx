@@ -142,17 +142,6 @@ function layout(branches, root, collapsed) {
 export function InterestGraph({ interests, root }) {
   const branches = useMemo(() => interestTree(interests), [interests]);
   const [collapsed, setCollapsed] = useState(() => new Set());
-  // Below this width a graph you drag fights the page for the same gesture, so it
-  // becomes a plain tree instead.
-  const [narrow, setNarrow] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia("(max-width: 720px)");
-    const sync = () => setNarrow(mq.matches);
-    sync();
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
-  }, []);
-
   const { nodes, links, box } = useMemo(() => layout(branches, root, collapsed), [branches, root, collapsed]);
 
   const frameRef = useRef(null);
@@ -171,7 +160,7 @@ export function InterestGraph({ interests, root }) {
     });
     ro.observe(el);
     return () => ro.disconnect();
-  }, [narrow]);
+  }, []);
 
   const fit = useCallback(() => {
     if (!size.w || !size.h || !box.w || !box.h) return;
@@ -255,7 +244,7 @@ export function InterestGraph({ interests, root }) {
     };
     el.addEventListener("wheel", h, { passive: false });
     return () => el.removeEventListener("wheel", h);
-  }, [zoomAbout, narrow]);
+  }, [zoomAbout]);
 
   const onKeyDown = (e) => {
     const step = e.shiftKey ? 80 : 28;
@@ -280,8 +269,6 @@ export function InterestGraph({ interests, root }) {
   const spoken = (interests || [])
     .map((p) => [root, ...(Array.isArray(p) ? p : [p])].filter(Boolean).join(" → "))
     .join("; ");
-
-  if (narrow) return <InterestTree interests={interests} root={root} />;
 
   const toggle = (n) => () => {
     if (dragged.current) return; // the press that ended here was a pan
@@ -341,39 +328,3 @@ export function InterestGraph({ interests, root }) {
   );
 }
 
-/* The plain version: used on narrow screens, where dragging would fight the page. */
-function Branch({ nodes }) {
-  if (!nodes.length) return null;
-  return (
-    <ul>
-      {nodes.map((n) => (
-        <li key={n.label}>
-          <span className="node">{n.label}</span>
-          <Branch nodes={n.children} />
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-export function InterestTree({ interests, root }) {
-  const nodes = interestTree(interests);
-  if (!nodes.length) return null;
-  const label = (interests || [])
-    .map((p) => [root, ...(Array.isArray(p) ? p : [p])].filter(Boolean).join(" → "))
-    .join("; ");
-  return (
-    <div className="itree" role="group" aria-label={`Research interests: ${label}`}>
-      {root ? (
-        <ul>
-          <li>
-            <span className="node node-root">{root}</span>
-            <Branch nodes={nodes} />
-          </li>
-        </ul>
-      ) : (
-        <Branch nodes={nodes} />
-      )}
-    </div>
-  );
-}

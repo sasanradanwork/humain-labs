@@ -1,5 +1,5 @@
 import { useId } from "react";
-import { hash, initials, rng, RADAR_AXES, radarScale, fmtDate, daysLeft, sortName } from "../lib/util.js";
+import { hash, initials, rng, fmtDate, daysLeft, sortName } from "../lib/util.js";
 import { S, AUTH } from "../lib/store.js";
 import { COUNTRY_CODES, DISCIPLINES } from "../lib/lists.js";
 
@@ -437,63 +437,6 @@ export const ScholarLink = ({ url, className = "btn btn-blue icon-btn" }) =>
   ) : null;
 
 /* ---------- publication radar ---------- */
-// Each axis is scaled against the highest figure among researchers here, so the shapes
-// differ from one another rather than all filling the chart.
-function radarTops() {
-  const tops = {};
-  for (const [, key, floor] of RADAR_AXES) {
-    tops[key] = Math.max(floor, ...S.researchers.map((r) => (r.metrics ? r.metrics[key] || 0 : 0)), AUTH.researcher?.metrics?.[key] || 0);
-  }
-  return tops;
-}
-export function Radar({ m, size = 64, labels = false }) {
-  if (!m) return null;
-  const tops = radarTops();
-  // With labels the drawing needs room either side for the text, so the box is wider than it is tall.
-  const viewW = labels ? size * 1.75 : size;
-  const cx = viewW / 2;
-  const cy = size / 2;
-  const rMax = size / 2 - (labels ? 18 : 3.5);
-  const pt = (i, f) => {
-    const a = -Math.PI / 2 + (i * 2 * Math.PI) / RADAR_AXES.length;
-    return [cx + Math.cos(a) * rMax * f, cy + Math.sin(a) * rMax * f];
-  };
-  const ring = (f) => RADAR_AXES.map((_, i) => pt(i, f).map((n) => n.toFixed(1)).join(",")).join(" ");
-  const shape = RADAR_AXES.map(([, key], i) => pt(i, Math.max(0.06, radarScale(m[key], tops[key]))).map((n) => n.toFixed(1)).join(",")).join(" ");
-  const tip = `${m.source || "OpenAlex"}: ${m.works} publications, ${m.citations} citations, h-index ${m.hIndex}, i10 ${m.i10}, ${m.recentWorks} published in the last 3 years${m.updatedAt ? ` (updated ${fmtDate(m.updatedAt)})` : ""}. Each axis is scaled against the highest figure among researchers here.`;
-  return (
-    <svg className="radar" viewBox={`0 0 ${viewW} ${size}`} width={viewW} height={size} role="img" aria-label={tip}>
-      <title>{tip}</title>
-      <polygon className="radar-grid" points={ring(1)} />
-      <polygon className="radar-grid" points={ring(0.6)} />
-      <polygon className="radar-grid" points={ring(0.3)} />
-      {RADAR_AXES.map((_, i) => {
-        const [x, y] = pt(i, 1);
-        return <line key={i} className="radar-grid" x1={cx} y1={cy} x2={x.toFixed(1)} y2={y.toFixed(1)} />;
-      })}
-      <polygon className="radar-shape" points={shape} />
-      {labels &&
-        RADAR_AXES.map(([label, key], i) => {
-          const [x, y] = pt(i, 1.13);
-          return (
-            <text
-              key={key}
-              className="radar-label"
-              x={x.toFixed(1)}
-              y={y.toFixed(1)}
-              textAnchor={x < cx - 2 ? "end" : x > cx + 2 ? "start" : "middle"}
-              dominantBaseline="middle"
-            >
-              {label}
-              <tspan className="radar-val" dx="4">
-                {m[key]}
-              </tspan>
-            </text>
-          );
-        })}
-    </svg>
-  );
-}
 
 /* ---------- interest sparkline ---------- */
 export function Spark({ vals, w = 84, h = 26, area = false, className = "spark" }) {

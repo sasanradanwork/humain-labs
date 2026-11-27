@@ -1,14 +1,14 @@
 // A researcher's own page: who they are, what they've published, the roles they hold,
 // and where their work stood each year. Reached by opening a card in the directory.
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
-import { Avatar, Flag, Icon, LinkedInLink, Radar, ScholarLink, Stem, VerificationLevel } from "../components/ui.jsx";
+import { Avatar, Flag, Icon, LinkedInLink, ScholarLink, Stem, VerificationLevel } from "../components/ui.jsx";
 import { HlgBadge } from "../components/hlg.jsx";
 import { CardPattern } from "../components/guilloche.jsx";
 import { InterestGraph } from "../components/interests.jsx";
-import { PointsBars, PubBars, ordinal } from "../components/charts.jsx";
+import { CareerSpans, PercentileTicks, PointsCurves, PointsMix, PubFigures, ordinal } from "../components/charts.jsx";
 import { AUTH, S, byId, groupsOf, role } from "../lib/store.js";
-import { DISCIPLINES } from "../lib/lists.js";
-import { fmtDate, gidKey, isOpen, plural } from "../lib/util.js";
+import { DISCIPLINES, PUB_KINDS } from "../lib/lists.js";
+import { fmtDate, gidKey, isOpen, plural, pubKind } from "../lib/util.js";
 import { navigate, useUI } from "../lib/ui.jsx";
 import { groupHref, researcherHref } from "../components/cards.jsx";
 import { ResearcherGate } from "./public.jsx";
@@ -96,58 +96,71 @@ function Standing({ r }) {
       </section>
     );
 
+  // Last year is the only comparison worth making on the headline: a researcher's own
+  // record, not the field's.
+  const prev = rows[1];
+  const delta = prev ? now.points - prev.points : null;
+  const career = rows.reduce((t, x) => t + x.points, 0);
+
   return (
-    <section className="pcard">
-      <h2>Standing</h2>
-      <div className="standing">
-        <div className="pct">
-          {/* The headline is one number, so it is a stat rather than a chart. */}
-          <b>{now.percentile == null ? "—" : ordinal(now.percentile)}</b>
-          <span>
-            {now.percentile == null
-              ? `Unranked for ${year}`
-              : `percentile for ${year}, among ${plural(now.ranked, "ranked researcher", "ranked researchers")}`}
-          </span>
-          {now.rank && (
-            <span className="small soft">
-              {ordinal(now.rank)} by points · {now.points} points this year
-            </span>
-          )}
-        </div>
-        <PointsBars rows={rows} />
+    <section className="pcard standing-card">
+      <div className="sec-head">
+        <h2>Standing</h2>
+        <span className="stand-year">{year}</span>
       </div>
 
-      <div className="table-wrap">
-      <table className="rank-table">
-        <thead>
-          <tr>
-            <th scope="col">Year</th>
-            <th scope="col">Publications</th>
-            <th scope="col">Endorsements</th>
-            <th scope="col">Points</th>
-            <th scope="col">Percentile</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((x) => (
-            <tr key={x.year}>
-              <th scope="row">{x.year}</th>
-              <td>
-                {x.publications}
-                {x.firstAuthor ? <span className="soft small"> ({x.firstAuthor} first author)</span> : null}
-              </td>
-              <td>{x.endorsements}</td>
-              <td>{x.points}</td>
-              <td>{x.percentile == null ? <span className="soft">Unranked</span> : ordinal(x.percentile)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {/* Each of the three answers a different question: how the score was built, what
+          was done this year, and where that leaves them. */}
+      <div className="stand-built st-tile">
+        <div className="st-head">
+          <h3>Points carried forward</h3>
+          <p>Each source, added up across {YEARS_SHOWN} years</p>
+        </div>
+        <PointsCurves rows={rows} />
+        <div className="st-figs">
+          <div>
+            <span className="st-k">This year</span>
+            <b className="st-v">{now.points}</b>
+            {delta != null && (
+              <span className={"st-delta" + (delta > 0 ? " is-up" : delta < 0 ? " is-down" : "")}>
+                {delta > 0 ? `+${delta}` : delta === 0 ? "level" : delta} on {prev.year}
+              </span>
+            )}
+          </div>
+          <div>
+            <span className="st-k">Over {YEARS_SHOWN} years</span>
+            <b className="st-v">{career}</b>
+          </div>
+        </div>
+      </div>
+
+      <div className="stand-row">
+        <div className="stand-mix st-tile">
+          <div className="st-head">
+            <h3>This year's work</h3>
+            <p>Share of this year's {now.points} points</p>
+          </div>
+          <PointsMix row={now} />
+        </div>
+
+        <div className="stand-rank st-tile">
+          <div className="st-head">
+            <h3>Where they rank</h3>
+            <p>Percentile among ranked researchers</p>
+          </div>
+          <PercentileTicks rows={rows} />
+          <p className="stand-rank-note">
+            {now.percentile == null
+              ? `Unranked for ${year}`
+              : <>
+                  {ordinal(now.rank)} of {plural(now.ranked, "ranked researcher", "ranked researchers")} in {year}
+                </>}
+          </p>
+        </div>
       </div>
       <p className="small soft rank-note">
-        Points are {PUBLICATION_POINTS} for each publication listed with that year on it, {FIRST_AUTHOR_BONUS} more when you are
-        first author, and {ENDORSEMENT_POINTS} for each peer endorsement. The percentile is a percentile rank: everyone who scored
-        less, plus half of anyone tied with you. A year with nothing recorded is unranked rather than last.
+        The percentile is a percentile rank: everyone who scored less, plus half of anyone tied with you. A year with nothing
+        recorded is unranked rather than last.
       </p>
 
       <div className="endorse-row">
@@ -167,6 +180,167 @@ function Standing({ r }) {
         )}
       </div>
     </section>
+  );
+}
+
+/**
+ * Everything a researcher has held or been given, on one time axis. The four kinds keep
+ * their own colour so the mix is readable at a glance; what is still running runs to the
+ * present rather than stopping at a date.
+ */
+const XP_KINDS = ["Academic", "Research", "Membership", "Highlight"];
+const XP_SHOWN = 6; // rows before "show more"; a career runs longer than a screen does
+function Experience({ academic, research, memberships, highlights }) {
+  const [all, setAll] = useState(false);
+  const items = [
+    ...academic.map((a) => ({ kind: "Academic", title: a.title, org: a.org, from: a.from, to: a.to })),
+    ...research.map((a) => ({ kind: "Research", title: a.title, org: a.org, from: a.from, to: a.to })),
+    ...memberships.map((m) => ({
+      kind: "Membership",
+      title: m.body,
+      org: m.grade,
+      from: m.since,
+      to: null,
+    })),
+    ...highlights.map((h) => ({ kind: "Highlight", title: h.title, org: h.detail, at: h.year })),
+  ]
+    // Most recent first, and anything still running above anything that has ended.
+    .sort((x, z) => (z.from || z.at || 0) - (x.from || x.at || 0));
+
+  const present = XP_KINDS.filter((k) => items.some((i) => i.kind === k));
+  const datable = items.filter((i) => i.from || i.at);
+  const undated = items.filter((i) => !i.from && !i.at);
+
+  return (
+    <section className="pcard xp-card">
+      <div className="sec-head">
+        <h2>Experience</h2>
+        <div className="pub-key">
+          {present.map((k) => (
+            <span className="pub-key-i" key={k} data-kind={k}>
+              <i aria-hidden="true" />
+              {k}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {datable.length > 0 && <CareerSpans items={datable} limit={all ? 0 : XP_SHOWN} />}
+      {datable.length > XP_SHOWN && !all && (
+        <button type="button" className="btn btn-sm xp-more" onClick={() => setAll(true)}>
+          Show {datable.length - XP_SHOWN} more
+        </button>
+      )}
+
+      {/* A role with no years on it still belongs on the page, just not on the axis. */}
+      {undated.length > 0 && (
+        <ul className="xp-undated">
+          {undated.map((it, i) => (
+            <li key={i} data-kind={it.kind}>
+              <i aria-hidden="true" />
+              <b>{it.title}</b>
+              {it.org && <span>{it.org}</span>}
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+/**
+ * The papers themselves, gathered under the year they came out. Each year opens and
+ * closes on its own, with the latest open to begin with, so a long record is a short
+ * list of years rather than a page of titles. The dot on each row is what the paper is.
+ */
+function PubList({ pubs }) {
+  const mostCited = Math.max(1, ...pubs.map((p) => p.citations || 0));
+  const years = [];
+  for (const p of pubs) {
+    const y = years[years.length - 1];
+    if (y && y.year === p.year) y.items.push(p);
+    else years.push({ year: p.year, items: [p] });
+  }
+  // The most recent year is open; the rest are a click away.
+  const [open, setOpen] = useState(() => new Set(years.slice(0, 1).map((y) => y.year)));
+  const kinds = [...new Set(pubs.map(pubKind))].sort((a, z) => PUB_KINDS.indexOf(a) - PUB_KINDS.indexOf(z));
+
+  return (
+    <div className="pubr">
+      <div className="pub-key">
+        {kinds.map((k) => (
+          <span className="pub-key-i" key={k} data-kind={k}>
+            <i aria-hidden="true" />
+            {k}
+          </span>
+        ))}
+      </div>
+
+      {years.map((y) => {
+        const isOpen = open.has(y.year);
+        const cited = y.items.reduce((t, p) => t + (p.citations || 0), 0);
+        return (
+          <div className={"pub-yr" + (isOpen ? " is-open" : "")} key={y.year}>
+            <button
+              type="button"
+              className="pub-yr-h"
+              aria-expanded={isOpen}
+              onClick={() =>
+                setOpen((cur) => {
+                  const next = new Set(cur);
+                  next.has(y.year) ? next.delete(y.year) : next.add(y.year);
+                  return next;
+                })
+              }
+            >
+              <Icon.chev />
+              <b>{y.year}</b>
+              {/* a dot per paper, coloured by kind: the year's shape before it is opened */}
+              <span className="pub-yr-dots" aria-hidden="true">
+                {y.items.map((p, i) => (
+                  <i key={i} data-kind={pubKind(p)} />
+                ))}
+              </span>
+              <span className="pub-rule" />
+              <span className="pub-count">
+                {plural(y.items.length, "paper", "papers")}
+                {cited ? ` · ${cited} cited` : ""}
+              </span>
+            </button>
+
+            {isOpen && (
+              <ol>
+                {y.items.map((p, i) => (
+                  <li key={p.doi || i} data-kind={pubKind(p)}>
+                    <span className="pub-dot" aria-hidden="true" />
+                    <div className="pub-main">
+                      {p.url ? (
+                        <a href={p.url} target="_blank" rel="noopener">
+                          {p.title}
+                        </a>
+                      ) : (
+                        <strong>{p.title}</strong>
+                      )}
+                      <div className="pub-meta">
+                        {p.authors ? <span>{p.authors}</span> : null}
+                        {p.venue ? <span>{p.venue}</span> : null}
+                      </div>
+                    </div>
+                    {typeof p.citations === "number" && (
+                      <span className="pub-cites" title={plural(p.citations, "citation", "citations")}>
+                        <b>{p.citations}</b>
+                        {/* against the best-cited paper listed, so the column reads as a shape */}
+                        <i style={{ "--w": `${Math.round((p.citations / mostCited) * 100)}%` }} />
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ol>
+            )}
+          </div>
+        );
+      })}
+    </div>
   );
 }
 
@@ -261,17 +435,29 @@ function Schedule({ events, own }) {
   // rail already had focus, focus follows the selection: that is the tablist pattern,
   // and without it the arrow keys keep acting on the stop you have left behind.
   // Keep the chosen stop in the middle of the rail — on selection, and again when the
-  // window changes size, since a narrower track would otherwise leave it off-screen.
+  // window is resized narrower or wider, which would otherwise leave it off to one side.
   useEffect(() => {
     const centre = (smooth) => {
       const track = trackRef.current;
       const el = track?.querySelector(`[data-i="${sel}"]`);
       if (!el) return;
-      el.scrollIntoView({ inline: "center", block: "nearest", behavior: smooth && !calmly() ? "smooth" : "auto" });
+      // Scroll the rail itself rather than calling scrollIntoView, which would scroll
+      // every ancestor including the page.
+      track.scrollTo({
+        left: el.offsetLeft - (track.clientWidth - el.offsetWidth) / 2,
+        behavior: smooth && !calmly() ? "smooth" : "auto",
+      });
       if (track.contains(document.activeElement) && document.activeElement !== el) el.focus({ preventScroll: true });
     };
     centre(true);
-    const settle = () => centre(false);
+    // Width only: on a phone the address bar sliding away fires resize on nearly every
+    // scroll, and re-centring on those would fight the reader for the page.
+    let was = window.innerWidth;
+    const settle = () => {
+      if (window.innerWidth === was) return;
+      was = window.innerWidth;
+      centre(false);
+    };
     window.addEventListener("resize", settle);
     return () => window.removeEventListener("resize", settle);
   }, [sel]);
@@ -322,19 +508,19 @@ function Schedule({ events, own }) {
     <section className="pcard">
       <div className="sec-head">
         <h2>Schedule</h2>
-        <div className="tl-nav">
-          <button type="button" className="tl-arrow" onClick={() => step(-1)} disabled={sel === 0} aria-label="Earlier">
+        <div className="sch-nav">
+          <button type="button" className="sch-arrow" onClick={() => step(-1)} disabled={sel === 0} aria-label="Earlier">
             <Icon.chev />
           </button>
-          <button type="button" className="tl-arrow next" onClick={() => step(1)} disabled={sel >= all.length - 1} aria-label="Later">
+          <button type="button" className="sch-arrow next" onClick={() => step(1)} disabled={sel >= all.length - 1} aria-label="Later">
             <Icon.chev />
           </button>
         </div>
       </div>
 
       {/* The rail. Stops sit in date order; the one you pick is shown in full below. */}
-      <div className="tl-wrap">
-        <div className="tl-track" ref={trackRef} role="tablist" aria-label="Events in date order" aria-orientation="horizontal" onKeyDown={onKey}>
+      <div className="sch-wrap">
+        <div className="sch-track" ref={trackRef} role="tablist" aria-label="Events in date order" aria-orientation="horizontal" onKeyDown={onKey}>
           {/* Written out here rather than as a nested component: a component declared
               inside this one is a new type on every render, so React would throw the
               stops away and rebuild them, losing focus mid-keypress. */}
@@ -347,32 +533,32 @@ function Schedule({ events, own }) {
             return (
               <Fragment key={i}>
                 {i === next && next > 0 && (
-                  <span className="tl-today" aria-hidden="true">
-                    <span className="tl-today-word">Today</span>
-                    <span className="tl-today-tick" />
-                    <span className="tl-today-dot" />
+                  <span className="sch-today" aria-hidden="true">
+                    <span className="sch-today-word">Today</span>
+                    <span className="sch-today-tick" />
+                    <span className="sch-today-dot" />
                   </span>
                 )}
                 <button
                   type="button"
                   role="tab"
                   data-i={i}
-                  id={`tl-tab-${i}`}
+                  id={`sch-tab-${i}`}
                   aria-selected={i === sel}
-                  aria-controls="tl-panel"
+                  aria-controls="sch-panel"
                   tabIndex={i === sel ? 0 : -1}
-                  className={"tl-stop" + (done ? " is-done" : "") + (onNow ? " is-now" : "") + (i === sel ? " is-sel" : "")}
+                  className={"sch-stop" + (done ? " is-done" : "") + (onNow ? " is-now" : "") + (i === sel ? " is-sel" : "")}
                   style={{ "--p": near.toFixed(3) }}
                   onClick={() => setSel(i)}
                 >
-                  <span className="tl-date">
+                  <span className="sch-date">
                     <b>{utc(e.date).getUTCDate()}</b>
                     <span>{mon(e.date)}</span>
                   </span>
-                  <span className="tl-node" aria-hidden="true" />
-                  <span className="tl-label">
-                    <span className="tl-type">{e.type}</span>
-                    <span className="tl-name">{e.title}</span>
+                  <span className="sch-node" aria-hidden="true" />
+                  <span className="sch-label">
+                    <span className="sch-type">{e.type}</span>
+                    <span className="sch-name">{e.title}</span>
                   </span>
                 </button>
               </Fragment>
@@ -382,18 +568,18 @@ function Schedule({ events, own }) {
       </div>
 
       {/* What you picked, in full. */}
-      <div className="tl-panel" id="tl-panel" role="tabpanel" aria-labelledby={`tl-tab-${sel}`} tabIndex={-1}>
-        <div className="tl-panel-top">
+      <div className="sch-panel" id="sch-panel" role="tabpanel" aria-labelledby={`sch-tab-${sel}`} tabIndex={-1}>
+        <div className="sch-panel-top">
           <span className="ev-type">{picked.type}</span>
           {!over(picked) && <span className="ev-soon">{when(picked)}</span>}
-          {over(picked) && <span className="tl-past-tag">Past</span>}
+          {over(picked) && <span className="sch-past-tag">Past</span>}
         </div>
         <h3>{picked.title}</h3>
         <div className="ev-meta">
           <span>{dates(picked)}</span>
           {picked.place && <span>{picked.place}</span>}
         </div>
-        {picked.detail && <p className="tl-detail">{picked.detail}</p>}
+        {picked.detail && <p className="sch-detail">{picked.detail}</p>}
         {picked.url && (
           <a className="link small" href={picked.url} target="_blank" rel="noreferrer noopener">
             Event page →
@@ -582,15 +768,6 @@ export function ResearcherPage({ id, own: ownPage = false, onVerify, onScholar }
 
   const own = AUTH.researcher?.id === r.id;
   const pubs = [...(r.publications || [])].sort((a, b) => b.year - a.year);
-  // Every year between the first and last publication gets a slot, including the empty
-  // ones: evenly spaced bars that skipped a year would read as consecutive.
-  const counts = pubs.reduce((m, p) => ({ ...m, [p.year]: (m[p.year] || 0) + 1 }), {});
-  const pubYears = pubs.map((p) => Number(p.year));
-  const last = pubYears.length ? Math.max(...pubYears) : 0;
-  const first = pubYears.length ? Math.max(Math.min(...pubYears), last - 9) : 0;
-  const years = pubYears.length
-    ? Array.from({ length: last - first + 1 }, (_, i) => ({ year: first + i, count: counts[first + i] || 0 }))
-    : [];
   const gs = groupsOf(r.id);
   const theirStudies = S.studies.filter((s) => s.researcherId === r.id);
   const supervising = (r.supervising || []).map((s) => ({ ...s, r: byId("researchers", s.researcherId) })).filter((s) => s.r);
@@ -619,8 +796,6 @@ export function ResearcherPage({ id, own: ownPage = false, onVerify, onScholar }
         {/* The identity, laid out like the data page of a passport: a ruled header, the
             portrait, labelled fields, then the document number along the bottom. */}
         <section className="ppt" aria-label={`${r.name}, researcher record`}>
-          <CardPattern className="ppt-pattern" />
-
           {/* A div, not a <header>: the site's own header palette is scoped to that tag. */}
           <div className="ppt-head">
             <span className="ppt-doc">
@@ -641,6 +816,8 @@ export function ResearcherPage({ id, own: ownPage = false, onVerify, onScholar }
             <div className="ppt-photo">
               <Avatar name={r.name} size={96} />
               <Stem discipline={r.discipline} />
+              {/* Last, so the portrait stays the column's first child and keeps its frame. */}
+              <CardPattern className="ppt-pattern" />
             </div>
             <div className="ppt-fields">
               <h1>{r.name}</h1>
@@ -762,137 +939,47 @@ export function ResearcherPage({ id, own: ownPage = false, onVerify, onScholar }
       <Standing r={r} />
 
       {/* ---- the published record ---- */}
-      <section className="pcard">
+      <section className="pcard pubs-card">
         <div className="sec-head">
           <h2>Publications</h2>
-          {own && (
-            <a className="link small" href="#/profile/edit">
-              Add by DOI →
-            </a>
-          )}
-        </div>
-        {!pubs.length ? (
-          <p className="soft small">No publications listed yet.</p>
-        ) : (
-          <div className="pcard-split">
-            <div>
-              <PubBars years={years} />
-              <ol className="pub-list">
-                {pubs.map((p, i) => (
-                  <li key={p.doi || i}>
-                    <div className="pub-year">{p.year}</div>
-                    <div>
-                      {p.url ? (
-                        <a href={p.url} target="_blank" rel="noopener">
-                          {p.title}
-                        </a>
-                      ) : (
-                        <strong>{p.title}</strong>
-                      )}
-                      <div className="small soft">{p.authors}</div>
-                      <div className="small soft">
-                        {p.venue}
-                        {typeof p.citations === "number" ? ` · ${plural(p.citations, "citation", "citations")}` : ""}
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            </div>
-            <div className="pcard-side">
-              {r.metrics ? (
-                <>
-                  <h3 className="sub" style={{ marginTop: 0 }}>Publication stats</h3>
-                  <Radar m={r.metrics} size={168} labels />
-                  <p className="small soft" style={{ marginTop: 8 }}>
-                    From {r.metrics.source || "OpenAlex"}, updated {fmtDate(r.metrics.updatedAt)}. Each axis is scaled against the
-                    highest figure among researchers here.
-                  </p>
-                  {own && (
-                    <button className="btn" onClick={onScholar}>
-                      Refresh stats
-                    </button>
-                  )}
-                </>
-              ) : own ? (
-                <>
-                  <h3 className="sub" style={{ marginTop: 0 }}>Publication stats</h3>
-                  <p className="small soft">Link your ORCID and OpenAlex fills in citations, h-index and i10.</p>
-                  <button className="btn" onClick={onScholar}>
-                    Add via ORCID
-                  </button>
-                </>
-              ) : null}
-            </div>
+          <div className="pubs-head-r">
+            {pubs.length > 0 && <span className="stand-year">{plural(pubs.length, "listed", "listed")}</span>}
+            {own && (
+              <a className="link small" href="#/profile/edit">
+                Add by DOI
+              </a>
+            )}
           </div>
+        </div>
+
+        {r.metrics ? (
+          <div className="st-tile pubs-stats">
+            <PubFigures m={r.metrics} />
+            {own && (
+              <button className="btn btn-sm" onClick={onScholar}>
+                Refresh figures
+              </button>
+            )}
+          </div>
+        ) : own ? (
+          <div className="st-tile pubs-stats">
+            <p className="small soft" style={{ margin: 0 }}>Link your ORCID and OpenAlex fills in citations, h-index and i10.</p>
+            <button className="btn btn-sm" onClick={onScholar}>
+              Add via ORCID
+            </button>
+          </div>
+        ) : null}
+
+        {!pubs.length ? (
+          <p className="soft small" style={{ marginTop: 12 }}>No publications listed yet.</p>
+        ) : (
+          <PubList pubs={pubs} />
         )}
       </section>
 
-      {/* ---- roles and memberships, in one place rather than four ---- */}
+      {/* ---- roles and memberships, on one axis rather than in four lists ---- */}
       {(academic.length > 0 || research.length > 0 || memberships.length > 0 || highlights.length > 0) && (
-        <section className="pcard">
-          <h2>Experience</h2>
-          <div className="pcols">
-            {academic.length > 0 && (
-              <div>
-                <h3 className="sub" style={{ marginTop: 0 }}>Academic roles</h3>
-                <ul className="role-list">
-                  {academic.map((a, i) => (
-                    <li key={i}>
-                      <strong>{a.title}</strong>
-                      {a.org && <div className="small soft">{a.org}</div>}
-                      <div className="small soft">{span(a)}</div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {research.length > 0 && (
-              <div>
-                <h3 className="sub" style={{ marginTop: 0 }}>Research roles</h3>
-                <ul className="role-list">
-                  {research.map((a, i) => (
-                    <li key={i}>
-                      <strong>{a.title}</strong>
-                      {a.org && <div className="small soft">{a.org}</div>}
-                      <div className="small soft">{span(a)}</div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {memberships.length > 0 && (
-              <div>
-                <h3 className="sub" style={{ marginTop: 0 }}>Memberships</h3>
-                <ul className="role-list">
-                  {memberships.map((m, i) => (
-                    <li key={i}>
-                      <strong>{m.body}</strong>
-                      <div className="small soft">{[m.grade, m.since ? `since ${m.since}` : ""].filter(Boolean).join(" · ")}</div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {highlights.length > 0 && (
-              <div>
-                <h3 className="sub" style={{ marginTop: 0 }}>Highlights</h3>
-                <ul className="hl-list">
-                  {highlights.map((h, i) => (
-                    <li key={i}>
-                      <Icon.star />
-                      <div>
-                        <strong>{h.title}</strong>
-                        {h.year ? <span className="small soft"> · {h.year}</span> : null}
-                        {h.detail && <div className="small soft">{h.detail}</div>}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        </section>
+        <Experience academic={academic} research={research} memberships={memberships} highlights={highlights} />
       )}
 
       {/* ---- the people around them ---- */}

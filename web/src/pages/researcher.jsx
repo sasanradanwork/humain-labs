@@ -1,6 +1,7 @@
 // The researcher side: directory, group pages, the group editor and the researcher area.
 import { useEffect, useRef, useState } from "react";
-import { Avatar, Icon, LinkedInLink, Radar, ScholarLink, Cover, DeadlinePill, VerifiedBadge, UnverifiedBadge, sortByName } from "../components/ui.jsx";
+import { PubFigures } from "../components/charts.jsx";
+import { Avatar, Icon, LinkedInLink, ScholarLink, Cover, DeadlinePill, VerifiedBadge, UnverifiedBadge, sortByName } from "../components/ui.jsx";
 import { GroupCard, ResearcherCard, Toolbar, groupHref, researcherHref, lookingFor, APP_STAGES } from "../components/cards.jsx";
 import { AUTH, S, appCount, byId, canEditGroup, groupStudies, groupsOf, memberResearchers, role } from "../lib/store.js";
 import { DAY_MS, fmtDate, FORMATS, gidKey, isOpen, makeHandle, matches, normCountry, OPENING_TYPES, plural, ROLE_SUGGESTIONS, sortName, today, uniq } from "../lib/util.js";
@@ -1294,9 +1295,8 @@ export function ProfileEditor({ onVerify, onScholar, onRor, onDelete }) {
             </div>
             {p.metrics ? (
               <div className="stats-box" style={{ marginTop: 14 }}>
-                <Radar m={p.metrics} size={190} labels />
+                <PubFigures m={p.metrics} />
                 <div>
-                  <p className="small soft">From OpenAlex, updated {fmtDate(p.metrics.updatedAt)}.</p>
                   <button type="button" className="btn" onClick={onScholar}>
                     Refresh stats
                   </button>

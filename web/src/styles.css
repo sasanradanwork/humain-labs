@@ -5,6 +5,12 @@
   --map-land:#DCE0EA; --map-hit:#AEB9EE; --overlay:rgba(16,24,40,.5);
   --t0b:#E9EBFA; --t0f:#1C39BB; --t1b:#E3F0EF; --t1f:#0F6E6E; --t2b:#EEEAF8; --t2f:#5B3FA8;
   --t3b:#E6ECF6; --t3f:#23408E; --t4b:#ECEEF2; --t4f:#3D4A5C;
+  /* the instrument set: the figure face, the series colours and the tile's lit edge,
+     shared by the standing panel and the published record */
+  --inst:ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace;
+  --c-pub:var(--blue); --c-first:var(--t1f); --c-end:var(--gold); --c-now:var(--green);
+  --edge:color-mix(in oklab, #FFFFFF 70%, transparent);
+  --lift:0 14px 26px -24px rgba(16,24,40,.75);
   --serif:'Source Serif 4', Georgia, 'Times New Roman', serif;
   --sans:'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   color-scheme: light;
@@ -13,7 +19,9 @@
   :root:not([data-theme="light"]){
     --paper:#0E1322; --paper-2:#161C2E; --card:#131A2C; --ink:#E7EAF3; --ink-soft:#A1A9BC;
     --line:#2A3350; --blue:#93A5FF; --blue-deep:#BCC7FF; --blue-tint:#1D2648; --on-blue:#0E1322; --green:#4ADE80; --green-tint:#14301F; --amber:#F5B041; --amber-tint:#3A2A10; --gold:#E9C46A; --gold-tint:#3A3216; --silver:#B7BFCC; --silver-tint:#262B38;
-    --map-land:#26304B; --map-hit:#4A5CB0; --overlay:rgba(0,0,0,.6);
+    --edge:color-mix(in oklab, #FFFFFF 8%, transparent); --lift:0 16px 30px -24px rgba(0,0,0,.9);
+    --edge:color-mix(in oklab, #FFFFFF 8%, transparent); --lift:0 16px 30px -24px rgba(0,0,0,.9);
+  --map-land:#26304B; --map-hit:#4A5CB0; --overlay:rgba(0,0,0,.6);
     --t0b:#1B2447; --t0f:#93A5FF; --t1b:#12302F; --t1f:#6CCFC6; --t2b:#241C3D; --t2f:#B9A4F2;
     --t3b:#18233F; --t3f:#8EB0F0; --t4b:#1D2330; --t4f:#A9B4C6;
     color-scheme: dark;
@@ -22,6 +30,7 @@
 :root[data-theme="dark"]{
   --paper:#0E1322; --paper-2:#161C2E; --card:#131A2C; --ink:#E7EAF3; --ink-soft:#A1A9BC;
   --line:#2A3350; --blue:#93A5FF; --blue-deep:#BCC7FF; --blue-tint:#1D2648; --on-blue:#0E1322; --green:#4ADE80; --green-tint:#14301F; --amber:#F5B041; --amber-tint:#3A2A10; --gold:#E9C46A; --gold-tint:#3A3216; --silver:#B7BFCC; --silver-tint:#262B38;
+  --edge:color-mix(in oklab, #FFFFFF 8%, transparent); --lift:0 16px 30px -24px rgba(0,0,0,.9);
   --map-land:#26304B; --map-hit:#4A5CB0; --overlay:rgba(0,0,0,.6);
   --t0b:#1B2447; --t0f:#93A5FF; --t1b:#12302F; --t1f:#6CCFC6; --t2b:#241C3D; --t2f:#B9A4F2;
   --t3b:#18233F; --t3f:#8EB0F0; --t4b:#1D2330; --t4f:#A9B4C6;
@@ -117,6 +126,10 @@ main{padding:36px 0 80px;min-height:60vh}
 .foot{margin-top:12px;padding-top:14px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}
 .badge{display:inline-block;font-size:.72rem;line-height:1.35;padding:.28rem .65rem;border-radius:8px;background:var(--blue-tint);color:var(--blue)}
 .badges{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+/* Where the study takes place. It belongs with the Format/Time rows under it, so it sits
+   close to them and takes the spare space above instead. */
+.card-loc{display:flex;align-items:center;gap:5px;margin-top:3px}
+.card-loc + .facts{margin-top:0}
 .facts{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font-size:.8rem;margin-top:4px}
 .facts dt{color:var(--ink-soft)}
 .facts dd{margin:0}
@@ -166,9 +179,6 @@ main{padding:36px 0 80px;min-height:60vh}
 .mapbox{border:1px solid var(--line);border-radius:20px;overflow:hidden;background:var(--paper-2);height:440px;position:relative}
 @media (max-width:640px){.mapbox{height:280px}}
 #map{width:100%;height:100%}
-.bars{display:grid;gap:8px;margin-top:22px}
-.bar{display:grid;grid-template-columns:140px 1fr 36px;gap:12px;align-items:center;font-size:.85rem}
-.bar i{display:block;height:8px;border-radius:99px;background:var(--blue)}
 
 /* table */
 .tablewrap{border:1px solid var(--line);border-radius:14px;overflow-x:auto}
@@ -491,14 +501,10 @@ header .who-name .avatar{border-color:rgba(231,234,243,.35)}
 .metrics b.muted{color:var(--ink-soft)}
 
 /* radar drawing styles */
-.radar-grid{fill:none;stroke:var(--line);stroke-width:1}
-.radar-shape{fill:var(--blue);fill-opacity:.22;stroke:var(--blue);stroke-width:1.6;stroke-linejoin:round}
-.radar-label{font-family:'IBM Plex Sans',sans-serif;font-size:9.5px;fill:var(--ink-soft)}
-.radar-val{fill:var(--blue);font-weight:600}
 .stats-box{flex-basis:100%;display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
 .stats-box > div{flex:1;min-width:200px;display:grid;gap:8px;justify-items:start}
 .stats-box.empty-box{align-items:flex-start}
-.stats-box .radar{flex:none}
+.stats-box .pfigs{flex:1 1 420px}
 .mlinks{display:flex;gap:8px;align-items:center;flex:none}
 
 /* ---- founder photo, group identifiers ---- */
@@ -741,12 +747,15 @@ header nav a:hover{color:#E7EAF3}
 header nav a[aria-current="page"]{color:#E7EAF3}
 header nav a::after{background:#FFFFFF}
 /* Study timeline on cards */
+/* The line has to run through the middle of the numbered circles, so it is positioned
+   from the same two measurements the circles are: the button's padding and the circle. */
 .tl{margin-top:12px}
-.tl-track{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));list-style:none;margin:0;padding:0}
-.tl-track::before{content:"";position:absolute;left:12.5%;right:12.5%;top:21px;height:2px;background:var(--line)}
+.tl-track{--dot-pad:4px; --mark:30px; position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));list-style:none;margin:0;padding:0}
+.tl-track::before{content:"";position:absolute;left:12.5%;right:12.5%;
+  top:calc(var(--dot-pad) + var(--mark) / 2 - 1px);height:2px;background:var(--line)}
 .tl-track li{display:flex;justify-content:center;min-width:0}
-.tl-dot{position:relative;background:none;border:0;padding:4px 2px;min-height:44px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;font:inherit;color:var(--ink-soft);min-width:0}
-.tl-mark{width:30px;height:30px;border-radius:999px;background:var(--card);border:2px solid var(--c);color:var(--c);display:inline-flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:600;transition:transform .2s ease,background .2s ease}
+.tl-dot{position:relative;background:none;border:0;padding:var(--dot-pad) 2px;min-height:44px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;font:inherit;color:var(--ink-soft);min-width:0}
+.tl-mark{width:var(--mark);height:var(--mark);border-radius:999px;background:var(--card);border:2px solid var(--c);color:var(--c);display:inline-flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:600;transition:transform .2s ease,background .2s ease}
 .tl-dot:hover .tl-mark{transform:scale(1.08)}
 .tl-dot[aria-pressed="true"] .tl-mark{background:var(--c);color:#FFFFFF}
 .tl-label{font-size:.72rem;line-height:1.2;text-align:center}
@@ -1009,13 +1018,12 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
 .role-list li{border-left:2px solid var(--line);padding-left:12px}
 .role-list li strong,.role-list li > a{display:block}
 
-.pub-list{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:14px}
-.pub-list li{display:grid;grid-template-columns:52px 1fr;gap:12px;align-items:start}
-.pub-year{font-variant-numeric:tabular-nums;color:var(--ink-soft);font-size:.86rem;padding-top:2px}
 
 /* ---- charts ---- */
 .chart{margin:4px 0 2px}
-.bars{width:100%;height:auto;display:block;overflow:visible}
+/* The chart's own spacing. It used to inherit this from a bar-list component that no
+   longer exists, which is why the rule carries its margin. */
+.bars{width:100%;height:auto;display:block;overflow:visible;margin-top:22px}
 .ax-grid{stroke:var(--line);stroke-width:1}
 .ax-line{stroke:var(--line);stroke-width:1.5}
 .ax-label{fill:var(--ink-soft);font-size:9.5px;font-variant-numeric:tabular-nums}
@@ -1103,31 +1111,6 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
 /* A section heading with a link opposite it. */
 .sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
 .sec-head h2{margin-bottom:0}
-
-/* ---- research interests, drawn as a tree ---- */
-/* Each level indents and hangs off an elbow from its parent, so a path reads
-   left to right: Technology → HCI → Technostress. */
-.itree{margin-top:4px}
-.itree ul{list-style:none;margin:0;padding:0}
-.itree li > ul{padding-left:20px}
-.itree li{position:relative;padding:3px 0 3px 0}
-.itree li > ul > li{padding-left:16px}
-.itree li > ul > li::before{
-  /* the vertical run from the parent down past this child */
-  content:"";position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--line);
-}
-.itree li > ul > li:last-child::before{bottom:auto;height:16px}
-.itree li > ul > li::after{
-  /* the elbow into this child */
-  content:"";position:absolute;left:0;top:16px;width:11px;height:1px;background:var(--line);
-}
-.itree .node{
-  display:inline-block;padding:3px 10px;border-radius:999px;border:1px solid var(--line);
-  background:var(--card);font-size:.84rem;color:var(--ink-soft);
-}
-.itree .node-root{border-color:var(--blue);color:var(--blue);background:var(--blue-tint);font-weight:600}
-/* The deeper a step, the more specific: the leaf is the one worth reading. */
-.itree li > ul > li > .node{color:var(--ink)}
 
 .badge-disc{border-color:var(--blue);color:var(--blue);background:var(--blue-tint)}
 
@@ -1305,8 +1288,11 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
 /* ---- research interests as a graph you move around ---- */
 /* The frame is a fixed size whatever is in it: adding an interest makes the drawing
    bigger inside the frame, not the page longer. */
+/* pan-y, not none: on a touch screen a finger swipe up or down scrolls the page as it
+   would anywhere else, and a sideways drag moves the drawing. Without it the frame
+   swallows the scroll and traps the reader half way down the profile. */
 .ig-frame{position:relative;height:300px;border:1px solid var(--line);border-radius:14px;
-  background:var(--paper-2);overflow:hidden;cursor:grab;touch-action:none;
+  background:var(--paper-2);overflow:hidden;cursor:grab;touch-action:pan-y;
   background-image:radial-gradient(color-mix(in oklab, var(--ink-soft) 20%, transparent) 1px, transparent 1px);
   background-size:18px 18px}
 .ig-frame:active{cursor:grabbing}
@@ -1343,8 +1329,6 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
 .pcard > h2,.pcard > .sec-head > h2{margin:0 0 16px;font-size:1.15rem}
 .pcard .sec-head{margin-bottom:16px}
 /* Body text on one side, the thing worth looking at on the other. */
-.pcard-split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:30px;align-items:start}
-.pcard-side{display:grid;gap:10px;justify-items:start}
 @media (max-width:900px){ .pcard-split{grid-template-columns:1fr;gap:22px} }
 @media (max-width:560px){ .pcard{padding:20px 18px} }
 /* Roles, memberships and people: as many columns as fit, never a tall thin list. */
@@ -1389,13 +1373,14 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
   :root:not([data-theme="light"]) .ppt{box-shadow:0 1px 2px rgba(0,0,0,.3), 0 14px 32px -20px rgba(0,0,0,.9)}
 }
 /* The watermark: nested rounded rectangles, centred on the portrait so the rings read as
-   radiating from it. It fades away in every direction from that centre, which keeps it
-   faint texture everywhere the eye actually reads. The offsets are the card's own left
-   padding plus half the 96px portrait, and the header band plus the top padding plus
-   half the portrait — that is, the middle of the picture. */
-.ppt > .ppt-pattern{
-  position:absolute;z-index:0;pointer-events:none;
-  width:620px;height:auto;max-width:none;left:70px;top:116px;transform:translate(-50%,-50%);
+   radiating from it, fading away in every direction from that centre. It lives in the
+   portrait column and is placed half a portrait down from the top of it, so the centre
+   follows the picture wherever the layout puts it — side by side on a wide screen,
+   stacked and centred on a phone — with no offsets to keep in step. */
+.ppt-photo{position:relative}
+.ppt-photo > .ppt-pattern{
+  position:absolute;z-index:-1;pointer-events:none;
+  width:620px;height:auto;max-width:none;left:50%;top:48px;transform:translate(-50%,-50%);
   color:var(--blue);opacity:.085;
   -webkit-mask-image:radial-gradient(circle at 50% 50%, rgb(0 0 0 / .9) 6%, rgb(0 0 0 / .35) 34%, transparent 62%);
   mask-image:radial-gradient(circle at 50% 50%, rgb(0 0 0 / .9) 6%, rgb(0 0 0 / .35) 34%, transparent 62%);
@@ -1403,13 +1388,15 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
 .cp-nested rect{stroke-width:.8}
 :root[data-theme="dark"] .ppt-pattern{opacity:.13}
 @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .ppt-pattern{opacity:.13} }
-@media (max-width:560px){ .ppt > .ppt-pattern{left:50%;top:150px;width:480px} }
+@media (max-width:560px){ .ppt-photo > .ppt-pattern{width:480px} }
 .ppt > *{position:relative;z-index:1}
 
 /* The ruled header: what the document is, and the two things you can do to it. */
 .ppt-head{display:flex;align-items:center;justify-content:space-between;gap:12px;
   padding:9px 14px 9px 18px;border-bottom:1px solid var(--line);
-  /* Opaque, so the watermark behind the card never shows through the header. */
+  /* Opaque, and above the portrait column, so the watermark that radiates up from the
+     picture stops at the band rather than bleeding into it. */
+  z-index:2;
   background:linear-gradient(90deg, var(--blue-tint), var(--card) 62%)}
 .ppt-doc{display:inline-flex;align-items:center;gap:8px;min-width:0;font-size:.66rem;font-weight:600;
   letter-spacing:.14em;text-transform:uppercase;color:var(--blue);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1450,107 +1437,104 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
    animated: a plain custom property would jump from one value to the next. */
 @property --p{syntax:'<number>';initial-value:0;inherits:true}
 
-.tl-nav{display:flex;gap:6px}
-.tl-arrow{width:28px;height:28px;display:grid;place-items:center;padding:0;cursor:pointer;
+.sch-nav{display:flex;gap:6px}
+.sch-arrow{width:28px;height:28px;display:grid;place-items:center;padding:0;cursor:pointer;
   border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink-soft)}
-.tl-arrow svg{width:15px;height:15px;transform:rotate(90deg)}
-.tl-arrow.next svg{transform:rotate(-90deg)}
-.tl-arrow:hover:not(:disabled){border-color:var(--blue);color:var(--blue)}
-.tl-arrow:disabled{opacity:.35;cursor:default}
+.sch-arrow svg{width:15px;height:15px;transform:rotate(90deg)}
+.sch-arrow.next svg{transform:rotate(-90deg)}
+.sch-arrow:hover:not(:disabled){border-color:var(--blue);color:var(--blue)}
+.sch-arrow:disabled{opacity:.35;cursor:default}
 
 /* The rail fades out at both ends rather than being cut, so it reads as continuing. */
-.tl-wrap{position:relative;margin:2px -4px 0;
+.sch-wrap{position:relative;margin:2px -4px 0;
   -webkit-mask-image:linear-gradient(90deg, transparent, #000 26px, #000 calc(100% - 26px), transparent);
   mask-image:linear-gradient(90deg, transparent, #000 26px, #000 calc(100% - 26px), transparent)}
 
 /* One rhythm, declared once: everything that has to sit on the rail is positioned from
    these, so the line, the nodes and the today marker cannot drift apart. */
-.tl-track{--pad:6px; --chip:38px; --gap:11px; --node:11px;
+.sch-track{--pad:6px; --chip:38px; --gap:11px; --node:11px;
   --rail:calc(var(--pad) + var(--chip) + var(--gap) + var(--node) / 2);
   position:relative;display:flex;align-items:flex-start;gap:4px;overflow-x:auto;
   padding:var(--pad) 26px 2px;scroll-snap-type:x proximity;scrollbar-width:none;overscroll-behavior-x:contain}
-.tl-track::-webkit-scrollbar{display:none}
-.tl-track::before{content:"";position:absolute;left:26px;right:26px;top:calc(var(--rail) - 1px);
+.sch-track::-webkit-scrollbar{display:none}
+.sch-track::before{content:"";position:absolute;left:26px;right:26px;top:calc(var(--rail) - 1px);
   height:2px;border-radius:2px;background:var(--line)}
 
-.tl-stop{position:relative;flex:1 0 clamp(118px, 34vw, 146px);max-width:190px;scroll-snap-align:center;display:grid;justify-items:center;
+.sch-stop{position:relative;flex:1 0 clamp(118px, 34vw, 146px);max-width:190px;scroll-snap-align:center;display:grid;justify-items:center;
   padding:0 6px 2px;border:0;background:none;cursor:pointer;font:inherit;color:inherit;text-align:center;
   border-radius:10px;transition:translate .2s ease}
-.tl-stop:hover{translate:0 -2px}
-.tl-stop:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+.sch-stop:hover{translate:0 -2px}
+.sch-stop:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
 
 /* The date rides above the rail. Quiet by default: the selection and today carry the
    colour, so a row of chips doesn't shout all at once. */
-.tl-date{display:grid;place-content:center;gap:0;width:38px;height:var(--chip);border-radius:10px;
+.sch-date{display:grid;place-content:center;gap:0;width:38px;height:var(--chip);border-radius:10px;
   line-height:1.05;background:var(--paper-2);box-shadow:inset 0 0 0 1px var(--line)}
-.tl-date b{font-size:.86rem;font-weight:650;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
-.tl-date span{font-size:.46rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}
-.tl-stop.is-sel .tl-date{background:color-mix(in oklab, var(--blue) 10%, var(--card));
+.sch-date b{font-size:.86rem;font-weight:650;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.sch-date span{font-size:.46rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}
+.sch-stop.is-sel .sch-date{background:color-mix(in oklab, var(--blue) 10%, var(--card));
   box-shadow:inset 0 0 0 1px color-mix(in oklab, var(--blue) 35%, transparent)}
-.tl-stop.is-sel .tl-date span{color:var(--blue)}
-.tl-stop.is-now .tl-date{background:var(--blue);box-shadow:none;color:var(--on-blue)}
-.tl-stop.is-now .tl-date span{color:color-mix(in oklab, var(--on-blue) 75%, transparent)}
+.sch-stop.is-sel .sch-date span{color:var(--blue)}
+.sch-stop.is-now .sch-date{background:var(--blue);box-shadow:none;color:var(--on-blue)}
+.sch-stop.is-now .sch-date span{color:color-mix(in oklab, var(--on-blue) 75%, transparent)}
 
 /* The node that sits on the line, with a ring that fills as the date nears. */
-.tl-node{position:relative;width:var(--node);height:var(--node);margin:var(--gap) 0 9px;border-radius:50%;
+.sch-node{position:relative;width:var(--node);height:var(--node);margin:var(--gap) 0 9px;border-radius:50%;
   background:var(--card);box-shadow:0 0 0 2px var(--line);transition:box-shadow .2s ease,scale .2s ease}
-.tl-node::before{content:"";position:absolute;inset:-5px;border-radius:50%;padding:2px;
+.sch-node::before{content:"";position:absolute;inset:-5px;border-radius:50%;padding:2px;
   background:conic-gradient(from 0deg, var(--blue) calc(var(--p) * 1turn), transparent 0);
   -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite:xor;
   mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   mask-composite:exclude;
   opacity:.8;transition:--p 1.1s cubic-bezier(.33,1,.68,1)}
-@starting-style{ .tl-stop{--p:0} }
-.tl-stop.is-done .tl-node{background:var(--line);box-shadow:0 0 0 2px var(--line)}
-.tl-stop.is-done .tl-node::before{display:none}
-.tl-stop.is-sel .tl-node{background:var(--blue);box-shadow:0 0 0 3px color-mix(in oklab, var(--blue) 25%, transparent)}
-.tl-stop.is-now .tl-node{animation:tl-breathe 2.8s ease-in-out infinite}
-@keyframes tl-breathe{
+@starting-style{ .sch-stop{--p:0} }
+.sch-stop.is-done .sch-node{background:var(--line);box-shadow:0 0 0 2px var(--line)}
+.sch-stop.is-done .sch-node::before{display:none}
+.sch-stop.is-sel .sch-node{background:var(--blue);box-shadow:0 0 0 3px color-mix(in oklab, var(--blue) 25%, transparent)}
+.sch-stop.is-now .sch-node{animation:sch-breathe 2.8s ease-in-out infinite}
+@keyframes sch-breathe{
   0%,100%{box-shadow:0 0 0 2px color-mix(in oklab, var(--blue) 55%, transparent)}
   50%{box-shadow:0 0 0 7px color-mix(in oklab, var(--blue) 0%, transparent)}
 }
 
-.tl-label{display:grid;gap:1px;max-width:100%}
-.tl-type{font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--ink-soft)}
-.tl-stop.is-sel .tl-type{color:var(--blue)}
-.tl-name{font-size:.78rem;font-weight:600;line-height:1.32;color:var(--ink-soft);
+.sch-label{display:grid;gap:1px;max-width:100%}
+.sch-type{font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--ink-soft)}
+.sch-stop.is-sel .sch-type{color:var(--blue)}
+.sch-name{font-size:.78rem;font-weight:600;line-height:1.32;color:var(--ink-soft);
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-wrap:balance}
-.tl-stop.is-sel .tl-name{color:var(--ink)}
-.tl-stop.is-done .tl-name,.tl-stop.is-done .tl-date{opacity:.6}
+.sch-stop.is-sel .sch-name{color:var(--ink)}
+.sch-stop.is-done .sch-name,.sch-stop.is-done .sch-date{opacity:.6}
 
 /* Where today falls on the rail: a named pill, a line down through the stops, and a dot
    on the rail itself — positioned from the same rhythm as everything else. */
-.tl-today{position:relative;flex:0 0 46px;display:grid;justify-items:center;align-content:start;
+.sch-today{position:relative;flex:0 0 46px;display:grid;justify-items:center;align-content:start;
   padding-top:1px;pointer-events:none}
-.tl-today-word{padding:2px 7px;border-radius:999px;background:var(--green);color:var(--card);
+.sch-today-word{padding:2px 7px;border-radius:999px;background:var(--green);color:var(--card);
   font-size:.48rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;line-height:1.35}
-.tl-today-tick{margin-top:5px;width:2px;height:64px;border-radius:2px;
+.sch-today-tick{margin-top:5px;width:2px;height:64px;border-radius:2px;
   background:linear-gradient(180deg, var(--green), color-mix(in oklab, var(--green) 10%, transparent))}
-.tl-today-dot{position:absolute;top:calc(var(--rail) - var(--pad) - 5px);width:10px;height:10px;border-radius:50%;
+.sch-today-dot{position:absolute;top:calc(var(--rail) - var(--pad) - 5px);width:10px;height:10px;border-radius:50%;
   background:var(--green);box-shadow:0 0 0 3px var(--card)}
 
 /* The stop you picked, in full. */
-.tl-panel{margin-top:12px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--paper-2);
+.sch-panel{margin-top:12px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--paper-2);
   display:grid;gap:5px;justify-items:start}
-.tl-panel:focus{outline:none}
-.tl-panel-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.tl-panel h3{margin:0;font-size:1rem;line-height:1.3;text-wrap:balance}
-.tl-past-tag{font-size:.6rem;padding:0 7px;border-radius:999px;background:var(--silver-tint);color:var(--silver);font-weight:600}
-.tl-detail{margin-top:3px;font-size:.86rem;line-height:1.65;text-wrap:pretty;max-width:68ch}
+.sch-panel:focus{outline:none}
+.sch-panel-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sch-panel h3{margin:0;font-size:1rem;line-height:1.3;text-wrap:balance}
+.sch-past-tag{font-size:.6rem;padding:0 7px;border-radius:999px;background:var(--silver-tint);color:var(--silver);font-weight:600}
+.sch-detail{margin-top:3px;font-size:.86rem;line-height:1.65;text-wrap:pretty;max-width:68ch}
 .ev-type{font-size:.58rem;letter-spacing:.09em;text-transform:uppercase;color:var(--blue);font-weight:700}
 .ev-soon{font-size:.62rem;padding:0 6px;border-radius:999px;background:var(--green-tint);color:var(--green);font-weight:600}
 .ev-meta{display:flex;flex-wrap:wrap;gap:0 5px;font-size:.76rem;color:var(--ink-soft)}
 .ev-meta > span:not(:last-child)::after{content:"\00b7";margin-left:5px;opacity:.55}
 
 @media (prefers-reduced-motion:reduce){
-  .tl-stop,.tl-node,.tl-node::before{transition:none}
-  .tl-stop:hover{translate:none}
-  .tl-stop.is-now .tl-node{animation:none}
+  .sch-stop,.sch-node,.sch-node::before{transition:none}
+  .sch-stop:hover{translate:none}
+  .sch-stop.is-now .sch-node{animation:none}
 }
-}
-}
-@media (prefers-reduced-motion:reduce){ .ev,.ev-title svg{transition:none} }
 
 .ppt-fields{min-width:0;flex:1}
 .ppt-fields h1{margin:0 0 13px;padding-bottom:11px;font-size:1.6rem;line-height:1.15;
@@ -1702,3 +1686,239 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
   mask-image:radial-gradient(circle at 50% 50%, rgb(0 0 0 / .9) 6%, rgb(0 0 0 / .35) 34%, transparent 62%)}
 :root[data-theme="dark"] .card > .body > .rc-pattern{opacity:.12}
 @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .card > .body > .rc-pattern{opacity:.12} }
+
+/* ---- standing: three readings, each answering its own question ---- */
+/* Figures are set in the same mono as the record number on the passport, so the panel
+   reads as instrumentation on that document rather than a dashboard bolted beside it. */
+.stand-year{font-family:var(--inst);font-size:.78rem;color:var(--ink-soft);
+  padding:2px 9px;border:1px solid var(--line);border-radius:999px;font-variant-numeric:tabular-nums}
+
+.st-tile{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:16px;
+  padding:15px 17px 13px;
+  background:linear-gradient(180deg, color-mix(in oklab, var(--card) 86%, var(--paper-2)), var(--paper-2));
+  box-shadow:inset 0 1px 0 var(--edge), var(--lift)}
+.st-head{margin-bottom:8px}
+.st-head h3{margin:0;font-size:.94rem;font-weight:600;line-height:1.3}
+.st-head p{margin:1px 0 0;font-size:.76rem;color:var(--ink-soft)}
+
+/* ---- how the score was built ---- */
+.stand-built{margin-top:12px}
+/* The accent sits behind the curves, strongest where they begin. */
+.stand-built::before{content:"";position:absolute;inset:-30% 40% 30% -20%;pointer-events:none;
+  background:radial-gradient(60% 60% at 40% 60%, color-mix(in oklab, var(--c-pub) 13%, transparent), transparent 70%)}
+.stand-built > *{position:relative}
+.curves-box{margin:2px 0 0}
+.curves{display:block;width:100%;height:auto;overflow:visible}
+/* In the narrow box every unit is bigger on screen, so the type is set smaller in units. */
+.curves.is-tight .cv-val{font-size:16px} .curves.is-tight .cv-year{fill:var(--ink-soft);font-size:13px}
+.cv-grid{stroke:var(--line);stroke-dasharray:2 5}
+.cv-now{stroke:color-mix(in oklab, var(--ink-soft) 45%, transparent);stroke-dasharray:3 4}
+/* Each series carries its colour on the group, so the line, its end dot and its figure
+   all take it from one place. */
+.cv-pub{color:var(--c-pub)} .cv-first{color:var(--c-first)} .cv-end{color:var(--c-end)}
+.cv-line{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.cv-dot{fill:currentColor;filter:drop-shadow(0 0 5px color-mix(in oklab, currentColor 55%, transparent))}
+.cv-val{fill:currentColor;font-family:var(--inst);font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+.cv-name{fill:var(--ink-soft);font-size:10px}
+.cv-tie{fill:none;stroke:currentColor;stroke-width:1;opacity:.5}
+.cv-year{fill:var(--ink-soft);font-size:10.5px}
+.cg-pub{stop-color:var(--c-pub)} .cg-first{stop-color:var(--c-first)} .cg-end{stop-color:var(--c-end)}
+
+.st-figs{display:flex;flex-wrap:wrap;gap:8px 30px;margin-top:10px;padding-top:11px;
+  border-top:1px solid color-mix(in oklab, var(--line) 70%, transparent)}
+.st-k{display:block;font-size:.76rem;color:var(--ink-soft)}
+.st-v{font-family:var(--inst);font-size:1.6rem;font-weight:600;line-height:1.15;letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums}
+.st-delta{margin-left:8px;font-size:.72rem;padding:2px 8px;border-radius:999px;
+  background:var(--silver-tint);color:var(--ink-soft);font-variant-numeric:tabular-nums;white-space:nowrap}
+.st-delta.is-up{background:var(--green-tint);color:var(--green)}
+.st-delta.is-down{background:var(--amber-tint);color:var(--amber)}
+
+/* ---- this year's work, and where it leaves them ---- */
+.stand-row{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:14px;margin-top:14px}
+
+/* Each source as a share of the year: label, how many, how much of the score. */
+.stand-mix{display:flex;flex-direction:column}
+/* One grid for all three rows, not a grid per row: the counts and the bars have to line
+   up down the tile, and a row of its own would size its columns to its own label. */
+.pmix{display:grid;grid-template-columns:minmax(96px,auto) 2.4rem minmax(60px,1fr) auto;
+  align-items:center;gap:11px 10px;flex:1;align-content:center}
+.pmix-r{display:contents}
+.pmix-label{display:flex;align-items:center;gap:7px;font-size:.82rem;color:var(--ink-soft);min-width:0}
+.pmix-label i{width:8px;height:8px;border-radius:50%;background:var(--c);flex:none;
+  box-shadow:0 0 7px color-mix(in oklab, var(--c) 55%, transparent)}
+.pmix-n{font-family:var(--inst);font-size:1.05rem;font-weight:600;text-align:right;
+  font-variant-numeric:tabular-nums}
+.pmix-bar{position:relative;height:9px;border-radius:999px;overflow:hidden;
+  background:color-mix(in oklab, var(--line) 70%, transparent)}
+.pmix-bar > span{display:block;height:100%;border-radius:999px;min-width:3px;
+  background:linear-gradient(90deg, color-mix(in oklab, var(--c) 45%, transparent), var(--c));
+  box-shadow:0 0 9px color-mix(in oklab, var(--c) 45%, transparent)}
+.pmix-pts{justify-self:end;font-family:var(--inst);font-size:.86rem;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pmix-pts span{font-family:var(--sans);font-size:.72rem;color:var(--ink-soft)}
+.pmix-pub{--c:var(--c-pub)} .pmix-first{--c:var(--c-first)} .pmix-end{--c:var(--c-end)}
+/* opacity needs a box, and the row no longer generates one */
+.pmix-r.is-none > *{opacity:.45}
+
+.pticks{display:block;width:100%;height:auto;margin-top:4px;overflow:visible}
+.pt-base{stroke:var(--line)}
+.pt-stem{stroke:color-mix(in oklab, var(--ink-soft) 35%, transparent);stroke-width:2;stroke-linecap:round}
+.pt-cap{fill:color-mix(in oklab, var(--ink-soft) 55%, transparent)}
+.pt.is-now .pt-stem{stroke:var(--c-now);stroke-width:2.6}
+.pt.is-now .pt-cap{fill:var(--c-now);filter:drop-shadow(0 0 6px color-mix(in oklab, var(--c-now) 65%, transparent))}
+.pt-first,.pt-now{font-size:10.5px;fill:var(--ink-soft)}
+.pt-now{fill:var(--c-now);font-weight:600}
+.stand-rank-note{margin:8px 0 0;font-size:.8rem;color:var(--ink-soft)}
+
+@media (max-width:860px){
+  .stand-row{grid-template-columns:1fr}
+}
+@media (max-width:620px){
+  .st-tile{padding:13px 13px 11px;border-radius:14px}
+  .st-figs{gap:6px 20px}
+  .st-v{font-size:1.35rem}
+  .pmix-r{grid-template-columns:minmax(0,auto) 2rem minmax(40px,1fr) auto;gap:8px}
+  .pmix-label{font-size:.78rem}
+}
+
+/* ---- the published record ---- */
+/* The tiles and type here are the standing panel's, so the two halves of the record read
+   as one instrument rather than two designs. */
+.pubs-head-r{display:flex;align-items:center;gap:12px}
+.pubs-stats{margin-top:12px;display:grid;gap:12px;justify-items:start}
+
+/* The career figures, each against the highest here. */
+.pfigs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px 18px;min-width:0}
+.pfig{display:grid;gap:1px;min-width:0}
+.pfig-k{font-size:.73rem;color:var(--ink-soft)}
+.pfig-v{font-family:var(--inst);font-size:1.45rem;font-weight:600;line-height:1.15;letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums}
+.pfig-bar{height:5px;margin-top:5px;border-radius:999px;overflow:hidden;
+  background:color-mix(in oklab, var(--line) 70%, transparent)}
+.pfig-bar > span{display:block;height:100%;border-radius:999px;
+  background:linear-gradient(90deg, color-mix(in oklab, var(--blue) 40%, transparent), var(--blue));
+  box-shadow:0 0 8px color-mix(in oklab, var(--blue) 40%, transparent)}
+.pfig-note{grid-column:1 / -1;margin:3px 0 0;font-size:.73rem;color:var(--ink-soft);max-width:72ch}
+
+/* A colour per kind of publication, used by the key, the year dots and each row. */
+.pubr{--k-journal:var(--blue); --k-conf:var(--t1f); --k-pre:var(--t2f); --k-book:var(--gold); --k-other:var(--silver)}
+[data-kind="Journal article"]{--k:var(--k-journal)}
+[data-kind="Conference paper"]{--k:var(--k-conf)}
+[data-kind="Preprint"]{--k:var(--k-pre)}
+[data-kind="Book chapter"]{--k:var(--k-book)}
+[data-kind="Other"]{--k:var(--k-other)}
+
+.pubr{margin-top:18px;display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+/* grid and flex children default to min-width:auto, which a nowrap title would hold
+   open: without these the whole list sets the page's width on a phone. */
+.pub-yr,.pubr ol,.pubr li{min-width:0}
+.pub-key{display:flex;flex-wrap:wrap;gap:6px 16px;margin-bottom:4px}
+.pub-key-i{display:inline-flex;align-items:center;gap:7px;font-size:.76rem;color:var(--ink-soft)}
+.pub-key-i i{width:8px;height:8px;border-radius:50%;background:var(--k);
+  box-shadow:0 0 7px color-mix(in oklab, var(--k) 50%, transparent)}
+
+/* The year opens and closes; shut, its dots still say how the year went. */
+.pub-yr-h{width:100%;display:flex;align-items:center;gap:10px;padding:9px 2px;cursor:pointer;
+  border:0;background:none;font:inherit;color:inherit;text-align:left;border-radius:10px}
+.pub-yr-h:hover b{color:var(--blue)}
+.pub-yr-h:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.pub-yr-h svg{width:15px;height:15px;flex:none;color:var(--ink-soft);transition:rotate .2s ease}
+.pub-yr.is-open .pub-yr-h svg{rotate:180deg}
+.pub-yr-h b{font-family:var(--inst);font-size:.95rem;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.pub-yr-dots{display:flex;gap:4px;flex-wrap:wrap;max-width:140px}
+.pub-yr-dots i{width:7px;height:7px;border-radius:50%;background:var(--k)}
+.pub-rule{flex:1;min-width:12px;height:1px;background:linear-gradient(90deg, var(--line), transparent)}
+.pub-count{font-size:.73rem;color:var(--ink-soft);white-space:nowrap;font-variant-numeric:tabular-nums}
+
+.pubr ol{list-style:none;margin:0 0 6px;padding:0}
+.pubr li{display:flex;align-items:center;gap:12px;padding:8px 2px 8px 6px;
+  border-bottom:1px solid color-mix(in oklab, var(--line) 55%, transparent)}
+.pubr li:last-child{border-bottom:0}
+.pub-dot{flex:none;width:7px;height:7px;border-radius:50%;background:var(--k);
+  box-shadow:0 0 7px color-mix(in oklab, var(--k) 45%, transparent)}
+.pub-main{min-width:0;flex:1}
+.pub-main a,.pub-main strong{font-weight:600;line-height:1.35;font-size:.92rem;
+  /* two lines at most: a hard cut mid-title reads worse than a wrap */
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pub-meta{display:flex;gap:0 6px;margin-top:1px;font-size:.77rem;color:var(--ink-soft);
+  overflow:hidden;white-space:nowrap}
+.pub-meta > span{overflow:hidden;text-overflow:ellipsis}
+.pub-meta > span:not(:last-child)::after{content:"\00b7";margin-left:6px;opacity:.55}
+/* citations as a figure with a bar under it, so the column reads as a shape */
+.pub-cites{flex:none;width:62px;display:grid;gap:3px;justify-items:end}
+.pub-cites b{font-family:var(--inst);font-size:.84rem;font-variant-numeric:tabular-nums;line-height:1}
+.pub-cites i{display:block;width:100%;height:4px;border-radius:999px;
+  background:color-mix(in oklab, var(--line) 70%, transparent)}
+.pub-cites i::before{content:"";display:block;width:var(--w,0);height:100%;border-radius:999px;background:var(--k)}
+.btn-sm{padding:6px 12px;font-size:.82rem}
+
+@media (max-width:900px){
+  .pfigs{grid-template-columns:repeat(auto-fit,minmax(92px,1fr))}
+}
+@media (max-width:620px){
+  .pfig-v{font-size:1.2rem}
+  .pub-cites{width:46px}
+  .pub-yr-dots{max-width:70px}
+}
+
+/* ---- experience, on one axis ---- */
+/* The four kinds carry the same colour everywhere they appear: the key, the bars and the
+   undated list below them. */
+.xp-card{--k-academic:var(--c-pub); --k-research:var(--c-first);
+  --k-membership:var(--c-end); --k-highlight:var(--c-now)}
+.xp-card [data-kind="Academic"]{--k:var(--k-academic)}
+.xp-card [data-kind="Research"]{--k:var(--k-research)}
+.xp-card [data-kind="Membership"]{--k:var(--k-membership)}
+.xp-card [data-kind="Highlight"]{--k:var(--k-highlight)}
+
+/* One line per role: the title, where it was held, its span and its years. A career is
+   long, and two lines apiece turns a dozen roles into a page of its own. */
+.xp{margin-top:12px}
+.xp-grid{position:relative;display:grid;grid-template-columns:minmax(0,19rem) minmax(0,1fr) auto;
+  gap:0 16px;align-items:center}
+/* The decade lines sit behind every row, drawn once rather than per row. A grid item,
+   not an absolute box: positioned absolutely it would measure itself against the whole
+   grid and the lines would miss the years printed under them. */
+.xp-lines{position:relative;grid-column:2;pointer-events:none;z-index:0}
+.xp-lines > span{position:absolute;top:0;bottom:0;width:1px;
+  background:color-mix(in oklab, var(--line) 75%, transparent)}
+.xp-lines .xp-now{width:2px;background:color-mix(in oklab, var(--c-now) 40%, transparent)}
+
+.xp-l{grid-column:1;display:flex;align-items:baseline;gap:7px;min-width:0;height:24px}
+.xp-l i{flex:none;width:7px;height:7px;border-radius:50%;background:var(--k);translate:0 -1px}
+.xp-l b{font-size:.85rem;font-weight:600;white-space:nowrap}
+.xp-l span{min-width:0;font-size:.78rem;color:var(--ink-soft);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.xp-t{grid-column:2;position:relative;height:24px;display:flex;align-items:center;min-width:0;z-index:1}
+.xp-bar{position:absolute;height:6px;border-radius:999px;
+  background:linear-gradient(90deg, color-mix(in oklab, var(--k) 45%, transparent), var(--k))}
+/* Still running: a lit cap at the present rather than a date that stops. */
+.xp-bar.is-now::after{content:"";position:absolute;right:-2px;top:50%;translate:0 -50%;
+  width:8px;height:8px;border-radius:50%;background:var(--k);
+  box-shadow:0 0 8px color-mix(in oklab, var(--k) 65%, transparent)}
+.xp-mark{position:absolute;width:8px;height:8px;translate:-50% 0;rotate:45deg;background:var(--k);
+  border-radius:2px;box-shadow:0 0 8px color-mix(in oklab, var(--k) 50%, transparent)}
+.xp-when{grid-column:3;font-family:var(--inst);font-size:.71rem;color:var(--ink-soft);
+  font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+
+.xp-axis{position:relative;grid-column:2;height:15px;margin-top:3px}
+.xp-axis > span{position:absolute;top:0;translate:-50% 0;font-size:.69rem;color:var(--ink-soft);
+  font-variant-numeric:tabular-nums}
+.xp-more{justify-self:start;margin-top:10px}
+
+.xp-undated{list-style:none;margin:12px 0 0;padding:10px 0 0;display:grid;gap:6px;
+  border-top:1px solid color-mix(in oklab, var(--line) 60%, transparent)}
+.xp-undated li{display:flex;align-items:baseline;gap:7px;min-width:0}
+.xp-undated i{flex:none;width:7px;height:7px;border-radius:50%;background:var(--k);translate:0 -1px}
+.xp-undated b{font-size:.85rem;font-weight:600}
+.xp-undated span{font-size:.78rem;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+@media (max-width:720px){
+  /* No room for a usable axis, and a bar without one says nothing: the rows keep their
+     colour and their years, and the spans go. */
+  .xp-grid{grid-template-columns:minmax(0,1fr) auto}
+  .xp-lines,.xp-t,.xp-axis{display:none}
+  .xp-l{grid-column:1}
+  .xp-when{grid-column:2}
+}

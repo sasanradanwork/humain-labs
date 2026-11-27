@@ -136,7 +136,7 @@ export function StudyCard({ study: s, onApply }) {
           ) : (
             <span className="small soft">{gName}</span>
           ))}
-        <div className="small soft" style={{ display: "flex", gap: 5, alignItems: "center" }}>
+        <div className="small soft card-loc">
           <Flag country={s.country} /> {s.country}
         </div>
         <dl className="facts">
