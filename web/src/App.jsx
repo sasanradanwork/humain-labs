@@ -248,12 +248,16 @@ export default function App() {
             onDelete={() =>
               setModal({
                 kind: "confirm",
-                title: "Delete your details?",
-                text: "Your participant details and every study application you've made will be deleted. This can't be undone.",
-                label: "Delete my details",
+                title: "Delete your profile?",
+                text:
+                  "Everything we hold for you goes: your details, every study application you've made, and your votes on what gets built next. " +
+                  "You'll be signed out. This can't be undone.",
+                label: "Delete my profile",
                 onConfirm: async () => {
                   await backend.deleteParticipant();
-                  toast("Your details have been deleted.");
+                  // Nothing of theirs is left to come back to, so end the session on the
+                  // page they'd start from again rather than on an empty profile.
+                  backend.signOut("#/auth");
                 },
               })
             }
@@ -276,12 +280,16 @@ export default function App() {
               setModal({
                 kind: "confirm",
                 title: "Delete your researcher profile?",
-                text: "Your profile and the studies you posted will be removed, along with their applications. You can't delete it while you still own research groups. This can't be undone.",
+                text:
+                  "Your profile goes, along with the studies you posted and their applications, the endorsements you gave other researchers, and your " +
+                  "votes on what gets built next. You'll be signed out, and can register again whenever you like. You can't delete it while you still " +
+                  "own research groups. This can't be undone.",
                 label: "Delete profile",
                 onConfirm: async () => {
                   await backend.deleteProfile();
-                  toast("Your researcher profile has been deleted.");
-                  navigate("#/");
+                  // Same as the participant side: nothing of theirs is left to come back
+                  // to, so end the session on the page they'd start from again.
+                  backend.signOut("#/auth");
                 },
               })
             }
@@ -456,7 +464,7 @@ export default function App() {
               <Icon.linkedin />
             </a>
             <a className="footer-social" href={SITE.x} target="_blank" rel="noreferrer" aria-label="HumAIn Labs on X" title="X">
-              <Icon.x />
+              <Icon.xcom />
             </a>
           </nav>
           <p className="small soft footer-legal">

@@ -23,6 +23,8 @@ export const COUNTRY_NAMES = [
 // The four disciplines a researcher files themselves under. The leaderboard and the
 // researchers page filter on these exact values.
 export const DISCIPLINES = ["Science", "Technology", "Engineering", "Mathematics"];
+// What a diary entry on a researcher profile can be.
+export const EVENT_TYPES = ["Conference", "Talk", "Workshop", "Seminar", "Panel", "Poster", "Summer school", "Other"];
 // ISO 3166-1 alpha-2 for each country above, so a flag can be drawn beside the name.
 export const COUNTRY_CODES = {
   "Argentina": "AR", "Australia": "AU", "Bangladesh": "BD", "Belgium": "BE", "Brazil": "BR", "Canada": "CA",

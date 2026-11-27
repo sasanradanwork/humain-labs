@@ -1,7 +1,7 @@
 import { useId } from "react";
 import { hash, initials, rng, RADAR_AXES, radarScale, fmtDate, daysLeft, sortName } from "../lib/util.js";
 import { S, AUTH } from "../lib/store.js";
-import { COUNTRY_CODES } from "../lib/lists.js";
+import { COUNTRY_CODES, DISCIPLINES } from "../lib/lists.js";
 
 /* ---------- icons ---------- */
 const s = (p) => ({ fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", ...p });
@@ -121,7 +121,9 @@ export const Icon = {
       <path d="M12 9v4.5M12 17h.01M10.3 3.9 1.9 18.3A2 2 0 0 0 3.6 21.3h16.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0" />
     </svg>
   ),
-  x: () => (
+  // The social network's logo. Named xcom, not x: a second `x` key here silently
+  // replaced the close cross above it, so every remove button drew this instead.
+  xcom: () => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
       <path d="M18.9 1.15h3.68l-8.04 9.19L24 22.85h-7.4l-5.8-7.58-6.64 7.58H.47l8.6-9.83L0 1.15h7.59l5.24 6.93zm-1.29 19.5h2.04L6.49 3.24H4.3z" />
     </svg>
@@ -509,3 +511,50 @@ export function Spark({ vals, w = 84, h = 26, area = false, className = "spark" 
 }
 
 export const sortByName = (a, b) => sortName(a.name).localeCompare(sortName(b.name));
+
+/**
+ * The discipline, shown as its place in STEM: the four initials with theirs picked out.
+ * It says which of the four they file under and what the other three are in one mark.
+ */
+export function Stem({ discipline }) {
+  const mine = DISCIPLINES.indexOf(discipline);
+  if (mine === -1) return <span className="ppt-caption">Researcher</span>;
+  return (
+    <span className="stem" title={`${discipline} — one of the four disciplines`}>
+      <span className="stem-letters" aria-hidden="true">
+        {DISCIPLINES.map((d, i) => (
+          <b key={d} className={i === mine ? "is-mine" : ""}>
+            {d[0]}
+          </b>
+        ))}
+      </span>
+      <span className="stem-word">{discipline}</span>
+    </span>
+  );
+}
+
+/**
+ * How far a researcher has got through checking: L1 is an institution email confirmed by
+ * code, L2 adds a documentary identity check. One marking replaces the two separate
+ * pills, so the record carries a level the way a document carries a class.
+ */
+const LEVELS = ["Not verified", "Email verified", "Identity verified"];
+
+export function VerificationLevel({ r }) {
+  const level = r.idVerified ? 2 : r.verified ? 1 : 0;
+  const at = r.verified && r.verified.domain ? ` (@${r.verified.domain})` : "";
+  const why = [
+    "No institution email has been verified yet.",
+    `Institution email verified${at}. No identity check has been completed.`,
+    `Institution email verified${at}, and identity documents checked.`,
+  ][level];
+  return (
+    <span className={`vlvl vlvl-${level}`} title={why}>
+      <b aria-hidden="true">Level {level}</b>
+      <span>
+        <span className="sr-only">Verification level {level}: </span>
+        {LEVELS[level]}
+      </span>
+    </span>
+  );
+}

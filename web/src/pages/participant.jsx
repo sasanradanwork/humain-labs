@@ -189,13 +189,13 @@ export function ParticipantProfile({ onDelete }) {
 
         {p && (
           <div className="fsec" style={{ marginTop: 26 }}>
-            <h2>Delete your details</h2>
+            <h2>Delete your profile</h2>
             <p className="hint">
-              This removes your participant details and every application you've made. You can set them up again at any time, but you'll need to confirm
-              your email again.
+              This removes everything we hold for you — your details, every application you've made, and your votes on what gets built next — and signs
+              you out. You can register again at any time, but you'll start from scratch and confirm your email again.
             </p>
             <button type="button" className="btn btn-danger" onClick={onDelete}>
-              Delete my details
+              Delete my profile
             </button>
           </div>
         )}

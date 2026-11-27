@@ -1,8 +1,9 @@
 // Cards and the search/filter toolbar shared by the three directory pages.
-import { Avatar, Cover, DeadlinePill, Flag, Icon, LinkedInLink, Radar, ScholarLink, TrendChips, VerifiedBadge, UnverifiedBadge } from "./ui.jsx";
+import { Avatar, Cover, DeadlinePill, Flag, Icon, TrendChips, VerificationLevel, VerifiedBadge, UnverifiedBadge } from "./ui.jsx";
 import { AUTH, S, applied, byId, groupsOf, memberResearchers, role, studyGroupName, studyVerified } from "../lib/store.js";
 import { fmtDate, plural, trendFor, uniq } from "../lib/util.js";
 import { navigate } from "../lib/ui.jsx";
+import { CardPattern } from "./guilloche.jsx";
 import { useState } from "react";
 
 export const studyTrend = (s) => s.trend || trendFor(s, S.applications);
@@ -180,88 +181,79 @@ export function ResearcherCard({ researcher: r }) {
       role="link"
       tabIndex={0}
       aria-label={r.name}
-      // Anything already clickable inside the card — the contact button, a group link,
-      // the stats pop-out — keeps its own behaviour.
-      onClick={(e) => !e.target.closest("a,button,.radar-mini") && go()}
+      // Anything already clickable inside the card keeps its own behaviour.
+      onClick={(e) => !e.target.closest("a,button") && go()}
       onKeyDown={(e) => e.key === "Enter" && !e.target.closest("a,button") && go()}
     >
       <div className="body">
-        {r.metrics && (
-          <>
-            <div className="radar-mini" tabIndex={0} role="button" aria-label={`Show publication stats for ${r.name}`}>
-              <Radar m={r.metrics} size={62} />
-            </div>
-            {/* The expanded view covers the whole card, so nothing behind it shows through. */}
-            <div className="radar-pop">
-              <div className="pop-head">
-                <div>
-                  <h3>{r.name}</h3>
-                  <div className="small soft">Publication stats</div>
-                </div>
-                <Avatar name={r.name} size={34} />
-              </div>
-              <Radar m={r.metrics} size={150} labels />
-              <div className="small soft pop-note">
-                From {r.metrics.source || "OpenAlex"}, updated {fmtDate(r.metrics.updatedAt)}. Each axis is scaled against the highest figure among
-                researchers here.
-              </div>
-            </div>
-          </>
-        )}
-        <div className="person">
-          <Avatar name={r.name} size={48} />
-          <div style={{ minWidth: 0 }}>
+        {/* The record page's watermark, scaled to the card and centred on the portrait,
+            so a card and a profile are plainly the same kind of thing. */}
+        <CardPattern className="rc-pattern" />
+
+        {/* The same shape as the record page: the portrait, then the labelled facts,
+            then one way in. The bio lives on the profile. */}
+        <div className="rc-head">
+          <div className="rc-photo">
+            <Avatar name={r.name} size={52} />
+          </div>
+          <div className="rc-who">
             <h3>
               <a className="plain" href={researcherHref(r)}>
                 {r.name}
               </a>
             </h3>
             <ContactReveal handle={r.handle} />
+            <div className="rc-level">
+              <VerificationLevel r={r} />
+            </div>
           </div>
         </div>
-        <div className="badges" style={{ marginTop: 6 }}>
-          {r.verified ? <VerifiedBadge v={r.verified} /> : <UnverifiedBadge />}
-          {r.idVerified && (
-            <span className="badge badge-pill" title="Identity checked">
-              <Icon.check /> ID checked
-            </span>
+
+        <dl className="rc-facts">
+          {r.position && (
+            <div>
+              <dt>
+                <Icon.post /> Position
+              </dt>
+              <dd>{r.position}</dd>
+            </div>
           )}
-        </div>
-        {r.position && (
-          <div className="small" style={{ marginTop: 8 }}>
-            {r.position}
+          <div>
+            <dt>
+              <Icon.inst /> Institution
+            </dt>
+            <dd>
+              {r.institution}
+              {r.department ? `, ${r.department}` : ""}
+            </dd>
           </div>
-        )}
-        <div className="small soft" style={{ display: "flex", gap: 6, alignItems: "flex-start" }}>
-          <Icon.inst />
-          <span>
-            {r.institution}
-            {r.department ? `, ${r.department}` : ""}
-          </span>
-        </div>
-        <div className="small soft" style={{ display: "flex", gap: 6, alignItems: "center" }}>
-          <Flag country={r.country} /> {r.country}
-        </div>
-        <div className="badges">
-          {r.discipline && <span className="badge badge-disc">{r.discipline}</span>}
-          <span className="badge">{r.field}</span>
-        </div>
-        <p className="small grow" style={{ marginTop: 6 }}>
-          {r.bio}
-        </p>
+          <div>
+            <dt>
+              <Icon.globe /> Country
+            </dt>
+            <dd className="ppt-country">
+              <Flag country={r.country} /> {r.country}
+            </dd>
+          </div>
+          <div>
+            <dt>
+              <Icon.book /> Specialised field
+            </dt>
+            <dd>{r.field}</dd>
+          </div>
+        </dl>
+
+        <div className="grow" />
         {gs.map((g) => (
           <a key={g.id} className="small" href={groupHref(g)}>
             Member of {g.name}
           </a>
         ))}
+        {/* One way in. Contacting them, and their links, belong on the record itself. */}
         <div className="foot">
-          <div className="btns">
-            <a className="btn btn-blue" href={`mailto:${r.email}?subject=${encodeURIComponent("Collaboration via HumAIn Labs")}`}>
-              <Icon.mail /> Contact
-            </a>
-            <LinkedInLink url={r.linkedin} />
-            <ScholarLink url={r.scholar} />
-          </div>
+          <a className="btn btn-blue rc-open" href={researcherHref(r)}>
+            View full profile <Icon.chev />
+          </a>
         </div>
       </div>
     </article>

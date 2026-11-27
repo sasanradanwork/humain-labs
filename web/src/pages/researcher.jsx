@@ -10,7 +10,7 @@ import { HlgBadge } from "../components/hlg.jsx";
 import { Repeater, YearSpan } from "../components/repeater.jsx";
 import { cleanDoi } from "../lib/doi.js";
 import { IdCheckPanel } from "../components/idcheck.jsx";
-import { DISCIPLINES, FIELDS, POSITIONS } from "../lib/lists.js";
+import { DISCIPLINES, EVENT_TYPES, FIELDS, POSITIONS } from "../lib/lists.js";
 import { namesFromHarvard } from "../lib/harvard.js";
 import { ResearcherGate, isVisible } from "./public.jsx";
 import { FEE_PERCENT, feeBreakdown, gbp } from "../lib/money.js";
@@ -347,6 +347,12 @@ export function GroupPage({ route, onApply }) {
                     </div>
                     <div className="small" style={{ color: /lead/i.test(m.role) ? "var(--blue)" : "var(--ink-soft)" }}>
                       {m.role}
+                      {m.researcherId === g.ownerId && <span className="lead-tag">Lead</span>}
+                      {m.researcherId === g.deputyId && (
+                        <span className="lead-tag second" title="Takes the group on if the lead leaves">
+                          Second lead
+                        </span>
+                      )}
                     </div>
                     <div className="handle">@{m.r.handle}</div>
                     {m.r.verified && (
@@ -1070,7 +1076,7 @@ function DoiAdd({ onAdd, known }) {
       {err ? (
         <p className="small doi-err">{err}</p>
       ) : (
-        <p className="small soft">Or add one by hand below. A DOI link works too.</p>
+        <p className="small soft">A DOI link works too — paste the whole doi.org address if that's easier.</p>
       )}
     </div>
   );
@@ -1095,6 +1101,7 @@ export function ProfileEditor({ onVerify, onScholar, onRor, onDelete }) {
   const [academic, setAcademic] = useState(() => (r0?.academicRoles || []).map((x) => ({ ...x })));
   const [research, setResearch] = useState(() => (r0?.researchRoles || []).map((x) => ({ ...x })));
   const [memberships, setMemberships] = useState(() => (r0?.memberships || []).map((x) => ({ ...x })));
+  const [schedule, setSchedule] = useState(() => (r0?.schedule || []).map((x) => ({ ...x })));
   const [supervising, setSupervising] = useState(() => (r0?.supervising || []).map((x) => ({ ...x })));
   const [sup, setSup] = useState("");
   const yr = new Date().getFullYear();
@@ -1142,6 +1149,9 @@ export function ProfileEditor({ onVerify, onScholar, onRor, onDelete }) {
               academicRoles: academic.map((x) => ({ title: x.title, org: x.org || "", from: x.from ? Number(x.from) : null, to: x.to ? Number(x.to) : null })),
               researchRoles: research.map((x) => ({ title: x.title, org: x.org || "", from: x.from ? Number(x.from) : null, to: x.to ? Number(x.to) : null })),
               memberships: memberships.map((x) => ({ body: x.body, grade: x.grade || "", since: x.since ? Number(x.since) : null })),
+              schedule: schedule
+                .filter((x) => (x.title || "").trim() && x.date)
+                .map((x) => ({ title: x.title, type: x.type || "Talk", date: x.date, endDate: x.endDate || "", place: x.place || "", url: x.url || "", detail: x.detail || "" })),
               supervising: supervising.map((x) => ({ researcherId: x.researcherId, role: x.role || "PhD student" })),
             });
             toast(AUTH.researcher ? "Profile saved." : "Profile published.");
@@ -1397,6 +1407,58 @@ export function ProfileEditor({ onVerify, onScholar, onRor, onDelete }) {
           </div>
 
           <div className="fsec">
+            <h2>Schedule</h2>
+            <p className="hint">
+              Talks, conferences and anything else you'll be at. Upcoming ones are shown on your profile first; past ones stay as a record.
+            </p>
+            <Repeater
+              rows={schedule}
+              setRows={setSchedule}
+              max={40}
+              blank={{ title: "", type: "Talk", date: "", endDate: "", place: "", url: "", detail: "" }}
+              noun={["Event", "Nothing in the diary yet."]}
+            >
+              {(x, set) => (
+                <>
+                  <div className="row2">
+                    <Field label="What it is" required>
+                      <input required maxLength="160" value={x.title || ""} onChange={(e) => set("title", e.target.value)} placeholder="CHI 2027" />
+                    </Field>
+                    <Field label="Kind" required>
+                      <select required value={x.type || "Talk"} onChange={(e) => set("type", e.target.value)}>
+                        {EVENT_TYPES.map((t) => (
+                          <option key={t} value={t}>
+                            {t}
+                          </option>
+                        ))}
+                      </select>
+                    </Field>
+                  </div>
+                  <div className="row2">
+                    <Field label="Date" required>
+                      <input type="date" required value={x.date || ""} onChange={(e) => set("date", e.target.value)} />
+                    </Field>
+                    <Field label="Ends" hint="Only for something that runs over several days.">
+                      <input type="date" min={x.date || undefined} value={x.endDate || ""} onChange={(e) => set("endDate", e.target.value)} />
+                    </Field>
+                  </div>
+                  <div className="row2">
+                    <Field label="Where">
+                      <input maxLength="160" value={x.place || ""} onChange={(e) => set("place", e.target.value)} placeholder="Berlin, or Online" />
+                    </Field>
+                    <Field label="Link">
+                      <input type="url" maxLength="500" value={x.url || ""} onChange={(e) => set("url", e.target.value)} placeholder="https://…" />
+                    </Field>
+                  </div>
+                  <Field label="A line about it">
+                    <input maxLength="400" value={x.detail || ""} onChange={(e) => set("detail", e.target.value)} />
+                  </Field>
+                </>
+              )}
+            </Repeater>
+          </div>
+
+          <div className="fsec">
             <h2>Academic roles</h2>
             <p className="hint">Posts you have held. Leave the end year empty for the one you hold now.</p>
             <Repeater rows={academic} setRows={setAcademic} max={20} blank={{ title: "", org: "", from: "", to: "" }} noun={["Academic role", "No academic roles added."]}>
@@ -1539,7 +1601,7 @@ export function ProfileEditor({ onVerify, onScholar, onRor, onDelete }) {
             {!isNew && (
               <>
                 <span className="spacer" />
-                <button type="button" className="btn btn-danger" onClick={onDelete}>
+                <button type="button" className="btn btn-danger" onClick={onDelete} title="Deletes your profile and signs you out. You can register again afterwards.">
                   Delete profile
                 </button>
               </>
@@ -1568,6 +1630,8 @@ export function GroupEditor({ route, onRor, onDelete }) {
     editing && g ? (g.publications || []).map((p) => ({ ...p, authorNames: p.authorNames?.length ? [...p.authorNames] : namesFromHarvard(p.authors) })) : []
   );
   const [openings, setOpenings] = useState(() => (editing && g ? (g.openings || []).map((o) => ({ ...o })) : []));
+  // Who takes the group on if the lead leaves. One member at most, never the lead.
+  const [deputyId, setDeputyId] = useState(() => (editing && g ? g.deputyId || "" : ""));
   const [inst, setInst] = useState({ name: g?.institution || me?.institution || "", ror: g?.ror || "", rorName: g?.rorName || "" });
   const [summaryLen, setSummaryLen] = useState((g?.summary || "").length);
   const [mention, setMention] = useState("");
@@ -1641,6 +1705,7 @@ export function GroupEditor({ route, onRor, onDelete }) {
     );
 
   const ownerId = editing ? g.ownerId : me.id;
+  const isOwner = ownerId === me.id;
   const isLead = !editing || g.ownerId === me.id || (g.members || []).some((m) => m.researcherId === me.id && /lead/i.test(m.role || ""));
   const v = g || { institution: me.institution, country: me.country, field: me.field, email: me.email };
   const year = new Date().getFullYear();
@@ -1661,6 +1726,11 @@ export function GroupEditor({ route, onRor, onDelete }) {
     if (r) toast(`${r.name} added. Set their role below.`);
   }
   const setMember = (i, k, val) => setMembers(members.map((m, j) => (j === i ? { ...m, [k]: val } : m)));
+  const dropMember = (i) => {
+    const gone = members[i];
+    setMembers(members.filter((_, j) => j !== i));
+    if (gone && gone.researcherId === deputyId) setDeputyId("");
+  };
   const setPub = (i, k, val) => setPubs(pubs.map((p, j) => (j === i ? { ...p, [k]: val } : p)));
   const setOpening = (i, k, val) => setOpenings(openings.map((o, j) => (j === i ? { ...o, [k]: val } : o)));
 
@@ -1699,6 +1769,7 @@ export function GroupEditor({ route, onRor, onDelete }) {
                 url: (p.url || "").trim(),
               })),
               openings: openings.map((o) => ({ type: o.type || "Other", title: o.title.trim(), detail: (o.detail || "").trim(), deadline: o.deadline || "" })),
+              deputyId: members.some((m) => m.researcherId === deputyId) && deputyId !== ownerId ? deputyId : "",
             };
             const saved = await backend.saveGroup(body, editing ? g.id : null);
             toast(editing ? "Group page saved." : "Group page published.");
@@ -1764,6 +1835,23 @@ export function GroupEditor({ route, onRor, onDelete }) {
             <div className="fsec">
               <h2>Who's in the group</h2>
               <p className="hint">Type @ and start typing a name or handle to add a registered researcher. People need a HumAIn Labs profile before they can be added.</p>
+              <p className="hint">
+                {isOwner ? (
+                  deputyId ? (
+                    <>
+                      <b>{byId("researchers", deputyId)?.name || "Your second lead"}</b> is the second lead: if you leave HumAIn Labs, the group passes
+                      to them. They can edit the page in the meantime.
+                    </>
+                  ) : (
+                    <>
+                      No second lead yet. Choose one and the group passes to them if you leave — without one you'd have to delete the group before you
+                      could delete your own profile.
+                    </>
+                  )
+                ) : (
+                  <>Only the group's lead can choose who stands second.</>
+                )}
+              </p>
               <div id="member-rows">
                 {members.map((m, i) => {
                   const r = byId("researchers", m.researcherId);
@@ -1786,21 +1874,41 @@ export function GroupEditor({ route, onRor, onDelete }) {
                         aria-label={`Role for ${r.name}`}
                         maxLength="80"
                       />
-                      <label className="ce" title={owner ? "The group's creator can always edit" : "Let this person edit the group page"}>
-                        <input type="checkbox" checked={!!m.canEdit || owner} disabled={owner} onChange={(e) => setMember(i, "canEdit", e.target.checked)} /> Can
-                        edit
+                      <label className="ce" title={owner || m.researcherId === deputyId ? "The lead and the second lead can always edit" : "Let this person edit the group page"}>
+                        <input
+                          type="checkbox"
+                          checked={!!m.canEdit || owner || m.researcherId === deputyId}
+                          disabled={owner || m.researcherId === deputyId}
+                          onChange={(e) => setMember(i, "canEdit", e.target.checked)}
+                        />{" "}
+                        Can edit
+                      </label>
+                      {/* Succession: one member stands behind the lead. Only the lead decides who. */}
+                      <label
+                        className="ce"
+                        title={
+                          owner
+                            ? "The lead can't also be the second lead"
+                            : isOwner
+                              ? `Make ${r.name} second lead. The group passes to them if you leave.`
+                              : "Only the group's lead can choose the second lead"
+                        }
+                      >
+                        <input
+                          type="radio"
+                          name="deputy"
+                          checked={m.researcherId === deputyId}
+                          disabled={owner || !isOwner}
+                          onChange={() => setDeputyId(m.researcherId)}
+                        />{" "}
+                        2nd lead
                       </label>
                       {owner ? (
                         <span className="small soft" style={{ width: 38, textAlign: "center" }}>
-                          Owner
+                          Lead
                         </span>
                       ) : (
-                        <button
-                          type="button"
-                          className="btn icon-btn"
-                          onClick={() => setMembers(members.filter((_, j) => j !== i))}
-                          aria-label={`Remove ${r.name}`}
-                        >
+                        <button type="button" className="btn icon-btn" onClick={() => dropMember(i)} aria-label={`Remove ${r.name}`}>
                           <Icon.x />
                         </button>
                       )}

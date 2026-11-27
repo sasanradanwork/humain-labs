@@ -1,7 +1,8 @@
 // A researcher's own page: who they are, what they've published, the roles they hold,
 // and where their work stood each year. Reached by opening a card in the directory.
-import { useMemo, useState } from "react";
-import { Avatar, Flag, Icon, LinkedInLink, Radar, ScholarLink } from "../components/ui.jsx";
+import { useEffect, useMemo, useState } from "react";
+import { flushSync } from "react-dom";
+import { Avatar, Flag, Icon, LinkedInLink, Radar, ScholarLink, Stem, VerificationLevel } from "../components/ui.jsx";
 import { HlgBadge } from "../components/hlg.jsx";
 import { CardPattern } from "../components/guilloche.jsx";
 import { InterestGraph } from "../components/interests.jsx";
@@ -214,28 +215,181 @@ function VisibilityEye({ r }) {
 }
 
 /**
- * How far a researcher has got through checking: L1 is an institution email confirmed by
- * code, L2 adds a documentary identity check. One marking replaces the two separate
- * pills, so the record carries a level the way a document carries a class.
+ * Where they'll be: talks, conferences and the rest, split at today. What's coming is
+ * open and counted down to; what's been is folded away as a record, newest first.
  */
-const LEVELS = ["Not verified", "Email verified", "Identity verified"];
+/** A clock that ticks once a minute, so a countdown on screen stays true without a reload. */
+function useNow(on) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!on) return;
+    const id = setInterval(() => {
+      // Nothing to repaint while the tab is in the background.
+      if (document.visibilityState === "visible") setNow(Date.now());
+    }, 60000);
+    const wake = () => setNow(Date.now());
+    document.addEventListener("visibilitychange", wake);
+    return () => {
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", wake);
+    };
+  }, [on]);
+  return now;
+}
 
-function VerificationLevel({ r }) {
-  const level = r.idVerified ? 2 : r.verified ? 1 : 0;
-  const at = r.verified && r.verified.domain ? ` (@${r.verified.domain})` : "";
-  const why = [
-    "No institution email has been verified yet.",
-    `Institution email verified${at}. No identity check has been completed.`,
-    `Institution email verified${at}, and identity documents checked.`,
-  ][level];
+const calmly = () => typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+
+/**
+ * Where they'll be: talks, conferences and the rest, split at today. What's coming is
+ * open and counted down to; what's been is folded away as a record, newest first.
+ */
+const HORIZON = 120; // days out at which the proximity ring is empty
+
+function Schedule({ events, own }) {
+  const [openId, setOpenId] = useState(null);
+  const [showPast, setShowPast] = useState(false);
+  const all = (events || []).filter((e) => e && e.date);
+  const now = useNow(all.length > 0);
+  // A visitor sees nothing where there is nothing. On your own page the section stays,
+  // so an empty diary looks like something you haven't filled in rather than a feature
+  // that isn't there.
+  if (!all.length)
+    return own ? (
+      <section className="pcard">
+        <h2>Schedule</h2>
+        <p className="own-empty">
+          Nothing in the diary yet. Add talks and conferences in <a href="#/profile/edit">Edit profile</a> and they'll appear here, soonest first.
+        </p>
+      </section>
+    ) : null;
+
+  const today = new Date(now).toISOString().slice(0, 10);
+  // An event that runs for days is still on until the last of them.
+  const over = (e) => (e.endDate || e.date) < today;
+  const upcoming = all.filter((e) => !over(e));
+  const past = all.filter(over).reverse();
+
+  const daysTo = (d) => Math.round((new Date(d + "T00:00:00Z") - new Date(today + "T00:00:00Z")) / 86400000);
+  const when = (e) => {
+    const n = daysTo(e.date);
+    if (n > 1) return `in ${n} days`;
+    if (n === 1) return "tomorrow";
+    if (n === 0) {
+      // Close enough to count the hours rather than the days.
+      const h = Math.round((new Date(e.date + "T09:00:00Z") - now) / 3600000);
+      return h > 0 ? `in ${plural(h, "hour", "hours")}` : "today";
+    }
+    return "on now";
+  };
+  const utc = (d) => new Date(d + "T00:00:00Z");
+  const mon = (d) => utc(d).toLocaleString("en-GB", { month: "short", timeZone: "UTC" });
+  /** Compact enough to sit on one line: "10–14 Dec 2026", "28 Nov – 2 Dec 2026", "10 Dec 2026". */
+  const dates = (e) => {
+    const a = utc(e.date);
+    if (!e.endDate || e.endDate === e.date) return `${a.getUTCDate()} ${mon(e.date)} ${a.getUTCFullYear()}`;
+    const b = utc(e.endDate);
+    const sameYear = a.getUTCFullYear() === b.getUTCFullYear();
+    if (sameYear && e.date.slice(0, 7) === e.endDate.slice(0, 7))
+      return `${a.getUTCDate()}–${b.getUTCDate()} ${mon(e.date)} ${a.getUTCFullYear()}`;
+    const left = `${a.getUTCDate()} ${mon(e.date)}${sameYear ? "" : ` ${a.getUTCFullYear()}`}`;
+    return `${left} – ${b.getUTCDate()} ${mon(e.endDate)} ${b.getUTCFullYear()}`;
+  };
+
+  /* Opening one event re-flows the grid, so hand the change to the browser's view
+     transition where there is one: it tweens the rows instead of snapping them. */
+  const toggle = (id) => {
+    const run = () => setOpenId((v) => (v === id ? null : id));
+    if (!calmly() && typeof document !== "undefined" && document.startViewTransition) document.startViewTransition(() => flushSync(run));
+    else run();
+  };
+
+  const Row = ({ e, i, done }) => {
+    const id = `${e.date}-${i}`;
+    const open = openId === id;
+    const more = !!(e.detail || e.url);
+    const left = daysTo(e.date);
+    // How near it is, 0 at the horizon and 1 on the day: the ring around the date fills
+    // as the event approaches, so a glance down the list reads as a sense of timing.
+    const near = done ? 0 : Math.min(1, Math.max(0, 1 - left / HORIZON));
+    return (
+      <li
+        className={"ev" + (done ? " is-done" : "") + (open ? " is-open" : "") + (!done && left <= 0 ? " is-now" : "")}
+        style={{ viewTransitionName: `ev-${i}${done ? "p" : "u"}` }}
+      >
+        {/* A tear-off leaf with a ring that fills as the date nears. */}
+        <div className="ev-when" style={{ "--p": near.toFixed(3) }} aria-hidden="true">
+          <span className="ev-mon">{mon(e.date)}</span>
+          <b>{utc(e.date).getUTCDate()}</b>
+        </div>
+        <div className="ev-main">
+          <div className="ev-top">
+            <span className="ev-type">{e.type}</span>
+            {!done && <span className="ev-soon">{when(e)}</span>}
+          </div>
+          {more ? (
+            <button type="button" className="ev-title" onClick={() => toggle(id)} aria-expanded={open}>
+              <span>{e.title}</span>
+              <Icon.chev />
+            </button>
+          ) : (
+            <span className="ev-title as-text">
+              <span>{e.title}</span>
+            </span>
+          )}
+          <div className="ev-meta">
+            <span>{dates(e)}</span>
+            {e.place && <span>{e.place}</span>}
+          </div>
+          {open && (
+            <div className="ev-more">
+              {e.detail && <p>{e.detail}</p>}
+              {e.url && (
+                <a className="link small" href={e.url} target="_blank" rel="noreferrer noopener">
+                  Event page →
+                </a>
+              )}
+            </div>
+          )}
+        </div>
+      </li>
+    );
+  };
+
   return (
-    <span className={`vlvl vlvl-${level}`} title={why}>
-      <b aria-hidden="true">L{level}</b>
-      <span>
-        <span className="sr-only">Verification level {level}: </span>
-        {LEVELS[level]}
-      </span>
-    </span>
+    <section className="pcard">
+      <div className="sec-head">
+        <h2>Schedule</h2>
+        {upcoming.length > 0 && <span className="own-n">{upcoming.length}</span>}
+      </div>
+
+      {upcoming.length ? (
+        <ul className="ev-list">
+          {upcoming.map((e, i) => (
+            <Row key={`u${i}`} e={e} i={i} />
+          ))}
+        </ul>
+      ) : (
+        <p className="own-empty">Nothing coming up at the moment.</p>
+      )}
+
+      {past.length > 0 && (
+        <>
+          <button type="button" className="btn-row past-toggle" onClick={() => setShowPast(!showPast)} aria-expanded={showPast}>
+            <span>
+              <Icon.history /> {plural(past.length, "past event", "past events")}
+            </span>
+            <Icon.chev className={showPast ? "chev up" : "chev"} />
+          </button>
+          {showPast && (
+            <ul className="ev-list is-past">
+              {past.map((e, i) => (
+                <Row key={`p${i}`} e={e} i={i} done />
+              ))}
+            </ul>
+          )}
+        </>
+      )}
+    </section>
   );
 }
 
@@ -256,9 +410,7 @@ function About({ bio }) {
   return (
     <section className="pcard about">
       <h2>About</h2>
-      <p className="about-text">
-        {long && !open ? `${cut}…` : text}
-      </p>
+      <blockquote className="about-text">{long && !open ? `${cut}…` : text}</blockquote>
       {long && (
         <button type="button" className="about-more" onClick={() => setOpen((v) => !v)} aria-expanded={open}>
           {open ? "Read less" : "Read more"}
@@ -477,7 +629,7 @@ export function ResearcherPage({ id, own: ownPage = false, onVerify, onScholar }
           <div className="ppt-top">
             <div className="ppt-photo">
               <Avatar name={r.name} size={96} />
-              <span className="ppt-caption">{r.discipline || "Researcher"}</span>
+              <Stem discipline={r.discipline} />
             </div>
             <div className="ppt-fields">
               <h1>{r.name}</h1>
@@ -593,6 +745,8 @@ export function ResearcherPage({ id, own: ownPage = false, onVerify, onScholar }
           </section>
         )}
       </div>
+
+      <Schedule events={r.schedule} own={own} />
 
       <Standing r={r} />
 

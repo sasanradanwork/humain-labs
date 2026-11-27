@@ -238,8 +238,8 @@ export function RorModal({ seed, onPick, onClose }) {
       <Form onSubmit={async (d) => setResults(await backend.rorSearch(d.q))}>
         <h2>Find your institution in ROR</h2>
         <p className="small soft">
-          The Research Organization Registry is the open registry of research institutions. Picking your institution here attaches its permanent ID to
-          your group page.
+          The Research Organization Registry is the open registry of research institutions. Picking yours here attaches its permanent ID, so the
+          institution is the same one wherever it appears.
         </p>
         <div className="stack" style={{ marginTop: 16 }}>
           <Field label="Institution name">

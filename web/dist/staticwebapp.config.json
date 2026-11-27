@@ -10,18 +10,6 @@
       ]
     },
     {
-      "route": "/api/status",
-      "allowedRoles": [
-        "anonymous"
-      ]
-    },
-    {
-      "route": "/api/roadmap*",
-      "allowedRoles": [
-        "anonymous"
-      ]
-    },
-    {
       "route": "/api/public",
       "allowedRoles": [
         "anonymous"
@@ -29,12 +17,6 @@
     },
     {
       "route": "/api/me",
-      "allowedRoles": [
-        "anonymous"
-      ]
-    },
-    {
-      "route": "/api/identity/webhook",
       "allowedRoles": [
         "anonymous"
       ]

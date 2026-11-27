@@ -58,6 +58,8 @@ function docBackend(store, kind) {
     else list[i].canEdit = true;
     return list;
   };
+  // A second lead who couldn't edit the page would be no use the day they took over.
+  const withEdit = (members, rid) => (rid ? members.map((m) => (m.researcherId === rid ? { ...m, canEdit: true } : m)) : members);
   const isVisibleHere = (s) => !s.hidden && !!(S.researchers.find((r) => r.id === s.researcherId)?.verified) && (!s.closesAt || s.closesAt >= today());
 
   const self = {
@@ -90,13 +92,15 @@ function docBackend(store, kind) {
       self.syncAuth();
       notify();
     },
-    signOut() {
+    /** @param to optional hash to land on, for sign-outs that shouldn't stay put. */
+    signOut(to) {
       session = null;
       try {
         localStorage.removeItem(SESSION_KEY);
       } catch (e) {}
       self.syncAuth();
       notify();
+      if (to) location.hash = to;
     },
     async saveProfile(p) {
       if (!session) throw new UserError("Sign in to do this.");
@@ -141,15 +145,25 @@ function docBackend(store, kind) {
       if (!me.verified || !me.idVerified) throw new UserError("Verify your institution email and identity before creating or editing research groups.");
       if (g.members.some((m) => !S.researchers.some((r) => r.id === m.researcherId)))
         throw new UserError("Every member must be a registered researcher.");
+      // The second lead has to be a member, and never the lead themselves.
+      const deputy = (ownerId) => {
+        const d = g.deputyId || null;
+        if (!d || d === ownerId) return null;
+        if (!g.members.some((m) => m.researcherId === d)) throw new UserError("The second lead has to be a member of the group. Add them to the members first.");
+        return d;
+      };
       if (id) {
         const ex = S.groups.find((x) => x.id === id);
         if (!ex) throw new UserError("That group doesn't exist.");
         if (!canEdit(ex, me.id)) throw new UserError("Only the group's owner and members with edit access can change this page.");
-        const doc = { ...g, members: ensureOwner(g.members, ex.ownerId), id, publicId: ex.publicId || newGroupId(), ownerId: ex.ownerId, createdAt: ex.createdAt, updatedAt: today() };
+        // Naming a successor is the lead's decision, not any editor's.
+        const deputyId = ex.ownerId === me.id ? deputy(ex.ownerId) : ex.deputyId || null;
+        const doc = { ...g, deputyId, members: withEdit(ensureOwner(g.members, ex.ownerId), deputyId), id, publicId: ex.publicId || newGroupId(), ownerId: ex.ownerId, createdAt: ex.createdAt, updatedAt: today() };
         await store.put("groups", doc);
         return doc;
       }
-      const doc = { ...g, members: ensureOwner(g.members, me.id), id: uid(), publicId: newGroupId(), ownerId: me.id, createdAt: today(), updatedAt: today() };
+      const deputyId = deputy(me.id);
+      const doc = { ...g, deputyId, members: withEdit(ensureOwner(g.members, me.id), deputyId), id: uid(), publicId: newGroupId(), ownerId: me.id, createdAt: today(), updatedAt: today() };
       await store.put("groups", doc);
       return doc;
     },
@@ -336,13 +350,54 @@ function docBackend(store, kind) {
     },
     async deleteProfile() {
       const me = needResearcher();
-      if (S.groups.some((g) => g.ownerId === me.id)) throw new UserError("Delete the research groups you created first. Other people are members of them, so they can't be removed automatically.");
+      // Groups with a second lead pass to them; the rest have nobody to take them on.
+      const owned = S.groups.filter((g) => g.ownerId === me.id);
+      const heirOf = (g) =>
+        g.deputyId && g.deputyId !== me.id && (g.members || []).some((m) => m.researcherId === g.deputyId) && S.researchers.some((r) => r.id === g.deputyId)
+          ? g.deputyId
+          : null;
+      const stuck = owned.filter((g) => !heirOf(g));
+      if (stuck.length)
+        throw new UserError(
+          `Name a second lead for ${stuck.map((g) => `"${g.name}"`).join(", ")} so the group passes to them, or delete it first. ` +
+            "Other people are members, so a group can't be left without anyone able to run it.",
+        );
+      for (const g of owned) {
+        const heirId = heirOf(g);
+        await store.put("groups", {
+          ...g,
+          ownerId: heirId,
+          deputyId: null,
+          updatedAt: today(),
+          members: (g.members || [])
+            .filter((m) => m.researcherId !== me.id)
+            .map((m) => (m.researcherId === heirId ? { ...m, canEdit: true, role: /second lead|member/i.test(m.role || "") ? "Group lead" : m.role } : m)),
+        });
+      }
       for (const s of S.studies.filter((x) => x.researcherId === me.id)) {
         for (const a of S.applications.filter((x) => x.studyId === s.id)) await store.del("applications", a.id);
         await store.del("studies", s.id);
       }
       for (const g of S.groups.filter((x) => (x.members || []).some((m) => m.researcherId === me.id)))
         await store.put("groups", { ...g, members: g.members.filter((m) => m.researcherId !== me.id) });
+      // What this profile said about other people goes with it, so an endorsement can't
+      // keep scoring for a profile that no longer exists.
+      for (const other of S.researchers) {
+        if (other.id === me.id) continue;
+        const patch = {};
+        const years = Object.entries(other.endorsements || {}).filter(([, v]) => v && me.id in v);
+        if (years.length) {
+          patch.endorsements = { ...other.endorsements };
+          for (const [year, v] of years) {
+            const left = { ...v };
+            delete left[me.id];
+            patch.endorsements[year] = left;
+          }
+        }
+        if ((other.supervising || []).some((s) => s.researcherId === me.id))
+          patch.supervising = other.supervising.filter((s) => s.researcherId !== me.id);
+        if (Object.keys(patch).length) await store.put("researchers", { ...other, ...patch });
+      }
       await store.del("researchers", me.id);
     },
     async apply(a) {
@@ -600,8 +655,9 @@ function azureBackend() {
       }
       notify();
     },
-    signOut() {
-      location.href = "/.auth/logout?post_logout_redirect_uri=" + encodeURIComponent("/" + location.hash);
+    /** @param to optional hash to land on, for sign-outs that shouldn't stay put. */
+    signOut(to) {
+      location.href = "/.auth/logout?post_logout_redirect_uri=" + encodeURIComponent("/" + (to || location.hash));
     },
     async after() {
       await self.reload();
