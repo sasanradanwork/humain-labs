@@ -364,6 +364,9 @@ async function putProfile({ repo, principal, body, screen, crossref = lookupDoi 
     // groups are. Private is the default, because a profile is personal.
     visibility: V.oneOf(b.visibility, "Profile visibility", ["public", "private"], "private"),
     ...profileDetail(b),
+    // Not part of the form: the photo is saved on its own, and editing a profile must
+    // not quietly drop the one already there.
+    ...(existing && existing.photo ? { photo: existing.photo } : {}),
   };
   const review = await screenFields({ Bio: p.bio }, { screen });
   const sameHandle = await repo.where("researchers", "handle", p.handle);
@@ -900,6 +903,74 @@ async function forgetVotes(repo, principal) {
   }
 }
 
+/* ---------- profile photo ---------- */
+/**
+ * A photo lives in its own container, not on the profile. The directory ships every
+ * profile in one payload, and a picture is several times the size of the record it would
+ * ride on; kept apart, it is fetched only for the faces actually on screen.
+ */
+const PHOTO_TYPES = ["image/webp", "image/jpeg", "image/png"];
+const PHOTO_MAX = 220 * 1024; // decoded bytes; the browser sends a square ~256px re-encode
+
+/** Read a data URI, or say precisely what is wrong with it. */
+function photoFrom(value) {
+  const raw = String(value || "").trim();
+  const m = /^data:([a-z/+-]+);base64,([A-Za-z0-9+/=\s]+)$/i.exec(raw);
+  if (!m) throw bad("That photo could not be read. Choose a PNG, JPEG or WebP image.");
+  const [, type, b64] = m;
+  if (!PHOTO_TYPES.includes(type.toLowerCase())) throw bad("A photo has to be a PNG, JPEG or WebP image.");
+  const bytes = Buffer.from(b64.replace(/\s+/g, ""), "base64");
+  if (!bytes.length) throw bad("That photo came through empty. Try choosing it again.");
+  if (bytes.length > PHOTO_MAX) throw bad(`That photo is ${Math.round(bytes.length / 1024)}KB. Photos have to be under ${Math.round(PHOTO_MAX / 1024)}KB.`);
+  // The declared type has to match what the bytes actually are, or a profile could serve
+  // something else from an image tag.
+  const sig = bytes.subarray(0, 12);
+  const isPng = sig[0] === 0x89 && sig[1] === 0x50 && sig[2] === 0x4e && sig[3] === 0x47;
+  const isJpeg = sig[0] === 0xff && sig[1] === 0xd8 && sig[2] === 0xff;
+  const isWebp = sig.subarray(0, 4).toString("ascii") === "RIFF" && sig.subarray(8, 12).toString("ascii") === "WEBP";
+  const actual = isPng ? "image/png" : isJpeg ? "image/jpeg" : isWebp ? "image/webp" : null;
+  if (!actual || actual !== type.toLowerCase()) throw bad("That file is not the kind of image it claims to be.");
+  return { dataUri: `data:${actual};base64,${bytes.toString("base64")}`, bytes: bytes.length };
+}
+
+/** Put a photo on your own profile, replacing any you already had. */
+async function putPhoto({ repo, principal, body }) {
+  const me = await needResearcher(repo, principal);
+  const { dataUri, bytes } = photoFrom((body || {}).photo);
+  const at = today();
+  await repo.upsert("photos", { id: me.id, dataUri, bytes, updatedAt: at });
+  // The profile carries only the fact that there is one, so lists know whether to ask.
+  await repo.upsert("researchers", { ...me, photo: { at }, updatedAt: at });
+  return ok({ photo: { at } });
+}
+
+/** Take it off again; the profile falls back to its initials. */
+async function deletePhoto({ repo, principal }) {
+  const me = await needResearcher(repo, principal);
+  await repo.remove("photos", me.id, me.id);
+  const { photo, ...rest } = me;
+  await repo.upsert("researchers", { ...rest, updatedAt: today() });
+  return ok({ deleted: true });
+}
+
+/**
+ * Serve one. A photo is as visible as the profile it belongs to: a private profile's
+ * picture is for signed-in researchers, exactly as the rest of that profile is.
+ */
+async function getPhoto({ repo, principal, params }) {
+  const key = String((params || {}).id || "");
+  const [byPublic, byId] = await Promise.all([repo.where("researchers", "publicId", key), repo.get("researchers", key, key)]);
+  const r = byPublic[0] || byId;
+  if (!r) throw new HttpError(404, "No such profile.");
+  if (r.visibility !== "public") {
+    const me = principal && (await repo.where("researchers", "userId", principal.userId))[0];
+    if (!me) throw new HttpError(403, "That profile is not public.");
+  }
+  const doc = await repo.get("photos", r.id, r.id);
+  if (!doc) throw new HttpError(404, "That profile has no photo.");
+  return ok({ photo: doc.dataUri, at: doc.updatedAt });
+}
+
 // Researcher: groups they created must be deleted first, since other people are members of them.
 // Their studies go too, with the applications to those studies.
 async function deleteResearcherProfile({ repo, principal }) {
@@ -943,6 +1014,8 @@ async function deleteResearcherProfile({ repo, principal }) {
     }
     if (Object.keys(patch).length) await repo.upsert("researchers", { ...other, ...patch });
   }
+  // The photo lives in its own container, so deleting the profile has to take it too.
+  await repo.remove("photos", me.id, me.id);
   await repo.remove("researchers", me.id);
   // Deleting the profile ends the session, so the roadmap votes go with it rather than
   // sitting against an account the person has walked away from.
@@ -1216,4 +1289,5 @@ module.exports = {
   createStudy, updateStudy, deleteStudy, studyApplicants, apply, myApplications, canEditGroup,
   statusData, roadmap, roadmapVote, endorseResearcher, resolveDoi, putParticipant, withdrawApplication, rateApplication, advanceApplication, rejectApplication,
   participantEmailStart, participantEmailConfirm, deleteParticipant, deleteResearcherProfile,
+  putPhoto, deletePhoto, getPhoto,
 };

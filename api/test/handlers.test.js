@@ -1103,3 +1103,73 @@ test("a publication records what kind of thing it is, from Crossref's own type",
   const none = await lookup("10.1234/x", fetchOf(undefined));
   assert.equal(none.kind, "Other");
 });
+
+test("a profile photo is stored apart from the profile, and only what it claims to be", async () => {
+  const repo = fresh();
+  await H.putProfile({ repo, principal: user("u-pic"), crossref, body: profile({ handle: "pic-one", visibility: "public" }) });
+  const me = (await repo.where("researchers", "userId", "u-pic"))[0];
+  await repo.upsert("researchers", { ...me, verified: { at: "2026-01-05", domain: "example.edu" } });
+
+  // A real 1x1 PNG, base64.
+  const png =
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
+  const saved = await run(H.putPhoto, { repo, principal: user("u-pic"), body: { photo: png } });
+  assert.equal(saved.status, 200);
+
+  // The picture is in its own container; the profile carries only the fact of it, so the
+  // directory payload doesn't grow by a photo per researcher.
+  const after = (await repo.where("researchers", "userId", "u-pic"))[0];
+  assert.ok(after.photo && after.photo.at, "the profile records that there is a photo");
+  assert.ok(!JSON.stringify(after).includes("base64"), "the photo itself is not on the profile");
+  assert.ok((await repo.get("photos", after.id)).dataUri.startsWith("data:image/png;base64,"));
+
+  // Served by public id, to anyone, for a public profile.
+  const got = await run(H.getPhoto, { repo, principal: null, params: { id: after.publicId } });
+  assert.equal(got.status, 200);
+  assert.equal(got.json.photo, png);
+
+  // A file that says one thing and is another is refused.
+  const liar = await run(H.putPhoto, { repo, principal: user("u-pic"), body: { photo: "data:image/png;base64,/9j/4AAQSkZJRg==" } });
+  assert.equal(liar.status, 400);
+  assert.match(liar.json.error, /not the kind of image/);
+
+  // So is something that isn't an image at all.
+  const text = await run(H.putPhoto, { repo, principal: user("u-pic"), body: { photo: "data:text/html;base64,PHNjcmlwdD4=" } });
+  assert.equal(text.status, 400);
+
+  // Editing the profile afterwards keeps the photo that is already there.
+  await H.putProfile({ repo, principal: user("u-pic"), crossref, body: profile({ handle: "pic-one", bio: "A new bio entirely.", visibility: "public" }) });
+  assert.ok((await repo.where("researchers", "userId", "u-pic"))[0].photo, "saving the form does not drop the photo");
+
+  // Removing it takes the stored picture with it.
+  assert.equal((await run(H.deletePhoto, { repo, principal: user("u-pic") })).status, 200);
+  assert.equal(await repo.get("photos", after.id), null);
+  assert.ok(!(await repo.where("researchers", "userId", "u-pic"))[0].photo);
+});
+
+test("a private profile's photo is for signed-in researchers, as the rest of it is", async () => {
+  const repo = fresh();
+  const png =
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
+  await H.putProfile({ repo, principal: user("u-shy"), crossref, body: profile({ handle: "shy-one", visibility: "private" }) });
+  await H.putPhoto({ repo, principal: user("u-shy"), body: { photo: png } });
+  const shy = (await repo.where("researchers", "userId", "u-shy"))[0];
+
+  assert.equal((await run(H.getPhoto, { repo, principal: null, params: { id: shy.id } })).status, 403);
+
+  await H.putProfile({ repo, principal: user("u-peer"), crossref, body: profile({ handle: "peer-one" }) });
+  assert.equal((await run(H.getPhoto, { repo, principal: user("u-peer"), params: { id: shy.id } })).status, 200);
+});
+
+test("deleting a profile takes its photo with it", async () => {
+  const repo = fresh();
+  const png =
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
+  await H.putProfile({ repo, principal: user("u-gone"), crossref, body: profile({ handle: "gone-one" }) });
+  await H.putPhoto({ repo, principal: user("u-gone"), body: { photo: png } });
+  const me = (await repo.where("researchers", "userId", "u-gone"))[0];
+  assert.ok(await repo.get("photos", me.id));
+
+  await H.deleteResearcherProfile({ repo, principal: user("u-gone") });
+  assert.equal(await repo.get("photos", me.id), null, "no orphan photo is left behind");
+});

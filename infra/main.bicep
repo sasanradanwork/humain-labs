@@ -31,6 +31,8 @@ var containers = [
   { name: 'applications', partitionKey: '/studyId' }
   { name: 'uptime', partitionKey: '/id' }
   { name: 'votes', partitionKey: '/id' }
+  { name: 'standings', partitionKey: '/id' }
+  { name: 'photos', partitionKey: '/id' }
 ]
 
 resource cosmos 'Microsoft.DocumentDB/databaseAccounts@2024-05-15' = {

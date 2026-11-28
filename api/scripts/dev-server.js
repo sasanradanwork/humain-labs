@@ -80,6 +80,8 @@ const routes = [
   ["PUT", /^participant$/, H.putParticipant], ["DELETE", /^participant$/, H.deleteParticipant],
   ["POST", /^participant\/email\/start$/, H.participantEmailStart], ["POST", /^participant\/email\/confirm$/, H.participantEmailConfirm],
   ["DELETE", /^profile$/, H.deleteResearcherProfile],
+  ["PUT", /^profile\/photo$/, H.putPhoto], ["DELETE", /^profile\/photo$/, H.deletePhoto],
+  ["GET", /^photos\/([^/]+)$/, H.getPhoto],
   ["POST", /^researchers\/([^/]+)\/endorse$/, H.endorseResearcher],
   ["GET", /^doi$/, H.resolveDoi],
   ["POST", /^applications\/([^/]+)\/withdraw$/, H.withdrawApplication],
