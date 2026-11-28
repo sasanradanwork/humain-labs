@@ -28,6 +28,12 @@
       ]
     },
     {
+      "route": "/api/photos/*",
+      "allowedRoles": [
+        "anonymous"
+      ]
+    },
+    {
       "route": "/api/me",
       "allowedRoles": [
         "anonymous"
