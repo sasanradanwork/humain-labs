@@ -840,19 +840,44 @@ export function Auth({ route, afterAuth, setAfterAuth }) {
     </button>
   );
 
-  if (AUTH.user)
+  // Asking for the researcher side while already signed in is a request for the profile
+  // form, not for a card about the account you happen to hold. Someone who has just
+  // deleted a participant account and come back to register lands here.
+  const wantsResearcher = route.q.get("as") === "researcher";
+  useEffect(() => {
+    if (AUTH.user && !AUTH.researcher && wantsResearcher) navigate("#/profile/edit");
+  }, [wantsResearcher, AUTH.user, AUTH.researcher]);
+
+  if (AUTH.user) {
+    // What the account actually holds, rather than what it is allowed to do: an account
+    // with nothing on it yet is not a participant account.
+    const holds = AUTH.researcher ? "researcher" : AUTH.participant ? "participant" : "none";
     return (
       <div className="wrap">
         <div className="auth-shell">
           <div className="auth-card">
             <h1 style={{ fontSize: "1.6rem" }}>You're signed in</h1>
             <p className="soft" style={{ margin: "8px 0 18px" }}>
-              Signed in as <strong>{AUTH.researcher?.name || AUTH.user.name}</strong> with a {role()} account.
+              {holds === "none" ? (
+                <>
+                  Signed in as <strong>{AUTH.user.name}</strong>. You haven't set up a profile on this account yet — take part in studies, or
+                  register as a researcher to run them.
+                </>
+              ) : (
+                <>
+                  Signed in as <strong>{AUTH.researcher?.name || AUTH.user.name}</strong> with a {holds} account.
+                </>
+              )}
             </p>
             <div className="actions">
-              <a className="btn btn-solid" href={role() === "researcher" ? "#/dashboard" : "#/studies"}>
-                {role() === "researcher" ? "Go to researcher area" : "Browse open studies"}
+              <a className="btn btn-solid" href={holds === "researcher" ? "#/dashboard" : "#/studies"}>
+                {holds === "researcher" ? "Go to researcher area" : "Browse open studies"}
               </a>
+              {holds !== "researcher" && (
+                <a className="btn" href="#/profile/edit">
+                  Register as a researcher
+                </a>
+              )}
               <button className="btn" onClick={() => backend.signOut()}>
                 Sign out
               </button>
@@ -861,6 +886,7 @@ export function Auth({ route, afterAuth, setAfterAuth }) {
         </div>
       </div>
     );
+  }
 
   const c = AUTH_COPY[as];
   let form;
@@ -1012,8 +1038,9 @@ export function ResearcherGate({ title }) {
         <div className="setup">
           <h2>This part of HumAIn Labs is for researchers</h2>
           <p className="soft">
-            You're signed in with a participant account. Researchers use a separate account with a researcher profile, so your applications stay
-            separate from any research you run.
+            {AUTH.participant
+              ? "You're signed in with a participant account. A researcher profile sits alongside it on the same account, so the studies you run stay separate from the ones you apply to."
+              : "You're signed in, but this account has no researcher profile on it yet. Setting one up takes a minute and is what the researcher area runs on."}
           </p>
           <div className="actions">
             <a className="btn btn-solid" href="#/studies">

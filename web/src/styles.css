@@ -134,7 +134,10 @@ main{padding:36px 0 80px;min-height:60vh}
 .facts dt{color:var(--ink-soft)}
 .facts dd{margin:0}
 .elig{font-size:.8rem;color:var(--blue)}
-.avatar{border-radius:999px;display:inline-flex;align-items:center;justify-content:center;font-weight:600;flex:none;font-family:var(--sans)}
+.avatar{position:relative;overflow:hidden;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;font-weight:600;flex:none;font-family:var(--sans)}
+/* The photo sits over the initials rather than replacing them: nothing moves when it
+   arrives, and a profile without one still has a face-shaped mark. */
+.avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit}
 .avs{display:flex}
 .avs .avatar{border:2px solid var(--card);margin-left:-8px}
 .avs .avatar:first-child{margin-left:0}
@@ -1922,3 +1925,11 @@ h3.sub{font-size:.95rem;margin:18px 0 8px;color:var(--ink-soft);font-weight:600}
   .xp-l{grid-column:1}
   .xp-when{grid-column:2}
 }
+
+/* ---- choosing a profile photo ---- */
+.photo-field{display:flex;align-items:center;gap:16px;padding:12px 0 2px}
+.photo-field .avatar{box-shadow:0 0 0 1px var(--line)}
+.photo-do{display:grid;gap:4px;min-width:0}
+.photo-btns{display:flex;gap:8px;flex-wrap:wrap}
+.photo-field .hint{margin:0}
+.photo-later{margin:0 0 4px}

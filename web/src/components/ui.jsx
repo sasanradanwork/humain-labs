@@ -365,15 +365,21 @@ export function Flag({ country, size = 15 }) {
   );
 }
 
-export function Avatar({ name, size = 40 }) {
+/**
+ * Initials in the profile's own colour, or the researcher's photo once it has arrived.
+ * The initials stay underneath rather than being swapped out, so a slow or missing
+ * picture leaves a face-shaped thing in the layout instead of a hole.
+ */
+export function Avatar({ name, size = 40, src = null }) {
   const t = hash(name) % 5;
   return (
     <span
-      className="avatar"
+      className={"avatar" + (src ? " has-photo" : "")}
       style={{ width: size, height: size, fontSize: Math.round(size * 0.38), background: `var(--t${t}b)`, color: `var(--t${t}f)` }}
       aria-hidden="true"
     >
       {initials(name)}
+      {src && <img src={src} alt="" loading="lazy" decoding="async" />}
     </span>
   );
 }

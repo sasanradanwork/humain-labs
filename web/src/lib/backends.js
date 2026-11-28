@@ -348,6 +348,24 @@ function docBackend(store, kind) {
       for (const a of S.applications.filter((x) => x.userId === session.userId)) await store.del("applications", a.id);
       if (part) await store.del("participants", part.id);
     },
+    async savePhoto(dataUri) {
+      const me = needResearcher();
+      // The demo keeps photos beside the profiles, in the same browser storage.
+      await store.put("photos", { id: me.id, dataUri, updatedAt: today() });
+      await store.put("researchers", { ...me, photo: { at: today() }, updatedAt: today() });
+    },
+    async deletePhoto() {
+      const me = needResearcher();
+      await store.del("photos", me.id);
+      const { photo, ...rest } = me;
+      await store.put("researchers", { ...rest, updatedAt: today() });
+    },
+    async loadPhoto(key) {
+      const r = S.researchers.find((x) => x.publicId === key || x.id === key);
+      if (!r) return null;
+      const doc = (S.photos || []).find((x) => x.id === r.id);
+      return doc ? doc.dataUri : null;
+    },
     async deleteProfile() {
       const me = needResearcher();
       // Groups with a second lead pass to them; the rest have nobody to take them on.
@@ -752,6 +770,19 @@ function azureBackend() {
     async deleteProfile() {
       await api("DELETE", "profile");
       await self.after();
+    },
+    async savePhoto(dataUri) {
+      const r = await api("PUT", "profile/photo", { photo: dataUri });
+      await self.after();
+      return r;
+    },
+    async deletePhoto() {
+      await api("DELETE", "profile/photo");
+      await self.after();
+    },
+    async loadPhoto(key) {
+      const r = await api("GET", `photos/${encodeURIComponent(key)}`);
+      return r.photo;
     },
     async sendParticipantCode() {
       return api("POST", "participant/email/start");

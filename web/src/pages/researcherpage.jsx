@@ -9,6 +9,7 @@ import { CareerSpans, PercentileTicks, PointsCurves, PointsMix, PubFigures, ordi
 import { AUTH, S, byId, groupsOf, role } from "../lib/store.js";
 import { DISCIPLINES, PUB_KINDS } from "../lib/lists.js";
 import { fmtDate, gidKey, isOpen, plural, pubKind } from "../lib/util.js";
+import { usePhoto } from "../lib/photos.js";
 import { navigate, useUI } from "../lib/ui.jsx";
 import { groupHref, researcherHref } from "../components/cards.jsx";
 import { ResearcherGate } from "./public.jsx";
@@ -745,7 +746,9 @@ function MyGroups() {
 
 export function ResearcherPage({ id, own: ownPage = false, onVerify, onScholar }) {
   const r = researcherByRef(id);
-  const { toast } = useUI();
+  const { toast, backend } = useUI();
+  // Before the gates below: a hook cannot sit behind a return.
+  const photo = usePhoto(r, backend);
   // A profile set to public is readable by anyone, exactly as a public group is. A
   // private one needs a researcher account, so visitors see the gate instead.
   if (r && r.visibility !== "public" && role() !== "researcher" && AUTH.researcher?.id !== r.id)
@@ -814,7 +817,7 @@ export function ResearcherPage({ id, own: ownPage = false, onVerify, onScholar }
 
           <div className="ppt-top">
             <div className="ppt-photo">
-              <Avatar name={r.name} size={96} />
+              <Avatar name={r.name} size={96} src={photo} />
               <Stem discipline={r.discipline} />
               {/* Last, so the portrait stays the column's first child and keeps its frame. */}
               <CardPattern className="ppt-pattern" />

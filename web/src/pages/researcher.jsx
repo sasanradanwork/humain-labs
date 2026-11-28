@@ -1,6 +1,7 @@
 // The researcher side: directory, group pages, the group editor and the researcher area.
 import { useEffect, useRef, useState } from "react";
 import { PubFigures } from "../components/charts.jsx";
+import { PhotoField } from "../components/photo.jsx";
 import { Avatar, Icon, LinkedInLink, ScholarLink, Cover, DeadlinePill, VerifiedBadge, UnverifiedBadge, sortByName } from "../components/ui.jsx";
 import { GroupCard, ResearcherCard, Toolbar, groupHref, researcherHref, lookingFor, APP_STAGES } from "../components/cards.jsx";
 import { AUTH, S, appCount, byId, canEditGroup, groupStudies, groupsOf, memberResearchers, role } from "../lib/store.js";
@@ -1166,6 +1167,13 @@ export function ProfileEditor({ onVerify, onScholar, onRor, onDelete }) {
             <h2>About you</h2>
             <p className="hint">Other researchers find you, and add you to groups, by name or @handle.</p>
             <div className="stack">
+              {/* Saved on its own, the moment it is chosen: it is not part of the form
+                  below, and a photo shouldn't wait on the rest of the profile. */}
+              {AUTH.researcher ? (
+                <PhotoField researcher={AUTH.researcher} />
+              ) : (
+                <p className="hint photo-later">You can add a profile photo once this profile is published.</p>
+              )}
               <div className="row2">
                 <Field label="Full name" required>
                   <input

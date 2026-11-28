@@ -8,6 +8,7 @@ import { AUTH, S, byId, role, useStore } from "./lib/store.js";
 import { fallbackBackend, pickBackend, setToaster } from "./lib/backends.js";
 import { UIProvider, navigate, useRoute, useTheme } from "./lib/ui.jsx";
 import { appCount, canEditGroup } from "./lib/store.js";
+import { usePhoto } from "./lib/photos.js";
 import { plural } from "./lib/util.js";
 import { SITE } from "./lib/site.js";
 import { Privacy, Terms } from "./pages/legal.jsx";
@@ -17,6 +18,13 @@ import { ParticipantProfile } from "./pages/participant.jsx";
 import { IdGate } from "./components/idcheck.jsx";
 
 // Researchers and participants see different parts of the site.
+/**
+ * What the account holds, for the badge beside the name. An account that has been signed
+ * in to but not set up holds nothing yet, and calling it a participant is how someone who
+ * deleted one and came back to register as a researcher ends up thinking it didn't work.
+ */
+const accountTag = () => (AUTH.researcher ? "Researcher" : AUTH.participant ? "Participant" : null);
+
 const NAV = {
   guest: [["home", "Home"], ["studies", "Studies"], ["researchers", "Researchers"], ["groups", "Groups"], ["reach", "Reach"], ["about", "About"]],
   participant: [["home", "Home"], ["studies", "Studies"], ["researchers", "Researchers"], ["groups", "Groups"], ["reach", "Reach"], ["mine", "My applications"], ["participant", "Your details"]],
@@ -49,6 +57,8 @@ export default function App() {
   const [modal, setModal] = useState(null);
   const [afterAuth, setAfterAuth] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  // Your own face in the header, once you have one on your profile.
+  const myPhoto = usePhoto(AUTH.researcher, backend);
   const [filters, setFilters] = useState({
     studies: { q: "", field: "", country: "", format: "", sort: "" },
     researchers: { q: "", discipline: "", field: "", country: "", institution: "", verified: false },
@@ -349,8 +359,8 @@ export default function App() {
                 {AUTH.user ? (
                   <>
                     <span className="menu-account">
-                      <Avatar name={AUTH.researcher?.name || AUTH.user.name || "you"} size={30} />
-                      <span className="role-tag">{role() === "researcher" ? "Researcher" : "Participant"}</span>
+                      <Avatar name={AUTH.researcher?.name || AUTH.user.name || "you"} size={30} src={myPhoto} />
+                      {accountTag() && <span className="role-tag">{accountTag()}</span>}
                     </span>
                     <button className="btn" onClick={() => backend.signOut()}>
                       Sign out
@@ -375,9 +385,9 @@ export default function App() {
             <div className="who" id="who">
               {AUTH.user ? (
                 <>
-                  <span className="who-name desk" title={`Signed in as ${AUTH.researcher?.name || AUTH.user.name} (${role()} account)`}>
-                    <Avatar name={AUTH.researcher?.name || AUTH.user.name || "you"} size={30} />
-                    <span className="role-tag">{role() === "researcher" ? "Researcher" : "Participant"}</span>
+                  <span className="who-name desk" title={`Signed in as ${AUTH.researcher?.name || AUTH.user.name}${accountTag() ? ` (${accountTag().toLowerCase()} account)` : ""}`}>
+                    <Avatar name={AUTH.researcher?.name || AUTH.user.name || "you"} size={30} src={myPhoto} />
+                    {accountTag() && <span className="role-tag">{accountTag()}</span>}
                   </span>
                   <button className="btn desk" onClick={() => backend.signOut()}>
                     Sign out

@@ -5,6 +5,8 @@ import { fmtDate, plural, trendFor, uniq } from "../lib/util.js";
 import { navigate } from "../lib/ui.jsx";
 import { CardPattern } from "./guilloche.jsx";
 import { useState } from "react";
+import { useUI } from "../lib/ui.jsx";
+import { usePhoto } from "../lib/photos.js";
 
 export const studyTrend = (s) => s.trend || trendFor(s, S.applications);
 export const groupHref = (g) => `#/groups/${encodeURIComponent(g.publicId || g.id)}`;
@@ -173,6 +175,8 @@ export function StudyCard({ study: s, onApply }) {
 }
 
 export function ResearcherCard({ researcher: r }) {
+  const { backend } = useUI();
+  const photo = usePhoto(r, backend);
   const gs = groupsOf(r.id);
   const go = () => navigate(researcherHref(r));
   return (
@@ -194,7 +198,7 @@ export function ResearcherCard({ researcher: r }) {
             then one way in. The bio lives on the profile. */}
         <div className="rc-head">
           <div className="rc-photo">
-            <Avatar name={r.name} size={52} />
+            <Avatar name={r.name} size={52} src={photo} />
           </div>
           <div className="rc-who">
             <h3>
